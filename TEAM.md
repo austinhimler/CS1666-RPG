@@ -14,7 +14,7 @@ TEAM:
 
 3.  David S. Gorny - dsg33@pitt.edu
 
-4.
+4. Ryan Killen - rek77@pitt.edu
 
 5.
 
