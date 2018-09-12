@@ -12,7 +12,7 @@ TEAM:
 
 2. James Finkel - jaf177@pitt.edu
 
-3.
+3. David S. Gorny - dsg33@pitt.edu
 
 4.
 
