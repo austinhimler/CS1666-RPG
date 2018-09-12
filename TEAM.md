@@ -10,7 +10,7 @@ TEAM:
 
 1. Austin Himler - arh121@pitt.edu
 
-2. 
+2. James Finkel - jaf177@pitt.edu
 
 3.
 
