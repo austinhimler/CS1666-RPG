@@ -1,5 +1,6 @@
 # CS1699-RPG
 
+SLACK JOIN LINK: https://join.slack.com/t/cs1666rpg/shared_invite/enQtNDMzNjU2MzkzODg5LTllNTA0MTc4ZDc3OWE3YWJhNTZmNTZhNzc4NTllZTJkOTdiOGExYzEwZjY5MmQxZjhjNDQzNWQwNTRlZDJiY2E
 README
 
 
