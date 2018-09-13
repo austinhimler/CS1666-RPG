@@ -16,7 +16,7 @@ TEAM:
 
 4. Ryan Killen - rek77@pitt.edu
 
-5.
+5. Senjun (Justin) Fan - sef62@pitt.edu
 
 6.
 
