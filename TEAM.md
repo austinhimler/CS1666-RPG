@@ -6,7 +6,7 @@ TEAM.md
 
 ->Should be editted/modified by each team member. Each team member should add their own name. This will ensure that everyone has at least 1 commit to the repository.
 
-TEAM: 
+TEAM:
 
 1. Austin Himler - arh121@pitt.edu
 
@@ -18,7 +18,7 @@ TEAM:
 
 5. Senjun (Justin) Fan - sef62@pitt.edu
 
-6.
+6. Mitchell Leng - mjl159@pitt.edu
 
 7.
 
