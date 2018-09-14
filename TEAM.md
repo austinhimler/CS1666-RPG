@@ -20,7 +20,7 @@ TEAM:
 
 6. Mitchell Leng - mjl159@pitt.edu
 
-7.
+7. Sanketh Kolli - ssk38@pitt.edu
 
 8.
 
