@@ -22,7 +22,7 @@ TEAM:
 
 7. Sanketh Kolli - ssk38@pitt.edu
 
-8.
+8. Kexin Wang -kew102@pitt.edu
 
 9.
 
