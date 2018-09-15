@@ -22,7 +22,7 @@ TEAM:
 
 7.
 
-8.
+8.Kexin Wang -kew102@pitt.edu
 
 9.
 
