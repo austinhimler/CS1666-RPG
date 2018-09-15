@@ -24,6 +24,6 @@ TEAM:
 
 8.Kexin Wang - kew102@pitt.edu
 
-9.
+9.Brandon Badger - bmb122@pitt.edu
 
 10.
