@@ -30,6 +30,6 @@ Slack will be used for a group-wide dicussions/announcements (group channel). Ad
 
 ####    c) *What coding style will be followed?
 
-        Google C++ Style Guide
-        
-        full documentation can be found at https://google.github.io/styleguide/cppguide.html#C++_Version
+Google C++ Style Guide
+
+full documentation can be found at https://google.github.io/styleguide/cppguide.html#C++_Version
