@@ -24,7 +24,7 @@ currently unassigned: Jake Himes, Sanketh Kolli
 ### e.g. 
 ####    a) Will Slack or equivalent be used for project discussion? 
 
-        Slack will be used for a group-wide dicussions/announcements as well as dedicated channels for each advanced topic subteam
+Slack will be used for a group-wide dicussions/announcements (group channel). Additional sub-channels will be dedicated to each subteam for advanced topic collaboration.
         
 ####    b) *What development methodologies will be used (if any)?  
 
