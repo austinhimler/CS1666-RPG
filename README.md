@@ -12,16 +12,24 @@
 
 ### Should list which students are working on each advanced topic subteam
 
-AI: Senjun (Justin) Fan, Austin Himler, James Finkel
+1. AI: Senjun (Justin) Fan, Austin Himler, James Finkel
 
-Graphics: Brandon Badger, Mitchell Leng, Kexin (Bruce) Wang
+2. Graphics: Brandon Badger, Mitchell Leng, Kexin (Bruce) Wang
 
-Networking: David (Sam) Gorny, Ryan Killen
+3. Networking: David (Sam) Gorny, Ryan Killen
 
 currently unassigned: Jake Himes, Sanketh Kolli
 
 ### Should describe what organizational approaches the team will take over the term
 ### e.g. 
-####    a) Will Slack or equivalent be used for project discussion?
+####    a) Will Slack or equivalent be used for project discussion? 
+
+        Slack will be used for a group-wide dicussions/announcements as well as dedicated channels for each advanced topic subteam
+        
 ####    b) *What development methodologies will be used (if any)?  
+
 ####    c) *What coding style will be followed?
+
+        Google C++ Style Guide
+        
+        full documentation can be found at https://google.github.io/styleguide/cppguide.html#C++_Version
