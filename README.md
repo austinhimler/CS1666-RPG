@@ -1,5 +1,4 @@
-# CS1666-RPG
-## README
+# CS1666-RPG: README
 
 ### Should describe the game being produced
 ### Should state the goals for this game for the term (i.e., what criteria must be met for the term project to be complete)
