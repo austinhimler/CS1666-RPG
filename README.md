@@ -4,13 +4,13 @@
 
 Turn-based combat, real-time overworld RPG/JRPG (roguelite/rougue-like). Interactive co-op (2+) i.e. multiplayer.  
 
-Top-down overworld for exploration and enemy encounter/engagement. 
+Character development focus on stats, level progression should feel significant but not overpowered. Items/equipment should influence combat.
 
-Side-view combat with 3-d animations/graphics. Co-op players can join combat mid-battle.
+Top-down overworld aspect for exploration and enemy encounter/engagement. 
+
+Side-view combat aspect with 3-d animations/graphics. Co-op combat.
 
 ### Should state the goals for this game for the term (i.e., what criteria must be met for the term project to be complete)
-
-
 
 ### Should describe the 3 advanced topics that will be implemented for the game
 
