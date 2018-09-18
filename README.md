@@ -11,6 +11,15 @@
 3. Wireless Networking
 
 ### Should list which students are working on each advanced topic subteam
+
+AI: Senjun (Justin) Fan, Austin Himler, James Finkel
+
+Graphics: Brandon Badger, Mitchell Leng, Kexin (Bruce) Wang
+
+Networking: David (Sam) Gorny, Ryan Killen
+
+currently unassigned: Jake Himes, Sanketh Kolli
+
 ### Should describe what organizational approaches the team will take over the term
 ### e.g. 
 ####    a) Will Slack or equivalent be used for project discussion?
