@@ -1,7 +1,17 @@
 # CS1666-RPG: README
 
 ### Should describe the game being produced
+
+Turn-based combat, real-time overworld RPG/JRPG (roguelite/rougue-like). Interactive co-op (2+) i.e. multiplayer.  
+
+Top-down overworld for exploration and enemy encounter/engagement. 
+
+Side-view combat with 3-d animations/graphics. Co-op players can join combat mid-battle.
+
 ### Should state the goals for this game for the term (i.e., what criteria must be met for the term project to be complete)
+
+
+
 ### Should describe the 3 advanced topics that will be implemented for the game
 
 1. Artificial Intellegence
