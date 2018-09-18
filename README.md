@@ -16,17 +16,17 @@ Dynamic/varied level progression (i.e. replay value). Early character decisions 
 
 Combat and overworld NPC interaction with player influenced/dictated by NPC artificial intellegence. Different 'classes' of enemy NPC will attack/run-away from player according to the NPC's strengths/weaknesses. i.e. an agile monster w/ low hp might flee from player; whereas, a slow, high hp monster would meander directly toward player
 
-Graphics provide implicit emphasis on significant events/actions i.e. special animation for powerful/unqiue abilities
+3-D graphics provide implicit emphasis on significant events/actions i.e. special animation for powerful/unqiue abilities
 
 Note: story will be minimal, focus placed upon overworld/combat aspects.
 
 ### Should describe the 3 advanced topics that will be implemented for the game
 
-1. Artificial Intellegence
+1. Artificial Intelligence: overworld NPC movement/combat initiation
 
-2. Advanced Computer Graphics
+2. Advanced Computer Graphics: 3-D effects in combat
 
-3. Wireless Networking
+3. Multiplayer Networking: enable player co-op
 
 ### Should list which students are working on each advanced topic subteam
 
