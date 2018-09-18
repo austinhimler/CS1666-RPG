@@ -6,11 +6,19 @@ Turn-based combat, real-time overworld RPG/JRPG (roguelite/rougue-like). Interac
 
 Character development focus on stats, level progression should feel significant but not overpowered. Items/equipment should influence combat.
 
-Top-down overworld aspect for exploration and enemy encounter/engagement. 
+Top-down overworld aspect for level/map exploration and enemy encounter/engagement. 
 
 Side-view combat aspect with 3-d animations/graphics. Co-op combat.
 
 ### Should state the goals for this game for the term (i.e., what criteria must be met for the term project to be complete)
+
+Dynamic/varied level progression (i.e. replay value). Early character decisions impact optimal playstyle. A significant difference in stats between two characters ought to imply a significant difference in playstyle.
+
+Combat and overworld NPC interaction with player influenced/dictated by NPC artificial intellegence. Different 'classes' of enemy NPC will attack/run-away from player according to the NPC's strengths/weaknesses. i.e. an agile monster w/ low hp might flee from player; whereas, a slow, high hp monster would meander directly toward player
+
+Graphics provide implicit emphasis on significant events/actions i.e. special animation for powerful/unqiue abilities
+
+Note: story will be minimal, focus placed upon overworld/combat aspects.
 
 ### Should describe the 3 advanced topics that will be implemented for the game
 
