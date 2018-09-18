@@ -26,9 +26,9 @@ Side-view combat with 3-d animations/graphics. Co-op players can join combat mid
 
 2. Graphics: Brandon Badger, Mitchell Leng, Kexin (Bruce) Wang
 
-3. Networking: David (Sam) Gorny, Ryan Killen
+3. Networking: David (Sam) Gorny, Ryan Killen, Jake Himes
 
-currently unassigned: Jake Himes, Sanketh Kolli
+currently unassigned: Sanketh Kolli
 
 ### Should describe what organizational approaches the team will take over the term
 ### e.g. 
@@ -37,6 +37,8 @@ currently unassigned: Jake Himes, Sanketh Kolli
 Slack will be used for a group-wide dicussions/announcements (group channel). Additional sub-channels will be dedicated to each subteam for advanced topic collaboration.
         
 ####    b) *What development methodologies will be used (if any)?  
+
+Agile software development (i.e. scrum from HBO's Silicon Valley)
 
 ####    c) *What coding style will be followed?
 
