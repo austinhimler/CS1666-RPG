@@ -20,8 +20,8 @@ README
 
 ## e.g. 
 
-   # a) Will Slack or equivalent be used for project discussion?
+#    a) Will Slack or equivalent be used for project discussion?
 
-   # b) *What development methodologies will be used (if any)?
+#    b) *What development methodologies will be used (if any)?
      
-   # c) *What coding style will be followed?
+#    c) *What coding style will be followed?
