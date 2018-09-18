@@ -1,5 +1,5 @@
 # CS1666-RPG
-# README
+## README
 
 
 ### Should describe the game being produced
