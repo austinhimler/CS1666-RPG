@@ -15,7 +15,7 @@ Side-view combat aspect with 3-d animations/graphics. Co-op combat.
 Dynamic/varied level progression (i.e. replay value). Early character decisions impact optimal playstyle. A significant difference in stats between two characters ought to imply a significant difference in playstyle.
 
 Combat and overworld NPC interaction with player influenced/dictated by NPC artificial intellegence. Different 'classes' of enemy NPC will attack/run-away from player according to the NPC's strengths/weaknesses. i.e. an agile monster w/ low hp might flee from player; whereas, a slow, high hp monster would meander directly toward player.
-Primary focus upon NPC decision-making/strategy during combat (NPC verworld ai will mostly be concerned with movement relative to player)
+Primary focus upon NPC decision-making/strategy during combat (NPC overworld ai will mostly be concerned with movement relative to player)
 
 3-D graphics provide implicit emphasis on significant events/actions i.e. special animation for powerful/unqiue abilities
 
