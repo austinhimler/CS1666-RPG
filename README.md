@@ -32,11 +32,11 @@ Note: story will be minimal, focus placed upon overworld/combat aspects.
 
 1. AI: Senjun (Justin) Fan, Austin Himler, James Finkel
 
-2. Graphics: Brandon Badger, Mitchell Leng, Kexin (Bruce) Wang
+2. Graphics: Brandon Badger, Mitchell Leng, Kexin (Bruce) Wang, Sanketh Kolli
 
 3. Networking: David (Sam) Gorny, Ryan Killen, Jake Himes
 
-currently unassigned: Sanketh Kolli
+currently unassigned: 
 
 ### Should describe what organizational approaches the team will take over the term
 ### e.g. 
