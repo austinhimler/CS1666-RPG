@@ -17,7 +17,7 @@ SDL_Window* gWindow = nullptr;
 SDL_Renderer* gRenderer = nullptr;
 std::vector<SDL_Texture*> gTex;
 
-bool init() {	
+bool init() {
 	// Flag what subsystems to initialize
 	// For now, just video
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -29,8 +29,8 @@ bool init() {
 	if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
 		std::cout << "Warning: Linear texture filtering not enabled!" << std::endl;
 	}
-	
-	
+
+
 	gWindow = SDL_CreateWindow("CS1666-RPG", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	if (gWindow == nullptr) {
 		std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
@@ -43,14 +43,14 @@ bool init() {
 	 *   (second arg, -1)
 	 */
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-	if (gRenderer == nullptr) {	
+	if (gRenderer == nullptr) {
 		std::cout << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
 		return  false;
 	}
 
 	// Set renderer draw/clear color
 	SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
-			
+
 	// Initialize PNG loading via SDL_image extension library
 	int imgFlags = IMG_INIT_PNG;
 	imgFlags = imgFlags | IMG_INIT_JPG;//add jpg support
@@ -59,7 +59,7 @@ bool init() {
 		std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -115,7 +115,8 @@ int main() {
 	gTex.push_back(loadImage("CREDIT_IMG/my_greatest_creation.png")); // jake
 	gTex.push_back(loadImage("CREDIT_IMG/ilum.jpg")); // James Finkel
 	gTex.push_back(loadImage("CREDIT_IMG/SankethKolliCredit.jpg"); //Sanketh Kolli - ssk38
-	
+	gTex.push_back(loadImage("CREDIT_IMG/mjl159Credits.png")); //Mitchell Leng - mjl159
+
 
 //This is for the actual credits
 	for(auto i: gTex)
