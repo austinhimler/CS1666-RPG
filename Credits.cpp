@@ -113,7 +113,7 @@ int main() {
 	gTex.push_back(loadImage("CREDIT_IMG/Kexin Wang.png"));
 	gTex.push_back(loadImage("CREDIT_IMG/justin.jpg"));
 	gTex.push_back(loadImage("CREDIT_IMG/my_greatest_creation.png")); // jake
-	gTex.push_back(loadImage("CREDIT_IMG/ilum.png")); // James Finkel
+	gTex.push_back(loadImage("CREDIT_IMG/ilum.jpg")); // James Finkel
 	
 
 //This is for the actual credits
