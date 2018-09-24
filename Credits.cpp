@@ -104,22 +104,16 @@ int main() {
 		return 1;
 	}
 
-	// Load media
+	// Everyone needs to add a line like this to add their image
 	gTex.push_back(loadImage("CREDIT_IMG/TestImage.png"));
-	gTex.push_back(loadImage("CREDIT_IMG/TestImage.png"));
+	
 
-	SDL_RenderClear(gRenderer);
-
-	// Render the image
-	SDL_RenderCopy(gRenderer, gTex[0], NULL, NULL);
-	// Display rendering
-	SDL_RenderPresent(gRenderer);
-	// Wait 5 seconds
-	SDL_Delay(5000);
-
-	SDL_RenderCopy(gRenderer, gTex[1], NULL, NULL);
-	SDL_RenderPresent(gRenderer);
-	SDL_Delay(3000);
-
+//This is for the actual credits
+	for(auto i: gTex)
+	{
+		SDL_RenderCopy(gRenderer, i, NULL, NULL);
+		SDL_RenderPresent(gRenderer);
+		SDL_Delay(3000);
+	}
 	close();
 }
