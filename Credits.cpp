@@ -110,6 +110,7 @@ int main() {
 	gTex.push_back(loadImage("CREDIT_IMG/RyanKillenCreditImage.jpg"));
 	gTex.push_back(loadImage("CREDIT_IMG/bmbCredits.jpg"));
 	gTex.push_back(loadImage("CREDIT_IMG/dank_farnan_meme.jpg"));
+	gTex.push_back(loadImage("CREDIT_IMG/Kexin Wang.png"));
 	
 
 //This is for the actual credits
