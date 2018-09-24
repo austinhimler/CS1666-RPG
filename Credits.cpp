@@ -105,7 +105,7 @@ int main() {
 	}
 
 	// Everyone needs to add a line like this to add their image
-	gTex.push_back(loadImage("CREDIT_IMG/TestImage.png"));
+	gTex.push_back(loadImage("CREDIT_IMG/dsgCredits.png"));
 	
 
 //This is for the actual credits
