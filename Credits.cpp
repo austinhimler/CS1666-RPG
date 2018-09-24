@@ -53,6 +53,7 @@ bool init() {
 			
 	// Initialize PNG loading via SDL_image extension library
 	int imgFlags = IMG_INIT_PNG;
+	imgFlags = imgFlags | IMG_INIT_JPG;//add jpg support
 	int retFlags = IMG_Init(imgFlags);
 	if(retFlags != imgFlags) {
 		std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
