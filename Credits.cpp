@@ -112,7 +112,7 @@ int main() {
 	gTex.push_back(loadImage("CREDIT_IMG/dank_farnan_meme.jpg")); //Austin Himler - arh121
 	gTex.push_back(loadImage("CREDIT_IMG/Kexin Wang.png"));
 	gTex.push_back(loadImage("CREDIT_IMG/justin.jpg"));
-	gTex.push_back(loadImage("CREDIT_IMG/my_greatest_creation.png"));
+	gTex.push_back(loadImage("CREDIT_IMG/my_greatest_creation.png")); // jake
 	
 
 //This is for the actual credits
