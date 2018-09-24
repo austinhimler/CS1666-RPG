@@ -4,9 +4,9 @@
 
 10-3  Brandon Badger
 
-10-10 David Gorny
+10-10 MIDTERM
 
-10-17
+10-17 David Gorny
 
 10-24 Kexin Wang
 
