@@ -106,6 +106,7 @@ int main() {
 
 	// Everyone needs to add a line like this to add their image
 	gTex.push_back(loadImage("CREDIT_IMG/dsgCredits.png"));
+	gTex.push_back(loadImage("CREDIT_IMG/RyanKillenCreditImage.jpg"));
 	
 
 //This is for the actual credits
