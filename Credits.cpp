@@ -3,6 +3,7 @@
 #include <string>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
@@ -16,11 +17,13 @@ void close();
 SDL_Window* gWindow = nullptr;
 SDL_Renderer* gRenderer = nullptr;
 std::vector<SDL_Texture*> gTex;
-
+// Music var
+Mix_Music *gMusic=NULL;
 bool init() {
 	// Flag what subsystems to initialize
 	// For now, just video
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+	//added audio init
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 		std::cout << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
 		return false;
 	}
@@ -59,6 +62,12 @@ bool init() {
 		std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
 		return false;
 	}
+	//initialize the sdl mixer
+	if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT,2,2048)<0)
+	{
+		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
+		return false;
+	}
 
 	return true;
 }
@@ -92,8 +101,11 @@ void close() {
 	SDL_DestroyWindow(gWindow);
 	gWindow = nullptr;
 	gRenderer = nullptr;
-
+	//Free music
+	Mix_FreeMusic(gMusic);
+	gMusic=NULL;
 	// Quit SDL subsystems
+	Mix_Quit();
 	IMG_Quit();
 	SDL_Quit();
 }
@@ -116,7 +128,12 @@ int main() {
 	gTex.push_back(loadImage("CREDIT_IMG/ilum.jpg")); // James Finkel
 	gTex.push_back(loadImage("CREDIT_IMG/SankethKolliCredit.jpg")); //Sanketh Kolli - ssk38
 	gTex.push_back(loadImage("CREDIT_IMG/mjl159Credits.png")); //Mitchell Leng - mjl159
-
+	//Load the music
+	gMusic= Mix_LoadMUS("CREDIT_IMG/BGM.wav");
+	if(gMusic==NULL)
+		std::cout <<  "Failed to load music" << std::endl;
+	//Play the music
+	Mix_PlayMusic(gMusic,-1);
 
 //This is for the actual credits
 	for(auto i: gTex)
@@ -125,5 +142,7 @@ int main() {
 		SDL_RenderPresent(gRenderer);
 		SDL_Delay(3000);
 	}
+	//Stop the music
+	Mix_HaltMusic();
 	close();
 }
