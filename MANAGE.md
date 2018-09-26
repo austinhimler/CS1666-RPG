@@ -10,13 +10,13 @@
 
 10-24 Kexin Wang
 
-10-31
+10-31 Jake Himes
 
-11-7
+11-7 Mitchell Leng
 
 11-14 James Finkel
 
-11-26
+11-26 Sanketh Kolli
 
 11-28
 
