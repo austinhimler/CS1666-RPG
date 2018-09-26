@@ -122,7 +122,7 @@ int main() {
 	gTex.push_back(loadImage("CREDIT_IMG/RyanKillenCreditImage.jpg")); //Ryan Killen - rek77
 	gTex.push_back(loadImage("CREDIT_IMG/bmbCredits.jpg"));
 	gTex.push_back(loadImage("CREDIT_IMG/dank_farnan_meme.jpg")); //Austin Himler - arh121
-	gTex.push_back(loadImage("CREDIT_IMG/Kexin Wang.png"));
+	gTex.push_back(loadImage("CREDIT_IMG/Kexin Wang.jpg"));
 	gTex.push_back(loadImage("CREDIT_IMG/justin.jpg"));
 	gTex.push_back(loadImage("CREDIT_IMG/my_greatest_creation.png")); // jake
 	gTex.push_back(loadImage("CREDIT_IMG/ilum.jpg")); // James Finkel
