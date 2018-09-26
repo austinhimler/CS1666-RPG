@@ -116,7 +116,12 @@ int main() {
 		close();
 		return 1;
 	}
-
+	//Load the music
+	gMusic= Mix_LoadMUS("CREDIT_IMG/BGM.wav");
+	if(gMusic==NULL)
+		std::cout <<  "Failed to load music" << std::endl;
+	//Play the music
+	Mix_PlayMusic(gMusic,-1);
 	// Everyone needs to add a line like this to add their image
 	gTex.push_back(loadImage("CREDIT_IMG/dsgCredits.png"));
 	gTex.push_back(loadImage("CREDIT_IMG/RyanKillenCreditImage.jpg")); //Ryan Killen - rek77
@@ -128,12 +133,7 @@ int main() {
 	gTex.push_back(loadImage("CREDIT_IMG/ilum.jpg")); // James Finkel
 	gTex.push_back(loadImage("CREDIT_IMG/SankethKolliCredit.jpg")); //Sanketh Kolli - ssk38
 	gTex.push_back(loadImage("CREDIT_IMG/mjl159Credits.png")); //Mitchell Leng - mjl159
-	//Load the music
-	gMusic= Mix_LoadMUS("CREDIT_IMG/BGM.wav");
-	if(gMusic==NULL)
-		std::cout <<  "Failed to load music" << std::endl;
-	//Play the music
-	Mix_PlayMusic(gMusic,-1);
+	
 
 //This is for the actual credits
 	for(auto i: gTex)
