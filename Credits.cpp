@@ -119,7 +119,7 @@ int main() {
 
 	// Everyone needs to add a line like this to add their image
 	gTex.push_back(loadImage("CREDIT_IMG/dsgCredits.png"));
-	gTex.push_back(loadImage("CREDIT_IMG/RyanKillenCreditImage.jpg"));
+	gTex.push_back(loadImage("CREDIT_IMG/RyanKillenCreditImage.jpg")); //Ryan Killen - rek77
 	gTex.push_back(loadImage("CREDIT_IMG/bmbCredits.jpg"));
 	gTex.push_back(loadImage("CREDIT_IMG/dank_farnan_meme.jpg")); //Austin Himler - arh121
 	gTex.push_back(loadImage("CREDIT_IMG/Kexin Wang.png"));
