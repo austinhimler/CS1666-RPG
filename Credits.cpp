@@ -7,7 +7,7 @@
 
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
-
+//TEST CHANGE - BRANDON BADGER
 // Function declarations
 bool init();
 SDL_Texture* loadImage(std::string fname);
