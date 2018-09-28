@@ -62,7 +62,7 @@ bool init() {
 		std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
 		return false;
 	}
-	//initialize the sdl mixer
+	//initialize the sdl mixer  
 	if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT,2,2048)<0)
 	{
 		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
