@@ -11,7 +11,16 @@ public:
 	std::string imageResource;
 	std::vector<Attribute> attributes;
 	std::vector<Abilitiy> abilities;
-	std::vector<Resistance> resistances;
+	//std::vector<Resistance> resistances;
+	//have an array or list each resistance out?
+	Resistance evasion;
+	Resistance physical;
+	Resistance fire;
+	Resistance earth;
+	Resistance water;
+	Resistance air;
+	Resistance light;
+	Resistance dark;
 
 	Character() {
 
