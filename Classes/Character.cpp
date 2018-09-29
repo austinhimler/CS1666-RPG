@@ -45,15 +45,16 @@ public:
 		energyCurrent = determineEnergyMax();
 	}
 
-	void determineHPMax() {
+	int determineHPMax() {
 
+		return 100;
 	}
 
-	void determineMPMax() {
-
+	int determineMPMax() {
+		return 100;
 	}
 
-	void determineEnergyMax{
-
+	int determineEnergyMax{
+		return 100;
 	}
 };
