@@ -153,7 +153,7 @@ void playGame() {
 		//movement
 		//collision detection
 		//when player collides into enemy
-		// combatScene(arrayOfCharacters);
+		// combatScene(vector of Type Characters);
 }
 
 void combatScene() {
