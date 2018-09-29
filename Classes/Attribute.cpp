@@ -2,11 +2,10 @@
 #include <vector>
 class Attribute {
 public:
-	int mainStat;
 	int base;
 	int current;
 	std::string name;
-	std::vector<Ability> abilities; //abilities this attribute has, might not need this
+	std::vector<Ability> abilities; //abilities this attribute has in the "Tree", might not need this
 	Attribute() {
 
 	}
