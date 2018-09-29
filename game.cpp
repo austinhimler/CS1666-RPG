@@ -145,11 +145,13 @@ void characterCreateScreen() {
 
 
 	//return when player hit creates and does it correctly (has valid playerName and attributesAllocated)
+	// 30(?) points to allocate, for each attribute minimum points is 1, max is 10 
 }
 
 void playGame() {
-	//render player, enemy, overworld
 	// while(gameOn) gameloop
+		//render top viewport: render player, enemy, overworld
+		//render bottom viewport: UI
 		//movement
 		//collision detection
 		//when player collides into enemy
