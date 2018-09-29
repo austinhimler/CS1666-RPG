@@ -6,6 +6,7 @@ public:
 	int base;
 	int current;
 	std::string name;
+	std::vector<Ability> abilities; //abilities this attribute has, might not need this
 	Attribute() {
 
 	}
