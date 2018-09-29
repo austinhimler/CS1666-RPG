@@ -10,8 +10,9 @@ public:
 
 	}
 
-	Attribute(int stat) {
+	Attribute(int stat, std::string name) {
 		base = stat;
 		current = stat;
+		this->name = name;
 	}
 };
