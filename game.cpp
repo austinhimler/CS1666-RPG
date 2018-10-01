@@ -162,7 +162,7 @@ void combatScene() {
 
 }
 
-int main() {
+int main(int argc, char *argv[]) {
 	if (!init()) {
 		std::cout << "Failed to initialize!" << std::endl;
 		close();
@@ -172,4 +172,5 @@ int main() {
 	playGame();
 	playCredits();
 	close();
+	return 0;
 }

@@ -71,20 +71,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\Documents\Code\Pitt\CS1666\RPG\dev_lib\include\x86;D:\Documents\Code\Pitt\CS1666\RPG\dev_lib\include\Both;$(IncludePath)</IncludePath>
+    <IncludePath>dev_lib\include\x86;dev_lib\include\Both;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Documents\Code\Pitt\CS1666\RPG\dev_lib\lib\x86;D:\Documents\Code\Pitt\CS1666\RPG\dev_lib\lib\Both;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>D:\Documents\Code\Pitt\CS1666\RPG\dev_lib\include\x86;D:\Documents\Code\Pitt\CS1666\RPG\dev_lib\include\Both;$(IncludePath)</IncludePath>
+    <IncludePath>dev_lib\include\x86;dev_lib\include\Both;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Documents\Code\Pitt\CS1666\RPG\dev_lib\lib\x86;D:\Documents\Code\Pitt\CS1666\RPG\dev_lib\lib\Both;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\Documents\Code\Pitt\CS1666\RPG\dev_lib\include\x64;D:\Documents\Code\Pitt\CS1666\RPG\dev_lib\include\Both;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Documents\Code\Pitt\CS1666\RPG\dev_lib\lib\x64;D:\Documents\Code\Pitt\CS1666\RPG\dev_lib\lib\Both;$(LibraryPath)</LibraryPath>
+    <IncludePath>dev_lib\include\x64;dev_lib\include\Both;$(IncludePath)</IncludePath>
+    <LibraryPath>dev_lib\lib\x64;dev_lib\lib\Both;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>D:\Documents\Code\Pitt\CS1666\RPG\dev_lib\include\x64;D:\Documents\Code\Pitt\CS1666\RPG\dev_lib\include\Both;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Documents\Code\Pitt\CS1666\RPG\dev_lib\lib\x64;D:\Documents\Code\Pitt\CS1666\RPG\dev_lib\lib\Both;$(LibraryPath)</LibraryPath>
+    <IncludePath>dev_lib\include\x64;dev_lib\include\Both;$(IncludePath)</IncludePath>
+    <LibraryPath>dev_lib\lib\x64;dev_lib\lib\Both;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
