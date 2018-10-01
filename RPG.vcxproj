@@ -145,6 +145,21 @@
   <ItemGroup>
     <ClCompile Include="Credits.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="CREDIT_IMG\BGM.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="CREDIT_IMG\bmbCredits.jpg" />
+    <Image Include="CREDIT_IMG\dank_farnan_meme.jpg" />
+    <Image Include="CREDIT_IMG\dsgCredits.png" />
+    <Image Include="CREDIT_IMG\ilum.jpg" />
+    <Image Include="CREDIT_IMG\justin.jpg" />
+    <Image Include="CREDIT_IMG\Kexin Wang.jpg" />
+    <Image Include="CREDIT_IMG\mjl159Credits.png" />
+    <Image Include="CREDIT_IMG\my_greatest_creation.png" />
+    <Image Include="CREDIT_IMG\RyanKillenCreditImage.jpg" />
+    <Image Include="CREDIT_IMG\SankethKolliCredit.jpg" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

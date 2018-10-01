@@ -13,10 +13,50 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Resource Files\CREDIT_IMAGES">
+      <UniqueIdentifier>{befb4058-31bd-499d-9b14-cc2b850861b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Credits.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="CREDIT_IMG\BGM.wav">
+      <Filter>Resource Files\CREDIT_IMAGES</Filter>
+    </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="CREDIT_IMG\bmbCredits.jpg">
+      <Filter>Resource Files\CREDIT_IMAGES</Filter>
+    </Image>
+    <Image Include="CREDIT_IMG\dank_farnan_meme.jpg">
+      <Filter>Resource Files\CREDIT_IMAGES</Filter>
+    </Image>
+    <Image Include="CREDIT_IMG\dsgCredits.png">
+      <Filter>Resource Files\CREDIT_IMAGES</Filter>
+    </Image>
+    <Image Include="CREDIT_IMG\ilum.jpg">
+      <Filter>Resource Files\CREDIT_IMAGES</Filter>
+    </Image>
+    <Image Include="CREDIT_IMG\justin.jpg">
+      <Filter>Resource Files\CREDIT_IMAGES</Filter>
+    </Image>
+    <Image Include="CREDIT_IMG\Kexin Wang.jpg">
+      <Filter>Resource Files\CREDIT_IMAGES</Filter>
+    </Image>
+    <Image Include="CREDIT_IMG\mjl159Credits.png">
+      <Filter>Resource Files\CREDIT_IMAGES</Filter>
+    </Image>
+    <Image Include="CREDIT_IMG\my_greatest_creation.png">
+      <Filter>Resource Files\CREDIT_IMAGES</Filter>
+    </Image>
+    <Image Include="CREDIT_IMG\RyanKillenCreditImage.jpg">
+      <Filter>Resource Files\CREDIT_IMAGES</Filter>
+    </Image>
+    <Image Include="CREDIT_IMG\SankethKolliCredit.jpg">
+      <Filter>Resource Files\CREDIT_IMAGES</Filter>
+    </Image>
   </ItemGroup>
 </Project>
