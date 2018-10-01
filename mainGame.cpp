@@ -185,17 +185,17 @@ void characterCreateScreen() {
 	std::vector<Button*> buttons;
 	//220 60 textpos for points
 																			//need attr objects
-	buttons.push_back(new Button("up", 335, 90, 53, 39, "pointUpArrow.png", "strength"));
-	buttons.push_back(new Button("down", 335, 135, 46, 42, "pointDownArrow.png", "strength"));
-	buttons.push_back(new Button("up", 335, 185, 53, 39, "pointUpArrow.png", "intelligence"));
-	buttons.push_back(new Button("down", 335, 230, 46, 42, "pointDownArrow.png", "intelligence"));
-	buttons.push_back(new Button("up", 335, 275, 53, 39, "pointUpArrow.png", "dexterity"));
-	buttons.push_back(new Button("down", 335, 310, 46, 42, "pointDownArrow.png", "dexterity"));
-	buttons.push_back(new Button("up", 335, 360, 53, 39, "pointUpArrow.png", "constitution"));
-	buttons.push_back(new Button("down", 335, 405, 46, 42, "pointDownArrow.png", "constitution"));
-	buttons.push_back(new Button("up", 335, 455, 53, 39, "pointUpArrow.png", "faith"));
-	buttons.push_back(new Button("down", 335, 500, 46, 42, "pointDownArrow.png", "faith"));
-	buttons.push_back(new Button("start", 450, 600, 244, 95, "StartButton.png", NULL));
+	buttons.push_back(new Button("up", 335, 90, 53, 39, "Images/UI/CreateScreen/pointUpArrow.png", "strength"));
+	buttons.push_back(new Button("down", 340, 135, 46, 42, "Images/UI/CreateScreen/pointDownArrow.png", "strength"));
+	buttons.push_back(new Button("up", 335, 185, 53, 39, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence"));
+	buttons.push_back(new Button("down", 340, 230, 46, 42, "Images/UI/CreateScreen/pointDownArrow.png", "intelligence"));
+	buttons.push_back(new Button("up", 335, 275, 53, 39, "Images/UI/CreateScreen/pointUpArrow.png", "dexterity"));
+	buttons.push_back(new Button("down", 340, 310, 46, 42, "Images/UI/CreateScreen/pointDownArrow.png", "dexterity"));
+	buttons.push_back(new Button("up", 335, 360, 53, 39, "Images/UI/CreateScreen/pointUpArrow.png", "constitution"));
+	buttons.push_back(new Button("down", 340, 405, 46, 42, "Images/UI/CreateScreen/pointDownArrow.png", "constitution"));
+	buttons.push_back(new Button("up", 335, 455, 53, 39, "Images/UI/CreateScreen/pointUpArrow.png", "faith"));
+	buttons.push_back(new Button("down", 340, 500, 46, 42, "Images/UI/CreateScreen/pointDownArrow.png", "faith"));
+	buttons.push_back(new Button("start", 450, 600, 244, 95, "Images/UI/CreateScreen/StartButton.png", ""));
 	
 	SDL_Event e;
 	while (onCharacterCreate) {
@@ -206,6 +206,8 @@ void characterCreateScreen() {
 			}
 
 			if (e.button.button == SDL_BUTTON_LEFT) {
+				std::cout << "button clicked";
+				std::cout << pointsToAllocate;
 				int mouseX, mouseY;
 				SDL_GetMouseState(&mouseX, &mouseY);
 				int deltaAttribute;
@@ -239,31 +241,31 @@ void characterCreateScreen() {
 						if (i->attribute == "strength") {
 							if ((deltaAttribute + strength) <= maxStat && (deltaAttribute + strength) >= minStat) {
 								strength += deltaAttribute;
-								pointsToAllocate += deltaAttribute;
+								pointsToAllocate -= deltaAttribute;
 							}
 						}
 						else if (i->attribute == "intelligence") {
 							if ((deltaAttribute + intelligence) <= maxStat && (deltaAttribute + intelligence) >= minStat) {
 								intelligence += deltaAttribute;
-								pointsToAllocate += deltaAttribute;
+								pointsToAllocate -= deltaAttribute;
 							}
 						}
 						else if (i->attribute == "dexterity") {
 							if ((deltaAttribute + dexterity) <= maxStat && (deltaAttribute + dexterity) >= minStat) {
 								dexterity += deltaAttribute;
-								pointsToAllocate += deltaAttribute;
+								pointsToAllocate -= deltaAttribute;
 							}
 						}
 						else if (i->attribute == "constitution") {
 							if ((deltaAttribute + constitution) <= maxStat && (deltaAttribute + constitution) >= minStat) {
 								constitution += deltaAttribute;
-								pointsToAllocate += deltaAttribute;
+								pointsToAllocate -= deltaAttribute;
 							}
 						}
 						else if (i->attribute == "faith") {
 							if ((deltaAttribute + faith) <= maxStat && (deltaAttribute + faith) >= minStat) {
 								faith += deltaAttribute;
-								pointsToAllocate += deltaAttribute;
+								pointsToAllocate -= deltaAttribute;
 							}
 						}
 					}
@@ -271,12 +273,13 @@ void characterCreateScreen() {
 			}
 		}
 
-		SDL_Texture* background = loadImage("characterCreateV2NoButtons.png");
+		SDL_Texture* background = loadImage("Images/UI/CreateScreen/characterCreateV2NoButtons.png");
 		SDL_RenderCopy(gRenderer, background, NULL, NULL);
 		for (auto i : buttons) {
 			SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
 		}
 		SDL_RenderPresent(gRenderer);
+		SDL_Delay(500);
 
 		//onCharacterCreate = false;
 	}
@@ -304,7 +307,7 @@ int main(int argc, char *argv[]) {
 		close();
 		return 1;
 	}
-	//characterCreateScreen();
+	characterCreateScreen();
 	playGame();
 	playCredits();
 	close();
