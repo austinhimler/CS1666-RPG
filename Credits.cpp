@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
 	gTex.push_back(loadImage("CREDIT_IMG/mjl159Credits.png")); //Mitchell Leng - mjl159
 	
 
-//This is for the actual credits
+	//This is for the actual credits
 	for(auto i: gTex)
 	{
 		SDL_RenderCopy(gRenderer, i, NULL, NULL);
