@@ -110,7 +110,7 @@ void close() {
 	SDL_Quit();
 }
 
-int main() {
+int main(int argc, char *argv[]) {
 	if (!init()) {
 		std::cout <<  "Failed to initialize!" << std::endl;
 		close();
@@ -145,4 +145,5 @@ int main() {
 	//Stop the music
 	Mix_HaltMusic();
 	close();
+	return 0;
 }
