@@ -258,6 +258,8 @@ void characterCreateScreen() {
 							if ((deltaAttribute + strength) <= maxStat && (deltaAttribute + strength) >= minStat) {
 								strength += deltaAttribute;
 								pointsToAllocate -= deltaAttribute;
+								printf("Strength: %d", strength);
+								printf("Points left: %d", deltaAttribute);
 							}
 						}
 						else if (i->attribute == "intelligence") {
@@ -295,7 +297,7 @@ void characterCreateScreen() {
 			SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
 		}
 		SDL_RenderPresent(gRenderer);
-		SDL_Delay(500);
+		SDL_Delay(16);
 
 		//onCharacterCreate = false;
 	}
