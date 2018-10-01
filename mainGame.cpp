@@ -131,11 +131,27 @@ void playCredits() {
 
 
 //This is for the actual credits
+	SDL_Event e;
+	int j=0;
 	for (auto i : gTex)
 	{
-		SDL_RenderCopy(gRenderer, i, NULL, NULL);
-		SDL_RenderPresent(gRenderer);
-		SDL_Delay(3000);
+		while (j < 101)
+		{
+			SDL_PollEvent(&e);
+			if (e.type == SDL_QUIT) {
+				Mix_HaltMusic();
+				return;
+			}
+			if (j == 100)
+			{
+				SDL_RenderCopy(gRenderer, i, NULL, NULL);
+				SDL_RenderPresent(gRenderer);
+				
+			}
+			SDL_Delay(30);
+			j++;
+		}
+		j = 0;
 	}
 	//Stop the music
 	Mix_HaltMusic();
@@ -196,7 +212,7 @@ void characterCreateScreen() {
 	buttons.push_back(new Button("up", 335, 455, 53, 39, "Images/UI/CreateScreen/pointUpArrow.png", "faith"));
 	buttons.push_back(new Button("down", 340, 500, 46, 42, "Images/UI/CreateScreen/pointDownArrow.png", "faith"));
 	buttons.push_back(new Button("start", 450, 600, 244, 95, "Images/UI/CreateScreen/StartButton.png", ""));
-	
+	SDL_Texture* background = loadImage("Images/UI/CreateScreen/characterCreateV2NoButtons.png"); //Moved to fix memory leak
 	SDL_Event e;
 	while (onCharacterCreate) {
 		while (SDL_PollEvent(&e)) {
@@ -273,7 +289,7 @@ void characterCreateScreen() {
 			}
 		}
 
-		SDL_Texture* background = loadImage("Images/UI/CreateScreen/characterCreateV2NoButtons.png");
+		
 		SDL_RenderCopy(gRenderer, background, NULL, NULL);
 		for (auto i : buttons) {
 			SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
