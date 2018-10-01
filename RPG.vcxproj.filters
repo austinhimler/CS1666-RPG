@@ -18,11 +18,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Credits.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <Media Include="CREDIT_IMG\BGM.wav">
       <Filter>Resource Files\CREDIT_IMAGES</Filter>
     </Media>
@@ -58,5 +53,10 @@
     <Image Include="CREDIT_IMG\SankethKolliCredit.jpg">
       <Filter>Resource Files\CREDIT_IMAGES</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="mainGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

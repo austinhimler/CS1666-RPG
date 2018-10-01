@@ -7,7 +7,7 @@
 
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
-//TEST CHANGE - BRANDON BADGER
+
 // Function declarations
 bool init();
 SDL_Texture* loadImage(std::string fname);
@@ -18,7 +18,7 @@ SDL_Window* gWindow = nullptr;
 SDL_Renderer* gRenderer = nullptr;
 std::vector<SDL_Texture*> gTex;
 // Music var
-Mix_Music *gMusic=NULL;
+Mix_Music *gMusic = NULL;
 bool init() {
 	// Flag what subsystems to initialize
 	// For now, just video
@@ -29,7 +29,7 @@ bool init() {
 	}
 
 	// Set texture filtering to linear
-	if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
+	if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
 		std::cout << "Warning: Linear texture filtering not enabled!" << std::endl;
 	}
 
@@ -52,18 +52,18 @@ bool init() {
 	}
 
 	// Set renderer draw/clear color
-	SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
+	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
 
 	// Initialize PNG loading via SDL_image extension library
 	int imgFlags = IMG_INIT_PNG;
 	imgFlags = imgFlags | IMG_INIT_JPG;//add jpg support
 	int retFlags = IMG_Init(imgFlags);
-	if(retFlags != imgFlags) {
+	if (retFlags != imgFlags) {
 		std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
 		return false;
 	}
 	//initialize the sdl mixer  
-	if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT,2,2048)<0)
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
 	{
 		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
 		//return false;
@@ -103,26 +103,21 @@ void close() {
 	gRenderer = nullptr;
 	//Free music
 	Mix_FreeMusic(gMusic);
-	gMusic=NULL;
+	gMusic = NULL;
 	// Quit SDL subsystems
 	Mix_Quit();
 	IMG_Quit();
 	SDL_Quit();
 }
 
-int main(int argc, char *argv[]) {
-	if (!init()) {
-		std::cout <<  "Failed to initialize!" << std::endl;
-		close();
-		return 1;
-	}
+void playCredits() {
 	//Load the music
-	gMusic= Mix_LoadMUS("CREDIT_IMG/BGM.wav");
-	if(gMusic==NULL)
-		std::cout <<  "Failed to load music" << std::endl;
+	gMusic = Mix_LoadMUS("CREDIT_IMG/BGM.wav");
+	if (gMusic == NULL)
+		std::cout << "Failed to load music" << std::endl;
 	//Play the music
-	Mix_PlayMusic(gMusic,-1);
-	// Everyone needs to add a line like this to add their image
+	Mix_PlayMusic(gMusic, -1);
+
 	gTex.push_back(loadImage("CREDIT_IMG/dsgCredits.png"));
 	gTex.push_back(loadImage("CREDIT_IMG/RyanKillenCreditImage.jpg")); //Ryan Killen - rek77
 	gTex.push_back(loadImage("CREDIT_IMG/bmbCredits.jpg"));
@@ -133,10 +128,10 @@ int main(int argc, char *argv[]) {
 	gTex.push_back(loadImage("CREDIT_IMG/ilum.jpg")); // James Finkel
 	gTex.push_back(loadImage("CREDIT_IMG/SankethKolliCredit.jpg")); //Sanketh Kolli - ssk38
 	gTex.push_back(loadImage("CREDIT_IMG/mjl159Credits.png")); //Mitchell Leng - mjl159
-	
 
-	//This is for the actual credits
-	for(auto i: gTex)
+
+//This is for the actual credits
+	for (auto i : gTex)
 	{
 		SDL_RenderCopy(gRenderer, i, NULL, NULL);
 		SDL_RenderPresent(gRenderer);
@@ -144,6 +139,38 @@ int main(int argc, char *argv[]) {
 	}
 	//Stop the music
 	Mix_HaltMusic();
+}
+
+void characterCreateScreen() {
+
+
+	//return when player hit creates and does it correctly (has valid playerName and attributesAllocated)
+	// 30(?) points to allocate, for each attribute minimum points is 1, max is 10 
+}
+
+void playGame() {
+	// while(gameOn) gameloop
+		//render top viewport: render player, enemy, overworld
+		//render bottom viewport: UI
+		//movement
+		//collision detection
+		//when player collides into enemy
+		// combatScene(vector of Type Characters);
+}
+
+void combatScene() {
+
+}
+
+int main(int argc, char *argv[]) {
+	if (!init()) {
+		std::cout << "Failed to initialize!" << std::endl;
+		close();
+		return 1;
+	}
+	characterCreateScreen();
+	playGame();
+	playCredits();
 	close();
 	return 0;
 }
