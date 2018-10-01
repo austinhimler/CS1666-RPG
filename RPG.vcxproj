@@ -160,6 +160,17 @@
     <Image Include="CREDIT_IMG\RyanKillenCreditImage.jpg" />
     <Image Include="CREDIT_IMG\SankethKolliCredit.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Ability.h" />
+    <ClInclude Include="Ailment.h" />
+    <ClInclude Include="Headers\Attribute.h" />
+    <ClInclude Include="Headers\Character.h" />
+    <ClInclude Include="Headers\Enemy.h" />
+    <ClInclude Include="Headers\Inventory.h" />
+    <ClInclude Include="Headers\Item.h" />
+    <ClInclude Include="Headers\Player.h" />
+    <ClInclude Include="Headers\Resistance.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

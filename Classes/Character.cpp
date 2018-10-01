@@ -18,7 +18,7 @@ public:
 	Constitution constitution;
 	Faith faith;
 
-	std::vector<Abilitiy> abilities;
+	std::vector<Ability> abilities;
 	//std::vector<Resistance> resistances;
 	//have an array or list each resistance out?
 	Resistance evasion;
