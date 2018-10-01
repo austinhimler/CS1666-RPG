@@ -141,9 +141,145 @@ void playCredits() {
 	Mix_HaltMusic();
 }
 
+
+class Button {
+private:
+
+public:
+	std::string type; //up stat, down stat, or start
+	int x;
+	int y;
+	int h;
+	int w;
+	std::string imageResource;
+	std::string attribute; //change to Attribute object later
+	SDL_Rect rect;
+	SDL_Texture* texture;
+	Button(std::string type, int x, int y, int w, int h, std::string imageResource, std::string attribute) {
+		this->type = type;
+		this->x = x;
+		this->y = y;
+		this->w = w;
+		this->h = h;
+		this->imageResource = imageResource;
+		this->rect = { x, y, w, h };
+		this->attribute = attribute;
+		this->texture = loadImage(imageResource);
+	}
+};
+
+class Stat {
+
+};
+
 void characterCreateScreen() {
+	bool onCharacterCreate = true;
+	int pointsToAllocate = 20;
+	int maxStat = 10;
+	int minStat = 1;
+	int strength = 1;
+	int intelligence = 1;
+	int dexterity = 1;
+	int constitution = 1;
+	int faith = 1;
+	std::vector<Button*> buttons;
+	//220 60 textpos for points
+																			//need attr objects
+	buttons.push_back(new Button("up", 335, 90, 53, 39, "pointUpArrow.png", "strength"));
+	buttons.push_back(new Button("down", 335, 135, 46, 42, "pointDownArrow.png", "strength"));
+	buttons.push_back(new Button("up", 335, 185, 53, 39, "pointUpArrow.png", "intelligence"));
+	buttons.push_back(new Button("down", 335, 230, 46, 42, "pointDownArrow.png", "intelligence"));
+	buttons.push_back(new Button("up", 335, 275, 53, 39, "pointUpArrow.png", "dexterity"));
+	buttons.push_back(new Button("down", 335, 310, 46, 42, "pointDownArrow.png", "dexterity"));
+	buttons.push_back(new Button("up", 335, 360, 53, 39, "pointUpArrow.png", "constitution"));
+	buttons.push_back(new Button("down", 335, 405, 46, 42, "pointDownArrow.png", "constitution"));
+	buttons.push_back(new Button("up", 335, 455, 53, 39, "pointUpArrow.png", "faith"));
+	buttons.push_back(new Button("down", 335, 500, 46, 42, "pointDownArrow.png", "faith"));
+	buttons.push_back(new Button("start", 450, 600, 244, 95, "StartButton.png", NULL));
+	
+	SDL_Event e;
+	while (onCharacterCreate) {
+		while (SDL_PollEvent(&e)) {
+			if (e.type == SDL_QUIT) {
+				onCharacterCreate = false;
+				
+			}
 
+			if (e.button.button == SDL_BUTTON_LEFT) {
+				int mouseX, mouseY;
+				SDL_GetMouseState(&mouseX, &mouseY);
+				int deltaAttribute;
+				for (auto i : buttons) {
+					//if mouse is clicked inside a button
+					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
+						((mouseY >= i->y) && (mouseY <= (i->y + i->h)))) {
+						if (i->type == "start") {
+							if (pointsToAllocate == 0) {
+								onCharacterCreate = false;
+								//make Character Object, validate, return to main
+								return;
+							}
+							else {
+								break; //not valid to start, break out of for loop
+							}
+						}
 
+						if (i->type == "up") {
+							if (pointsToAllocate > 0) {
+								deltaAttribute = 1;
+							}
+							else {
+								deltaAttribute = 0;
+							}
+						}
+						else if (i->type == "down") {
+							deltaAttribute = -1;
+						}
+
+						if (i->attribute == "strength") {
+							if ((deltaAttribute + strength) <= maxStat && (deltaAttribute + strength) >= minStat) {
+								strength += deltaAttribute;
+								pointsToAllocate += deltaAttribute;
+							}
+						}
+						else if (i->attribute == "intelligence") {
+							if ((deltaAttribute + intelligence) <= maxStat && (deltaAttribute + intelligence) >= minStat) {
+								intelligence += deltaAttribute;
+								pointsToAllocate += deltaAttribute;
+							}
+						}
+						else if (i->attribute == "dexterity") {
+							if ((deltaAttribute + dexterity) <= maxStat && (deltaAttribute + dexterity) >= minStat) {
+								dexterity += deltaAttribute;
+								pointsToAllocate += deltaAttribute;
+							}
+						}
+						else if (i->attribute == "constitution") {
+							if ((deltaAttribute + constitution) <= maxStat && (deltaAttribute + constitution) >= minStat) {
+								constitution += deltaAttribute;
+								pointsToAllocate += deltaAttribute;
+							}
+						}
+						else if (i->attribute == "faith") {
+							if ((deltaAttribute + faith) <= maxStat && (deltaAttribute + faith) >= minStat) {
+								faith += deltaAttribute;
+								pointsToAllocate += deltaAttribute;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		SDL_Texture* background = loadImage("characterCreateV2NoButtons.png");
+		SDL_RenderCopy(gRenderer, background, NULL, NULL);
+		for (auto i : buttons) {
+			SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
+		}
+		SDL_RenderPresent(gRenderer);
+
+		//onCharacterCreate = false;
+	}
 	//return when player hit creates and does it correctly (has valid playerName and attributesAllocated)
 	// 30(?) points to allocate, for each attribute minimum points is 1, max is 10 
 }
@@ -168,7 +304,7 @@ int main(int argc, char *argv[]) {
 		close();
 		return 1;
 	}
-	characterCreateScreen();
+	//characterCreateScreen();
 	playGame();
 	playCredits();
 	close();
