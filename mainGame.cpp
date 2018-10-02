@@ -214,14 +214,15 @@ void characterCreateScreen() {
 	buttons.push_back(new Button("start", 450, 600, 244, 95, "Images/UI/CreateScreen/StartButton.png", ""));
 	SDL_Texture* background = loadImage("Images/UI/CreateScreen/characterCreateV2NoButtons.png"); //Moved to fix memory leak
 	SDL_Event e;
+	
 	while (onCharacterCreate) {
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
 				onCharacterCreate = false;
 				
 			}
-
-			if (e.button.button == SDL_BUTTON_LEFT) {
+			
+			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN) {
 				std::cout << "button clicked";
 				std::cout << pointsToAllocate;
 				int mouseX, mouseY;
@@ -258,8 +259,6 @@ void characterCreateScreen() {
 							if ((deltaAttribute + strength) <= maxStat && (deltaAttribute + strength) >= minStat) {
 								strength += deltaAttribute;
 								pointsToAllocate -= deltaAttribute;
-								printf("Strength: %d", strength);
-								printf("Points left: %d", deltaAttribute);
 							}
 						}
 						else if (i->attribute == "intelligence") {
@@ -291,12 +290,12 @@ void characterCreateScreen() {
 			}
 		}
 
-		
 		SDL_RenderCopy(gRenderer, background, NULL, NULL);
-		for (auto i : buttons) {
-			SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
-		}
-		SDL_RenderPresent(gRenderer);
+	for (auto i : buttons) {
+		SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
+	}
+	SDL_RenderPresent(gRenderer);
+	
 		SDL_Delay(16);
 
 		//onCharacterCreate = false;
