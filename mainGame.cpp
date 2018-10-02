@@ -184,11 +184,7 @@ public:
 	}
 };
 
-class Stat {
-
-};
-
-void characterCreateScreen() {
+bool characterCreateScreen() {
 	bool onCharacterCreate = true;
 	int pointsToAllocate = 20;
 	int maxStat = 10;
@@ -201,16 +197,16 @@ void characterCreateScreen() {
 	std::vector<Button*> buttons;
 	//220 60 textpos for points
 																			//need attr objects
-	buttons.push_back(new Button("up", 335, 90, 53, 39, "Images/UI/CreateScreen/pointUpArrow.png", "strength"));
-	buttons.push_back(new Button("down", 340, 135, 46, 42, "Images/UI/CreateScreen/pointDownArrow.png", "strength"));
-	buttons.push_back(new Button("up", 335, 185, 53, 39, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence"));
-	buttons.push_back(new Button("down", 340, 230, 46, 42, "Images/UI/CreateScreen/pointDownArrow.png", "intelligence"));
-	buttons.push_back(new Button("up", 335, 275, 53, 39, "Images/UI/CreateScreen/pointUpArrow.png", "dexterity"));
-	buttons.push_back(new Button("down", 340, 310, 46, 42, "Images/UI/CreateScreen/pointDownArrow.png", "dexterity"));
-	buttons.push_back(new Button("up", 335, 360, 53, 39, "Images/UI/CreateScreen/pointUpArrow.png", "constitution"));
-	buttons.push_back(new Button("down", 340, 405, 46, 42, "Images/UI/CreateScreen/pointDownArrow.png", "constitution"));
-	buttons.push_back(new Button("up", 335, 455, 53, 39, "Images/UI/CreateScreen/pointUpArrow.png", "faith"));
-	buttons.push_back(new Button("down", 340, 500, 46, 42, "Images/UI/CreateScreen/pointDownArrow.png", "faith"));
+	buttons.push_back(new Button("up", 340, 80, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "strength"));
+	buttons.push_back(new Button("down", 340, 130, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "strength"));
+	buttons.push_back(new Button("up", 340, 175, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence"));
+	buttons.push_back(new Button("down", 340, 225, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "intelligence"));
+	buttons.push_back(new Button("up", 340, 270, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "dexterity"));
+	buttons.push_back(new Button("down", 340, 320, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "dexterity"));
+	buttons.push_back(new Button("up", 340, 365, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "constitution"));
+	buttons.push_back(new Button("down", 340, 415, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "constitution"));
+	buttons.push_back(new Button("up", 340, 460, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "faith"));
+	buttons.push_back(new Button("down", 340, 510, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "faith"));
 	buttons.push_back(new Button("start", 450, 600, 244, 95, "Images/UI/CreateScreen/StartButton.png", ""));
 	SDL_Texture* background = loadImage("Images/UI/CreateScreen/characterCreateV2NoButtons.png"); //Moved to fix memory leak
 	SDL_Event e;
@@ -218,7 +214,7 @@ void characterCreateScreen() {
 	while (onCharacterCreate) {
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
-				onCharacterCreate = false;
+				return false; //end game
 				
 			}
 			
@@ -236,7 +232,11 @@ void characterCreateScreen() {
 							if (pointsToAllocate == 0) {
 								onCharacterCreate = false;
 								//make Character Object, validate, return to main
-								return;
+								for (auto i : buttons) {
+									delete(i);
+								}
+								SDL_DestroyTexture(background);
+								return true;
 							}
 							else {
 								break; //not valid to start, break out of for loop
@@ -291,15 +291,15 @@ void characterCreateScreen() {
 		}
 
 		SDL_RenderCopy(gRenderer, background, NULL, NULL);
-	for (auto i : buttons) {
-		SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
-	}
-	SDL_RenderPresent(gRenderer);
+		for (auto i : buttons) {
+			SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
+		}
+		SDL_RenderPresent(gRenderer);
 	
 		SDL_Delay(16);
-
-		//onCharacterCreate = false;
 	}
+
+
 	//return when player hit creates and does it correctly (has valid playerName and attributesAllocated)
 	// 30(?) points to allocate, for each attribute minimum points is 1, max is 10 
 }
@@ -324,9 +324,11 @@ int main(int argc, char *argv[]) {
 		close();
 		return 1;
 	}
-	characterCreateScreen();
-	playGame();
-	playCredits();
+	bool keepPlaying = characterCreateScreen();
+	if (keepPlaying) {
+		playGame();
+		playCredits();
+	}
 	close();
 	return 0;
 }
