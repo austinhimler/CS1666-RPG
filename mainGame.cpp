@@ -228,7 +228,9 @@ bool characterCreateScreen() {
 	SDL_Rect dexterityTextRectangle = { 250, 302, 0, 0 };
 	SDL_Rect constitutionTextRectangle = { 250, 395, 0, 0 };
 	SDL_Rect faithTextRectangle = { 250, 490, 0, 0 };
+	SDL_Rect nameTextRetangle = { 143, 640, 0,0 };
 	SDL_Color textColor = { 0, 0, 0, 0 };
+	std::string nameInputText;
 
 	std::vector<Button*> buttons;
 																		//need attr objects
@@ -323,6 +325,21 @@ bool characterCreateScreen() {
 					}
 				}
 			}
+
+			else if (e.type == SDL_KEYDOWN) {
+				//remove char if backspace
+				if (e.key.keysym.sym == SDLK_BACKSPACE && nameInputText.length() > 0){
+					nameInputText.pop_back();
+				}
+			}
+
+			else if (e.type == SDL_TEXTINPUT) {
+				//add char
+				//set length limit to arbitrariy be 12 (fits textbox about right, depends on what user enters)
+				if (nameInputText.length() < 13) {
+					nameInputText += e.text.text;
+				}
+			}
 		}
 
 		SDL_RenderCopy(gRenderer, background, NULL, NULL);
@@ -343,6 +360,9 @@ bool characterCreateScreen() {
 		renderText(constitutionString.c_str(), &constitutionTextRectangle, &textColor);
 		renderText(faithString.c_str(), &faithTextRectangle, &textColor);
 		renderText(pointsLeftToAllocateString.c_str(), &pointsAllocatedRectangle, &textColor);
+		if (nameInputText.length() > 0) {
+			renderText(nameInputText.c_str(), &nameTextRetangle, &textColor);
+		}
 
 		SDL_RenderPresent(gRenderer);
 		SDL_Delay(16);
