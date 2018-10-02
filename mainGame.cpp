@@ -4,6 +4,8 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
+#include <SDL_ttf.h>
+#include <cmath>
 
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
@@ -19,6 +21,7 @@ SDL_Renderer* gRenderer = nullptr;
 std::vector<SDL_Texture*> gTex;
 // Music var
 Mix_Music *gMusic = NULL;
+TTF_Font* font; 
 bool init() {
 	// Flag what subsystems to initialize
 	// For now, just video
@@ -69,6 +72,15 @@ bool init() {
 		//return false;
 	}
 
+	if (TTF_Init() == -1) {
+		std::cout << "TTF could not initialize. Error: %s\n", TTF_GetError();
+		return false;
+	}
+	font = TTF_OpenFont("arial.ttf", 28);
+	if (font == NULL) {
+		std::cout << "font was null";
+	}
+
 	return true;
 }
 
@@ -101,10 +113,13 @@ void close() {
 	SDL_DestroyWindow(gWindow);
 	gWindow = nullptr;
 	gRenderer = nullptr;
+	TTF_CloseFont(font);
+	font = NULL;
 	//Free music
 	Mix_FreeMusic(gMusic);
 	gMusic = NULL;
 	// Quit SDL subsystems
+	TTF_Quit();
 	Mix_Quit();
 	IMG_Quit();
 	SDL_Quit();
@@ -184,6 +199,22 @@ public:
 	}
 };
 
+void renderText(const char* text, SDL_Rect* rect, SDL_Color* color) {
+
+	SDL_Surface* surface;
+	SDL_Texture* texture;
+
+	//surface = TTF_RenderText_Shaded(font, text, { 150, 150, 50 }, { 0, 0, 255 });
+	surface = TTF_RenderText_Solid(font, text, *color);
+	texture = SDL_CreateTextureFromSurface(gRenderer, surface);
+	rect->w = surface->w;
+	rect->h = surface->h;
+	SDL_FreeSurface(surface);
+	SDL_RenderCopy(gRenderer, texture, NULL, rect);
+	SDL_DestroyTexture(texture);
+	//return texture;
+}
+
 bool characterCreateScreen() {
 	bool onCharacterCreate = true;
 	int pointsToAllocate = 20;
@@ -194,9 +225,22 @@ bool characterCreateScreen() {
 	int dexterity = 1;
 	int constitution = 1;
 	int faith = 1;
+	SDL_Rect pointsAllocatedRectangle = { 230, 30, 0, 0};
+	SDL_Rect strengthTextRectangle = { 240, 110, 0, 0 };
+	SDL_Rect intelligenceTextRectangle = { 240, 205, 0, 0 };
+	SDL_Rect dexterityTextRectangle = { 240, 305, 0, 0 };
+	SDL_Rect constitutionTextRectangle = { 240, 395, 0, 0 };
+	SDL_Rect faithTextRectangle = { 240, 490, 0, 0 };
+	SDL_Color textColor = { 0, 0, 0, 0 };
+
+	//SDL_Surface* strengthTextSurface;
+	//SDL_Surface* intelligenceTextSurface;
+	//SDL_Surface* dexterityTextSurface;
+	//SDL_Surface* constitutionTextSurface;
+	//SDL_Surface* faithTextSurface;
+
 	std::vector<Button*> buttons;
-	//220 60 textpos for points
-																			//need attr objects
+																		//need attr objects
 	buttons.push_back(new Button("up", 340, 80, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "strength"));
 	buttons.push_back(new Button("down", 340, 130, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "strength"));
 	buttons.push_back(new Button("up", 340, 175, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence"));
@@ -208,14 +252,14 @@ bool characterCreateScreen() {
 	buttons.push_back(new Button("up", 340, 460, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "faith"));
 	buttons.push_back(new Button("down", 340, 510, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "faith"));
 	buttons.push_back(new Button("start", 450, 600, 244, 95, "Images/UI/CreateScreen/StartButton.png", ""));
+
 	SDL_Texture* background = loadImage("Images/UI/CreateScreen/characterCreateV2NoButtons.png"); //Moved to fix memory leak
+
 	SDL_Event e;
-	
 	while (onCharacterCreate) {
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
 				return false; //end game
-				
 			}
 			
 			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN) {
@@ -290,19 +334,32 @@ bool characterCreateScreen() {
 			}
 		}
 
+
+
 		SDL_RenderCopy(gRenderer, background, NULL, NULL);
 		for (auto i : buttons) {
 			SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
 		}
+
+		std::string strengthString = std::to_string(strength);
+		std::string intelligenceString = std::to_string(intelligence);
+		std::string dexterityString = std::to_string(dexterity);
+		std::string constitutionString = std::to_string(constitution);
+		std::string faithString = std::to_string(faith);
+		std::string pointsLeftToAllocateString = std::to_string(pointsToAllocate);
+
+		renderText(strengthString.c_str(), &strengthTextRectangle, &textColor);
+		renderText(intelligenceString.c_str(), &intelligenceTextRectangle, &textColor);
+		renderText(dexterityString.c_str(), &dexterityTextRectangle, &textColor);
+		renderText(constitutionString.c_str(), &constitutionTextRectangle, &textColor);
+		renderText(faithString.c_str(), &faithTextRectangle, &textColor);
+		renderText(pointsLeftToAllocateString.c_str(), &pointsAllocatedRectangle, &textColor);
+
 		SDL_RenderPresent(gRenderer);
-	
 		SDL_Delay(16);
 	}
-
-
-	//return when player hit creates and does it correctly (has valid playerName and attributesAllocated)
-	// 30(?) points to allocate, for each attribute minimum points is 1, max is 10 
 }
+
 
 void playGame() {
 	// while(gameOn) gameloop
