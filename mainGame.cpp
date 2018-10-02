@@ -184,7 +184,7 @@ public:
 	}
 };
 
-void characterCreateScreen() {
+bool characterCreateScreen() {
 	bool onCharacterCreate = true;
 	int pointsToAllocate = 20;
 	int maxStat = 10;
@@ -214,7 +214,7 @@ void characterCreateScreen() {
 	while (onCharacterCreate) {
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
-				onCharacterCreate = false;
+				return false; //end game
 				
 			}
 			
@@ -232,7 +232,11 @@ void characterCreateScreen() {
 							if (pointsToAllocate == 0) {
 								onCharacterCreate = false;
 								//make Character Object, validate, return to main
-								return;
+								for (auto i : buttons) {
+									delete(i);
+								}
+								SDL_DestroyTexture(background);
+								return true;
 							}
 							else {
 								break; //not valid to start, break out of for loop
@@ -295,10 +299,7 @@ void characterCreateScreen() {
 		SDL_Delay(16);
 	}
 
-	for (auto i : buttons) {
-		delete(i);
-	}
-	SDL_DestroyTexture(background);
+
 	//return when player hit creates and does it correctly (has valid playerName and attributesAllocated)
 	// 30(?) points to allocate, for each attribute minimum points is 1, max is 10 
 }
@@ -323,9 +324,11 @@ int main(int argc, char *argv[]) {
 		close();
 		return 1;
 	}
-	characterCreateScreen();
-	playGame();
-	playCredits();
+	bool keepPlaying = characterCreateScreen();
+	if (keepPlaying) {
+		playGame();
+		playCredits();
+	}
 	close();
 	return 0;
 }
