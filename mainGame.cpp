@@ -76,7 +76,7 @@ bool init() {
 		std::cout << "TTF could not initialize. Error: %s\n", TTF_GetError();
 		return false;
 	}
-	font = TTF_OpenFont("Fonts/arial.ttf", 30);
+	font = TTF_OpenFont("Fonts/Stacked pixel.ttf", 30);
 	if (font == NULL) {
 		std::cout << "font was null";
 	}
