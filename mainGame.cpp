@@ -184,10 +184,6 @@ public:
 	}
 };
 
-class Stat {
-
-};
-
 void characterCreateScreen() {
 	bool onCharacterCreate = true;
 	int pointsToAllocate = 20;
@@ -291,15 +287,18 @@ void characterCreateScreen() {
 		}
 
 		SDL_RenderCopy(gRenderer, background, NULL, NULL);
-	for (auto i : buttons) {
-		SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
-	}
-	SDL_RenderPresent(gRenderer);
+		for (auto i : buttons) {
+			SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
+		}
+		SDL_RenderPresent(gRenderer);
 	
 		SDL_Delay(16);
-
-		//onCharacterCreate = false;
 	}
+
+	for (auto i : buttons) {
+		delete(i);
+	}
+	SDL_DestroyTexture(background);
 	//return when player hit creates and does it correctly (has valid playerName and attributesAllocated)
 	// 30(?) points to allocate, for each attribute minimum points is 1, max is 10 
 }
