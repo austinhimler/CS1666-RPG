@@ -201,16 +201,16 @@ void characterCreateScreen() {
 	std::vector<Button*> buttons;
 	//220 60 textpos for points
 																			//need attr objects
-	buttons.push_back(new Button("up", 335, 90, 53, 39, "Images/UI/CreateScreen/pointUpArrow.png", "strength"));
-	buttons.push_back(new Button("down", 340, 135, 46, 42, "Images/UI/CreateScreen/pointDownArrow.png", "strength"));
-	buttons.push_back(new Button("up", 335, 185, 53, 39, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence"));
-	buttons.push_back(new Button("down", 340, 230, 46, 42, "Images/UI/CreateScreen/pointDownArrow.png", "intelligence"));
-	buttons.push_back(new Button("up", 335, 275, 53, 39, "Images/UI/CreateScreen/pointUpArrow.png", "dexterity"));
-	buttons.push_back(new Button("down", 340, 310, 46, 42, "Images/UI/CreateScreen/pointDownArrow.png", "dexterity"));
-	buttons.push_back(new Button("up", 335, 360, 53, 39, "Images/UI/CreateScreen/pointUpArrow.png", "constitution"));
-	buttons.push_back(new Button("down", 340, 405, 46, 42, "Images/UI/CreateScreen/pointDownArrow.png", "constitution"));
-	buttons.push_back(new Button("up", 335, 455, 53, 39, "Images/UI/CreateScreen/pointUpArrow.png", "faith"));
-	buttons.push_back(new Button("down", 340, 500, 46, 42, "Images/UI/CreateScreen/pointDownArrow.png", "faith"));
+	buttons.push_back(new Button("up", 340, 90, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "strength"));
+	buttons.push_back(new Button("down", 340, 135, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "strength"));
+	buttons.push_back(new Button("up", 340, 185, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence"));
+	buttons.push_back(new Button("down", 340, 230, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "intelligence"));
+	buttons.push_back(new Button("up", 340, 275, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "dexterity"));
+	buttons.push_back(new Button("down", 340, 310, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "dexterity"));
+	buttons.push_back(new Button("up", 340, 360, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "constitution"));
+	buttons.push_back(new Button("down", 340, 405, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "constitution"));
+	buttons.push_back(new Button("up", 340, 455, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "faith"));
+	buttons.push_back(new Button("down", 340, 500, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "faith"));
 	buttons.push_back(new Button("start", 450, 600, 244, 95, "Images/UI/CreateScreen/StartButton.png", ""));
 	SDL_Texture* background = loadImage("Images/UI/CreateScreen/characterCreateV2NoButtons.png"); //Moved to fix memory leak
 	SDL_Event e;
