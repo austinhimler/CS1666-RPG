@@ -76,7 +76,7 @@ bool init() {
 		std::cout << "TTF could not initialize. Error: %s\n", TTF_GetError();
 		return false;
 	}
-	font = TTF_OpenFont("arial.ttf", 28);
+	font = TTF_OpenFont("Fonts/arial.ttf", 30);
 	if (font == NULL) {
 		std::cout << "font was null";
 	}
@@ -200,11 +200,9 @@ public:
 };
 
 void renderText(const char* text, SDL_Rect* rect, SDL_Color* color) {
-
 	SDL_Surface* surface;
 	SDL_Texture* texture;
 
-	//surface = TTF_RenderText_Shaded(font, text, { 150, 150, 50 }, { 0, 0, 255 });
 	surface = TTF_RenderText_Solid(font, text, *color);
 	texture = SDL_CreateTextureFromSurface(gRenderer, surface);
 	rect->w = surface->w;
@@ -212,12 +210,11 @@ void renderText(const char* text, SDL_Rect* rect, SDL_Color* color) {
 	SDL_FreeSurface(surface);
 	SDL_RenderCopy(gRenderer, texture, NULL, rect);
 	SDL_DestroyTexture(texture);
-	//return texture;
 }
 
 bool characterCreateScreen() {
 	bool onCharacterCreate = true;
-	int pointsToAllocate = 20;
+	int pointsToAllocate = 25;
 	int maxStat = 10;
 	int minStat = 1;
 	int strength = 1;
@@ -225,19 +222,13 @@ bool characterCreateScreen() {
 	int dexterity = 1;
 	int constitution = 1;
 	int faith = 1;
-	SDL_Rect pointsAllocatedRectangle = { 230, 30, 0, 0};
-	SDL_Rect strengthTextRectangle = { 240, 110, 0, 0 };
-	SDL_Rect intelligenceTextRectangle = { 240, 205, 0, 0 };
-	SDL_Rect dexterityTextRectangle = { 240, 305, 0, 0 };
-	SDL_Rect constitutionTextRectangle = { 240, 395, 0, 0 };
-	SDL_Rect faithTextRectangle = { 240, 490, 0, 0 };
+	SDL_Rect pointsAllocatedRectangle = { 225, 32, 0, 0};
+	SDL_Rect strengthTextRectangle = { 250, 115, 0, 0 };
+	SDL_Rect intelligenceTextRectangle = { 250, 205, 0, 0 };
+	SDL_Rect dexterityTextRectangle = { 250, 302, 0, 0 };
+	SDL_Rect constitutionTextRectangle = { 250, 395, 0, 0 };
+	SDL_Rect faithTextRectangle = { 250, 490, 0, 0 };
 	SDL_Color textColor = { 0, 0, 0, 0 };
-
-	//SDL_Surface* strengthTextSurface;
-	//SDL_Surface* intelligenceTextSurface;
-	//SDL_Surface* dexterityTextSurface;
-	//SDL_Surface* constitutionTextSurface;
-	//SDL_Surface* faithTextSurface;
 
 	std::vector<Button*> buttons;
 																		//need attr objects
@@ -333,8 +324,6 @@ bool characterCreateScreen() {
 				}
 			}
 		}
-
-
 
 		SDL_RenderCopy(gRenderer, background, NULL, NULL);
 		for (auto i : buttons) {
