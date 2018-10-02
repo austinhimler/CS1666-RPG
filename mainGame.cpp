@@ -142,7 +142,7 @@ void playCredits() {
 				Mix_HaltMusic();
 				return;
 			}
-			if (j == 100)
+			if (j == 0)
 			{
 				SDL_RenderCopy(gRenderer, i, NULL, NULL);
 				SDL_RenderPresent(gRenderer);
