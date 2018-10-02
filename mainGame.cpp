@@ -335,7 +335,7 @@ bool characterCreateScreen() {
 
 			else if (e.type == SDL_TEXTINPUT) {
 				//add char
-				//set length limit to arbitrariy be 12 (fits textbox about right, depends on what user enters)
+				//set length limit to arbitrariy be 13 (fits textbox about right, depends on what user enters)
 				if (nameInputText.length() < 13) {
 					nameInputText += e.text.text;
 				}
