@@ -278,7 +278,7 @@ bool characterCreateScreen() {
 	int dexterity = 1;
 	int constitution = 1;
 	int faith = 1;
-	SDL_Rect pointsAllocatedRectangle = { 225, 32, 0, 0};
+	SDL_Rect pointsAllocatedRectangle = { 227, 32, 0, 0};
 	SDL_Rect strengthTextRectangle = { 250, 115, 0, 0 };
 	SDL_Rect intelligenceTextRectangle = { 250, 205, 0, 0 };
 	SDL_Rect dexterityTextRectangle = { 250, 302, 0, 0 };
@@ -563,21 +563,21 @@ void playGame() {
 		else if (yVelocity > characterMoveMaxSpeed)
 			yVelocity = characterMoveMaxSpeed;
 
-		// Try to move vertically
+		//Move vertically
 		characterBox.y += yVelocity;
 		if (characterBox.y < 0 || (characterBox.y + characterBox.h > SCREEN_HEIGHT)) {
 			//go back into window
 			characterBox.y -= yVelocity;
 		}
 
-		// Try to move horizontally
+		//Move horizontally
 		characterBox.x += xVelocity;
 		if (characterBox.x < 0 || (characterBox.x + characterBox.w > SCREEN_WIDTH)) {
 			//go back into window
 			characterBox.x -= xVelocity;
 		}
 
-		// Clear black
+		//Set Black
 		SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
 		SDL_RenderClear(gRenderer);
 
