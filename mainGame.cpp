@@ -234,7 +234,7 @@ public:
 	int y;
 	int h;
 	int w;
-	bool pressed = false;
+	int pressed = 0;
 	std::string imageResource;
 	std::string attribute; //change to Attribute object later
 	SDL_Rect rect;
@@ -356,7 +356,7 @@ bool characterCreateScreen() {
 					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
 						((mouseY >= i->y) && (mouseY <= (i->y + i->h)))) 
 					{
-						i->pressed = true;
+						i->pressed = 5;
 						if (i->type == "start") {
 							if (pointsToAllocate == 0) {
 								if (nameInputText != "") {
@@ -483,7 +483,7 @@ bool characterCreateScreen() {
 		SDL_RenderCopy(gRenderer, background, NULL, NULL);
 		//Renders buttons and shows pressed image if pressed
 		for (auto i : buttons) {
-			if(!i->pressed||i->attribute=="")
+			if(!i->pressed>0||i->attribute=="")
 				SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
 			else
 			{
@@ -491,8 +491,7 @@ bool characterCreateScreen() {
 					SDL_RenderCopy(gRenderer, upPress, NULL, &i->rect);
 				else
 					SDL_RenderCopy(gRenderer, downPress, NULL, &i->rect);
-				SDL_Delay(100);
-				i->pressed = false;
+				i->pressed--;
 			}
 		}
 		
