@@ -1,6 +1,6 @@
 #include <string>
 #include <vector>
-
+#include "../Headers/Inventory.h"
 class Player /*: public Character*/
 {
 public:
@@ -10,7 +10,7 @@ public:
 	int constitution;
 	int faith;
 	int currentExprience;
-	//Inventory inventory;
+	Inventory inventory;
 	std::string name;
 	//stores stats
 	Player();

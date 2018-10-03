@@ -5,8 +5,8 @@
 	int dexterity = 1;
 	int constitution = 1;
 	int faith = 1;
-	int currentExprience;*/
-	//Inventory inventory;
+	int currentExprience;
+	Inventory inventory*/
 	std::string name;
 	//stores stats
 	Player::Player() {}
