@@ -528,7 +528,7 @@ void playGame() {
 
 	SDL_Rect characterBox = { 50, 50, 200, 37*4 };
 	SDL_Rect enemyBox = { 200, 200, 50, 50 };
-	SDL_Texture* characterTexture = loadImage("Images/Player/Character.png");
+	SDL_Texture* characterTexture = loadImage("Images/Player/Character_Idle.png");
 	int charMoveSpeed = 2;
 	int characterMoveAcceleration = 2;
 	int characterMoveMaxSpeed = 4;
