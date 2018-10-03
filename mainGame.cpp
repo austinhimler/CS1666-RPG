@@ -587,6 +587,9 @@ void playGame() {
 
 
 		SDL_RenderPresent(gRenderer);
+
+		//to add more frames per image to make it more fluid
+		//definitely not the best way to do this, need to sync to a consistent gametime
 		delaysPerFrame++;
 		if (delaysPerFrame >= 10) {
 			frame++;
