@@ -288,6 +288,14 @@ bool characterCreateScreen() {
 	int dexterity = 1;
 	int constitution = 1;
 	int faith = 1;
+	int charImageX = 0;
+	int charImageY = 0;
+	int charImageW = 200;
+	int charImageH = 148;
+	int delaysPerFrame = 0;
+	int frame = 0;
+
+	SDL_Rect characterBox = { 436, 205, 200, 148 };
 	SDL_Rect pointsAllocatedRectangle = { 227, 32, 0, 0};
 	SDL_Rect strengthTextRectangle = { 250, 115, 0, 0 };
 	SDL_Rect intelligenceTextRectangle = { 250, 205, 0, 0 };
@@ -305,6 +313,10 @@ bool characterCreateScreen() {
 	std::vector<Button*> buttons;
 	SDL_Texture* upPress= loadImage("Images/UI/CreateScreen/pointUpArrow_Pressed.png");
 	SDL_Texture* downPress = loadImage("Images/UI/CreateScreen/pointDownArrow_Pressed.png");
+	SDL_Surface* loadedSurface = IMG_Load("Images/Player/Character_Idle.png");
+	SDL_Texture* character = NULL;
+	SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));//transprant background
+	character = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
 	//need attr objects
 	buttons.push_back(new Button("up", 340, 80, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "strength"));
 	buttons.push_back(new Button("down", 340, 130, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "strength"));
@@ -483,7 +495,27 @@ bool characterCreateScreen() {
 				i->pressed = false;
 			}
 		}
+		
+		
+		charImageX = frame * 200;
 
+		
+		SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };
+		SDL_RenderCopy(gRenderer, character, &charactersRectangle, &characterBox);
+
+		
+
+		//to add more frames per image to make it more fluid
+		//definitely not the best way to do this, need to sync to a consistent gametime
+		delaysPerFrame++;
+		if (delaysPerFrame >= 6) {
+			frame++;
+			delaysPerFrame = 0;
+		}
+		if (frame == 4) {
+			frame = 0;
+		}
+		
 		std::string strengthString = std::to_string(strength);
 		std::string intelligenceString = std::to_string(intelligence);
 		std::string dexterityString = std::to_string(dexterity);
@@ -528,7 +560,11 @@ void playGame() {
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	SDL_Rect characterBox = { 50, 50, 200, 148 };
 	SDL_Rect enemyBox = { 200, 200, 50, 50 };
-	SDL_Texture* characterTexture = loadImage("Images/Player/Character_Run.png");
+	SDL_Surface* loadedSurface = IMG_Load("Images/Player/Character_Run.png");
+	SDL_Texture* characterTexture = NULL;
+	SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));//transprant background
+	characterTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
+	
 	int charMoveSpeed = 2;
 	int characterMoveAcceleration = 2;
 	int characterMoveMaxSpeed = 4;
