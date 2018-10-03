@@ -263,6 +263,12 @@ void renderText(const char* text, SDL_Rect* rect, SDL_Color* color) {
 }
 
 bool characterCreateScreen() {
+	//loads music and starts it
+	gMusic = Mix_LoadMUS("CREDIT_IMG/charactercreate.wav");
+	if (gMusic == NULL)
+		std::cout << "Failed to load music" << std::endl;
+	//Play the music
+	Mix_PlayMusic(gMusic, -1);
 	bool onCharacterCreate = true;
 	int pointsToAllocate = 25;
 	int maxStat = 10;
@@ -307,6 +313,7 @@ bool characterCreateScreen() {
 		while (SDL_PollEvent(&e)) {
 			
 			if (e.type == SDL_QUIT) {
+				Mix_HaltMusic();
 				return false; //end game
 			}
 			
@@ -335,6 +342,7 @@ bool characterCreateScreen() {
 										delete(i);
 									}
 									SDL_DestroyTexture(background);
+									Mix_HaltMusic();
 									return true;
 								}
 								else {
