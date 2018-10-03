@@ -6,9 +6,11 @@
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 #include <cmath>
+#include <fstream>
 
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
+
 
 // Function declarations
 bool init();
@@ -371,6 +373,19 @@ bool characterCreateScreen() {
 
 
 void playGame() {
+	//max level size
+	const int LEVEL_WIDTH = 4200;
+	const int LEVEL_HEIGHT = 4200;
+	//TILE DEFINITIONS
+	const int TILE_WIDTH = 42;
+	const int TILE_HEIGHT = 42;
+	const int TOTAL_TILES = 10000;
+	const int NUM_SPRITES = 3;
+	//The different tile sprites
+	const int TILE_SOLID = 0;
+	const int TILE_WALL = 1;
+	const int TILE_FLOOR = 2;
+	
 	// while(gameOn) gameloop
 		//render top viewport: render player, enemy, overworld
 		//render bottom viewport: UI
@@ -392,7 +407,7 @@ int main(int argc, char *argv[]) {
 	}
 	bool keepPlaying = characterCreateScreen();
 	if (keepPlaying) {
-		playGame();
+		//playGame();
 		playCredits();
 	}
 	close();
