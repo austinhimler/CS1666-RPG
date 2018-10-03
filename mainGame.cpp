@@ -525,7 +525,7 @@ void playGame() {
 	const int TILE_SOLID = 0;
 	const int TILE_WALL = 1;
 	const int TILE_FLOOR = 2;
-
+	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	SDL_Rect characterBox = { 50, 50, 200, 37*4 };
 	SDL_Rect enemyBox = { 200, 200, 50, 50 };
 	SDL_Texture* characterTexture = loadImage("Images/Player/Character_Idle.png");
@@ -548,7 +548,8 @@ void playGame() {
 	SDL_Event e;
 	bool inOverworld = true;
 	while (inOverworld) {
-		while (SDL_PollEvent(&e)) {
+		while (SDL_PollEvent(&e))
+		{
 			if (e.type == SDL_QUIT) {
 				inOverworld = false;
 				return;
@@ -607,14 +608,17 @@ void playGame() {
 			//go back into window
 			characterBox.x -= xVelocity;
 		}
-
+		if (xVelocity > 0 && flip == SDL_FLIP_HORIZONTAL)
+			flip = SDL_FLIP_NONE;
+		else if (xVelocity < 0 && flip == SDL_FLIP_NONE)
+			flip = SDL_FLIP_HORIZONTAL;
 		//Set Black
 		SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
 		SDL_RenderClear(gRenderer);
 
 		charImageX = frame * 200;
 		SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH};
-		SDL_RenderCopy(gRenderer, characterTexture, &charactersRectangle, &characterBox);
+		SDL_RenderCopyEx(gRenderer, characterTexture, &charactersRectangle, &characterBox,0.0,nullptr, flip);
 
 
 		SDL_RenderPresent(gRenderer);
