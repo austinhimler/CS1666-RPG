@@ -230,9 +230,13 @@ bool characterCreateScreen() {
 	SDL_Rect dexterityTextRectangle = { 250, 302, 0, 0 };
 	SDL_Rect constitutionTextRectangle = { 250, 395, 0, 0 };
 	SDL_Rect faithTextRectangle = { 250, 490, 0, 0 };
-	SDL_Rect nameTextRetangle = { 143, 640, 0,0 };
+	SDL_Rect nameTextRectangle = { 143, 640, 0,0 };
+	SDL_Rect errorTextRectangle = { 465, 580, 0, 0 };
+	SDL_Rect errorTextRectangleLong = {445, 580, 0, 0 };
 	SDL_Color textColor = { 0, 0, 0, 0 };
+	SDL_Color errorColor = { 255, 0, 0, 0 };
 	std::string nameInputText;
+	std::string errorInputText;
 
 	std::vector<Button*> buttons;
 																		//need attr objects
@@ -253,11 +257,16 @@ bool characterCreateScreen() {
 	SDL_Event e;
 	while (onCharacterCreate) {
 		while (SDL_PollEvent(&e)) {
+			
 			if (e.type == SDL_QUIT) {
 				return false; //end game
 			}
 			
+			if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_KEYDOWN) {
+				errorInputText = "";
+			}
 			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN) {
+				
 				std::cout << "button clicked";
 				std::cout << pointsToAllocate;
 				int mouseX, mouseY;
@@ -269,15 +278,21 @@ bool characterCreateScreen() {
 						((mouseY >= i->y) && (mouseY <= (i->y + i->h)))) {
 						if (i->type == "start") {
 							if (pointsToAllocate == 0) {
-								onCharacterCreate = false;
-								//make Character Object, validate, return to main
-								for (auto i : buttons) {
-									delete(i);
+								if (nameInputText != "") {
+									onCharacterCreate = false;
+									//make Character Object, validate, return to main
+									for (auto i : buttons) {
+										delete(i);
+									}
+									SDL_DestroyTexture(background);
+									return true;
 								}
-								SDL_DestroyTexture(background);
-								return true;
+								else {
+									errorInputText = "Enter Your Name!";
+								}
 							}
 							else {
+								errorInputText = "Points Remaining!";
 								break; //not valid to start, break out of for loop
 							}
 						}
@@ -287,6 +302,7 @@ bool characterCreateScreen() {
 								deltaAttribute = 1;
 							}
 							else {
+								errorInputText = "No Points Remaining!";
 								deltaAttribute = 0;
 							}
 						}
@@ -299,11 +315,23 @@ bool characterCreateScreen() {
 								strength += deltaAttribute;
 								pointsToAllocate -= deltaAttribute;
 							}
+							else if ((deltaAttribute + strength) > maxStat) {
+								errorInputText = "Max Strength!";
+							}
+							else if ((deltaAttribute + strength) < minStat) {
+								errorInputText = "Min Strength!";
+							}
 						}
 						else if (i->attribute == "intelligence") {
 							if ((deltaAttribute + intelligence) <= maxStat && (deltaAttribute + intelligence) >= minStat) {
 								intelligence += deltaAttribute;
 								pointsToAllocate -= deltaAttribute;
+							}
+							else if ((deltaAttribute + intelligence) > maxStat) {
+								errorInputText = "Max Intelligence!";
+							}
+							else if ((deltaAttribute + intelligence) < minStat) {
+								errorInputText = "Min Intelligence!";
 							}
 						}
 						else if (i->attribute == "dexterity") {
@@ -311,17 +339,35 @@ bool characterCreateScreen() {
 								dexterity += deltaAttribute;
 								pointsToAllocate -= deltaAttribute;
 							}
+							else if ((deltaAttribute + dexterity) > maxStat) {
+								errorInputText = "Max Dexterity!";
+							}
+							else if ((deltaAttribute + dexterity) < minStat) {
+								errorInputText = "Min Dexterity!";
+							}
 						}
 						else if (i->attribute == "constitution") {
 							if ((deltaAttribute + constitution) <= maxStat && (deltaAttribute + constitution) >= minStat) {
 								constitution += deltaAttribute;
 								pointsToAllocate -= deltaAttribute;
 							}
+							else if ((deltaAttribute + constitution) > maxStat) {
+								errorInputText = "Max Constitution!";
+							}
+							else if ((deltaAttribute + constitution) < minStat) {
+								errorInputText = "Min Constitution!";
+							}
 						}
 						else if (i->attribute == "faith") {
 							if ((deltaAttribute + faith) <= maxStat && (deltaAttribute + faith) >= minStat) {
 								faith += deltaAttribute;
 								pointsToAllocate -= deltaAttribute;
+							}
+							else if ((deltaAttribute + faith) > maxStat) {
+								errorInputText = "Max Faith!";
+							}
+							else if ((deltaAttribute + faith) < minStat) {
+								errorInputText = "Min Faith!";
 							}
 						}
 					}
@@ -363,9 +409,14 @@ bool characterCreateScreen() {
 		renderText(faithString.c_str(), &faithTextRectangle, &textColor);
 		renderText(pointsLeftToAllocateString.c_str(), &pointsAllocatedRectangle, &textColor);
 		if (nameInputText.length() > 0) {
-			renderText(nameInputText.c_str(), &nameTextRetangle, &textColor);
+			renderText(nameInputText.c_str(), &nameTextRectangle, &textColor);
 		}
-
+		if (errorInputText.length() > 13) {
+			renderText(errorInputText.c_str(), &errorTextRectangleLong, &errorColor);
+		}
+		else if (errorInputText.length() > 0) {
+			renderText(errorInputText.c_str(), &errorTextRectangle, &errorColor);
+		}
 		SDL_RenderPresent(gRenderer);
 		SDL_Delay(16);
 	}
