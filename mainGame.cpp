@@ -23,6 +23,7 @@ SDL_Renderer* gRenderer = nullptr;
 std::vector<SDL_Texture*> gTex;
 // Music var
 Mix_Music *gMusic = NULL;
+Mix_Chunk *gBSound = NULL;
 TTF_Font* font; 
 class Player
 {
@@ -167,6 +168,7 @@ void close() {
 	font = NULL;
 	//Free music
 	Mix_FreeMusic(gMusic);
+	Mix_FreeChunk(gBSound);
 	gMusic = NULL;
 	// Quit SDL subsystems
 	TTF_Quit();
@@ -232,6 +234,7 @@ public:
 	int y;
 	int h;
 	int w;
+	bool pressed = false;
 	std::string imageResource;
 	std::string attribute; //change to Attribute object later
 	SDL_Rect rect;
@@ -267,8 +270,15 @@ bool characterCreateScreen() {
 	gMusic = Mix_LoadMUS("CREDIT_IMG/charactercreate.wav");
 	if (gMusic == NULL)
 		std::cout << "Failed to load music" << std::endl;
+	gBSound = Mix_LoadWAV("CREDIT_IMG/BSound.wav");
+	if (gBSound == NULL)
+	{
+		printf("Failed to load Button sound effect! SDL_mixer Error: %s\n", Mix_GetError());
+	}
 	//Play the music
 	Mix_PlayMusic(gMusic, -1);
+
+
 	bool onCharacterCreate = true;
 	int pointsToAllocate = 25;
 	int maxStat = 10;
@@ -293,7 +303,9 @@ bool characterCreateScreen() {
 	std::string errorInputText;
 
 	std::vector<Button*> buttons;
-																		//need attr objects
+	SDL_Texture* upPress= loadImage("Images/UI/CreateScreen/pointUpArrow_Pressed.png");
+	SDL_Texture* downPress = loadImage("Images/UI/CreateScreen/pointDownArrow_Pressed.png");
+	//need attr objects
 	buttons.push_back(new Button("up", 340, 80, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "strength"));
 	buttons.push_back(new Button("down", 340, 130, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "strength"));
 	buttons.push_back(new Button("up", 340, 175, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence"));
@@ -307,7 +319,7 @@ bool characterCreateScreen() {
 	buttons.push_back(new Button("start", 450, 600, 244, 95, "Images/UI/CreateScreen/StartButton.png", ""));
 
 	SDL_Texture* background = loadImage("Images/UI/CreateScreen/characterCreateV2NoButtons.png"); //Moved to fix memory leak
-
+	
 	SDL_Event e;
 	while (onCharacterCreate) {
 		while (SDL_PollEvent(&e)) {
@@ -330,10 +342,13 @@ bool characterCreateScreen() {
 				for (auto i : buttons) {
 					//if mouse is clicked inside a button
 					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
-						((mouseY >= i->y) && (mouseY <= (i->y + i->h)))) {
+						((mouseY >= i->y) && (mouseY <= (i->y + i->h)))) 
+					{
+						i->pressed = true;
 						if (i->type == "start") {
 							if (pointsToAllocate == 0) {
 								if (nameInputText != "") {
+									Mix_PlayChannel(-1, gBSound, 0);
 									onCharacterCreate = false;
 									player1.setAll(strength, intelligence, dexterity, constitution, faith, nameInputText);
 									std::cout << std::string(player1); //displays player 1
@@ -357,6 +372,7 @@ bool characterCreateScreen() {
 
 						if (i->type == "up") {
 							if (pointsToAllocate > 0) {
+								Mix_PlayChannel(-1, gBSound, 0);
 								deltaAttribute = 1;
 							}
 							else {
@@ -365,6 +381,7 @@ bool characterCreateScreen() {
 							}
 						}
 						else if (i->type == "down") {
+							Mix_PlayChannel(-1, gBSound, 0);
 							deltaAttribute = -1;
 						}
 
@@ -429,12 +446,15 @@ bool characterCreateScreen() {
 							}
 						}
 					}
+					else
+					i->pressed = false;
 				}
 			}
 
 			else if (e.type == SDL_KEYDOWN) {
 				//remove char if backspace
 				if (e.key.keysym.sym == SDLK_BACKSPACE && nameInputText.length() > 0){
+					Mix_PlayChannel(-1, gBSound, 0);
 					nameInputText.pop_back();
 				}
 			}
@@ -443,14 +463,25 @@ bool characterCreateScreen() {
 				//add char
 				//set length limit to arbitrariy be 13 (fits textbox about right, depends on what user enters)
 				if (nameInputText.length() < 13) {
+					Mix_PlayChannel(-1, gBSound, 0);
 					nameInputText += e.text.text;
 				}
 			}
 		}
 
 		SDL_RenderCopy(gRenderer, background, NULL, NULL);
+		//Renders buttons and shows pressed image if pressed
 		for (auto i : buttons) {
-			SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
+			if(!i->pressed||i->attribute!="")
+				SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
+			else
+			{
+				if(i->type=="up")
+					SDL_RenderCopy(gRenderer, upPress, NULL, &i->rect);
+				else
+					SDL_RenderCopy(gRenderer, downPress, NULL, &i->rect);
+				SDL_Delay(100);
+			}
 		}
 
 		std::string strengthString = std::to_string(strength);
