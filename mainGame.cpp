@@ -446,11 +446,10 @@ bool characterCreateScreen() {
 							}
 						}
 					}
-					else
-					i->pressed = false;
+					
 				}
 			}
-
+			
 			else if (e.type == SDL_KEYDOWN) {
 				//remove char if backspace
 				if (e.key.keysym.sym == SDLK_BACKSPACE && nameInputText.length() > 0){
@@ -472,7 +471,7 @@ bool characterCreateScreen() {
 		SDL_RenderCopy(gRenderer, background, NULL, NULL);
 		//Renders buttons and shows pressed image if pressed
 		for (auto i : buttons) {
-			if(!i->pressed||i->attribute!="")
+			if(!i->pressed||i->attribute=="")
 				SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
 			else
 			{
@@ -481,6 +480,7 @@ bool characterCreateScreen() {
 				else
 					SDL_RenderCopy(gRenderer, downPress, NULL, &i->rect);
 				SDL_Delay(100);
+				i->pressed = false;
 			}
 		}
 
