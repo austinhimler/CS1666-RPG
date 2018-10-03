@@ -24,6 +24,54 @@ std::vector<SDL_Texture*> gTex;
 // Music var
 Mix_Music *gMusic = NULL;
 TTF_Font* font; 
+class Player
+{
+public:
+	int strength=1;
+	int intelligence=1;
+	int dexterity=1;
+	int constitution=1;
+	int faith=1;
+	std::string name;
+	//stores stats
+	Player(){}
+	Player(int s, int i, int d, int c, int f, std::string n) 
+	{
+		strength=s;
+		intelligence=i;
+		dexterity=d;
+		constitution=c;
+		faith=f;
+		name=n;
+	}
+	void setAll(int s, int i, int d, int c, int f, std::string n)
+	{
+		strength = s;
+		intelligence = i;
+		dexterity = d;
+		constitution = c;
+		faith = f;
+		name = n;
+		return;
+	}
+	operator std::string() 
+	{ 
+		std::string strengthString = std::to_string(strength);
+		std::string intelligenceString = std::to_string(intelligence);
+		std::string dexterityString = std::to_string(dexterity);
+		std::string constitutionString = std::to_string(constitution);
+		std::string faithString = std::to_string(faith);
+		std::string s = "Name: " + name + " Strength: " + strengthString + " Intelligence: " + intelligenceString + " Dexterity: " + dexterityString + " Constitution: " + constitutionString + " Faith: " + faithString; ;
+		return s;
+	}
+	
+
+private:
+	
+};
+//Player ONE
+Player player1;
+
 bool init() {
 	// Flag what subsystems to initialize
 	// For now, just video
@@ -280,6 +328,8 @@ bool characterCreateScreen() {
 							if (pointsToAllocate == 0) {
 								if (nameInputText != "") {
 									onCharacterCreate = false;
+									player1.setAll(strength, intelligence, dexterity, constitution, faith, nameInputText);
+									std::cout << std::string(player1); //displays player 1
 									//make Character Object, validate, return to main
 									for (auto i : buttons) {
 										delete(i);
