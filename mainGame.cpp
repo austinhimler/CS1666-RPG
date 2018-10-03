@@ -561,9 +561,14 @@ void playGame() {
 	SDL_Rect characterBox = { 50, 50, 200, 148 };
 	SDL_Rect enemyBox = { 200, 200, 50, 50 };
 	SDL_Surface* loadedSurface = IMG_Load("Images/Player/Character_Run.png");
-	SDL_Texture* characterTexture = NULL;
-	SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));//transprant background
-	characterTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
+	SDL_Surface* idleLoadedSurface = IMG_Load("Images/Player/Character_Idle.png");
+	SDL_Texture* characterRunTexture = NULL;
+	SDL_Texture* characterIdleTexture = NULL;
+	SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));//transparent background
+	SDL_SetColorKey(idleLoadedSurface, SDL_TRUE, SDL_MapRGB(idleLoadedSurface->format, 0, 0xFF, 0xFF));//transparent background
+	characterRunTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
+	characterIdleTexture = SDL_CreateTextureFromSurface(gRenderer, idleLoadedSurface);
+
 	
 	int charMoveSpeed = 2;
 	int characterMoveAcceleration = 2;
@@ -652,12 +657,15 @@ void playGame() {
 		SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
 		SDL_RenderClear(gRenderer);
 
-		if (xVelocity == 0 && yVelocity == 0) {
-			frame = 0;
-		}
+
 		charImageX = frame * 200;
 		SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH};
-		SDL_RenderCopyEx(gRenderer, characterTexture, &charactersRectangle, &characterBox,0.0,nullptr, flip);
+		if (xVelocity == 0 && yVelocity == 0) {
+			SDL_RenderCopyEx(gRenderer, characterIdleTexture, &charactersRectangle, &characterBox, 0.0, nullptr, flip);
+		}
+		else {
+			SDL_RenderCopyEx(gRenderer, characterRunTexture, &charactersRectangle, &characterBox, 0.0, nullptr, flip);
+		}
 
 
 		SDL_RenderPresent(gRenderer);
