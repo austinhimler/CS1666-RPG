@@ -652,6 +652,9 @@ void playGame() {
 		SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
 		SDL_RenderClear(gRenderer);
 
+		if (xVelocity == 0 && yVelocity == 0) {
+			frame = 0;
+		}
 		charImageX = frame * 200;
 		SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH};
 		SDL_RenderCopyEx(gRenderer, characterTexture, &charactersRectangle, &characterBox,0.0,nullptr, flip);
