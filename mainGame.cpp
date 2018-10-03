@@ -494,8 +494,111 @@ void playGame() {
 	const int TILE_SOLID = 0;
 	const int TILE_WALL = 1;
 	const int TILE_FLOOR = 2;
+
+	SDL_Rect characterBox = { 50, 50, 200, 37*4 };
+	SDL_Rect enemyBox = { 200, 200, 50, 50 };
+	SDL_Texture* characterTexture = loadImage("Images/Player/Character.png");
+	int charMoveSpeed = 2;
+	int characterMoveAcceleration = 2;
+	int characterMoveMaxSpeed = 4;
+
+	int xVelocity = 0;
+	int yVelocity = 0;
+	int xDeltaVelocity;
+	int yDeltaVelocity;
+	int charImageX = 0;
+	int charImageY = 0;
+	int charImageW = 200;
+	int charImageH = 37 * 4;
+	int delaysPerFrame = 0;
+	int frame = 0;
+
+
+	SDL_Event e;
+	bool inOverworld = true;
+	while (inOverworld) {
+		while (SDL_PollEvent(&e)) {
+			if (e.type == SDL_QUIT) {
+				inOverworld = false;
+				return;
+			}
+		}
+
+		xDeltaVelocity = 0;
+		yDeltaVelocity = 0;
+		const Uint8* keyState = SDL_GetKeyboardState(nullptr);
+		if (keyState[SDL_SCANCODE_W])
+			yDeltaVelocity -= characterMoveAcceleration;
+		if (keyState[SDL_SCANCODE_A])
+			xDeltaVelocity -= characterMoveAcceleration;
+		if (keyState[SDL_SCANCODE_S])
+			yDeltaVelocity += characterMoveAcceleration;
+		if (keyState[SDL_SCANCODE_D])
+			xDeltaVelocity += characterMoveAcceleration;
+
+		if (xDeltaVelocity == 0) {
+			if (xVelocity > 0)
+				xDeltaVelocity = -characterMoveAcceleration;
+			else if (xVelocity < 0)
+				xDeltaVelocity = characterMoveAcceleration;
+		}
+		if (yDeltaVelocity == 0) {
+			if (yVelocity > 0)
+				yDeltaVelocity = -characterMoveAcceleration;
+			else if (yVelocity < 0)
+				yDeltaVelocity = characterMoveMaxSpeed;
+		}
+
+		xVelocity += xDeltaVelocity;
+		yVelocity += yDeltaVelocity;
+
+		//bound within Max Speed
+		if (xVelocity < -characterMoveMaxSpeed)
+			xVelocity = -characterMoveMaxSpeed;
+		else if (xVelocity > characterMoveMaxSpeed)
+			xVelocity = characterMoveMaxSpeed;
+		//bound within Max Speed
+		if (yVelocity < -characterMoveMaxSpeed)
+			yVelocity = -characterMoveMaxSpeed;
+		else if (yVelocity > characterMoveMaxSpeed)
+			yVelocity = characterMoveMaxSpeed;
+
+		// Try to move vertically
+		characterBox.y += yVelocity;
+		if (characterBox.y < 0 || (characterBox.y + characterBox.h > SCREEN_HEIGHT)) {
+			//go back into window
+			characterBox.y -= yVelocity;
+		}
+
+		// Try to move horizontally
+		characterBox.x += xVelocity;
+		if (characterBox.x < 0 || (characterBox.x + characterBox.w > SCREEN_WIDTH)) {
+			//go back into window
+			characterBox.x -= xVelocity;
+		}
+
+		// Clear black
+		SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
+		SDL_RenderClear(gRenderer);
+
+		charImageX = frame * 200;
+		SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH};
+		SDL_RenderCopy(gRenderer, characterTexture, &charactersRectangle, &characterBox);
+
+
+		SDL_RenderPresent(gRenderer);
+		delaysPerFrame++;
+		if (delaysPerFrame >= 10) {
+			frame++;
+			delaysPerFrame = 0;
+		}
+		if (frame == 4) {
+			frame = 0;
+		}
+		SDL_Delay(16);
+	}
 	
-	// while(gameOn) gameloop
+	 //while(gameOn) gameloop
 		//render top viewport: render player, enemy, overworld
 		//render bottom viewport: UI
 		//movement
@@ -516,7 +619,7 @@ int main(int argc, char *argv[]) {
 	}
 	bool keepPlaying = characterCreateScreen();
 	if (keepPlaying) {
-		//playGame();
+		playGame();
 		playCredits();
 	}
 	close();
