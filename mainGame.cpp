@@ -526,9 +526,9 @@ void playGame() {
 	const int TILE_WALL = 1;
 	const int TILE_FLOOR = 2;
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
-	SDL_Rect characterBox = { 50, 50, 200, 37*4 };
+	SDL_Rect characterBox = { 50, 50, 200, 148 };
 	SDL_Rect enemyBox = { 200, 200, 50, 50 };
-	SDL_Texture* characterTexture = loadImage("Images/Player/Character_Idle.png");
+	SDL_Texture* characterTexture = loadImage("Images/Player/Character_Run.png");
 	int charMoveSpeed = 2;
 	int characterMoveAcceleration = 2;
 	int characterMoveMaxSpeed = 4;
@@ -540,7 +540,7 @@ void playGame() {
 	int charImageX = 0;
 	int charImageY = 0;
 	int charImageW = 200;
-	int charImageH = 37 * 4;
+	int charImageH = 148;
 	int delaysPerFrame = 0;
 	int frame = 0;
 
@@ -626,11 +626,11 @@ void playGame() {
 		//to add more frames per image to make it more fluid
 		//definitely not the best way to do this, need to sync to a consistent gametime
 		delaysPerFrame++;
-		if (delaysPerFrame >= 10) {
+		if (delaysPerFrame >= 6) {
 			frame++;
 			delaysPerFrame = 0;
 		}
-		if (frame == 4) {
+		if (frame == 6) {
 			frame = 0;
 		}
 		SDL_Delay(16);
