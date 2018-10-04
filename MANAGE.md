@@ -6,9 +6,9 @@ Ending dates Name
 
 10-3  Ryan Killen
 
-10-10  Brandon Badger
+10-10 MIDTERM
 
-10-17 MIDTERM
+10-17 Brandon Badger
 
 10-24 David Gorny
 
@@ -22,4 +22,4 @@ Ending dates Name
 
 11-28 Sanketh Kolli
 
-12-5
+12-5 Brandon Badger (I can present again on the last day)

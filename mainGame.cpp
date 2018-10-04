@@ -234,7 +234,7 @@ public:
 	int y;
 	int h;
 	int w;
-	bool pressed = false;
+	int pressed = 0;
 	std::string imageResource;
 	std::string attribute; //change to Attribute object later
 	SDL_Rect rect;
@@ -356,7 +356,7 @@ bool characterCreateScreen() {
 					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
 						((mouseY >= i->y) && (mouseY <= (i->y + i->h)))) 
 					{
-						i->pressed = true;
+						i->pressed = 5;
 						if (i->type == "start") {
 							if (pointsToAllocate == 0) {
 								if (nameInputText != "") {
@@ -483,7 +483,7 @@ bool characterCreateScreen() {
 		SDL_RenderCopy(gRenderer, background, NULL, NULL);
 		//Renders buttons and shows pressed image if pressed
 		for (auto i : buttons) {
-			if(!i->pressed||i->attribute=="")
+			if(!i->pressed>0||i->attribute=="")
 				SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
 			else
 			{
@@ -491,8 +491,7 @@ bool characterCreateScreen() {
 					SDL_RenderCopy(gRenderer, upPress, NULL, &i->rect);
 				else
 					SDL_RenderCopy(gRenderer, downPress, NULL, &i->rect);
-				SDL_Delay(100);
-				i->pressed = false;
+				i->pressed--;
 			}
 		}
 		
@@ -560,6 +559,7 @@ void playGame() {
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	SDL_Rect characterBox = { 50, 50, 200, 148 };
 	SDL_Rect enemyBox = { 200, 200, 50, 50 };
+
 	SDL_Surface* loadedSurfaceRun = IMG_Load("Images/Player/Character_Run.png");
 	SDL_Surface* loadedSurfaceIdle = IMG_Load("Images/Player/Character_Idle.png");
 	SDL_Texture* characterTextureActive = NULL;
@@ -675,8 +675,10 @@ void playGame() {
 		SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
 		SDL_RenderClear(gRenderer);
 
+
 		charImageX = frame * 200;
 		SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH};
+
 		SDL_RenderCopyEx(gRenderer, characterTextureActive, &charactersRectangle, &characterBox,0.0,nullptr, flip);
 
 
