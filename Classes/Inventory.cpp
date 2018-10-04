@@ -1,5 +1,3 @@
-#include <string>
-#include <vector>
-class Inventory {
-
-};
+#include "../Headers/Inventory.h"
+Inventory::Inventory() {}
+Inventory::Inventory(int maxLoad, int curLoad){}
