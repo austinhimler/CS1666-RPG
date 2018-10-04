@@ -8,6 +8,7 @@
 #include <cmath>
 #include <fstream>
 #include "Headers/Player.h"
+#include "Headers/Ability.h"
 
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;

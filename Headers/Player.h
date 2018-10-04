@@ -1,3 +1,6 @@
+#ifndef _____PLAYER_H_____
+#define _____PLAYER_H_____
+
 #include <string>
 #include <vector>
 #include "../Headers/Inventory.h"
@@ -12,6 +15,7 @@ public:
 	int currentExprience;
 	Inventory inventory;
 	std::string name;
+
 	//stores stats
 	Player();
 	Player(int s, int i, int d, int c, int f, std::string n);
@@ -20,3 +24,4 @@ public:
 private:
 
 };
+#endif // !_____PLAYER_H_____

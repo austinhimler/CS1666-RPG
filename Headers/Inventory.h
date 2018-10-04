@@ -1,3 +1,6 @@
+#ifndef _____INVENTORY_H_____
+#define _____INVENTORY_H_____
+
 #include <string>
 #include <vector>
 class Inventory {
@@ -8,3 +11,5 @@ class Inventory {
 		int maxLoad;
 		int curLoad;
 };
+
+#endif

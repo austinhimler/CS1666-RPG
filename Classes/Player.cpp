@@ -1,13 +1,14 @@
 #include "../Headers/Player.h"
-
-	/*int strength = 1;
+	/*
+	int strength = 1;
 	int intelligence = 1;
 	int dexterity = 1;
 	int constitution = 1;
 	int faith = 1;
 	int currentExprience;
-	Inventory inventory*/
+	Inventory inventory
 	std::string name;
+	*/
 	//stores stats
 	Player::Player() {}
 	Player::Player(int s, int i, int d, int c, int f, std::string n)
