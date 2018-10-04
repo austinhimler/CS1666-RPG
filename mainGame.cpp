@@ -559,15 +559,17 @@ void playGame() {
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	SDL_Rect characterBox = { 50, 50, 200, 148 };
 	SDL_Rect enemyBox = { 200, 200, 50, 50 };
-	SDL_Surface* loadedSurface = IMG_Load("Images/Player/Character_Run.png");
-	SDL_Surface* idleLoadedSurface = IMG_Load("Images/Player/Character_Idle.png");
-	SDL_Texture* characterRunTexture = NULL;
-	SDL_Texture* characterIdleTexture = NULL;
-	SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));//transparent background
-	SDL_SetColorKey(idleLoadedSurface, SDL_TRUE, SDL_MapRGB(idleLoadedSurface->format, 0, 0xFF, 0xFF));//transparent background
-	characterRunTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
-	characterIdleTexture = SDL_CreateTextureFromSurface(gRenderer, idleLoadedSurface);
 
+	SDL_Surface* loadedSurfaceRun = IMG_Load("Images/Player/Character_Run.png");
+	SDL_Surface* loadedSurfaceIdle = IMG_Load("Images/Player/Character_Idle.png");
+	SDL_Texture* characterTextureActive = NULL;
+	SDL_Texture* characterTextureRun = NULL;
+	SDL_Texture* characterTextureIdle = NULL;
+	SDL_SetColorKey(loadedSurfaceRun, SDL_TRUE, SDL_MapRGB(loadedSurfaceRun->format, 0, 0xFF, 0xFF)); //Transparent background
+	SDL_SetColorKey(loadedSurfaceIdle, SDL_TRUE, SDL_MapRGB(loadedSurfaceIdle->format, 0, 0xFF, 0xFF)); //Transparent background
+	characterTextureIdle = SDL_CreateTextureFromSurface(gRenderer, loadedSurfaceIdle);
+	characterTextureRun = SDL_CreateTextureFromSurface(gRenderer, loadedSurfaceRun);
+	characterTextureActive = characterTextureIdle;
 	
 	int charMoveSpeed = 2;
 	int characterMoveAcceleration = 2;
@@ -583,6 +585,7 @@ void playGame() {
 	int charImageH = 148;
 	int delaysPerFrame = 0;
 	int frame = 0;
+	int maxFrame = 4;
 
 
 	SDL_Event e;
@@ -624,6 +627,22 @@ void playGame() {
 		xVelocity += xDeltaVelocity;
 		yVelocity += yDeltaVelocity;
 
+		//Change sprite if character is in motion
+		if (xVelocity != 0 || yVelocity != 0) {
+			if (characterTextureActive != characterTextureRun) {
+				characterTextureActive = characterTextureRun;
+				frame = 0;
+				maxFrame = 6;
+			}
+		}
+		else {
+			if (characterTextureActive != characterTextureIdle) {
+				characterTextureActive = characterTextureIdle;
+				frame = 0;
+				maxFrame = 4;
+			}
+		}
+	
 		//bound within Max Speed
 		if (xVelocity < -characterMoveMaxSpeed)
 			xVelocity = -characterMoveMaxSpeed;
@@ -659,12 +678,8 @@ void playGame() {
 
 		charImageX = frame * 200;
 		SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH};
-		if (xVelocity == 0 && yVelocity == 0) {
-			SDL_RenderCopyEx(gRenderer, characterIdleTexture, &charactersRectangle, &characterBox, 0.0, nullptr, flip);
-		}
-		else {
-			SDL_RenderCopyEx(gRenderer, characterRunTexture, &charactersRectangle, &characterBox, 0.0, nullptr, flip);
-		}
+
+		SDL_RenderCopyEx(gRenderer, characterTextureActive, &charactersRectangle, &characterBox,0.0,nullptr, flip);
 
 
 		SDL_RenderPresent(gRenderer);
@@ -676,7 +691,7 @@ void playGame() {
 			frame++;
 			delaysPerFrame = 0;
 		}
-		if (frame == 6) {
+		if (frame == maxFrame) {
 			frame = 0;
 		}
 		SDL_Delay(16);
