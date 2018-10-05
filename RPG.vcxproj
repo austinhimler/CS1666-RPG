@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Classes\Ability.cpp" />
+    <ClCompile Include="Classes\Button.cpp" />
     <ClCompile Include="Classes\Inventory.cpp" />
     <ClCompile Include="Classes\Player.cpp" />
     <ClCompile Include="mainGame.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Ailment.h" />
     <ClInclude Include="Headers\Ability.h" />
     <ClInclude Include="Headers\Attribute.h" />
+    <ClInclude Include="Headers\Button.h" />
     <ClInclude Include="Headers\Character.h" />
     <ClInclude Include="Headers\Enemy.h" />
     <ClInclude Include="Headers\Inventory.h" />

@@ -1,0 +1,23 @@
+#ifndef _____BUTTON_H_____
+#define _____BUTTON_H_____
+#include <string>
+#include <vector>
+#include <SDL.h>
+class Button {
+public:
+	std::string type; //up stat, down stat, or start
+	int x;
+	int y;
+	int h;
+	int w;
+	int pressed;
+	std::string imageResource;
+	std::string attribute; //change to Attribute object later
+	SDL_Rect rect;
+	SDL_Texture* texture;
+	Button(std::string type, int x, int y, int w, int h, std::string imageResource, std::string attribute);
+private:
+
+};
+
+#endif
