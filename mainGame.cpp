@@ -143,6 +143,8 @@ SDL_Texture* loadImage(std::string fname) {
 		std::cout << "Unable to load image " << fname << "! SDL Error: " << SDL_GetError() << std::endl;
 		return nullptr;
 	}
+	
+	SDL_SetColorKey(startSurf, SDL_TRUE, SDL_MapRGB(startSurf->format, 0, 0xFF, 0xFF));//if the color is 0, 0xFF, 0xFF, it should be cleaned
 
 	newText = SDL_CreateTextureFromSurface(gRenderer, startSurf);
 	if (newText == nullptr) {
@@ -313,10 +315,10 @@ bool characterCreateScreen() {
 	std::vector<Button*> buttons;
 	SDL_Texture* upPress= loadImage("Images/UI/CreateScreen/pointUpArrow_Pressed.png");
 	SDL_Texture* downPress = loadImage("Images/UI/CreateScreen/pointDownArrow_Pressed.png");
-	SDL_Surface* loadedSurface = IMG_Load("Images/Player/Character_Idle.png");
-	SDL_Texture* character = NULL;
-	SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));//transprant background
-	character = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
+	 
+	SDL_Texture* character = loadImage("Images/Player/Character_Idle.png");
+	
+	
 	//need attr objects
 	buttons.push_back(new Button("up", 340, 80, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "strength"));
 	buttons.push_back(new Button("down", 340, 130, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "strength"));
@@ -560,15 +562,9 @@ void playGame() {
 	SDL_Rect characterBox = { 50, 50, 200, 148 };
 	SDL_Rect enemyBox = { 200, 200, 50, 50 };
 
-	SDL_Surface* loadedSurfaceRun = IMG_Load("Images/Player/Character_Run.png");
-	SDL_Surface* loadedSurfaceIdle = IMG_Load("Images/Player/Character_Idle.png");
 	SDL_Texture* characterTextureActive = NULL;
-	SDL_Texture* characterTextureRun = NULL;
-	SDL_Texture* characterTextureIdle = NULL;
-	SDL_SetColorKey(loadedSurfaceRun, SDL_TRUE, SDL_MapRGB(loadedSurfaceRun->format, 0, 0xFF, 0xFF)); //Transparent background
-	SDL_SetColorKey(loadedSurfaceIdle, SDL_TRUE, SDL_MapRGB(loadedSurfaceIdle->format, 0, 0xFF, 0xFF)); //Transparent background
-	characterTextureIdle = SDL_CreateTextureFromSurface(gRenderer, loadedSurfaceIdle);
-	characterTextureRun = SDL_CreateTextureFromSurface(gRenderer, loadedSurfaceRun);
+	SDL_Texture* characterTextureRun = loadImage("Images/Player/Character_Run.png");
+	SDL_Texture* characterTextureIdle = loadImage("Images/Player/Character_Idle.png");
 	characterTextureActive = characterTextureIdle;
 	
 	int charMoveSpeed = 2;
