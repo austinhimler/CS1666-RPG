@@ -148,6 +148,9 @@
     <ClCompile Include="Classes\Inventory.cpp" />
     <ClCompile Include="Classes\Player.cpp" />
     <ClCompile Include="mainGame.cpp" />
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Resistance.cpp" />
+    <ClCompile Include="Squad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="CREDIT_IMG\BGM.wav" />
@@ -169,12 +172,10 @@
     <Image Include="CREDIT_IMG\SankethKolliCredit.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Ability.h" />
-    <ClInclude Include="Ailment.h" />
+    <ClInclude Include="Squad.h" />
     <ClInclude Include="Headers\Ability.h" />
     <ClInclude Include="Headers\Attribute.h" />
     <ClInclude Include="Headers\Button.h" />
-    <ClInclude Include="Headers\Character.h" />
     <ClInclude Include="Headers\Enemy.h" />
     <ClInclude Include="Headers\Inventory.h" />
     <ClInclude Include="Headers\Item.h" />
