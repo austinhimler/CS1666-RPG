@@ -7,8 +7,6 @@
 #include <SDL_ttf.h>
 #include <cmath>
 #include <fstream>
-#include "Headers/Player.h"
-#include "Headers/Ability.h"
 
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
@@ -28,8 +26,81 @@ Mix_Music *gMusic = NULL;
 Mix_Chunk *gBSound = NULL;
 TTF_Font* font; 
 
+class Player
+{
+public:
+	int strength=1;
+	int intelligence=1;
+	int dexterity=1;
+	int constitution=1;
+	int faith=1;
+	std::string name;
+	//stores stats
+	Player(){}
+	Player(int s, int i, int d, int c, int f, std::string n) 
+	{
+		strength=s;
+		intelligence=i;
+		dexterity=d;
+		constitution=c;
+		faith=f;
+		name=n;
+	}
+	void setAll(int s, int i, int d, int c, int f, std::string n)
+	{
+		strength = s;
+		intelligence = i;
+		dexterity = d;
+		constitution = c;
+		faith = f;
+		name = n;
+		return;
+	}
+	operator std::string() 
+	{ 
+		std::string strengthString = std::to_string(strength);
+		std::string intelligenceString = std::to_string(intelligence);
+		std::string dexterityString = std::to_string(dexterity);
+		std::string constitutionString = std::to_string(constitution);
+		std::string faithString = std::to_string(faith);
+		std::string s = "Name: " + name + " Strength: " + strengthString + " Intelligence: " + intelligenceString + " Dexterity: " + dexterityString + " Constitution: " + constitutionString + " Faith: " + faithString; ;
+		return s;
+	}
+	
+
+private:
+	
+};
+
+class Button {
+private:
+
+public:
+	std::string type; //up stat, down stat, or start
+	int x;
+	int y;
+	int h;
+	int w;
+	int pressed = 0;
+	std::string imageResource;
+	std::string attribute; //change to Attribute object later
+	SDL_Rect rect;
+	SDL_Texture* texture;
+	Button(std::string type, int x, int y, int w, int h, std::string imageResource, std::string attribute) {
+		this->type = type;
+		this->x = x;
+		this->y = y;
+		this->w = w;
+		this->h = h;
+		this->imageResource = imageResource;
+		this->rect = { x, y, w, h };
+		this->attribute = attribute;
+		this->texture = loadImage(imageResource);
+	}
+};
+
 //Player ONE
-Player player1(1,1,1,1,1,"nlf4");
+Player player1;
 
 bool init() {
 	// Flag what subsystems to initialize
@@ -101,6 +172,8 @@ SDL_Texture* loadImage(std::string fname) {
 		std::cout << "Unable to load image " << fname << "! SDL Error: " << SDL_GetError() << std::endl;
 		return nullptr;
 	}
+	
+	SDL_SetColorKey(startSurf, SDL_TRUE, SDL_MapRGB(startSurf->format, 0, 0xFF, 0xFF));//if the color is 0, 0xFF, 0xFF, it should be cleaned
 
 	newText = SDL_CreateTextureFromSurface(gRenderer, startSurf);
 	if (newText == nullptr) {
@@ -183,33 +256,6 @@ void playCredits() {
 }
 
 
-class Button {
-private:
-
-public:
-	std::string type; //up stat, down stat, or start
-	int x;
-	int y;
-	int h;
-	int w;
-	int pressed = 0;
-	std::string imageResource;
-	std::string attribute; //change to Attribute object later
-	SDL_Rect rect;
-	SDL_Texture* texture;
-	Button(std::string type, int x, int y, int w, int h, std::string imageResource, std::string attribute) {
-		this->type = type;
-		this->x = x;
-		this->y = y;
-		this->w = w;
-		this->h = h;
-		this->imageResource = imageResource;
-		this->rect = { x, y, w, h };
-		this->attribute = attribute;
-		this->texture = loadImage(imageResource);
-	}
-};
-
 void renderText(const char* text, SDL_Rect* rect, SDL_Color* color) {
 	SDL_Surface* surface;
 	SDL_Texture* texture;
@@ -271,10 +317,9 @@ bool characterCreateScreen() {
 	std::vector<Button*> buttons;
 	SDL_Texture* upPress= loadImage("Images/UI/CreateScreen/pointUpArrow_Pressed.png");
 	SDL_Texture* downPress = loadImage("Images/UI/CreateScreen/pointDownArrow_Pressed.png");
-	SDL_Surface* loadedSurface = IMG_Load("Images/Player/Character_Idle.png");
-	SDL_Texture* character = NULL;
-	SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));//transprant background
-	character = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
+	SDL_Texture* character = loadImage("Images/Player/Character_Idle.png");
+	
+	
 	//need attr objects
 	buttons.push_back(new Button("up", 340, 80, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "strength"));
 	buttons.push_back(new Button("down", 340, 130, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "strength"));
@@ -515,18 +560,13 @@ void playGame() {
 	const int TILE_WALL = 1;
 	const int TILE_FLOOR = 2;
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
-	SDL_Rect characterBox = { 50, 50, 200, 148 };
-	SDL_Rect enemyBox = { 200, 200, 50, 50 };
+	SDL_Rect characterBox = {250, 250, 200, 148 };
+	SDL_Rect enemyBox = { 400, 100, 384, 308 };
 
-	SDL_Surface* loadedSurfaceRun = IMG_Load("Images/Player/Character_Run.png");
-	SDL_Surface* loadedSurfaceIdle = IMG_Load("Images/Player/Character_Idle.png");
 	SDL_Texture* characterTextureActive = NULL;
-	SDL_Texture* characterTextureRun = NULL;
-	SDL_Texture* characterTextureIdle = NULL;
-	SDL_SetColorKey(loadedSurfaceRun, SDL_TRUE, SDL_MapRGB(loadedSurfaceRun->format, 0, 0xFF, 0xFF)); //Transparent background
-	SDL_SetColorKey(loadedSurfaceIdle, SDL_TRUE, SDL_MapRGB(loadedSurfaceIdle->format, 0, 0xFF, 0xFF)); //Transparent background
-	characterTextureIdle = SDL_CreateTextureFromSurface(gRenderer, loadedSurfaceIdle);
-	characterTextureRun = SDL_CreateTextureFromSurface(gRenderer, loadedSurfaceRun);
+	SDL_Texture* characterTextureRun = loadImage("Images/Player/Character_Run.png");
+	SDL_Texture* characterTextureIdle = loadImage("Images/Player/Character_Idle.png");
+	SDL_Texture* enemyTextureIdle = loadImage("Images/Enemies/Enemy1/Enemy_Idle.png");
 	characterTextureActive = characterTextureIdle;
 	
 	int charMoveSpeed = 2;
@@ -541,6 +581,10 @@ void playGame() {
 	int charImageY = 0;
 	int charImageW = 200;
 	int charImageH = 148;
+	int enemyImageX = 0;
+	int enemyImageY = 0;
+	int enemyImageW = 384;
+	int enemyImageH = 308;
 	int delaysPerFrame = 0;
 	int frame = 0;
 	int maxFrame = 4;
@@ -633,12 +677,14 @@ void playGame() {
 		SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
 		SDL_RenderClear(gRenderer);
 
-
+		enemyImageX = frame * 384;
 		charImageX = frame * 200;
+		
 		SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH};
-
+		SDL_Rect enemyRectangle = { enemyImageX, enemyImageY, enemyImageW, enemyImageH };
 		SDL_RenderCopyEx(gRenderer, characterTextureActive, &charactersRectangle, &characterBox,0.0,nullptr, flip);
-
+		
+		SDL_RenderCopy(gRenderer, enemyTextureIdle, &enemyRectangle, &enemyBox);
 
 		SDL_RenderPresent(gRenderer);
 
