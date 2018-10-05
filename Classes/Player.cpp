@@ -11,8 +11,7 @@
 	*/
 	//stores stats
 	Player::Player() {}
-	Player::Player(int s, int i, int d, int c, int f, std::string n)
-	{
+	Player::Player(int s, int i, int d, int c, int f, std::string n) {
 		strength = s;
 		intelligence = i;
 		dexterity = d;
@@ -20,8 +19,11 @@
 		faith = f;
 		name = n;
 	}
-	void Player::setAll(int s, int i, int d, int c, int f, std::string n)
-	{
+	Player::Player(int s, int i, int d, int c, int f, std::string n, Ability* a) {
+		Player::Player(s, i, d, c, f, n);
+		*ability = *a;
+	}
+	void Player::setAll(int s, int i, int d, int c, int f, std::string n) {
 		strength = s;
 		intelligence = i;
 		dexterity = d;
@@ -30,8 +32,7 @@
 		name = n;
 		return;
 	}
-	Player::operator std::string()
-	{
+	Player::operator std::string() {
 		std::string strengthString = std::to_string(strength);
 		std::string intelligenceString = std::to_string(intelligence);
 		std::string dexterityString = std::to_string(dexterity);

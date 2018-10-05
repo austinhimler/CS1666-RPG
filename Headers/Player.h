@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include "../Headers/Inventory.h"
+#include "../Headers/Ability.h"
+
 class Player /*: public Character*/
 {
 public:
@@ -15,10 +17,12 @@ public:
 	int currentExprience;
 	Inventory inventory;
 	std::string name;
+	Ability ability[];
 
 	//stores stats
 	Player();
 	Player(int s, int i, int d, int c, int f, std::string n);
+	Player(int s, int i, int d, int c, int f, std::string n, Ability* a);
 	void setAll(int s, int i, int d, int c, int f, std::string n);
 	operator std::string();
 private:

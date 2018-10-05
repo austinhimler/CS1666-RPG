@@ -76,6 +76,9 @@
     <ClCompile Include="Classes\Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\Ability.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ability.h">
@@ -99,10 +102,13 @@
     <ClInclude Include="Headers\Item.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\Resistance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Headers\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Resistance.h">
+    <ClInclude Include="Headers\Ability.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
