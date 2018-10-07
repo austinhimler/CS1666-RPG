@@ -96,7 +96,6 @@ public void end_turn() {
 						end-turn calculation
 						check surivval
 						call combat manager for next turn
-
 	*/
 	// Do calculations, check if enemies are dead, etc.
 	if (e1.hpCurrent <= 0) {
