@@ -147,6 +147,7 @@
     <ClCompile Include="Classes\Button.cpp" />
     <ClCompile Include="Classes\Inventory.cpp" />
     <ClCompile Include="Classes\Player.cpp" />
+    <ClCompile Include="Classes\QueueManager.cpp" />
     <ClCompile Include="mainGame.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +180,7 @@
     <ClInclude Include="Headers\Inventory.h" />
     <ClInclude Include="Headers\Item.h" />
     <ClInclude Include="Headers\Player.h" />
+    <ClInclude Include="Headers\QueueManager.h" />
     <ClInclude Include="Headers\Resistance.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
