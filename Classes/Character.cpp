@@ -1,5 +1,11 @@
 #include <string>
 #include <vector>
+#include "../Headers/Attribute.h"
+#include "../Headers/Attributes/Strength.h"
+#include "../Headers/Attributes/Intelligence.h"
+#include "../Headers/Attributes/Dexterity.h"
+#include "../Headers/Attributes/Constitution.h"
+#include "../Headers/Attributes/Faith.h"
 class Character {
 public:
 	int hpMax;
@@ -21,14 +27,14 @@ public:
 	std::vector<Ability> abilities;
 	//std::vector<Resistance> resistances;
 	//have an array or list each resistance out?
-	Resistance evasion;
+	/*Resistance evasion;
 	Resistance physical;
 	Resistance fire;
 	Resistance earth;
 	Resistance water;
 	Resistance air;
 	Resistance light;
-	Resistance dark;
+	Resistance dark;*/
 
 	Character() {
 
@@ -54,7 +60,7 @@ public:
 		return 100;
 	}
 
-	int determineEnergyMax{
+	int determineEnergyMax(){
 		return 100;
 	}
 };

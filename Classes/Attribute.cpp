@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include "../Headers/Ability.h"
 class Attribute {
 public:
 	int base;
