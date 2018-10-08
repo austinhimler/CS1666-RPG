@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <SDL.h>
+
 class Button {
 public:
 	std::string type; //up stat, down stat, or start
@@ -15,7 +16,10 @@ public:
 	std::string attribute; //change to Attribute object later
 	SDL_Rect rect;
 	SDL_Texture* texture;
-	Button(std::string type, int x, int y, int w, int h, std::string imageResource, std::string attribute);
+	SDL_Renderer* gRenderer;
+	Button();
+	Button(std::string type, int x, int y, int w, int h, std::string imageResource, std::string attribute, SDL_Renderer* gRenderer);
+	
 private:
 
 };

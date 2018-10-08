@@ -2,6 +2,7 @@
 #include <vector>
 #include <SDL.h>
 #include "../Headers/Button.h"
+#include "../Headers/Helper.h"
 	//std::string type; //up stat, down stat, or start
 	//int x;
 	//int y;
@@ -12,8 +13,8 @@
 	//std::string attribute; //change to Attribute object later
 	//SDL_Rect rect;
 	//SDL_Texture* texture;
-
-	Button::Button(std::string type, int x, int y, int w, int h, std::string imageResource, std::string attribute) {
+Button::Button() {}
+	Button::Button(std::string type, int x, int y, int w, int h, std::string imageResource, std::string attribute, SDL_Renderer* gRenderer) {
 		this->type = type;
 		this->x = x;
 		this->y = y;
@@ -22,7 +23,9 @@
 		this->imageResource = imageResource;
 		this->rect = { x, y, w, h };
 		this->attribute = attribute;
-		//this->texture = loadImage(imageResource);
+		this->gRenderer = gRenderer;
+		Helper temp = Helper();
+		this->texture = temp.loadImage(imageResource,gRenderer);
 	}
 
 

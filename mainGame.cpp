@@ -27,7 +27,7 @@ std::vector<SDL_Texture*> gTex;
 Mix_Music *gMusic = NULL;
 Mix_Chunk *gBSound = NULL;
 TTF_Font* font; 
-
+/*
 class Button {
 private:
 
@@ -54,7 +54,7 @@ public:
 		this->texture = loadImage(imageResource);
 	}
 };
-
+*/
 //Player ONE
 Player player1 = Player::Player(1,1,1,1,1,"nlf4");
 
@@ -277,17 +277,17 @@ bool characterCreateScreen() {
 	
 	
 	//need attr objects
-	buttons.push_back(new Button("up", 340, 80, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "strength"));
-	buttons.push_back(new Button("down", 340, 130, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "strength"));
-	buttons.push_back(new Button("up", 340, 175, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence"));
-	buttons.push_back(new Button("down", 340, 225, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "intelligence"));
-	buttons.push_back(new Button("up", 340, 270, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "dexterity"));
-	buttons.push_back(new Button("down", 340, 320, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "dexterity"));
-	buttons.push_back(new Button("up", 340, 365, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "constitution"));
-	buttons.push_back(new Button("down", 340, 415, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "constitution"));
-	buttons.push_back(new Button("up", 340, 460, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "faith"));
-	buttons.push_back(new Button("down", 340, 510, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "faith"));
-	buttons.push_back(new Button("start", 450, 600, 244, 95, "Images/UI/CreateScreen/StartButton.png", ""));
+	buttons.push_back(new Button("up", 340, 80, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "strength",gRenderer));
+	buttons.push_back(new Button("down", 340, 130, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "strength",gRenderer));
+	buttons.push_back(new Button("up", 340, 175, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence",gRenderer));
+	buttons.push_back(new Button("down", 340, 225, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "intelligence", gRenderer));
+	buttons.push_back(new Button("up", 340, 270, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "dexterity", gRenderer));
+	buttons.push_back(new Button("down", 340, 320, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "dexterity", gRenderer));
+	buttons.push_back(new Button("up", 340, 365, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "constitution", gRenderer));
+	buttons.push_back(new Button("down", 340, 415, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "constitution", gRenderer));
+	buttons.push_back(new Button("up", 340, 460, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "faith",gRenderer));
+	buttons.push_back(new Button("down", 340, 510, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "faith", gRenderer));
+	buttons.push_back(new Button("start", 450, 600, 244, 95, "Images/UI/CreateScreen/StartButton.png", "", gRenderer));
 
 	SDL_Texture* background = loadImage("Images/UI/CreateScreen/characterCreateV2NoButtons.png"); //Moved to fix memory leak
 	

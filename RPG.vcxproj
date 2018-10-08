@@ -147,6 +147,7 @@
     <ClCompile Include="Classes\Button.cpp" />
     <ClCompile Include="Classes\Inventory.cpp" />
     <ClCompile Include="Classes\Player.cpp" />
+    <ClCompile Include="Helper.cpp" />
     <ClCompile Include="mainGame.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -180,6 +181,7 @@
     <ClInclude Include="Headers\Item.h" />
     <ClInclude Include="Headers\Player.h" />
     <ClInclude Include="Headers\Resistance.h" />
+    <ClInclude Include="Helper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
