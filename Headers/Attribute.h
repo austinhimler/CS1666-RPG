@@ -1,9 +1,12 @@
 #pragma once
+#include "Ability.h"
 #include <string>
 #include <vector>
-
-int base;
-int current;
-std::string name;
-std::vector<Ability> abilities;
-void Attribute(int stat, std::string name);
+class Attribute {
+	int base;
+	int current;
+	std::string name;
+	std::vector<Ability> abilities;
+	Attribute();
+	Attribute(int stat, std::string name);
+};

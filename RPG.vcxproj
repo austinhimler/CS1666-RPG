@@ -144,10 +144,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Classes\Ability.cpp" />
+    <ClCompile Include="Classes\Attribute.cpp" />
+    <ClCompile Include="Classes\Attributes\Constitution.cpp" />
+    <ClCompile Include="Classes\Attributes\Dexterity.cpp" />
+    <ClCompile Include="Classes\Attributes\Faith.cpp" />
+    <ClCompile Include="Classes\Attributes\Intelligence.cpp" />
+    <ClCompile Include="Classes\Attributes\Strength.cpp" />
     <ClCompile Include="Classes\Button.cpp" />
+    <ClCompile Include="Classes\Character.cpp" />
     <ClCompile Include="Classes\Inventory.cpp" />
     <ClCompile Include="Classes\Player.cpp" />
-    <ClCompile Include="Helper.cpp" />
+    <ClCompile Include="Classes\QueueManager.cpp" />
     <ClCompile Include="mainGame.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -173,15 +180,22 @@
     <ClInclude Include="Ability.h" />
     <ClInclude Include="Ailment.h" />
     <ClInclude Include="Headers\Ability.h" />
+    <ClInclude Include="Headers\Ailment.h" />
     <ClInclude Include="Headers\Attribute.h" />
+    <ClInclude Include="Headers\Attributes\Constitution.h" />
+    <ClInclude Include="Headers\Attributes\Dexterity.h" />
+    <ClInclude Include="Headers\Attributes\Faith.h" />
+    <ClInclude Include="Headers\Attributes\Intelligence.h" />
+    <ClInclude Include="Headers\Attributes\Strength.h" />
     <ClInclude Include="Headers\Button.h" />
     <ClInclude Include="Headers\Character.h" />
+    <ClInclude Include="Headers\Combat.h" />
     <ClInclude Include="Headers\Enemy.h" />
     <ClInclude Include="Headers\Inventory.h" />
     <ClInclude Include="Headers\Item.h" />
     <ClInclude Include="Headers\Player.h" />
+    <ClInclude Include="Headers\QueueManager.h" />
     <ClInclude Include="Headers\Resistance.h" />
-    <ClInclude Include="Helper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
