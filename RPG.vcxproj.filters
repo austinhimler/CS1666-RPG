@@ -82,9 +82,6 @@
     <ClCompile Include="Classes\Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Classes\QueueManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Classes\Attributes\Constitution.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -103,7 +100,7 @@
     <ClCompile Include="Classes\Attribute.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Classes\Character.cpp">
+    <ClCompile Include="Helper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -163,6 +160,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\Attributes\Constitution.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

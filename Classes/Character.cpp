@@ -6,25 +6,14 @@
 #include "../Headers/Attributes/Dexterity.h"
 #include "../Headers/Attributes/Constitution.h"
 #include "../Headers/Attributes/Faith.h"
-class Character {
-public:
-	int hpMax;
-	int hpCurrent;
-	int energyMax;
-	int energyCurrent;
-	int mpCurrent;
-	int mpMax;
-	std::string imageResource;
+#include "../Headers/Character.h"
+
 
 	//std::vector<Attribute> attributes;
 	//Had array of attributes in github todo but since all will have the same 5, probably better to just list them
-	Strength strength;
-	Intelligence intelligence;
-	Dexterity dexterity;
-	Constitution constitution;
-	Faith faith;
+	
 
-	std::vector<Ability> abilities;
+
 	//std::vector<Resistance> resistances;
 	//have an array or list each resistance out?
 	/*Resistance evasion;
@@ -36,11 +25,9 @@ public:
 	Resistance light;
 	Resistance dark;*/
 
-	Character() {
+	Character::Character() {}
 
-	}
-
-	Character(Strength strength, Intelligence intelligence, Dexterity dexterity, Constitution constitution, Faith faith) {
+	Character::Character(Strength strength, Intelligence intelligence, Dexterity dexterity, Constitution constitution, Faith faith) {
 		this->strength = strength;
 		this->intelligence = intelligence;
 		this->dexterity = dexterity;
@@ -51,16 +38,15 @@ public:
 		energyCurrent = determineEnergyMax();
 	}
 
-	int determineHPMax() {
+	int Character::determineHPMax() {
 
 		return 100;
 	}
 
-	int determineMPMax() {
+	int Character::determineMPMax() {
 		return 100;
 	}
 
-	int determineEnergyMax(){
+	int Character::determineEnergyMax(){
 		return 100;
 	}
-};
