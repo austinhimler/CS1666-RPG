@@ -9,10 +9,8 @@
 #include <fstream>
 #include "Headers/Player.h"
 #include "Headers/Button.h"
-
-const int SCREEN_WIDTH = 720;
-const int SCREEN_HEIGHT = 720;
-
+#include "Headers/Character.h"
+#include "Headers/Globals.h"
 
 // Function declarations
 bool init();
@@ -20,9 +18,10 @@ SDL_Texture* loadImage(std::string fname);
 void close();
 
 // Globals
-SDL_Window* gWindow = nullptr;
-SDL_Renderer* gRenderer = nullptr;
-std::vector<SDL_Texture*> gTex;
+//gWindow = nullptr;
+//gRenderer = nullptr;
+
+//std::vector<SDL_Texture*> gTex;
 // Music var
 Mix_Music *gMusic = NULL;
 Mix_Chunk *gBSound = NULL;
@@ -56,7 +55,7 @@ public:
 };
 */
 //Player ONE
-Player player1 = Player::Player(1,1,1,1,1,"nlf4");
+Player player1 = Player::Player("nlf4",1,1,1,1,1);
 
 bool init() {
 	// Flag what subsystems to initialize
@@ -321,7 +320,7 @@ bool characterCreateScreen() {
 								if (nameInputText != "") {
 									Mix_PlayChannel(-1, gBSound, 0);
 									onCharacterCreate = false;
-									player1.setAll(strength, intelligence, dexterity, constitution, faith, nameInputText);
+									player1.setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
 									std::cout << std::string(player1); //displays player 1
 									//make Character Object, validate, return to main
 									for (auto i : buttons) {
