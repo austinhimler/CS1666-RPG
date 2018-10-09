@@ -7,10 +7,10 @@
 #include <SDL_ttf.h>
 #include <cmath>
 #include <fstream>
+#include "Headers/Globals.h"
 #include "Headers/Player.h"
 #include "Headers/Button.h"
-#include "Headers/Character.h"
-#include "Headers/Globals.h"
+//#include "Headers/Character.h"
 
 // Function declarations
 bool init();
@@ -18,8 +18,12 @@ SDL_Texture* loadImage(std::string fname);
 void close();
 
 // Globals
-//gWindow = nullptr;
-//gRenderer = nullptr;
+SDL_Window* gWindow = nullptr;
+SDL_Renderer* gRenderer = nullptr;
+std::vector<SDL_Texture*> gTex;
+
+const int SCREEN_WIDTH = 720;
+const int SCREEN_HEIGHT = 720;
 
 //std::vector<SDL_Texture*> gTex;
 // Music var

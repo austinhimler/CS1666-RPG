@@ -1,4 +1,5 @@
 #include "../Headers/Player.h"
+#include <iostream>
 	/*
 	int strength = 1;
 	int intelligence = 1;
@@ -10,34 +11,22 @@
 	std::string name;
 	*/
 	//stores stats
-	Player::Player() {}
-	Player::Player(int s, int i, int d, int c, int f, std::string n) {
-		strength = s;
-		intelligence = i;
-		dexterity = d;
-		constitution = c;
-		faith = f;
+	Player::Player() : Character("Player 1") {}
+	Player::Player(std::string n) : Character(n) {}
+	Player::Player(std::string n, int s, int i, int d, int c, int f) : Character(n, s,i,d,c,f){}
+	Player::Player(std::string n, std::vector<Attribute> attr) : Character(n, attr) {}
+	void Player::setAll(std::string n, int s, int i, int d, int c, int f) {
+		attributes[STR] = Attribute("Strength", s);
+		attributes[INT] = Attribute("Intelligence", i);
+		attributes[DEX] = Attribute("Dexerity", d);
+		attributes[CON] = Attribute("Constitution", c);
+		attributes[FAI] = Attribute("Faith", f);
 		name = n;
-	}
-	Player::Player(int s, int i, int d, int c, int f, std::string n, Ability* a) {
-		Player::Player(s, i, d, c, f, n);
-		*ability = *a;
-	}
-	void Player::setAll(int s, int i, int d, int c, int f, std::string n) {
-		strength = s;
-		intelligence = i;
-		dexterity = d;
-		constitution = c;
-		faith = f;
-		name = n;
-		return;
 	}
 	Player::operator std::string() {
-		std::string strengthString = std::to_string(strength);
-		std::string intelligenceString = std::to_string(intelligence);
-		std::string dexterityString = std::to_string(dexterity);
-		std::string constitutionString = std::to_string(constitution);
-		std::string faithString = std::to_string(faith);
-		std::string s = "Name: " + name + " Strength: " + strengthString + " Intelligence: " + intelligenceString + " Dexterity: " + dexterityString + " Constitution: " + constitutionString + " Faith: " + faithString; ;
+		std::string s = "Name: " +	name + "\n";
+		for (auto i : attributes) {
+			s += i.toString() + "\n";
+		}
 		return s;
 	}

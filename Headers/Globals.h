@@ -14,12 +14,11 @@ enum attr_index {
 	CON,
 	FAI
 };
+extern SDL_Window* gWindow;
+extern SDL_Renderer* gRenderer;
+extern std::vector<SDL_Texture*> gTex;
 
-SDL_Window* gWindow = nullptr;
-SDL_Renderer* gRenderer = nullptr;
-std::vector<SDL_Texture*> gTex;
-
-const int SCREEN_WIDTH = 720;
-const int SCREEN_HEIGHT = 720;
+extern const int SCREEN_WIDTH;
+extern const int SCREEN_HEIGHT;
 
 #endif // !_____GLOBALS_H_____

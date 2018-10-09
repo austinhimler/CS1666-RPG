@@ -3,29 +3,23 @@
 
 #include <string>
 #include <vector>
-#include "../Headers/Inventory.h"
-#include "../Headers/Ability.h"
+#include "Inventory.h"
+#include "Ability.h"
+#include "Character.h"
 
-class Player /*: public Character*/
+class Player : public Character
 {
 public:
-	int strength;
-	int intelligence;
-	int dexterity;
-	int constitution;
-	int faith;
-	int currentExprience;
-	Inventory inventory;
-	std::string name;
-	Ability ability[];
-
-	//stores stats
+		//stores stats
 	Player();
-	Player(int s, int i, int d, int c, int f, std::string n);
-	Player(int s, int i, int d, int c, int f, std::string n, Ability* a);
-	void setAll(int s, int i, int d, int c, int f, std::string n);
+	Player(std::string n);
+	Player(std::string n, int s, int i, int d, int c, int f);
+	Player(std::string n, std::vector<Attribute> attr);
+	void setAll(std::string n, int s, int i, int d, int c, int f);
 	operator std::string();
 private:
+	int currentExprience;
+	Inventory inventory;
 
 };
 #endif // !_____PLAYER_H_____
