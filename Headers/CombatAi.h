@@ -7,7 +7,12 @@
 
 class CombatAi : public Ai {
 public:
+	CombatAi();
+	CombatAi(std::string name);
+	boolean changeType(boolean temp) { return false; }
 private:
+	std::string name;
+	boolean type = 1;
 };
 
 #endif

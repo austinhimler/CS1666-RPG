@@ -7,7 +7,12 @@
 
 class OverworldAi : public Ai{
 public:
+	OverworldAi();
+	OverworldAi(std:string name);
+	boolean changeType(boolean a) { return false;  }
 private:
+	std::string name;
+	boolean type = 0;
 };
 
 #endif
