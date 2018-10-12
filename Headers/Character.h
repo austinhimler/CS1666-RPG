@@ -33,11 +33,13 @@ protected:
 	int energyCurrent;
 	int mpMax;
 	int mpCurrent;
-	std::string imageResource;
+	std::string imageIdleResource;
+	std::string imageRunResource;
 	std::string name;
 	SDL_Texture* textureIdle;
 	SDL_Texture* textureRun;
-	int pixelShiftInSpirteSheetAmountForAnimation;
+	int pixelShiftAmountForIdleAnimation;
+	int pixelShiftAmountForRunAnimation;
 	int numIdleAnimationFrames;
 	int numRunAnimatonFrames;
 	int timeBetweenIdleAnimations; //ms
