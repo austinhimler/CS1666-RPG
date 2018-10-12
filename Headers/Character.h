@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include "Attribute.h"
-#include "GLobals.h"
+#include "Globals.h"
 
 /*
 #include "Attributes/Strength.h"
@@ -35,7 +35,17 @@ protected:
 	int mpCurrent;
 	std::string imageResource;
 	std::string name;
-
+	SDL_Texture* textureIdle;
+	SDL_Texture* textureRun;
+	int pixelShiftInSpirteSheetAmountForAnimation;
+	int numIdleAnimationFrames;
+	int numRunAnimatonFrames;
+	int timeBetweenIdleAnimations; //ms
+	int timeBetweenRunAnimations; //ms
+	SDL_Rect rectangle;
+	int speed; // pixels per second
+	int speedMax; 
+	int acceleration; // px/s^2
 
 	void setHPMax();
 	void setMPMax();

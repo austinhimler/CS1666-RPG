@@ -10,7 +10,7 @@
 #include "Headers/Globals.h"
 #include "Headers/Player.h"
 #include "Headers/Button.h"
-//#include "Headers/Character.h"
+#include "Headers/Character.h"
 
 // Function declarations
 bool init();
