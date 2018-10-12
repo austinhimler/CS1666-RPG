@@ -26,6 +26,17 @@
 		energyCurrent = energyMax;
 		name = n;
 	}
+	int Character::getHPMax() {
+		return hpMax;
+	}
+	
+	int Character::getMPMax() {
+		return mpMax;
+	}
+
+	int Character::getEnergyMax() {
+		return energyMax;
+	}
 
 	void Character::setHPMax() {
 		hpMax = 100 * attributes[CON].current;
@@ -38,16 +49,3 @@
 	void Character::setEnergyMax() {
 		energyMax = 100 * attributes[DEX].current;
 	}
-	/*
-	int Character::getHPMax() {
-		return 100 * CON;
-	}
-
-	int Character::getMPMax() {
-		return 100;
-	}
-
-	int Character::getEnergyMax(){
-		return 100;
-	}
-	*/

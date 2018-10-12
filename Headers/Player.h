@@ -20,6 +20,6 @@ public:
 private:
 	int currentExprience;
 	Inventory inventory;
-
+			
 };
 #endif // !_____PLAYER_H_____

@@ -1,6 +1,6 @@
 #include "../Headers/Attribute.h"
 	Attribute::Attribute() {
-		
+		Attribute("Attribute 1");
 	}
 
 	Attribute::Attribute(std::string n) {
