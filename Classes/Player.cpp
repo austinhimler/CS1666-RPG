@@ -26,10 +26,10 @@
 		name = n;
 
 
-		pixelShiftAmountForIdleAnimation = 200;
-		pixelShiftAmountForRunAnimation = 200;
+	    pixelShiftAmountForAnimationInSpriteSheet = 200;
 		numIdleAnimationFrames = 4;
 		numRunAnimatonFrames = 6;
+		currentFrame = 0;
 		timeBetweenIdleAnimations = 120;
 		timeBetweenRunAnimations = 100;
 		imageIdleResource = "Images/Player/Character_Idle.png";
@@ -37,14 +37,15 @@
 		Helper helper = Helper();
 		textureIdle = helper.loadImage(imageIdleResource.c_str(), gRenderer);
 		textureRun = helper.loadImage(imageRunResource.c_str(), gRenderer);
-		rectangle = {250, 250, 200, 148 };
+		textureActive = NULL;
+		imageWidth = 200;
+		imageHeight = 148;
+		xPosition = 250; //will need to edit for starting level
+		yPosition = 250; //will need to edit for starting level
+		rectangle = {xPosition, yPosition, imageWidth, imageHeight};
 		speed = 300;
 		speedMax = 500;
 		acceleration = 200;
-
-		//speed
-		//rectangle
-		//animation nums
 	}
 
 

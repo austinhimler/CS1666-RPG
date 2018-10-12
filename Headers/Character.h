@@ -25,6 +25,8 @@ public:
 	int getHPMax();
 	int getMPMax();
 	int getEnergyMax();
+	int getXPosition();
+	int getYPosition();
 	
 protected:
 	int hpMax;
@@ -38,8 +40,9 @@ protected:
 	std::string name;
 	SDL_Texture* textureIdle;
 	SDL_Texture* textureRun;
-	int pixelShiftAmountForIdleAnimation;
-	int pixelShiftAmountForRunAnimation;
+	SDL_Texture* textureActive;
+	int pixelShiftAmountForAnimationInSpriteSheet;
+	int currentFrame;
 	int numIdleAnimationFrames;
 	int numRunAnimatonFrames;
 	int timeBetweenIdleAnimations; //ms
@@ -48,6 +51,10 @@ protected:
 	int speed; // pixels per second
 	int speedMax; 
 	int acceleration; // px/s^2
+	int imageWidth;
+	int imageHeight;
+	int xPosition;
+	int yPosition;
 
 	void setHPMax();
 	void setMPMax();
