@@ -1,52 +1,51 @@
-#include <string>
-#include <vector>
-#include "../Headers/Attribute.h"
-#include "../Headers/Attributes/Strength.h"
-#include "../Headers/Attributes/Intelligence.h"
-#include "../Headers/Attributes/Dexterity.h"
-#include "../Headers/Attributes/Constitution.h"
-#include "../Headers/Attributes/Faith.h"
 #include "../Headers/Character.h"
 
+	Character::Character() {
+		Character("Character 1");
+	}
+	Character::Character(std::string n) {
+		Character(n, 1,1,1,1,1);
+	}
+	Character::Character(std::string n, int s, int i, int d, int c, int f) {
+		attributes = std::vector<Attribute>(5);
+		attributes[STR] = Attribute("Strength", s);
+		attributes[INT] = Attribute("Intelligence", i);
+		attributes[DEX] = Attribute("Dexerity", d);
+		attributes[CON] = Attribute("Constitution", c);
+		attributes[FAI] = Attribute("Faith", f);
+		Character(n, attributes);
 
-	//std::vector<Attribute> attributes;
-	//Had array of attributes in github todo but since all will have the same 5, probably better to just list them
+	}
+	Character::Character(std::string n, std::vector<Attribute> attr) {
+		attributes = attr;
+		setHPMax();
+		setMPMax();
+		setEnergyMax();
+		hpCurrent = hpMax;
+		mpCurrent = mpMax;
+		energyCurrent = energyMax;
+		name = n;
+	}
+	int Character::getHPMax() {
+		return hpMax;
+	}
 	
-
-
-	//std::vector<Resistance> resistances;
-	//have an array or list each resistance out?
-	/*Resistance evasion;
-	Resistance physical;
-	Resistance fire;
-	Resistance earth;
-	Resistance water;
-	Resistance air;
-	Resistance light;
-	Resistance dark;*/
-
-	Character::Character() {}
-
-	Character::Character(Strength strength, Intelligence intelligence, Dexterity dexterity, Constitution constitution, Faith faith) {
-		this->strength = strength;
-		this->intelligence = intelligence;
-		this->dexterity = dexterity;
-		this->constitution = constitution;
-		this->faith = faith;
-		mpCurrent = determineMPMax();
-		hpCurrent = determineHPMax();
-		energyCurrent = determineEnergyMax();
+	int Character::getMPMax() {
+		return mpMax;
 	}
 
-	int Character::determineHPMax() {
-
-		return 100;
+	int Character::getEnergyMax() {
+		return energyMax;
 	}
 
-	int Character::determineMPMax() {
-		return 100;
+	void Character::setHPMax() {
+		hpMax = 100 * attributes[CON].current;
 	}
 
-	int Character::determineEnergyMax(){
-		return 100;
+	void Character::setMPMax() {
+		mpMax = 100 * attributes[INT].current;
+	}
+
+	void Character::setEnergyMax() {
+		energyMax = 100 * attributes[DEX].current;
 	}

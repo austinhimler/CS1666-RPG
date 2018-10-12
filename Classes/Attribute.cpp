@@ -1,19 +1,19 @@
-#include <string>
-#include <vector>
-#include "../Headers/Ability.h"
-class Attribute {
-public:
-	int base;
-	int current;
-	std::string name;
-	std::vector<Ability> abilities; //abilities this attribute has in the "Tree", might not need this
-	Attribute() {
-
+#include "../Headers/Attribute.h"
+	Attribute::Attribute() {
+		Attribute("Attribute 1");
 	}
 
-	Attribute(int stat, std::string name) {
+	Attribute::Attribute(std::string n) {
+		Attribute(n, 1);
+	}
+	Attribute::Attribute(std::string name, int stat) {
 		base = stat;
 		current = stat;
-		this->name = name;
+		name = name;
 	}
-};
+
+	std::string Attribute::toString() {
+		std::string s = name;
+		s += "base: " + std::to_string(base) + " cur: " + std::to_string(current);
+		return s;
+	}
