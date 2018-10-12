@@ -24,6 +24,8 @@
 		attributes[CON] = Attribute("Constitution", c);
 		attributes[FAI] = Attribute("Faith", f);
 		name = n;
+
+
 		pixelShiftAmountForIdleAnimation = 200;
 		pixelShiftAmountForRunAnimation = 200;
 		numIdleAnimationFrames = 4;
@@ -35,7 +37,10 @@
 		Helper helper = Helper();
 		textureIdle = helper.loadImage(imageIdleResource.c_str(), gRenderer);
 		textureRun = helper.loadImage(imageRunResource.c_str(), gRenderer);
-
+		rectangle = {250, 250, 200, 148 };
+		speed = 300;
+		speedMax = 500;
+		acceleration = 200;
 
 		//speed
 		//rectangle
