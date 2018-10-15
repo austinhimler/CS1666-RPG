@@ -28,6 +28,8 @@ public:
 	int getMPMax();
 	int getEnergyMax();
 	void takeDamage(Ability a);
+	int getXPosition();
+	int getYPosition();
 	
 protected:
 	int hpMax;
@@ -36,9 +38,26 @@ protected:
 	int energyCurrent;
 	int mpMax;
 	int mpCurrent;
-	std::string imageResource;
+	std::string imageIdleResource;
+	std::string imageRunResource;
 	std::string name;
-
+	SDL_Texture* textureIdle;
+	SDL_Texture* textureRun;
+	SDL_Texture* textureActive;
+	int pixelShiftAmountForAnimationInSpriteSheet;
+	int currentFrame;
+	int numIdleAnimationFrames;
+	int numRunAnimatonFrames;
+	int timeBetweenIdleAnimations; //ms
+	int timeBetweenRunAnimations; //ms
+	SDL_Rect rectangle;
+	int speed; // pixels per second
+	int speedMax; 
+	int acceleration; // px/s^2
+	int imageWidth;
+	int imageHeight;
+	int xPosition;
+	int yPosition;
 
 	void setHPMax();
 	void setMPMax();

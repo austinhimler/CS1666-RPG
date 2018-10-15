@@ -10,7 +10,7 @@
 #include "Headers/Globals.h"
 #include "Headers/Player.h"
 #include "Headers/Button.h"
-//#include "Headers/Character.h"
+#include "Headers/Character.h"
 
 // Function declarations
 bool init();
@@ -30,34 +30,7 @@ const int SCREEN_HEIGHT = 720;
 Mix_Music *gMusic = NULL;
 Mix_Chunk *gBSound = NULL;
 TTF_Font* font; 
-/*
-class Button {
-private:
 
-public:
-	std::string type; //up stat, down stat, or start
-	int x;
-	int y;
-	int h;
-	int w;
-	int pressed = 0;
-	std::string imageResource;
-	std::string attribute; //change to Attribute object later
-	SDL_Rect rect;
-	SDL_Texture* texture;
-	Button(std::string type, int x, int y, int w, int h, std::string imageResource, std::string attribute) {
-		this->type = type;
-		this->x = x;
-		this->y = y;
-		this->w = w;
-		this->h = h;
-		this->imageResource = imageResource;
-		this->rect = { x, y, w, h };
-		this->attribute = attribute;
-		this->texture = loadImage(imageResource);
-	}
-};
-*/
 //Player ONE
 Player player1 = Player::Player("nlf4",1,1,1,1,1);
 

@@ -151,6 +151,8 @@
     <ClCompile Include="Classes\Attributes\Intelligence.cpp" />
     <ClCompile Include="Classes\Attributes\Strength.cpp" />
     <ClCompile Include="Classes\Button.cpp" />
+    <ClCompile Include="Classes\Character.cpp" />
+    <ClCompile Include="Classes\Enemy.cpp" />
     <ClCompile Include="Classes\Inventory.cpp" />
     <ClCompile Include="Classes\Player.cpp" />
     <ClCompile Include="Helper.cpp" />
@@ -188,8 +190,9 @@
     <ClInclude Include="Headers\Attributes\Strength.h" />
     <ClInclude Include="Headers\Button.h" />
     <ClInclude Include="Headers\Character.h" />
-    <ClInclude Include="Headers\Combat.h" />
+    <ClInclude Include="Headers\CombatManager.h" />
     <ClInclude Include="Headers\Enemy.h" />
+    <ClInclude Include="Headers\Globals.h" />
     <ClInclude Include="Headers\Helper.h" />
     <ClInclude Include="Headers\Inventory.h" />
     <ClInclude Include="Headers\Item.h" />
