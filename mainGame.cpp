@@ -11,6 +11,7 @@
 #include "Headers/Player.h"
 #include "Headers/Button.h"
 #include "Headers/Character.h"
+#include "Headers/Tile.h"
 
 // Function declarations
 bool init();
@@ -271,17 +272,17 @@ bool characterCreateScreen() {
 	
 	
 	//need attr objects
-	buttons.push_back(new Button("up", 340, 80, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "strength",gRenderer));
-	buttons.push_back(new Button("down", 340, 130, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "strength",gRenderer));
-	buttons.push_back(new Button("up", 340, 175, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence",gRenderer));
-	buttons.push_back(new Button("down", 340, 225, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "intelligence", gRenderer));
-	buttons.push_back(new Button("up", 340, 270, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "dexterity", gRenderer));
-	buttons.push_back(new Button("down", 340, 320, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "dexterity", gRenderer));
-	buttons.push_back(new Button("up", 340, 365, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "constitution", gRenderer));
-	buttons.push_back(new Button("down", 340, 415, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "constitution", gRenderer));
-	buttons.push_back(new Button("up", 340, 460, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "faith",gRenderer));
-	buttons.push_back(new Button("down", 340, 510, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "faith", gRenderer));
-	buttons.push_back(new Button("start", 450, 600, 244, 95, "Images/UI/CreateScreen/StartButton.png", "", gRenderer));
+	buttons.push_back(new Button("up", 340, 80, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "strength",gRenderer));
+	buttons.push_back(new Button("down", 340, 130, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "strength",gRenderer));
+	buttons.push_back(new Button("up", 340, 175, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence",gRenderer));
+	buttons.push_back(new Button("down", 340, 225, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "intelligence", gRenderer));
+	buttons.push_back(new Button("up", 340, 270, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "dexterity", gRenderer));
+	buttons.push_back(new Button("down", 340, 320, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "dexterity", gRenderer));
+	buttons.push_back(new Button("up", 340, 365, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "constitution", gRenderer));
+	buttons.push_back(new Button("down", 340, 415, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "constitution", gRenderer));
+	buttons.push_back(new Button("up", 340, 460, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "faith",gRenderer));
+	buttons.push_back(new Button("down", 340, 510, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "faith", gRenderer));
+	buttons.push_back(new Button("start", 450, 625, 230, 56, "Images/UI/CreateScreen/StartButton.png", "", gRenderer));
 
 	SDL_Texture* background = loadImage("Images/UI/CreateScreen/characterCreateV2NoButtons.png"); //Moved to fix memory leak
 	
@@ -498,18 +499,7 @@ bool characterCreateScreen() {
 
 
 void playGame() {
-	//max level size
-	const int LEVEL_WIDTH = 4200;
-	const int LEVEL_HEIGHT = 4200;
-	//TILE DEFINITIONS
-	const int TILE_WIDTH = 42;
-	const int TILE_HEIGHT = 42;
-	const int TOTAL_TILES = 10000;
-	const int NUM_SPRITES = 3;
-	//The different tile sprites
-	const int TILE_SOLID = 0;
-	const int TILE_WALL = 1;
-	const int TILE_FLOOR = 2;
+	
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 
 	SDL_Rect characterBox = {250, 250, 200, 148 };

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include "Attribute.h"
-#include "GLobals.h"
+#include "Globals.h"
 #include "Resistance.h"
 #include "Ability.h"
 
@@ -25,12 +25,40 @@ public:
 	Character(std::string n, int s, int i, int d, int c, int f);
 	Character(std::string n, std::vector<Attribute> attr);
 	int getHPMax();
+	int getHPCurrent();
+	int getMPCurrent();
 	int getMPMax();
+	int getEnergyCurrent();
 	int getEnergyMax();
+	int getPixelShiftAmountForAnimationInSpriteSheet();
+	int getCurrentFrame();
+	int getNumIdleAnimationFrames();
+	int getNumRunAnimationFrames();
+	int getTimeBetweenIdleAnimations();
+	int getTimeBetweenRunAnimations();
+	int getImageWidth();
+	int getImageHeight();
+	double getSpeedMax();
+	double getAcceleration();
+	double xVelocity;
+	double yVelocity;
+	double xDeltaVelocity;
+	double yDeltaVelocity;
+	int xPosition;
+	int yPosition;
+	std::string getImageIdleResource();
+	std::string getImageRunResource();
+	std::string getName();
+	SDL_Texture* getTextureIdle();
+	SDL_Texture* getTextureRun();
+	SDL_Texture* getTextureActive();
+	SDL_Rect getRectangle();
+	std::vector<Attribute> getAttributes();
+	std::vector<Ability> getAbilities();
+	int getDex();
+	int getHPCur();
 	void takeDamage(Ability a);
-	int getXPosition();
-	int getYPosition();
-	
+
 protected:
 	int hpMax;
 	int hpCurrent;
@@ -51,13 +79,10 @@ protected:
 	int timeBetweenIdleAnimations; //ms
 	int timeBetweenRunAnimations; //ms
 	SDL_Rect rectangle;
-	int speed; // pixels per second
-	int speedMax; 
-	int acceleration; // px/s^2
 	int imageWidth;
 	int imageHeight;
-	int xPosition;
-	int yPosition;
+	double speedMax; // px/s
+	double acceleration; // px/s^2
 
 	void setHPMax();
 	void setMPMax();
@@ -84,5 +109,4 @@ Resistance water;
 Resistance air;
 Resistance light;
 Resistance dark;*/
-
 #endif

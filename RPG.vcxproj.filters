@@ -65,6 +65,12 @@
     <Image Include="..\..\..\..\..\Programming\cs1666\pointUpArrow.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Images\Tiles\64^64 Grasstiles.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Tiles\64^64 lake.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mainGame.cpp">
