@@ -4,7 +4,9 @@
 #include <string>
 #include <vector>
 #include "Attribute.h"
-#include "Globals.h"
+#include "GLobals.h"
+#include "Resistance.h"
+#include "Ability.h"
 
 /*
 #include "Attributes/Strength.h"
@@ -25,6 +27,7 @@ public:
 	int getHPMax();
 	int getMPMax();
 	int getEnergyMax();
+	void takeDamage(Ability a);
 	int getXPosition();
 	int getYPosition();
 	
@@ -81,4 +84,5 @@ Resistance water;
 Resistance air;
 Resistance light;
 Resistance dark;*/
+
 #endif
