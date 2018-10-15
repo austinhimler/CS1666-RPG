@@ -155,6 +155,7 @@
     <ClCompile Include="Classes\Enemy.cpp" />
     <ClCompile Include="Classes\Inventory.cpp" />
     <ClCompile Include="Classes\Player.cpp" />
+    <ClCompile Include="Classes\Tile.cpp" />
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="mainGame.cpp" />
   </ItemGroup>
@@ -202,6 +203,7 @@
     <ClInclude Include="Headers\Player.h" />
     <ClInclude Include="Headers\QueueManager.h" />
     <ClInclude Include="Headers\Resistance.h" />
+    <ClInclude Include="Headers\Tile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -33,7 +33,7 @@ Mix_Chunk *gBSound = NULL;
 TTF_Font* font; 
 
 //Player ONE
-Player player1 = Player::Player("nlf4",1,1,1,1,1);
+Player player1 = Player("nlf4",1,1,1,1,1);
 
 bool init() {
 	// Flag what subsystems to initialize
