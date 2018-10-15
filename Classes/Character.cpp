@@ -24,34 +24,29 @@
 		name = n;
 	}
 
-	int Character::getHPMax() {
-		return hpMax;
-	}
-	
-	int Character::getMPMax() {
-		return mpMax;
-	}
+	int Character::getHPMax() { return hpMax; }
+	int Character::getMPMax() { return mpMax; }
+	int Character::getEnergyMax() { return energyMax; }
+	void Character::setHPMax() { hpMax = 100 * attributes[CON].current; }
+	void Character::setMPMax() { mpMax = 100 * attributes[INT].current; }
+	void Character::setEnergyMax() { energyMax = 100 * attributes[DEX].current; }
+	int Character::getHPCurrent() { return hpCurrent; }
+	int Character::getMPCurrent() { return mpCurrent; }
+	int Character::getEnergyCurrent() { return energyCurrent;  }
+	int Character::getPixelShiftAmountForAnimationInSpriteSheet() { return pixelShiftAmountForAnimationInSpriteSheet; }
+	int Character::getNumIdleAnimationFrames() { return numIdleAnimationFrames; }
+	int Character::getNumRunAnimationFrames() { return numRunAnimatonFrames; }
+	int Character::getTimeBetweenIdleAnimations() { return timeBetweenIdleAnimations; }
+	int Character::getTimeBetweenRunAnimations() { return timeBetweenRunAnimations;  }
+	int Character::getImageWidth() { return imageWidth; }
+	int Character::getImageHeight() { return imageHeight; }
+	std::string Character::getImageIdleResource() { return imageIdleResource; }
+	std::string Character::getImageRunResource() { return imageRunResource; }
+	std::string Character::getName() { return name; }
+	SDL_Texture* Character::getTextureIdle() { return textureIdle; }
+	SDL_Texture* Character::getTextureRun() { return textureRun; }
+	SDL_Texture* Character::getTextureActive() { return textureActive; }
+	SDL_Rect Character::getRectangle() { return rectangle; }
+	std::vector<Attribute> Character::getAttributes() { return attributes; }
+	std::vector<Ability> Character::getAbilities() { return abilities; }
 
-	int Character::getEnergyMax() {
-		return energyMax;
-	}
-
-	void Character::setHPMax() {
-		hpMax = 100 * attributes[CON].current;
-	}
-
-	void Character::setMPMax() {
-		mpMax = 100 * attributes[INT].current;
-	}
-
-	void Character::setEnergyMax() {
-		energyMax = 100 * attributes[DEX].current;
-	}
-
-	int Character::getDex() {
-		return attributes[DEX].current;
-	}
-
-	int Character::getHPCur() {
-		return hpCurrent;
-	}

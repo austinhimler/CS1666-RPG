@@ -27,7 +27,7 @@
 
 	void QueueManager::changeRounds()
 	{
-		//std::copy(nextTurn, nextTurn[nextTurn.size()], currTurn);
+		vectorCopy(currTurn, nextTurn);
 		insertionSort(nextTurn, nextTurn.size());
 	}
 
@@ -48,6 +48,14 @@
 		}
 	}
 
+	void QueueManager::vectorCopy(vector<Character>& cT, vector<Character>& nT)
+	{
+		cT.erase(cT.begin(), cT.end());
+		for (int i = 0; i < nT.size(); i++)
+		{
+			cT.push_back(nT[i]);
+		}
+	}
 
 CombatManager::CombatManager()
 {
@@ -124,6 +132,7 @@ void combatManager(Player& p)
 	
 
 }
+
 
 
 
