@@ -11,6 +11,7 @@
 #include "Headers/Player.h"
 #include "Headers/Button.h"
 #include "Headers/Character.h"
+#include "Headers/Tile.h"
 
 // Function declarations
 bool init();
@@ -480,18 +481,7 @@ bool characterCreateScreen() {
 
 
 void playGame() {
-	//max level size
-	const int LEVEL_WIDTH = 4200;
-	const int LEVEL_HEIGHT = 4200;
-	//TILE DEFINITIONS
-	const int TILE_WIDTH = 42;
-	const int TILE_HEIGHT = 42;
-	const int TOTAL_TILES = 10000;
-	const int NUM_SPRITES = 3;
-	//The different tile sprites
-	const int TILE_SOLID = 0;
-	const int TILE_WALL = 1;
-	const int TILE_FLOOR = 2;
+	
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	SDL_Rect characterBox = {250, 250, 200, 148 };
 	SDL_Rect enemyBox = { 400, 100, 384, 308 };
