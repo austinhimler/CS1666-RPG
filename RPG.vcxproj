@@ -179,6 +179,7 @@
     <Image Include="CREDIT_IMG\SankethKolliCredit.jpg" />
     <Image Include="Images\Tiles\64^64 Grasstiles.png" />
     <Image Include="Images\Tiles\64^64 lake.png" />
+    <Image Include="Images\Tiles\singleGrass.png" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ability.h" />

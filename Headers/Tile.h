@@ -1,5 +1,5 @@
-#ifndef _____BUTTON_H_____
-#define _____BUTTON_H_____
+#ifndef _____TILE_H_____
+#define _____TILE_H_____
 #include <SDL.h>
 #include <SDL_image.h>
 #include <stdio.h>
@@ -18,7 +18,10 @@ const int NUM_SPRITES = 2;
 const int TILE_LAKE = 0;
 const int TILE_GRASS = 1;
 //const int TILE_FLOOR = 2;
+SDL_Texture* texture;
+
 class Tile {
+public:
 	//Initializes position and type
 	Tile(int x, int y, int tileType);
 
@@ -31,7 +34,7 @@ class Tile {
 	//Get the collision box
 	SDL_Rect getBox();
 
-	private:
+	protected:
 	//The attributes of the tile
 	SDL_Rect mBox;
 
