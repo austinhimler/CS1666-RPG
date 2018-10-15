@@ -393,6 +393,7 @@ bool characterCreateScreen() {
 								errorInputText = "Min Faith!";
 							}
 						}
+						break;
 					}
 					
 				}
@@ -637,6 +638,11 @@ void combatScene() {
 }
 
 int main(int argc, char *argv[]) {
+	/*
+	Resistance r = Resistance("Resistance");
+	std::cout << r.to_string() << std::endl;
+	//*/
+	
 	if (!init()) {
 		std::cout << "Failed to initialize!" << std::endl;
 		close();
@@ -648,5 +654,6 @@ int main(int argc, char *argv[]) {
 		playCredits();
 	}
 	close();
+	//*/
 	return 0;
 }
