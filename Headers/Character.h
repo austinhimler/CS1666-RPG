@@ -31,7 +31,7 @@ public:
 	int getEnergyCurrent();
 	int getEnergyMax();
 	int getPixelShiftAmountForAnimationInSpriteSheet();
-	int getCurrentFrame();
+	int currentFrame;
 	int getNumIdleAnimationFrames();
 	int getNumRunAnimationFrames();
 	int getTimeBetweenIdleAnimations();
@@ -73,7 +73,6 @@ protected:
 	SDL_Texture* textureRun;
 	SDL_Texture* textureActive;
 	int pixelShiftAmountForAnimationInSpriteSheet;
-	int currentFrame;
 	int numIdleAnimationFrames;
 	int numRunAnimatonFrames;
 	int timeBetweenIdleAnimations; //ms
@@ -87,6 +86,10 @@ protected:
 	void setHPMax();
 	void setMPMax();
 	void setEnergyMax();
+	void setRectangle(SDL_Rect);
+	void setTextureActive(SDL_Texture*);
+	void setAttributes(std::vector<Attribute>);
+	void setAbilities(std::vector<Ability>);
 	/*
 	Strength strength;
 	Intelligence intelligence;
