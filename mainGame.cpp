@@ -392,6 +392,7 @@ bool characterCreateScreen() {
 								errorInputText = "Min Faith!";
 							}
 						}
+						break;
 					}
 					
 				}
