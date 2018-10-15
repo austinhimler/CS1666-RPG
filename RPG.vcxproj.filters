@@ -71,6 +71,9 @@
     <Image Include="Images\Tiles\64^64 lake.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Images\Tiles\singleGrass.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mainGame.cpp">

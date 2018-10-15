@@ -14,6 +14,16 @@ Tile::Tile(int x, int y, int tileType)
 
 	//Get the tile type
 	mType = tileType;
+	Helper temp = Helper();
+	switch (tileType)
+	{
+	case 0:
+		this->texture = temp.loadImage("Images/Tiles/64^64 lake.png", gRenderer);
+		break;
+	case 1:
+		this->texture = temp.loadImage("Images/Tiles/singleGrass.png", gRenderer);
+		break;
+	}
 }
 void Tile::render(SDL_Rect& camera)
 {
@@ -21,7 +31,7 @@ void Tile::render(SDL_Rect& camera)
 	if (checkCollision(camera, mBox))
 	{
 		//Show the tile
-		gTileTexture.render(mBox.x - camera.x, mBox.y - camera.y, &gTileClips[mType]);
+		gTileTexture.render(mBox.x - camera.x, mBox.y - camera.y, texture);
 	}
 }
 int Tile::getType()
