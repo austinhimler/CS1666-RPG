@@ -1,10 +1,8 @@
 #include "../Headers/Character.h"
 
-	Character::Character() {
-		Character("Character 1");
+	Character::Character() : Character("Character 1") {
 	}
-	Character::Character(std::string n) {
-		Character(n, 1,1,1,1,1);
+	Character::Character(std::string n) : Character(n, 1, 1, 1, 1, 1) {
 	}
 	Character::Character(std::string n, int s, int i, int d, int c, int f) {
 		attributes = std::vector<Attribute>(5);
@@ -13,8 +11,7 @@
 		attributes[DEX] = Attribute("Dexerity", d);
 		attributes[CON] = Attribute("Constitution", c);
 		attributes[FAI] = Attribute("Faith", f);
-		Character(n, attributes);
-
+		new Character(n, attributes);
 	}
 	Character::Character(std::string n, std::vector<Attribute> attr) {
 		attributes = attr;
@@ -26,6 +23,7 @@
 		energyCurrent = energyMax;
 		name = n;
 	}
+
 	int Character::getHPMax() {
 		return hpMax;
 	}
