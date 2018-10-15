@@ -20,7 +20,7 @@ public:
 	~QueueManager();
 	void createRounds(vector<Character> c);
 	void changeRounds();
-	void vectorCopy(vector<Character>& currTurn, vector<Character>& NextTurn);
+	void vectorCopy(vector<Character>& cT, vector<Character>& nT);
 private:
 	void insertionSort(std::vector<Character>& turn, int n);
 };
