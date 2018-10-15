@@ -1,4 +1,4 @@
-#include "Headers/Combat.h"
+#include "Headers/CombatManager.h"
 //#include "Headers/QueueManager.h"
 #include "Headers/Character.h"
 #include "Headers/Player.h"
@@ -85,15 +85,15 @@ class QueueManager
 {
 	QueueManager::QueueManager()
 	{
-		Character[] currTurn;
-		Character[] nextTurn;
+		
 	}
 
 	QueueManager::~QueueManager()
 	{
 
 	}
-	
+	Character[] currTurn;
+	Character[] nextTurn;
 
 	void createRounds(Character[] c)
 	{
@@ -124,6 +124,15 @@ private:
 				j = j - 1;
 			}
 			turn[j + 1] = key;
+		}
+	}
+
+	void vectorCopy(vector<Character> currTurn, vector<Character> NextTurn)
+	{
+		currTurn.erase(currTurn.begin(), currTurn.size() - 1);
+		for (int i = 0; i < nextTurn.size(); i++)
+		{
+			currTurn.push_back(nextTurn[i]);
 		}
 	}
 };
