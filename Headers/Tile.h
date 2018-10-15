@@ -18,6 +18,8 @@ const int NUM_SPRITES = 2;
 const int TILE_LAKE = 0;
 const int TILE_GRASS = 1;
 //const int TILE_FLOOR = 2;
+SDL_Texture* texture;
+
 class Tile {
 public:
 	//Initializes position and type
