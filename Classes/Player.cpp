@@ -43,8 +43,7 @@
 		xPosition = 250; //will need to edit for starting level
 		yPosition = 250; //will need to edit for starting level
 		rectangle = {xPosition, yPosition, imageWidth, imageHeight};
-		speed = 300;
-		speedMax = 500;
+		speedMax = 250;
 		acceleration = 200;
 	}
 
