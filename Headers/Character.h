@@ -5,6 +5,8 @@
 #include <vector>
 #include "Attribute.h"
 #include "Globals.h"
+#include "Resistance.h"
+#include "Ability.h"
 
 /*
 #include "Attributes/Strength.h"
