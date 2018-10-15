@@ -176,6 +176,8 @@
     <Image Include="CREDIT_IMG\my_greatest_creation.png" />
     <Image Include="CREDIT_IMG\RyanKillenCreditImage.jpg" />
     <Image Include="CREDIT_IMG\SankethKolliCredit.jpg" />
+    <Image Include="Images\Tiles\64^64 Grasstiles.png" />
+    <Image Include="Images\Tiles\64^64 lake.png" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ability.h" />
