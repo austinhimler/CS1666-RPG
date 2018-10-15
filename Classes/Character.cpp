@@ -55,3 +55,11 @@
 	void Character::setEnergyMax() {
 		energyMax = 100 * attributes[DEX].current;
 	}
+
+	int Character::getDex() {
+		return attributes[DEX].current;
+	}
+
+	int Character::getHPCur() {
+		return hpCurrent;
+	}

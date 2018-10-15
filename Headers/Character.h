@@ -27,6 +27,8 @@ public:
 	int getHPMax();
 	int getMPMax();
 	int getEnergyMax();
+	int getDex();
+	int getHPCur();
 	void takeDamage(Ability a);
 	int getXPosition();
 	int getYPosition();
