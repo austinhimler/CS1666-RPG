@@ -1,4 +1,6 @@
 #include "../Headers/Player.h"
+#include "../Headers/Globals.h"
+#include "../Headers/Helper.h"
 #include <iostream>
 	/*
 	int strength = 1;
@@ -22,7 +24,31 @@
 		attributes[CON] = Attribute("Constitution", c);
 		attributes[FAI] = Attribute("Faith", f);
 		name = n;
+
+
+	    pixelShiftAmountForAnimationInSpriteSheet = 200;
+		numIdleAnimationFrames = 4;
+		numRunAnimatonFrames = 6;
+		currentFrame = 0;
+		timeBetweenIdleAnimations = 120;
+		timeBetweenRunAnimations = 100;
+		imageIdleResource = "Images/Player/Character_Idle.png";
+		imageRunResource = "Images/Player/Character_Run.png";
+		Helper helper = Helper();
+		textureIdle = helper.loadImage(imageIdleResource.c_str(), gRenderer);
+		textureRun = helper.loadImage(imageRunResource.c_str(), gRenderer);
+		textureActive = NULL;
+		imageWidth = 200;
+		imageHeight = 148;
+		xPosition = 250; //will need to edit for starting level
+		yPosition = 250; //will need to edit for starting level
+		rectangle = {xPosition, yPosition, imageWidth, imageHeight};
+		speed = 300;
+		speedMax = 500;
+		acceleration = 200;
 	}
+
+
 	Player::operator std::string() {
 		std::string s = "Name: " +	name + "\n";
 		for (auto i : attributes) {

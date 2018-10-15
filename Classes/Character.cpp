@@ -38,6 +38,14 @@
 		return energyMax;
 	}
 
+	int Character::getXPosition() {
+		return xPosition;
+	}
+
+	int Character::getYPosition() {
+		return yPosition;
+	}
+
 	void Character::setHPMax() {
 		hpMax = 100 * attributes[CON].current;
 	}
