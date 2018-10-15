@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include "Attribute.h"
+
 //#include "../Headers/Attribute.h"
 //#include "../Headers/Resistance.h"
 
@@ -21,6 +23,10 @@ private:
 	bool isDamage;
 	bool isHealing;
 	bool isDefense;
+	
+	// attributes affecting this ability, assuming maximum 3 attributes can affect it
+	// stores the enum of the attributes
+	int relatedAttr[3];
 
 	//std::vector<Resistance> resistancesEffected;
 	//Attribute abilityAttributeType;

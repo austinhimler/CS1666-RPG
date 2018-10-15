@@ -1,10 +1,8 @@
 #include "../Headers/Attribute.h"
-	Attribute::Attribute() {
-		Attribute("Attribute 1");
+	Attribute::Attribute() : Attribute("Attribute 1") {
 	}
 
-	Attribute::Attribute(std::string n) {
-		Attribute(n, 1);
+	Attribute::Attribute(std::string n) : Attribute(n, 1) {
 	}
 	Attribute::Attribute(std::string name, int stat) {
 		base = stat;
