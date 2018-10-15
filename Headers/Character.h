@@ -38,8 +38,8 @@ public:
 	int getTimeBetweenRunAnimations();
 	int getImageWidth();
 	int getImageHeight();
-	double speedMax; // px/s
-	double acceleration; // px/s^2
+	double getSpeedMax();
+	double getAcceleration();
 	double xVelocity;
 	double yVelocity;
 	double xDeltaVelocity;
@@ -55,6 +55,8 @@ public:
 	SDL_Rect getRectangle();
 	std::vector<Attribute> getAttributes();
 	std::vector<Ability> getAbilities();
+	int getDex();
+	int getHPCur();
 	void takeDamage(Ability a);
 
 protected:
@@ -79,6 +81,8 @@ protected:
 	SDL_Rect rectangle;
 	int imageWidth;
 	int imageHeight;
+	double speedMax; // px/s
+	double acceleration; // px/s^2
 
 	void setHPMax();
 	void setMPMax();
