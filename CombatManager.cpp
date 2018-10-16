@@ -1,13 +1,6 @@
 #include "Headers/CombatManager.h"
-#include "Headers/Player.h"
-#include "Headers/Enemy.h"
-#include "Headers/Button.h"
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
-#include <SDL_ttf.h>
-#include <vector>
-#include <iostream>
+
+
 	QueueManager::QueueManager(vector<Character *> c)
 	{
 		for (auto C : c) {
@@ -129,23 +122,26 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 	else
 	{
 		
-		while (SDL_PollEvent(&e))
-		{
-			int mouseX, mouseY;
-			SDL_GetMouseState(&mouseX, &mouseY);
-			for (auto i : buttons)
+		bool takingAction = true;
+		while(takingAction) {
+			while (SDL_PollEvent(&e))
 			{
-				if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
-					((mouseY >= i->y) && (mouseY <= (i->y + i->h))) )
+				int mouseX, mouseY;
+				SDL_GetMouseState(&mouseX, &mouseY);
+				for (auto i : buttons)
 				{
-					if (i->type == "character")
+					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
+						((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
 					{
-						//Display character info in info sheet
-					}
+						if (i->type == "character")
+						{
+							//Display character info in info sheet
+						}
 
-					if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN && (i->type == "button"))
-					{
-						//Display buttons in info sheet
+						if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN && (i->type == "button"))
+						{
+							//Display buttons in info sheet
+						}
 					}
 				}
 			}
@@ -188,7 +184,7 @@ void CombatManager::combatManager(std::vector<Character*>& p)
 	SDL_Event e;
 	SDL_Texture* background = loadImage("Images/UI/CombatScene/combatScene.png");
 	SDL_RenderCopy(gRenderer, background, NULL, NULL);
-	while (gameOn)
+	/*while (gameOn)
 	{
 		for (int i = 0; i < participants.size(); i++)
 		{
@@ -196,7 +192,7 @@ void CombatManager::combatManager(std::vector<Character*>& p)
 			takeAction(participants[i], buttons, e);
 		}
 		qm.changeRounds();
-	}
+	}*/
 	
 	 
 	
