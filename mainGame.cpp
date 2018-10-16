@@ -30,10 +30,10 @@ const int SCREEN_HEIGHT = 720;
 // Music var
 Mix_Music *gMusic = NULL;
 Mix_Chunk *gBSound = NULL;
-TTF_Font* font; 
+TTF_Font* font;
 
 //Player ONE
-Player player1 = Player("nlf4",1,1,1,1,1);
+Player player1 = Player("nlf4", 1, 1, 1, 1, 1);
 
 bool init() {
 	// Flag what subsystems to initialize
@@ -123,7 +123,7 @@ SDL_Texture* loadImage(std::string fname) {
 		std::cout << "Unable to load image " << fname << "! SDL Error: " << SDL_GetError() << std::endl;
 		return nullptr;
 	}
-	
+
 	SDL_SetColorKey(startSurf, SDL_TRUE, SDL_MapRGB(startSurf->format, 0, 0xFF, 0xFF));//if the color is 0, 0xFF, 0xFF, it should be cleaned
 
 	newText = SDL_CreateTextureFromSurface(gRenderer, startSurf);
@@ -181,7 +181,7 @@ void playCredits() {
 
 //This is for the actual credits
 	SDL_Event e;
-	int j=0;
+	int j = 0;
 	for (auto i : gTex)
 	{
 		while (j < 101)
@@ -195,7 +195,7 @@ void playCredits() {
 			{
 				SDL_RenderCopy(gRenderer, i, NULL, NULL);
 				SDL_RenderPresent(gRenderer);
-				
+
 			}
 			SDL_Delay(30);
 			j++;
@@ -251,7 +251,7 @@ bool characterCreateScreen() {
 	int frame = 0;
 
 	SDL_Rect characterBox = { 436, 205, 200, 148 };
-	SDL_Rect pointsAllocatedRectangle = { 227, 32, 0, 0};
+	SDL_Rect pointsAllocatedRectangle = { 227, 32, 0, 0 };
 	SDL_Rect strengthTextRectangle = { 250, 115, 0, 0 };
 	SDL_Rect intelligenceTextRectangle = { 250, 205, 0, 0 };
 	SDL_Rect dexterityTextRectangle = { 250, 302, 0, 0 };
@@ -259,47 +259,47 @@ bool characterCreateScreen() {
 	SDL_Rect faithTextRectangle = { 250, 490, 0, 0 };
 	SDL_Rect nameTextRectangle = { 143, 640, 0,0 };
 	SDL_Rect errorTextRectangle = { 465, 580, 0, 0 };
-	SDL_Rect errorTextRectangleLong = {445, 580, 0, 0 };
+	SDL_Rect errorTextRectangleLong = { 445, 580, 0, 0 };
 	SDL_Color textColor = { 0, 0, 0, 0 };
 	SDL_Color errorColor = { 255, 0, 0, 0 };
 	std::string nameInputText;
 	std::string errorInputText;
 
 	std::vector<Button*> buttons;
-	SDL_Texture* upPress= loadImage("Images/UI/CreateScreen/pointUpArrow_Pressed.png");
+	SDL_Texture* upPress = loadImage("Images/UI/CreateScreen/pointUpArrow_Pressed.png");
 	SDL_Texture* downPress = loadImage("Images/UI/CreateScreen/pointDownArrow_Pressed.png");
 	SDL_Texture* character = loadImage("Images/Player/Character_Idle.png");
-	
-	
+
+
 	//need attr objects
-	buttons.push_back(new Button("up", 340, 80, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "strength",gRenderer));
-	buttons.push_back(new Button("down", 340, 130, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "strength",gRenderer));
-	buttons.push_back(new Button("up", 340, 175, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence",gRenderer));
+	buttons.push_back(new Button("up", 340, 80, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "strength", gRenderer));
+	buttons.push_back(new Button("down", 340, 130, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "strength", gRenderer));
+	buttons.push_back(new Button("up", 340, 175, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence", gRenderer));
 	buttons.push_back(new Button("down", 340, 225, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "intelligence", gRenderer));
 	buttons.push_back(new Button("up", 340, 270, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "dexterity", gRenderer));
 	buttons.push_back(new Button("down", 340, 320, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "dexterity", gRenderer));
 	buttons.push_back(new Button("up", 340, 365, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "constitution", gRenderer));
 	buttons.push_back(new Button("down", 340, 415, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "constitution", gRenderer));
-	buttons.push_back(new Button("up", 340, 460, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "faith",gRenderer));
+	buttons.push_back(new Button("up", 340, 460, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "faith", gRenderer));
 	buttons.push_back(new Button("down", 340, 510, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "faith", gRenderer));
 	buttons.push_back(new Button("start", 450, 625, 230, 56, "Images/UI/CreateScreen/StartButton.png", "", gRenderer));
 
 	SDL_Texture* background = loadImage("Images/UI/CreateScreen/characterCreateV2NoButtons.png"); //Moved to fix memory leak
-	
+
 	SDL_Event e;
 	while (onCharacterCreate) {
 		while (SDL_PollEvent(&e)) {
-			
+
 			if (e.type == SDL_QUIT) {
 				Mix_HaltMusic();
 				return false; //end game
 			}
-			
+
 			if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_KEYDOWN) {
 				errorInputText = "";
 			}
 			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN) {
-				
+
 				std::cout << "button clicked";
 				std::cout << pointsToAllocate;
 				int mouseX, mouseY;
@@ -308,7 +308,7 @@ bool characterCreateScreen() {
 				for (auto i : buttons) {
 					//if mouse is clicked inside a button
 					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
-						((mouseY >= i->y) && (mouseY <= (i->y + i->h)))) 
+						((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
 					{
 						i->pressed = 5;
 						if (i->type == "start") {
@@ -413,13 +413,13 @@ bool characterCreateScreen() {
 						}
 						break;
 					}
-					
+
 				}
 			}
-			
+
 			else if (e.type == SDL_KEYDOWN) {
 				//remove char if backspace
-				if (e.key.keysym.sym == SDLK_BACKSPACE && nameInputText.length() > 0){
+				if (e.key.keysym.sym == SDLK_BACKSPACE && nameInputText.length() > 0) {
 					Mix_PlayChannel(-1, gBSound, 0);
 					nameInputText.pop_back();
 				}
@@ -438,26 +438,26 @@ bool characterCreateScreen() {
 		SDL_RenderCopy(gRenderer, background, NULL, NULL);
 		//Renders buttons and shows pressed image if pressed
 		for (auto i : buttons) {
-			if(!i->pressed>0||i->attribute=="")
+			if (!i->pressed > 0 || i->attribute == "")
 				SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
 			else
 			{
-				if(i->type=="up")
+				if (i->type == "up")
 					SDL_RenderCopy(gRenderer, upPress, NULL, &i->rect);
 				else
 					SDL_RenderCopy(gRenderer, downPress, NULL, &i->rect);
 				i->pressed--;
 			}
 		}
-		
-		
+
+
 		charImageX = frame * 200;
 
-		
+
 		SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };
 		SDL_RenderCopy(gRenderer, character, &charactersRectangle, &characterBox);
 
-		
+
 
 		//to add more frames per image to make it more fluid
 		//definitely not the best way to do this, need to sync to a consistent gametime
@@ -469,7 +469,7 @@ bool characterCreateScreen() {
 		if (frame == 4) {
 			frame = 0;
 		}
-		
+
 		std::string strengthString = std::to_string(strength);
 		std::string intelligenceString = std::to_string(intelligence);
 		std::string dexterityString = std::to_string(dexterity);
@@ -499,7 +499,7 @@ bool characterCreateScreen() {
 
 
 void playGame() {
-	
+
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 
 	//SDL_Rect characterBox = {250, 250, 200, 148 };
@@ -511,7 +511,7 @@ void playGame() {
 	SDL_Texture* enemyTextureIdle = loadImage("Images/Enemies/Enemy1/Enemy_Idle.png");
 	//characterTextureActive = characterTextureIdle;
 	player1.setTextureActive(player1.getTextureIdle());
-	
+
 	//int charMoveSpeed = 2;
 	//int characterMoveAcceleration = 2;
 	//int characterMoveMaxSpeed = 4;
@@ -579,7 +579,8 @@ void playGame() {
 					player1.xVelocity = 0;
 				else
 					player1.xVelocity += (player1.getAcceleration() * timePassed);
-		} else {
+		}
+		else {
 			player1.xVelocity += player1.xDeltaVelocity;
 		}
 
@@ -594,7 +595,8 @@ void playGame() {
 					player1.yVelocity = 0;
 				else
 					player1.yVelocity += (player1.getAcceleration() * timePassed);
-		} else {
+		}
+		else {
 			player1.yVelocity += player1.yDeltaVelocity;
 		}
 
@@ -663,7 +665,7 @@ void playGame() {
 			}
 		}
 		player1.drawRectangle.x = player1.currentFrame * player1.getPixelShiftAmountForAnimationInSpriteSheet();
-		
+
 		//SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH};
 		//player1.drawRectangle = { player1.currentFrame * player1.getPixelShiftAmountForAnimationInSpriteSheet(),
 		//	0, player1.getImageWidth(), player1.getImageHeight()};
@@ -676,7 +678,7 @@ void playGame() {
 		SDL_Rect enemyRectangle = { enemyImageX, enemyImageY, enemyImageW, enemyImageH };
 		//SDL_RenderCopyEx(gRenderer, characterTextureActive, &charactersRectangle, &characterBox,0.0,nullptr, flip);
 		SDL_RenderCopyEx(gRenderer, player1.getTextureActive(), &player1.drawRectangle, &player1.rectangle, 0.0, nullptr, flip);
-		
+
 		SDL_RenderCopy(gRenderer, enemyTextureIdle, &enemyRectangle, &enemyBox);
 
 		SDL_RenderPresent(gRenderer);
@@ -694,14 +696,19 @@ void playGame() {
 		//}
 		//SDL_Delay(16);
 	}
-	
-	 //while(gameOn) gameloop
-		//render top viewport: render player, enemy, overworld
-		//render bottom viewport: UI
-		//movement
-		//collision detection
-		//when player collides into enemy
-		// combatScene(vector of Type Characters);
+
+	while (!inOverworld) {
+		combatScene();
+		inOverworld = true;
+	}
+
+	//while(gameOn) gameloop
+	   //render top viewport: render player, enemy, overworld
+	   //render bottom viewport: UI
+	   //movement
+	   //collision detection
+	   //when player collides into enemy
+	   // combatScene(vector of Type Characters);
 }
 
 void combatScene() {
@@ -722,7 +729,7 @@ int main(int argc, char *argv[]) {
 	Resistance r = Resistance("Resistance");
 	std::cout << r.to_string() << std::endl;
 	//*/
-	
+
 	if (!init()) {
 		std::cout << "Failed to initialize!" << std::endl;
 		close();
