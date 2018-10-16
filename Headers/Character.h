@@ -4,9 +4,9 @@
 #include <string>
 #include <vector>
 #include "Attribute.h"
-#include "Globals.h"
 #include "Resistance.h"
 #include "Ability.h"
+#include "Globals.h"
 
 /*
 #include "Attributes/Strength.h"
@@ -42,6 +42,9 @@ public:
 	int getImageHeight();
 	double getSpeedMax();
 	double getAcceleration();
+	int getDex();
+	int getHPCur();
+
 	double xVelocity;
 	double yVelocity;
 	double xDeltaVelocity;
@@ -61,9 +64,12 @@ public:
 	SDL_Rect getRectangle();
 	std::vector<Attribute> getAttributes();
 	std::vector<Ability> getAbilities();
-	int getDex();
-	int getHPCur();
-	void takeDamage(Ability a);
+	
+	void beingTarget(Ability* a);
+	//void takeDamage(Ability a);
+	void learnAbility(int a);
+
+	string toString();
 	void setTextureActive(SDL_Texture*);
 
 protected:
@@ -71,6 +77,7 @@ protected:
 	int hpCurrent;
 	int energyMax;
 	int energyCurrent;
+	int energyRegen;
 	int mpMax;
 	int mpCurrent;
 	std::string imageIdleResource;
@@ -95,16 +102,9 @@ protected:
 	void setRectangle(SDL_Rect);
 	void setAttributes(std::vector<Attribute>);
 	void setAbilities(std::vector<Ability>);
-	/*
-	Strength strength;
-	Intelligence intelligence;
-	Dexterity dexterity;
-	Constitution constitution;
-	Faith faith;
-	*/
+
 	std::vector<Attribute> attributes;
 	std::vector<Ability> abilities;
-
 };
 
 

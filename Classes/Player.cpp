@@ -16,7 +16,10 @@
 	Player::Player() : Character("Player 1") {}
 	Player::Player(std::string n) : Character(n) {}
 	Player::Player(std::string n, int s, int i, int d, int c, int f) : Character(n, s,i,d,c,f){}
-	Player::Player(std::string n, std::vector<Attribute> attr) : Character(n, attr) {}
+	Player::Player(std::string n, std::vector<Attribute> attr) : Character(n, attr) {
+		learnAbility(FIREBALL);
+		learnAbility(SUMMON);
+	}
 	void Player::setAll(std::string n, int s, int i, int d, int c, int f) {
 		attributes[STR] = Attribute("Strength", s);
 		attributes[INT] = Attribute("Intelligence", i);

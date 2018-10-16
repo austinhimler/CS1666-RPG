@@ -413,7 +413,6 @@ bool characterCreateScreen() {
 						}
 						break;
 					}
-
 				}
 			}
 

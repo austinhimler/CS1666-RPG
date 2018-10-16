@@ -1,5 +1,5 @@
 #include "../Headers/Character.h"
-
+#include <iostream>
 
 	Character::Character(std::string n, std::vector<Attribute> attr) {
 		attributes = attr;
@@ -9,7 +9,11 @@
 		hpCurrent = hpMax;
 		mpCurrent = mpMax;
 		energyCurrent = energyMax;
+		energyRegen = (energyMax < 10)?1:0.1 * energyMax;
 		name = n;
+		learnAbility(ATTACK);
+		learnAbility(DEFEND);
+		learnAbility(ESCAPE);
 	}
 	Character::Character(std::string n, int s, int i, int d, int c, int f) {
 		attributes = std::vector<Attribute>(5);
@@ -25,6 +29,55 @@
 	}
 	Character::Character() {
 		Character("Character 1");
+	}
+
+	void Character::beingTarget(Ability* a) {
+		int i;
+		switch (a->getType()) {
+		case AbilityResource::tDAMAGE:
+			hpCurrent -= a->getVal();
+			if (hpCurrent < 0) hpCurrent = 0;
+			break;
+		case AbilityResource::tHEALING:
+			hpCurrent += a->getVal();
+			if (hpCurrent > hpMax) hpCurrent = hpMax;
+			break;
+		case AbilityResource::tDEFENSE:
+			energyRegen++;
+			break;
+		case AbilityResource::tESCAPE:
+			i = rand() % 2;
+			if (i == 1)//escape succesfully;
+			//else fails to escape
+			//send signal for escape?
+			//animation for escape?
+			break;
+		default:
+			std::cout << "unimplemented ability type!" << std::endl;
+			break;
+		}
+	}
+
+	/*
+	void Character::takeDamage(Ability a) {
+		
+	}*/
+	
+	void Character::learnAbility(int a) {
+		Ability* abil = new Ability(a, {1,2,4}/*currently only str, int, con affect abilities*/, attributes);
+		for (auto& i : abilities) {
+			if (i.cmp(a)) {
+				i = *abil;//used for updating learned abilities
+				return;
+			}
+		}
+		abilities.push_back(*abil);
+	}
+
+	//*/
+	std::string Character::toString() {
+		std::string s = name + "\nHP: "+ std::to_string(hpCurrent) + "/"+ std::to_string(hpMax);
+		return s;
 	}
 
 	int Character::getDex() { return attributes[DEX].current;}
