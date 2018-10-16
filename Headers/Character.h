@@ -24,6 +24,7 @@ public:
 	Character(std::string n);
 	Character(std::string n, int s, int i, int d, int c, int f);
 	Character(std::string n, std::vector<Attribute> attr);
+	bool isEnemy;
 	int getHPMax();
 	int getHPCurrent();
 	int getMPCurrent();
