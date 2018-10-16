@@ -497,6 +497,18 @@ bool characterCreateScreen() {
 	}
 }
 
+void combatScene() {
+
+
+
+
+
+
+
+
+
+
+}
 
 void playGame() {
 
@@ -685,19 +697,6 @@ void playGame() {
 	   //collision detection
 	   //when player collides into enemy
 	   // combatScene(vector of Type Characters);
-}
-
-void combatScene() {
-
-
-
-
-
-
-
-
-
-
 }
 
 int main(int argc, char *argv[]) {
