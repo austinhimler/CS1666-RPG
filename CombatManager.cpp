@@ -69,19 +69,22 @@ CombatManager::~CombatManager()
 
 
 void updateStatus(Character& c) {
-	/**
-	*	Turn - pre-turn:
-						pre-turn effect calculation (if we wanna add status effects that carry over from one battle to the next we can but for now let's just make all effects wiped at the end of combat)
-						check survival
-						start in-turn
-						*/
+	//First check if character is dead
 	if (c.getHPCur() <= 0) {
-		// game over
-		exit(0);
+		gameOn = false;
 	}
-	// Game on!
+	// Next check the ailments of given character
 	else {
-
+		if (ailments.size() != 0) {
+			for (int i = 0; i < ailments.size(); i++) {
+				if (ailments[i] == 0) {
+					silenced(c);
+				}
+				else if (ailments[i] == 1) {
+					poisoned(c);
+				}
+			}
+		}
 	}
 }
 void takeAction(Character& c) {
@@ -93,9 +96,19 @@ void takeAction(Character& c) {
 		If a skill is clicked wait for user to click on character to use the skill on
 		If energy = 0 or player clicks End Turn, return
 	*/
+	
+
 
 
 }
+void silenced(Character& c) {
+	// silence effects
+}
+
+void poisoned(Character& c) {
+	//poison effects
+}
+
 bool gameOn = true;
 void combatManager(Player& p) 
 {
@@ -113,7 +126,8 @@ void combatManager(Player& p)
 	// Set up a Character array and populate it (not sorted by dex) 
 	//Character participants[2];
 	vector<Character> participants;
-	participants[0] = Character(p);
+	vector<int> ailments;
+	participants[0] = Character(p); 
 	participants[1] = Character(e1);
 	// Create QueueManager obj which contains sorting of participant array. 
 	QueueManager qm = QueueManager(participants);
@@ -127,11 +141,17 @@ void combatManager(Player& p)
 		}
 		qm.changeRounds();
 	}
+
 	
 	 
 	
 
 }
+
+
+
+
+
 
 
 

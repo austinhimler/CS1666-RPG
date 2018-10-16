@@ -18,25 +18,26 @@ const int NUM_SPRITES = 2;
 const int TILE_LAKE = 0;
 const int TILE_GRASS = 1;
 //const int TILE_FLOOR = 2;
-SDL_Texture* texture;
+
 
 class Tile {
 public:
+	SDL_Texture* texture;
 	//Initializes position and type
 	Tile(int x, int y, int tileType);
 
 	//Shows the tile
-	void render(SDL_Rect& camera);
+	void render(SDL_Rect* camera);
 
 	//Get the tile type
 	int getType();
 
 	//Get the collision box
-	SDL_Rect getBox();
+	SDL_Rect* getBox();
 
-	protected:
+	
 	//The attributes of the tile
-	SDL_Rect mBox;
+	SDL_Rect* mBox;
 
 	//The tile type
 	int mType;
