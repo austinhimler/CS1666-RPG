@@ -6,12 +6,12 @@
 Tile::Tile(int x, int y, int tileType)
 {
 	//Get the offsets
-	mBox->x = x;
-	mBox->y = y;
+	mBox.x = x;
+	mBox.y = y;
 
 	//Set the collision box
-	mBox->w = TILE_WIDTH;
-	mBox->h = TILE_HEIGHT;
+	mBox.w = TILE_WIDTH;
+	mBox.h = TILE_HEIGHT;
 
 	//Get the tile type
 	mType = tileType;
@@ -26,22 +26,27 @@ Tile::Tile(int x, int y, int tileType)
 		break;
 	}
 }
-void Tile::render(SDL_Rect* camera)
+//To render everytile have a loop iterate through the tile array calling .render and pass the camera object
+//The tile will be rendered to the screen if it collides with the camera object
+//only check for collisions with player for tiles if this function returns true
+bool Tile::render(SDL_Rect* camera)
 {
 	
 	//If the tile is on screen
-	if (SDL_HasIntersection(camera, mBox))
+	if (SDL_HasIntersection(camera, &mBox))
 	{
-		//Show the tile
-		SDL_RenderCopy(gRenderer,texture,NULL,mBox);
+		SDL_Rect Temp = {mBox.x-camera->x,mBox.y-camera->y, mBox.w,mBox.h};
+		SDL_RenderCopy(gRenderer,texture,NULL,&Temp);
+		return true;
 	}
+	return false;
 }
 int Tile::getType()
 {
 	return mType;
 }
 
-SDL_Rect* Tile::getBox()
+SDL_Rect Tile::getBox()
 {
 	return mBox;
 }

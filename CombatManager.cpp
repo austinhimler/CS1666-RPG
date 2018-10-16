@@ -121,7 +121,6 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 	}
 	else
 	{
-		
 		bool takingAction = true;
 		while(takingAction) {
 			if (c->getEnergyCurrent() == 0) {
@@ -144,30 +143,33 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 
 						if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN && (i->type == "button"))
 						{
-							//Display buttons in info sheet
-							
-							/*
-							if(Escape button is clicked) {
+							bool abil_button = true;
+							/*while (abil_button) {
+								//Display buttons in info sheet
+
+								
+								if(Escape button is clicked) {
 								Ability* a = c->abilities[c->getHelp(ESCAPE)];
-								if(c->beingTarget(a)) {
-									// escape successfully
-									// play animation
-									// end combat
+									if(c->beingTarget(a) == -1) {
+										// escape successfully
+										// play animation
+										// end combat
+									}
+									else {
+										//escape failed
+										//play animation
+									}
 								}
-								else {
-									//escape failed
-									//play animation
+								if(Ability buttons are clicked) {
+									Ability* a = c->abilities[c->getHelp(the abilities whose button is clicked)];
+									// create/activate character buttons
+									while(Character buttons are clicked) {
+										Character* target = the character whose button is clicked
+										int result = target->beingTarget(a); // result gives the how many hp increased or decresed
+									}
 								}
-							}
-							if(Ability buttons are clicked) {
-								Ability* a = c->abilities[c->getHelp(the abilities whose button is clicked)];
-								// create/activate character buttons
-								if(Character buttons are clicked) {
-									Character* target = the character whose button is clicked
-									target->beingTarget(a);
-								}
-							}
-							*/
+							
+							}*/
 						}
 					}
 				}
@@ -188,8 +190,7 @@ void poisoned(Character& c) {
 	//poison effects
 }
 
-bool gameOn = true;
-void CombatManager::combatManager(std::vector<Character*>& p) 
+bool CombatManager::combatManager(std::vector<Character*>& p) 
 {
 	/**
 	*	Combat Manager - Start Battle:
@@ -203,14 +204,31 @@ void CombatManager::combatManager(std::vector<Character*>& p)
 	// Create Enemy within combat class. Could be subject to change 
 	// Set up a Character array and populate it (not sorted by dex) 
 	//Character participants[2];
+	gameOn = true;
 	participants = p;
 	vector<int> ailments;
 	// Create QueueManager obj which contains sorting of participant array. 
 	QueueManager qm = QueueManager(participants);
+	/*
 	std::vector<Button *> buttons;
 	SDL_Event e;
 	SDL_Texture* background = loadImage("Images/UI/CombatScene/combatScene.png");
+	SDL_Rect scene_box = { 0,0,720,540 };
+	SDL_Rect ui_box = { 0,540,720,180 };
+
+	vector<Button*> buttons;
+		buttons.push_back(new Button("attack", ui_box.x+10, ui_box.y + 10, 20, 20, "Images/UI/CombatScene/Button.png", "Attack", gRenderer));
+		buttons.push_back(new Button("defend", ui_box.x + 40, ui_box.y + 40, 20, 20, "Images/UI/CombatScene/Button.png", "Defend", gRenderer));
+	
 	SDL_RenderCopy(gRenderer, background, NULL, NULL);
+	for (auto i : button_box) {
+		SDL_RenderCopy(gRenderer, button, NULL, &i);
+	}*/
+	//Test to check that the background appears
+	while (gameOn)
+	{
+		printf("Keep Fighting");
+	}
 	/*while (gameOn)
 	{
 		for (int i = 0; i < participants.size(); i++)
@@ -220,6 +238,7 @@ void CombatManager::combatManager(std::vector<Character*>& p)
 		}
 		qm.changeRounds();
 	}*/
+	return false;
 	
 	 
 	

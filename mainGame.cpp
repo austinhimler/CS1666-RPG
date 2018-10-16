@@ -498,6 +498,18 @@ bool characterCreateScreen() {
 	}
 }
 
+void combatScene() {
+
+
+
+
+
+
+
+
+
+
+}
 
 void combatScene(std::vector<Character> combatants) {
 	for (auto i : combatants) {
@@ -652,20 +664,6 @@ void playGame() {
 			SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
 			SDL_RenderClear(gRenderer);
 
-
-			if (player1.getTextureActive() == player1.getTextureIdle()) {
-				if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenIdleAnimations()) {
-					player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
-					player1.timeSinceLastAnimation = SDL_GetTicks();
-				}
-			}
-			else {
-				if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenRunAnimations()) {
-					player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
-					player1.timeSinceLastAnimation = SDL_GetTicks();
-				}
-			}
-
 			if (enemy1.getTextureActive() == enemy1.getTextureIdle()) {
 				if (SDL_GetTicks() - enemy1.timeSinceLastAnimation > enemy1.getTimeBetweenIdleAnimations()) {
 					enemy1.currentFrame = (enemy1.currentFrame + 1) % enemy1.currentMaxFrame;
@@ -679,13 +677,6 @@ void playGame() {
 			enemy1.rectangle.y = (int)enemy1.yPosition;
 			SDL_RenderCopy(gRenderer, enemy1.getTextureActive(), &enemy1.drawRectangle, &enemy1.rectangle);
 			// Finish drawing clusters
-
-			// Start drawing player
-			player1.drawRectangle.x = player1.currentFrame * player1.getPixelShiftAmountForAnimationInSpriteSheet();
-			player1.rectangle.x = (int)player1.xPosition;
-			player1.rectangle.y = (int)player1.yPosition;
-			SDL_RenderCopyEx(gRenderer, player1.getTextureActive(), &player1.drawRectangle, &player1.rectangle, 0.0, nullptr, flip);
-			// Finish drawing player
 
 
 			SDL_RenderPresent(gRenderer);
@@ -712,7 +703,6 @@ void playGame() {
 		   // combatScene(vector of Type Characters);
 	}
 }
-
 
 int main(int argc, char *argv[]) {
 	/*
