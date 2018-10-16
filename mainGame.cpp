@@ -526,7 +526,7 @@ void combatScene(std::vector<Character> combatants) {
 }
 void playGame() {
 
-	Cluster enemy1 = Cluster("Sample");
+	Cluster enemy1 = Cluster(1);
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 
 	player1.setTextureActive(player1.getTextureIdle());
@@ -556,8 +556,7 @@ void playGame() {
 	while (keepPlaying) {
 
 		while (inOverworld) {
-			while (SDL_PollEvent(&e))
-			{
+			while (SDL_PollEvent(&e)) {
 				if (e.type == SDL_QUIT) {
 					inOverworld = false;
 					return;
@@ -664,6 +663,19 @@ void playGame() {
 			SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
 			SDL_RenderClear(gRenderer);
 
+			if (player1.getTextureActive() == player1.getTextureIdle()) {
+				if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenIdleAnimations()) {
+					player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
+					player1.timeSinceLastAnimation = SDL_GetTicks();
+				}
+			}
+			else {
+				if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenRunAnimations()) {
+					player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
+					player1.timeSinceLastAnimation = SDL_GetTicks();
+				}
+			}
+
 			if (enemy1.getTextureActive() == enemy1.getTextureIdle()) {
 				if (SDL_GetTicks() - enemy1.timeSinceLastAnimation > enemy1.getTimeBetweenIdleAnimations()) {
 					enemy1.currentFrame = (enemy1.currentFrame + 1) % enemy1.currentMaxFrame;
@@ -678,7 +690,12 @@ void playGame() {
 			SDL_RenderCopy(gRenderer, enemy1.getTextureActive(), &enemy1.drawRectangle, &enemy1.rectangle);
 			// Finish drawing clusters
 
-
+			// Start drawing player
+			player1.drawRectangle.x = player1.currentFrame * player1.getPixelShiftAmountForAnimationInSpriteSheet();
+			player1.rectangle.x = (int)player1.xPosition;
+			player1.rectangle.y = (int)player1.yPosition;
+			SDL_RenderCopyEx(gRenderer, player1.getTextureActive(), &player1.drawRectangle, &player1.rectangle, 0.0, nullptr, flip);
+			// Finish drawing player
 			SDL_RenderPresent(gRenderer);
 
 			if (check_collision(player1.rectangle, enemy1.rectangle)){
