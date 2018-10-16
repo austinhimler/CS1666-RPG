@@ -188,8 +188,7 @@ void poisoned(Character& c) {
 	//poison effects
 }
 
-bool gameOn = true;
-void CombatManager::combatManager(std::vector<Character*>& p) 
+bool CombatManager::combatManager(std::vector<Character*>& p) 
 {
 	/**
 	*	Combat Manager - Start Battle:
@@ -203,6 +202,7 @@ void CombatManager::combatManager(std::vector<Character*>& p)
 	// Create Enemy within combat class. Could be subject to change 
 	// Set up a Character array and populate it (not sorted by dex) 
 	//Character participants[2];
+	gameOn = true;
 	participants = p;
 	vector<int> ailments;
 	// Create QueueManager obj which contains sorting of participant array. 
@@ -210,7 +210,14 @@ void CombatManager::combatManager(std::vector<Character*>& p)
 	std::vector<Button *> buttons;
 	SDL_Event e;
 	SDL_Texture* background = loadImage("Images/UI/CombatScene/combatScene.png");
-	SDL_RenderCopy(gRenderer, background, NULL, NULL);
+	SDL_Texture* button = loadImage("Images/UI/CombatScene/Button.png");
+	SDL_RenderCopy(gRenderer, button, NULL, NULL);
+	
+	//Test to check that the background appears
+	while (gameOn)
+	{
+		printf("Keep Fighting");
+	}
 	/*while (gameOn)
 	{
 		for (int i = 0; i < participants.size(); i++)
@@ -220,6 +227,7 @@ void CombatManager::combatManager(std::vector<Character*>& p)
 		}
 		qm.changeRounds();
 	}*/
+	return false;
 	
 	 
 	
