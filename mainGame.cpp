@@ -12,6 +12,7 @@
 #include "Headers/Button.h"
 #include "Headers/Character.h"
 #include "Headers/Tile.h"
+#include "Headers/CombatManager.h"
 
 // Function declarations
 bool init();
@@ -711,12 +712,13 @@ int main(int argc, char *argv[]) {
 		close();
 		return 1;
 	}
+
 	bool keepPlaying = characterCreateScreen();
 	if (keepPlaying) {
 		playGame();
 		playCredits();
 	}
 	close();
-	//*/
+	
 	return 0;
 }

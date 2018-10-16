@@ -11,6 +11,7 @@ public:
 	void combatManager(std::vector<Character*>& c);
 	bool gameOn;
 	vector<Character*> participants;
+	SDL_Texture* loadImage(std::string fname);
 
 };
 class QueueManager
