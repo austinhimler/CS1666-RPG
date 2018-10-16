@@ -1,18 +1,6 @@
 #include "../Headers/Character.h"
 
-	Character::Character() : Character("Character 1") {
-	}
-	Character::Character(std::string n) : Character(n, 1, 1, 1, 1, 1) {
-	}
-	Character::Character(std::string n, int s, int i, int d, int c, int f) {
-		attributes = std::vector<Attribute>(5);
-		attributes[STR] = Attribute("Strength", s);
-		attributes[INT] = Attribute("Intelligence", i);
-		attributes[DEX] = Attribute("Dexerity", d);
-		attributes[CON] = Attribute("Constitution", c);
-		attributes[FAI] = Attribute("Faith", f);
-		new Character(n, attributes);
-	}
+
 	Character::Character(std::string n, std::vector<Attribute> attr) {
 		attributes = attr;
 		setHPMax();
@@ -23,6 +11,21 @@
 		energyCurrent = energyMax;
 		name = n;
 	}
+	Character::Character(std::string n, int s, int i, int d, int c, int f) {
+		attributes = std::vector<Attribute>(5);
+		attributes[STR] = Attribute("Strength", s);
+		attributes[INT] = Attribute("Intelligence", i);
+		attributes[DEX] = Attribute("Dexerity", d);
+		attributes[CON] = Attribute("Constitution", c);
+		attributes[FAI] = Attribute("Faith", f);
+		new Character(n, attributes);
+	}
+	Character::Character(std::string n) {
+		Character(n, 1, 1, 1, 1, 1);
+	}
+	Character::Character() {
+		Character("Character 1");
+	}
 
 	int Character::getHPMax() { return hpMax; }
 	int Character::getMPMax() { return mpMax; }
@@ -30,6 +33,7 @@
 	void Character::setHPMax() { hpMax = 100 * attributes[CON].current; }
 	void Character::setMPMax() { mpMax = 100 * attributes[INT].current; }
 	void Character::setEnergyMax() { energyMax = 100 * attributes[DEX].current; }
+	void Character::setTextureActive(SDL_Texture* text) { textureActive = text; }
 	int Character::getHPCurrent() { return hpCurrent; }
 	int Character::getMPCurrent() { return mpCurrent; }
 	int Character::getEnergyCurrent() { return energyCurrent;  }

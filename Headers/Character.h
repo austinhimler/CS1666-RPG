@@ -31,7 +31,8 @@ public:
 	int getEnergyCurrent();
 	int getEnergyMax();
 	int getPixelShiftAmountForAnimationInSpriteSheet();
-	int getCurrentFrame();
+	int currentFrame;
+	int currentMaxFrame;
 	int getNumIdleAnimationFrames();
 	int getNumRunAnimationFrames();
 	int getTimeBetweenIdleAnimations();
@@ -46,6 +47,8 @@ public:
 	double yDeltaVelocity;
 	int xPosition;
 	int yPosition;
+	SDL_Rect rectangle;
+	SDL_Rect drawRectangle;
 	std::string getImageIdleResource();
 	std::string getImageRunResource();
 	std::string getName();
@@ -58,6 +61,7 @@ public:
 	int getDex();
 	int getHPCur();
 	void takeDamage(Ability a);
+	void setTextureActive(SDL_Texture*);
 
 protected:
 	int hpMax;
@@ -73,12 +77,10 @@ protected:
 	SDL_Texture* textureRun;
 	SDL_Texture* textureActive;
 	int pixelShiftAmountForAnimationInSpriteSheet;
-	int currentFrame;
 	int numIdleAnimationFrames;
 	int numRunAnimatonFrames;
 	int timeBetweenIdleAnimations; //ms
 	int timeBetweenRunAnimations; //ms
-	SDL_Rect rectangle;
 	int imageWidth;
 	int imageHeight;
 	double speedMax; // px/s
@@ -87,6 +89,9 @@ protected:
 	void setHPMax();
 	void setMPMax();
 	void setEnergyMax();
+	void setRectangle(SDL_Rect);
+	void setAttributes(std::vector<Attribute>);
+	void setAbilities(std::vector<Ability>);
 	/*
 	Strength strength;
 	Intelligence intelligence;
