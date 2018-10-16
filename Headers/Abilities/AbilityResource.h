@@ -7,10 +7,10 @@ namespace AbilityResource {
 	//ability descriptions
 	inline std::string const &abilityDescrip(int n) {
 		static std::string ability_description[] = {
-			"Basic attack"
-			""
-			"Try to escape from battle"
-			"Take the defending stance and increase energy regeneration for next turn"
+			"Basic attack",
+			"",
+			"Try to escape from battle",
+			"Take the defending stance and increase energy regeneration for next turn",
 			""
 		};
 		return ability_description[n];

@@ -11,6 +11,7 @@
 		energyCurrent = energyMax;
 		energyRegen = (energyMax < 10)?1:0.1 * energyMax;
 		name = n;
+		buff = std::vector<int>(BUFFCOUNT, 0);
 		learnAbility(ATTACK);
 		learnAbility(DEFEND);
 		learnAbility(ESCAPE);
@@ -31,8 +32,9 @@
 		Character("Character 1");
 	}
 
-	void Character::beingTarget(Ability* a) {
+	bool Character::beingTarget(Ability* a) {
 		int i;
+		bool result = true;
 		switch (a->getType()) {
 		case AbilityResource::tDAMAGE:
 			hpCurrent -= a->getVal();
@@ -42,26 +44,23 @@
 			hpCurrent += a->getVal();
 			if (hpCurrent > hpMax) hpCurrent = hpMax;
 			break;
-		case AbilityResource::tDEFENSE:
-			energyRegen++;
-			break;
 		case AbilityResource::tESCAPE:
 			i = rand() % 2;
-			if (i == 1)//escape succesfully;
-			//else fails to escape
-			//send signal for escape?
-			//animation for escape?
+			if (i == 0) result = false;
+			break;
+		case AbilityResource::tDEFENSE:
+			buff[ENERGYREGEN]++;
+			break;
+		case AbilityResource::tSUMMON:
 			break;
 		default:
 			std::cout << "unimplemented ability type!" << std::endl;
 			break;
 		}
+
+		return result;
 	}
 
-	/*
-	void Character::takeDamage(Ability a) {
-		
-	}*/
 	
 	void Character::learnAbility(int a) {
 		Ability* abil = new Ability(a, {1,2,4}/*currently only str, int, con affect abilities*/, attributes);
@@ -72,14 +71,22 @@
 			}
 		}
 		abilities.push_back(*abil);
+		abil_helper[a] = abilities.size() - 1;
 	}
 
+	void Character::updateEnergy() {
+		int temp = energyRegen + buff[ENERGYREGEN];
+		energyCurrent += (temp >= 0) ? temp : 0;
+		if (energyCurrent > energyMax) energyCurrent = energyMax;
+		buff[ENERGYREGEN] = 0;
+	}
 	//*/
 	std::string Character::toString() {
 		std::string s = name + "\nHP: "+ std::to_string(hpCurrent) + "/"+ std::to_string(hpMax);
 		return s;
 	}
 
+	int Character::getHelp(int n) { return abil_helper[n]; }
 	int Character::getDex() { return attributes[DEX].current;}
 	int Character::getHPMax() { return hpMax; }
 	int Character::getMPMax() { return mpMax; }

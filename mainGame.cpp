@@ -715,7 +715,7 @@ int main(int argc, char *argv[]) {
 	bool keepPlaying = characterCreateScreen();
 	if (keepPlaying) {
 		playGame();
-		playCredits();
+		//playCredits();
 	}
 	close();
 	

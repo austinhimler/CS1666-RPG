@@ -7,6 +7,7 @@
 #include "Resistance.h"
 #include "Ability.h"
 #include "Globals.h"
+#include <map>
 
 /*
 #include "Attributes/Strength.h"
@@ -44,6 +45,7 @@ public:
 	double getAcceleration();
 	int getDex();
 	int getHPCur();
+	int getHelp(int n);
 
 	double xVelocity;
 	double yVelocity;
@@ -65,9 +67,11 @@ public:
 	std::vector<Attribute> getAttributes();
 	std::vector<Ability> getAbilities();
 	
-	void beingTarget(Ability* a);
+	bool beingTarget(Ability* a);
 	//void takeDamage(Ability a);
 	void learnAbility(int a);
+
+	void updateEnergy();
 
 	string toString();
 	void setTextureActive(SDL_Texture*);
@@ -80,6 +84,7 @@ protected:
 	int energyRegen;
 	int mpMax;
 	int mpCurrent;
+	std::vector<int> buff;
 	std::string imageIdleResource;
 	std::string imageRunResource;
 	std::string name;
@@ -105,6 +110,8 @@ protected:
 
 	std::vector<Attribute> attributes;
 	std::vector<Ability> abilities;
+	std::map<int, int> abil_helper;
+	
 };
 
 

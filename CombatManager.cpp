@@ -124,6 +124,10 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 		
 		bool takingAction = true;
 		while(takingAction) {
+			if (c->getEnergyCurrent() == 0) {
+				takingAction = false;
+				break;
+			}
 			while (SDL_PollEvent(&e))
 			{
 				int mouseX, mouseY;
@@ -141,6 +145,29 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 						if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN && (i->type == "button"))
 						{
 							//Display buttons in info sheet
+							
+							/*
+							if(Escape button is clicked) {
+								Ability* a = c->abilities[c->getHelp(ESCAPE)];
+								if(c->beingTarget(a)) {
+									// escape successfully
+									// play animation
+									// end combat
+								}
+								else {
+									//escape failed
+									//play animation
+								}
+							}
+							if(Ability buttons are clicked) {
+								Ability* a = c->abilities[c->getHelp(the abilities whose button is clicked)];
+								// create/activate character buttons
+								if(Character buttons are clicked) {
+									Character* target = the character whose button is clicked
+									target->beingTarget(a);
+								}
+							}
+							*/
 						}
 					}
 				}

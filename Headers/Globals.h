@@ -14,7 +14,8 @@ enum attr_index {
 	INT,
 	DEX,
 	CON,
-	FAI
+	FAI,
+	ATTRCOUNT
 };
 
 enum ABILITY {
@@ -22,7 +23,14 @@ enum ABILITY {
 	FIREBALL,
 	ESCAPE,
 	DEFEND,
-	SUMMON
+	SUMMON,
+	ABILCOUNT
+};
+
+
+enum BUFF {
+	ENERGYREGEN,
+	BUFFCOUNT
 };
 
 
