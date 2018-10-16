@@ -11,7 +11,6 @@ public:
 	void takeAction(Character* c);
 	void combatManager(std::vector<Character*>& c);
 	bool gameOn;
-	vector<Character *> participants;
 
 };
 class QueueManager
