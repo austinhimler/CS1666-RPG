@@ -50,4 +50,6 @@
 	SDL_Rect Character::getRectangle() { return rectangle; }
 	std::vector<Attribute> Character::getAttributes() { return attributes; }
 	std::vector<Ability> Character::getAbilities() { return abilities; }
+	double Character::getSpeedMax() { return speedMax; }
+	double Character::getAcceleration() { return acceleration; }
 
