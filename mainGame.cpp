@@ -710,12 +710,14 @@ int main(int argc, char *argv[]) {
 		close();
 		return 1;
 	}
-
-	bool keepPlaying = characterCreateScreen();
+	CombatManager cm;
+	vector<Character*> c;
+	bool keepFighting = cm.combatManager(c);
+	/*bool keepPlaying = characterCreateScreen();
 	if (keepPlaying) {
 		playGame();
 		//playCredits();
-	}
+	}*/
 	close();
 	
 	return 0;

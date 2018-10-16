@@ -215,6 +215,7 @@ bool CombatManager::combatManager(std::vector<Character*>& p)
 	std::vector<int> ailments;
 	// Create QueueManager obj which contains sorting of participant array. 
 	QueueManager qm = QueueManager(participants);
+	
 	std::vector<Button *> buttons;
 	SDL_Event e;
 	SDL_Texture* background = loadImage("Images/UI/CombatScene/combatScene.png");
