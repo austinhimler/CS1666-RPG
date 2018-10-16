@@ -220,6 +220,23 @@ void renderText(const char* text, SDL_Rect* rect, SDL_Color* color) {
 	SDL_DestroyTexture(texture);
 }
 
+bool check_collision(SDL_Rect a, SDL_Rect b) {
+	// Check vertical overlap
+	if (a.y + a.h <= b.y)
+		return false;
+	if (a.y >= b.y + b.h)
+		return false;
+
+	// Check horizontal overlap
+	if (a.x >= b.x + b.w)
+		return false;
+	if (a.x + a.w <= b.x)
+		return false;
+
+	// Must overlap in both
+	return true;
+}
+
 bool characterCreateScreen() {
 	//loads music and starts it
 	gMusic = Mix_LoadMUS("CREDIT_IMG/charactercreate.wav");
@@ -497,12 +514,14 @@ bool characterCreateScreen() {
 	}
 }
 
+void combatScene() {
+	std::cout << "IN COMBAT";
+}
 
 void playGame() {
 	
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
-
-	SDL_Rect characterBox = {250, 250, 200, 148 };
+	SDL_Rect characterBox = {0, 250, 200, 148 };
 	SDL_Rect enemyBox = { 400, 100, 384, 308 };
 
 	SDL_Texture* characterTextureActive = NULL;
@@ -534,135 +553,140 @@ void playGame() {
 
 	SDL_Event e;
 	bool inOverworld = true;
-	while (inOverworld) {
-		while (SDL_PollEvent(&e))
-		{
-			if (e.type == SDL_QUIT) {
+	bool keepPlaying = true;
+	while (keepPlaying) {
+
+		while (inOverworld) {
+			while (SDL_PollEvent(&e))
+			{
+				if (e.type == SDL_QUIT) {
+					inOverworld = false;
+					return;
+				}
+			}
+
+			xDeltaVelocity = 0;
+			yDeltaVelocity = 0;
+			const Uint8* keyState = SDL_GetKeyboardState(nullptr);
+			if (keyState[SDL_SCANCODE_W])
+				yDeltaVelocity -= characterMoveAcceleration;
+			if (keyState[SDL_SCANCODE_A])
+				xDeltaVelocity -= characterMoveAcceleration;
+			if (keyState[SDL_SCANCODE_S])
+				yDeltaVelocity += characterMoveAcceleration;
+			if (keyState[SDL_SCANCODE_D])
+				xDeltaVelocity += characterMoveAcceleration;
+
+			if (xDeltaVelocity == 0) {
+				if (xVelocity > 0)
+					xDeltaVelocity = -characterMoveAcceleration;
+				else if (xVelocity < 0)
+					xDeltaVelocity = characterMoveAcceleration;
+			}
+			if (yDeltaVelocity == 0) {
+				if (yVelocity > 0)
+					yDeltaVelocity = -characterMoveAcceleration;
+				else if (yVelocity < 0)
+					yDeltaVelocity = characterMoveMaxSpeed;
+			}
+
+			xVelocity += xDeltaVelocity;
+			yVelocity += yDeltaVelocity;
+
+			//Change sprite if character is in motion
+			if (xVelocity != 0 || yVelocity != 0) {
+				if (characterTextureActive != characterTextureRun) {
+					characterTextureActive = characterTextureRun;
+					frame = 0;
+					maxFrame = 6;
+				}
+			}
+			else {
+				if (characterTextureActive != characterTextureIdle) {
+					characterTextureActive = characterTextureIdle;
+					frame = 0;
+					maxFrame = 4;
+				}
+			}
+
+			//bound within Max Speed
+			if (xVelocity < -characterMoveMaxSpeed)
+				xVelocity = -characterMoveMaxSpeed;
+			else if (xVelocity > characterMoveMaxSpeed)
+				xVelocity = characterMoveMaxSpeed;
+			//bound within Max Speed
+			if (yVelocity < -characterMoveMaxSpeed)
+				yVelocity = -characterMoveMaxSpeed;
+			else if (yVelocity > characterMoveMaxSpeed)
+				yVelocity = characterMoveMaxSpeed;
+
+			//Move vertically
+			characterBox.y += yVelocity;
+			if (characterBox.y < 0 || (characterBox.y + characterBox.h > SCREEN_HEIGHT)) {
+				//go back into window
+				characterBox.y -= yVelocity;
+			}
+
+			//Move horizontally
+			characterBox.x += xVelocity;
+			if (characterBox.x < 0 || (characterBox.x + characterBox.w > SCREEN_WIDTH)) {
+				//go back into window
+				characterBox.x -= xVelocity;
+			}
+			if (xVelocity > 0 && flip == SDL_FLIP_HORIZONTAL)
+				flip = SDL_FLIP_NONE;
+			else if (xVelocity < 0 && flip == SDL_FLIP_NONE)
+				flip = SDL_FLIP_HORIZONTAL;
+
+			//Check Collision with Single Enemy
+			if (check_collision(characterBox, enemyBox))
 				inOverworld = false;
-				return;
+
+
+			//Set Black
+			SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
+			SDL_RenderClear(gRenderer);
+
+			enemyImageX = frame * 384;
+			charImageX = frame * 200;
+
+			SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };
+			SDL_Rect enemyRectangle = { enemyImageX, enemyImageY, enemyImageW, enemyImageH };
+			SDL_SetRenderDrawColor(gRenderer, 0, 0, 255, 255);
+			SDL_RenderFillRect(gRenderer, &characterBox);
+			SDL_SetRenderDrawColor(gRenderer, 255, 0, 0, 255);
+			SDL_RenderFillRect(gRenderer, &enemyBox);
+
+			SDL_RenderCopyEx(gRenderer, characterTextureActive, &charactersRectangle, &characterBox, 0.0, nullptr, flip);
+
+			SDL_RenderCopy(gRenderer, enemyTextureIdle, &enemyRectangle, &enemyBox);
+
+			SDL_RenderPresent(gRenderer);
+
+			//to add more frames per image to make it more fluid
+			//definitely not the best way to do this, need to sync to a consistent gametime
+			delaysPerFrame++;
+			if (delaysPerFrame >= 6) {
+				frame++;
+				delaysPerFrame = 0;
 			}
-		}
-
-		xDeltaVelocity = 0;
-		yDeltaVelocity = 0;
-		const Uint8* keyState = SDL_GetKeyboardState(nullptr);
-		if (keyState[SDL_SCANCODE_W])
-			yDeltaVelocity -= characterMoveAcceleration;
-		if (keyState[SDL_SCANCODE_A])
-			xDeltaVelocity -= characterMoveAcceleration;
-		if (keyState[SDL_SCANCODE_S])
-			yDeltaVelocity += characterMoveAcceleration;
-		if (keyState[SDL_SCANCODE_D])
-			xDeltaVelocity += characterMoveAcceleration;
-
-		if (xDeltaVelocity == 0) {
-			if (xVelocity > 0)
-				xDeltaVelocity = -characterMoveAcceleration;
-			else if (xVelocity < 0)
-				xDeltaVelocity = characterMoveAcceleration;
-		}
-		if (yDeltaVelocity == 0) {
-			if (yVelocity > 0)
-				yDeltaVelocity = -characterMoveAcceleration;
-			else if (yVelocity < 0)
-				yDeltaVelocity = characterMoveMaxSpeed;
-		}
-
-		xVelocity += xDeltaVelocity;
-		yVelocity += yDeltaVelocity;
-
-		//Change sprite if character is in motion
-		if (xVelocity != 0 || yVelocity != 0) {
-			if (characterTextureActive != characterTextureRun) {
-				characterTextureActive = characterTextureRun;
+			if (frame == maxFrame) {
 				frame = 0;
-				maxFrame = 6;
 			}
+			SDL_Delay(16);
 		}
-		else {
-			if (characterTextureActive != characterTextureIdle) {
-				characterTextureActive = characterTextureIdle;
-				frame = 0;
-				maxFrame = 4;
-			}
+		while (!inOverworld) {
+			combatScene();
+			inOverworld = true;
 		}
-	
-		//bound within Max Speed
-		if (xVelocity < -characterMoveMaxSpeed)
-			xVelocity = -characterMoveMaxSpeed;
-		else if (xVelocity > characterMoveMaxSpeed)
-			xVelocity = characterMoveMaxSpeed;
-		//bound within Max Speed
-		if (yVelocity < -characterMoveMaxSpeed)
-			yVelocity = -characterMoveMaxSpeed;
-		else if (yVelocity > characterMoveMaxSpeed)
-			yVelocity = characterMoveMaxSpeed;
-
-		//Move vertically
-		characterBox.y += yVelocity;
-		if (characterBox.y < 0 || (characterBox.y + characterBox.h > SCREEN_HEIGHT)) {
-			//go back into window
-			characterBox.y -= yVelocity;
-		}
-
-		//Move horizontally
-		characterBox.x += xVelocity;
-		if (characterBox.x < 0 || (characterBox.x + characterBox.w > SCREEN_WIDTH)) {
-			//go back into window
-			characterBox.x -= xVelocity;
-		}
-		if (xVelocity > 0 && flip == SDL_FLIP_HORIZONTAL)
-			flip = SDL_FLIP_NONE;
-		else if (xVelocity < 0 && flip == SDL_FLIP_NONE)
-			flip = SDL_FLIP_HORIZONTAL;
-		//Set Black
-		SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
-		SDL_RenderClear(gRenderer);
-
-		enemyImageX = frame * 384;
-		charImageX = frame * 200;
-		
-		SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH};
-		SDL_Rect enemyRectangle = { enemyImageX, enemyImageY, enemyImageW, enemyImageH };
-		SDL_RenderCopyEx(gRenderer, characterTextureActive, &charactersRectangle, &characterBox,0.0,nullptr, flip);
-		
-		SDL_RenderCopy(gRenderer, enemyTextureIdle, &enemyRectangle, &enemyBox);
-
-		SDL_RenderPresent(gRenderer);
-
-		//to add more frames per image to make it more fluid
-		//definitely not the best way to do this, need to sync to a consistent gametime
-		delaysPerFrame++;
-		if (delaysPerFrame >= 6) {
-			frame++;
-			delaysPerFrame = 0;
-		}
-		if (frame == maxFrame) {
-			frame = 0;
-		}
-		SDL_Delay(16);
+		//while(gameOn) gameloop
+		   //render top viewport: render player, enemy, overworld
+		   //render bottom viewport: UI
+		   //movement
+		   //collision detection
+		   //when player collides into enemy
+		   // combatScene(vector of Type Characters);
 	}
-	
-	 //while(gameOn) gameloop
-		//render top viewport: render player, enemy, overworld
-		//render bottom viewport: UI
-		//movement
-		//collision detection
-		//when player collides into enemy
-		// combatScene(vector of Type Characters);
-}
-
-void combatScene() {
-
-
-
-
-
-
-
-
-
-
 }
 
 int main(int argc, char *argv[]) {
