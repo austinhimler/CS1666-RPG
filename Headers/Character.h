@@ -32,6 +32,7 @@ public:
 	int getEnergyMax();
 	int getPixelShiftAmountForAnimationInSpriteSheet();
 	int currentFrame;
+	int currentMaxFrame;
 	int getNumIdleAnimationFrames();
 	int getNumRunAnimationFrames();
 	int getTimeBetweenIdleAnimations();
@@ -46,6 +47,8 @@ public:
 	double yDeltaVelocity;
 	int xPosition;
 	int yPosition;
+	SDL_Rect rectangle;
+	SDL_Rect drawRectangle;
 	std::string getImageIdleResource();
 	std::string getImageRunResource();
 	std::string getName();
@@ -58,6 +61,7 @@ public:
 	int getDex();
 	int getHPCur();
 	void takeDamage(Ability a);
+	void setTextureActive(SDL_Texture*);
 
 protected:
 	int hpMax;
@@ -77,7 +81,6 @@ protected:
 	int numRunAnimatonFrames;
 	int timeBetweenIdleAnimations; //ms
 	int timeBetweenRunAnimations; //ms
-	SDL_Rect rectangle;
 	int imageWidth;
 	int imageHeight;
 	double speedMax; // px/s
@@ -87,7 +90,6 @@ protected:
 	void setMPMax();
 	void setEnergyMax();
 	void setRectangle(SDL_Rect);
-	void setTextureActive(SDL_Texture*);
 	void setAttributes(std::vector<Attribute>);
 	void setAbilities(std::vector<Ability>);
 	/*
