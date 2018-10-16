@@ -4,9 +4,10 @@
 #include <string>
 #include <vector>
 #include "Attribute.h"
-#include "Globals.h"
 #include "Resistance.h"
 #include "Ability.h"
+#include "Globals.h"
+#include <map>
 
 /*
 #include "Attributes/Strength.h"
@@ -24,6 +25,7 @@ public:
 	Character(std::string n);
 	Character(std::string n, int s, int i, int d, int c, int f);
 	Character(std::string n, std::vector<Attribute> attr);
+	bool isEnemy;
 	int getHPMax();
 	int getHPCurrent();
 	int getMPCurrent();
@@ -32,6 +34,7 @@ public:
 	int getEnergyMax();
 	int getPixelShiftAmountForAnimationInSpriteSheet();
 	int currentFrame;
+	int currentMaxFrame;
 	int getNumIdleAnimationFrames();
 	int getNumRunAnimationFrames();
 	int getTimeBetweenIdleAnimations();
@@ -40,12 +43,20 @@ public:
 	int getImageHeight();
 	double getSpeedMax();
 	double getAcceleration();
+	int getDex();
+	int getHPCur();
+	int getHelp(int n);
+
 	double xVelocity;
 	double yVelocity;
 	double xDeltaVelocity;
 	double yDeltaVelocity;
-	int xPosition;
-	int yPosition;
+	double xPosition;
+	double yPosition;
+	Uint32 timeSinceLastMovement;
+	Uint32 timeSinceLastAnimation;
+	SDL_Rect rectangle;
+	SDL_Rect drawRectangle;
 	std::string getImageIdleResource();
 	std::string getImageRunResource();
 	std::string getName();
@@ -55,17 +66,25 @@ public:
 	SDL_Rect getRectangle();
 	std::vector<Attribute> getAttributes();
 	std::vector<Ability> getAbilities();
-	int getDex();
-	int getHPCur();
-	void takeDamage(Ability a);
+	
+	bool beingTarget(Ability* a);
+	//void takeDamage(Ability a);
+	void learnAbility(int a);
+
+	void updateEnergy();
+
+	string toString();
+	void setTextureActive(SDL_Texture*);
 
 protected:
 	int hpMax;
 	int hpCurrent;
 	int energyMax;
 	int energyCurrent;
+	int energyRegen;
 	int mpMax;
 	int mpCurrent;
+	std::vector<int> buff;
 	std::string imageIdleResource;
 	std::string imageRunResource;
 	std::string name;
@@ -77,7 +96,6 @@ protected:
 	int numRunAnimatonFrames;
 	int timeBetweenIdleAnimations; //ms
 	int timeBetweenRunAnimations; //ms
-	SDL_Rect rectangle;
 	int imageWidth;
 	int imageHeight;
 	double speedMax; // px/s
@@ -87,19 +105,13 @@ protected:
 	void setMPMax();
 	void setEnergyMax();
 	void setRectangle(SDL_Rect);
-	void setTextureActive(SDL_Texture*);
 	void setAttributes(std::vector<Attribute>);
 	void setAbilities(std::vector<Ability>);
-	/*
-	Strength strength;
-	Intelligence intelligence;
-	Dexterity dexterity;
-	Constitution constitution;
-	Faith faith;
-	*/
+
 	std::vector<Attribute> attributes;
 	std::vector<Ability> abilities;
-
+	std::map<int, int> abil_helper;
+	
 };
 
 

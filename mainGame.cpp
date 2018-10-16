@@ -12,6 +12,7 @@
 #include "Headers/Button.h"
 #include "Headers/Character.h"
 #include "Headers/Tile.h"
+#include "Headers/CombatManager.h"
 
 // Function declarations
 bool init();
@@ -30,7 +31,7 @@ const int SCREEN_HEIGHT = 720;
 // Music var
 Mix_Music *gMusic = NULL;
 Mix_Chunk *gBSound = NULL;
-TTF_Font* font; 
+TTF_Font* font;
 
 //Player ONE
 Player player1 = Player("nlf4",1,1,1,1,1);
@@ -123,7 +124,7 @@ SDL_Texture* loadImage(std::string fname) {
 		std::cout << "Unable to load image " << fname << "! SDL Error: " << SDL_GetError() << std::endl;
 		return nullptr;
 	}
-	
+
 	SDL_SetColorKey(startSurf, SDL_TRUE, SDL_MapRGB(startSurf->format, 0, 0xFF, 0xFF));//if the color is 0, 0xFF, 0xFF, it should be cleaned
 
 	newText = SDL_CreateTextureFromSurface(gRenderer, startSurf);
@@ -181,7 +182,7 @@ void playCredits() {
 
 //This is for the actual credits
 	SDL_Event e;
-	int j=0;
+	int j = 0;
 	for (auto i : gTex)
 	{
 		while (j < 101)
@@ -195,7 +196,7 @@ void playCredits() {
 			{
 				SDL_RenderCopy(gRenderer, i, NULL, NULL);
 				SDL_RenderPresent(gRenderer);
-				
+
 			}
 			SDL_Delay(30);
 			j++;
@@ -251,7 +252,7 @@ bool characterCreateScreen() {
 	int frame = 0;
 
 	SDL_Rect characterBox = { 436, 205, 200, 148 };
-	SDL_Rect pointsAllocatedRectangle = { 227, 32, 0, 0};
+	SDL_Rect pointsAllocatedRectangle = { 227, 32, 0, 0 };
 	SDL_Rect strengthTextRectangle = { 250, 115, 0, 0 };
 	SDL_Rect intelligenceTextRectangle = { 250, 205, 0, 0 };
 	SDL_Rect dexterityTextRectangle = { 250, 302, 0, 0 };
@@ -259,47 +260,47 @@ bool characterCreateScreen() {
 	SDL_Rect faithTextRectangle = { 250, 490, 0, 0 };
 	SDL_Rect nameTextRectangle = { 143, 640, 0,0 };
 	SDL_Rect errorTextRectangle = { 465, 580, 0, 0 };
-	SDL_Rect errorTextRectangleLong = {445, 580, 0, 0 };
+	SDL_Rect errorTextRectangleLong = { 445, 580, 0, 0 };
 	SDL_Color textColor = { 0, 0, 0, 0 };
 	SDL_Color errorColor = { 255, 0, 0, 0 };
 	std::string nameInputText;
 	std::string errorInputText;
 
 	std::vector<Button*> buttons;
-	SDL_Texture* upPress= loadImage("Images/UI/CreateScreen/pointUpArrow_Pressed.png");
+	SDL_Texture* upPress = loadImage("Images/UI/CreateScreen/pointUpArrow_Pressed.png");
 	SDL_Texture* downPress = loadImage("Images/UI/CreateScreen/pointDownArrow_Pressed.png");
 	SDL_Texture* character = loadImage("Images/Player/Character_Idle.png");
-	
-	
+
+
 	//need attr objects
-	buttons.push_back(new Button("up", 340, 80, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "strength",gRenderer));
-	buttons.push_back(new Button("down", 340, 130, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "strength",gRenderer));
-	buttons.push_back(new Button("up", 340, 175, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence",gRenderer));
+	buttons.push_back(new Button("up", 340, 80, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "strength", gRenderer));
+	buttons.push_back(new Button("down", 340, 130, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "strength", gRenderer));
+	buttons.push_back(new Button("up", 340, 175, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence", gRenderer));
 	buttons.push_back(new Button("down", 340, 225, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "intelligence", gRenderer));
 	buttons.push_back(new Button("up", 340, 270, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "dexterity", gRenderer));
 	buttons.push_back(new Button("down", 340, 320, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "dexterity", gRenderer));
 	buttons.push_back(new Button("up", 340, 365, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "constitution", gRenderer));
 	buttons.push_back(new Button("down", 340, 415, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "constitution", gRenderer));
-	buttons.push_back(new Button("up", 340, 460, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "faith",gRenderer));
+	buttons.push_back(new Button("up", 340, 460, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "faith", gRenderer));
 	buttons.push_back(new Button("down", 340, 510, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "faith", gRenderer));
 	buttons.push_back(new Button("start", 450, 625, 230, 56, "Images/UI/CreateScreen/StartButton.png", "", gRenderer));
 
 	SDL_Texture* background = loadImage("Images/UI/CreateScreen/characterCreateV2NoButtons.png"); //Moved to fix memory leak
-	
+
 	SDL_Event e;
 	while (onCharacterCreate) {
 		while (SDL_PollEvent(&e)) {
-			
+
 			if (e.type == SDL_QUIT) {
 				Mix_HaltMusic();
 				return false; //end game
 			}
-			
+
 			if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_KEYDOWN) {
 				errorInputText = "";
 			}
 			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN) {
-				
+
 				std::cout << "button clicked";
 				std::cout << pointsToAllocate;
 				int mouseX, mouseY;
@@ -308,7 +309,7 @@ bool characterCreateScreen() {
 				for (auto i : buttons) {
 					//if mouse is clicked inside a button
 					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
-						((mouseY >= i->y) && (mouseY <= (i->y + i->h)))) 
+						((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
 					{
 						i->pressed = 5;
 						if (i->type == "start") {
@@ -413,13 +414,12 @@ bool characterCreateScreen() {
 						}
 						break;
 					}
-					
 				}
 			}
-			
+
 			else if (e.type == SDL_KEYDOWN) {
 				//remove char if backspace
-				if (e.key.keysym.sym == SDLK_BACKSPACE && nameInputText.length() > 0){
+				if (e.key.keysym.sym == SDLK_BACKSPACE && nameInputText.length() > 0) {
 					Mix_PlayChannel(-1, gBSound, 0);
 					nameInputText.pop_back();
 				}
@@ -438,26 +438,26 @@ bool characterCreateScreen() {
 		SDL_RenderCopy(gRenderer, background, NULL, NULL);
 		//Renders buttons and shows pressed image if pressed
 		for (auto i : buttons) {
-			if(!i->pressed>0||i->attribute=="")
+			if (!i->pressed > 0 || i->attribute == "")
 				SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
 			else
 			{
-				if(i->type=="up")
+				if (i->type == "up")
 					SDL_RenderCopy(gRenderer, upPress, NULL, &i->rect);
 				else
 					SDL_RenderCopy(gRenderer, downPress, NULL, &i->rect);
 				i->pressed--;
 			}
 		}
-		
-		
+
+
 		charImageX = frame * 200;
 
-		
+
 		SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };
 		SDL_RenderCopy(gRenderer, character, &charactersRectangle, &characterBox);
 
-		
+
 
 		//to add more frames per image to make it more fluid
 		//definitely not the best way to do this, need to sync to a consistent gametime
@@ -469,7 +469,7 @@ bool characterCreateScreen() {
 		if (frame == 4) {
 			frame = 0;
 		}
-		
+
 		std::string strengthString = std::to_string(strength);
 		std::string intelligenceString = std::to_string(intelligence);
 		std::string dexterityString = std::to_string(dexterity);
@@ -499,30 +499,14 @@ bool characterCreateScreen() {
 
 
 void playGame() {
-	
+
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
-
-	SDL_Rect characterBox = {250, 250, 200, 148 };
 	SDL_Rect enemyBox = { 400, 100, 384, 308 };
-
-	SDL_Texture* characterTextureActive = NULL;
-	SDL_Texture* characterTextureRun = loadImage("Images/Player/Character_Run.png");
-	SDL_Texture* characterTextureIdle = loadImage("Images/Player/Character_Idle.png");
 	SDL_Texture* enemyTextureIdle = loadImage("Images/Enemies/Enemy1/Enemy_Idle.png");
-	characterTextureActive = characterTextureIdle;
-	
-	int charMoveSpeed = 2;
-	int characterMoveAcceleration = 2;
-	int characterMoveMaxSpeed = 4;
+	player1.setTextureActive(player1.getTextureIdle());
+	player1.currentMaxFrame = player1.getNumIdleAnimationFrames();
+	std::vector<Character> charactersOnScreen;
 
-	int xVelocity = 0;
-	int yVelocity = 0;
-	int xDeltaVelocity;
-	int yDeltaVelocity;
-	int charImageX = 0;
-	int charImageY = 0;
-	int charImageW = 200;
-	int charImageH = 148;
 	int enemyImageX = 0;
 	int enemyImageY = 0;
 	int enemyImageW = 384;
@@ -530,6 +514,15 @@ void playGame() {
 	int delaysPerFrame = 0;
 	int frame = 0;
 	int maxFrame = 4;
+
+
+	Uint32 timeSinceLastMovement = SDL_GetTicks();
+	Uint32 timeSinceLastAnimation = SDL_GetTicks();
+	player1.timeSinceLastMovement = timeSinceLastMovement;
+	player1.timeSinceLastAnimation = timeSinceLastAnimation;
+	double timePassed = 0;
+
+	charactersOnScreen.push_back(player1);
 
 
 	SDL_Event e;
@@ -543,113 +536,155 @@ void playGame() {
 			}
 		}
 
-		xDeltaVelocity = 0;
-		yDeltaVelocity = 0;
+		// figure out how much of a second has passed
+		timePassed = (SDL_GetTicks() - timeSinceLastMovement) / 1000.0;
+		player1.xDeltaVelocity = 0;
+		player1.yDeltaVelocity = 0;
+
+
 		const Uint8* keyState = SDL_GetKeyboardState(nullptr);
 		if (keyState[SDL_SCANCODE_W])
-			yDeltaVelocity -= characterMoveAcceleration;
+			player1.yDeltaVelocity -= (player1.getAcceleration() * timePassed);
 		if (keyState[SDL_SCANCODE_A])
-			xDeltaVelocity -= characterMoveAcceleration;
+			player1.xDeltaVelocity -= (player1.getAcceleration() * timePassed);
 		if (keyState[SDL_SCANCODE_S])
-			yDeltaVelocity += characterMoveAcceleration;
+			player1.yDeltaVelocity += (player1.getAcceleration() * timePassed);
 		if (keyState[SDL_SCANCODE_D])
-			xDeltaVelocity += characterMoveAcceleration;
+			player1.xDeltaVelocity += (player1.getAcceleration() * timePassed);
 
-		if (xDeltaVelocity == 0) {
-			if (xVelocity > 0)
-				xDeltaVelocity = -characterMoveAcceleration;
-			else if (xVelocity < 0)
-				xDeltaVelocity = characterMoveAcceleration;
+		if (player1.xDeltaVelocity == 0) {
+			if (player1.xVelocity > 0)
+				if (player1.xVelocity < (player1.getAcceleration() * timePassed))
+					player1.xVelocity = 0;
+				else
+					player1.xVelocity -= (player1.getAcceleration() * timePassed);
+			else if (player1.xVelocity < 0)
+				if (-player1.xVelocity < (player1.getAcceleration() * timePassed))
+					player1.xVelocity = 0;
+				else
+					player1.xVelocity += (player1.getAcceleration() * timePassed);
 		}
-		if (yDeltaVelocity == 0) {
-			if (yVelocity > 0)
-				yDeltaVelocity = -characterMoveAcceleration;
-			else if (yVelocity < 0)
-				yDeltaVelocity = characterMoveMaxSpeed;
+		else {
+			player1.xVelocity += player1.xDeltaVelocity;
 		}
 
-		xVelocity += xDeltaVelocity;
-		yVelocity += yDeltaVelocity;
+		if (player1.yDeltaVelocity == 0) {
+			if (player1.yVelocity > 0)
+				if (player1.yVelocity < (player1.getAcceleration() * timePassed))
+					player1.yVelocity = 0;
+				else
+					player1.yVelocity -= (player1.getAcceleration() * timePassed);
+			else if (player1.yVelocity < 0)
+				if (-player1.yVelocity < (player1.getAcceleration() * timePassed))
+					player1.yVelocity = 0;
+				else
+					player1.yVelocity += (player1.getAcceleration() * timePassed);
+		}
+		else {
+			player1.yVelocity += player1.yDeltaVelocity;
+		}
+
+		//bound within Max Speed
+		if (player1.xVelocity < -player1.getSpeedMax())
+			player1.xVelocity = -player1.getSpeedMax();
+		else if (player1.xVelocity > player1.getSpeedMax())
+			player1.xVelocity = player1.getSpeedMax();
+		//bound within Max Speed
+		if (player1.yVelocity < -player1.getSpeedMax())
+			player1.yVelocity = -player1.getSpeedMax();
+		else if (player1.yVelocity > player1.getSpeedMax())
+			player1.yVelocity = player1.getSpeedMax();
 
 		//Change sprite if character is in motion
-		if (xVelocity != 0 || yVelocity != 0) {
-			if (characterTextureActive != characterTextureRun) {
-				characterTextureActive = characterTextureRun;
-				frame = 0;
-				maxFrame = 6;
+		if (player1.xVelocity != 0 || player1.yVelocity != 0) {
+			if (player1.getTextureActive() != player1.getTextureRun()) {
+				player1.setTextureActive(player1.getTextureRun());
+				player1.currentFrame = 0;
+				player1.currentMaxFrame = player1.getNumRunAnimationFrames();
 			}
 		}
 		else {
-			if (characterTextureActive != characterTextureIdle) {
-				characterTextureActive = characterTextureIdle;
-				frame = 0;
-				maxFrame = 4;
+			if (player1.getTextureActive() != player1.getTextureIdle()) {
+				player1.setTextureActive(player1.getTextureIdle());
+				player1.currentFrame = 0;
+				player1.currentMaxFrame = player1.getNumIdleAnimationFrames();
 			}
 		}
-	
-		//bound within Max Speed
-		if (xVelocity < -characterMoveMaxSpeed)
-			xVelocity = -characterMoveMaxSpeed;
-		else if (xVelocity > characterMoveMaxSpeed)
-			xVelocity = characterMoveMaxSpeed;
-		//bound within Max Speed
-		if (yVelocity < -characterMoveMaxSpeed)
-			yVelocity = -characterMoveMaxSpeed;
-		else if (yVelocity > characterMoveMaxSpeed)
-			yVelocity = characterMoveMaxSpeed;
 
 		//Move vertically
-		characterBox.y += yVelocity;
-		if (characterBox.y < 0 || (characterBox.y + characterBox.h > SCREEN_HEIGHT)) {
+		player1.yPosition += (player1.yVelocity * timePassed);
+		if (player1.yPosition < 0 || (player1.yPosition + player1.getImageHeight() > SCREEN_HEIGHT)) {
 			//go back into window
-			characterBox.y -= yVelocity;
+			player1.yPosition -= (player1.yVelocity * timePassed);
 		}
 
 		//Move horizontally
-		characterBox.x += xVelocity;
-		if (characterBox.x < 0 || (characterBox.x + characterBox.w > SCREEN_WIDTH)) {
+		player1.xPosition += (player1.xVelocity * timePassed);
+		if (player1.xPosition < 0 || (player1.xPosition + player1.getImageWidth() > SCREEN_HEIGHT)) {
 			//go back into window
-			characterBox.x -= xVelocity;
+			player1.xPosition -= (player1.xVelocity * timePassed);
 		}
-		if (xVelocity > 0 && flip == SDL_FLIP_HORIZONTAL)
+
+		timeSinceLastMovement = SDL_GetTicks();
+
+		if (player1.xVelocity > 0 && flip == SDL_FLIP_HORIZONTAL)
 			flip = SDL_FLIP_NONE;
-		else if (xVelocity < 0 && flip == SDL_FLIP_NONE)
+		else if (player1.xVelocity < 0 && flip == SDL_FLIP_NONE)
 			flip = SDL_FLIP_HORIZONTAL;
+
 		//Set Black
 		SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
 		SDL_RenderClear(gRenderer);
 
 		enemyImageX = frame * 384;
-		charImageX = frame * 200;
-		
-		SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH};
+
+		if (player1.getTextureActive() == player1.getTextureIdle()) {
+			if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenIdleAnimations()) {
+				player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
+				player1.timeSinceLastAnimation = SDL_GetTicks();
+			}
+		}
+		else {
+			if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenRunAnimations()) {
+				player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
+				player1.timeSinceLastAnimation = SDL_GetTicks();
+			}
+		}
+		player1.drawRectangle.x = player1.currentFrame * player1.getPixelShiftAmountForAnimationInSpriteSheet();
+		player1.rectangle.x = (int) player1.xPosition;
+		player1.rectangle.y = (int) player1.yPosition;
+		SDL_RenderCopyEx(gRenderer, player1.getTextureActive(), &player1.drawRectangle, &player1.rectangle, 0.0, nullptr, flip);
+
 		SDL_Rect enemyRectangle = { enemyImageX, enemyImageY, enemyImageW, enemyImageH };
-		SDL_RenderCopyEx(gRenderer, characterTextureActive, &charactersRectangle, &characterBox,0.0,nullptr, flip);
-		
 		SDL_RenderCopy(gRenderer, enemyTextureIdle, &enemyRectangle, &enemyBox);
 
 		SDL_RenderPresent(gRenderer);
 
-		//to add more frames per image to make it more fluid
-		//definitely not the best way to do this, need to sync to a consistent gametime
+
+		//BELOW CODE ONLY USED FOR MINOTAUR BASED ON OLD FRAME WAY
 		delaysPerFrame++;
-		if (delaysPerFrame >= 6) {
+		if (delaysPerFrame >= 300) {
 			frame++;
 			delaysPerFrame = 0;
 		}
 		if (frame == maxFrame) {
 			frame = 0;
 		}
-		SDL_Delay(16);
+		//SDL_Delay(16);
 	}
-	
-	 //while(gameOn) gameloop
-		//render top viewport: render player, enemy, overworld
-		//render bottom viewport: UI
-		//movement
-		//collision detection
-		//when player collides into enemy
-		// combatScene(vector of Type Characters);
+
+	while (!inOverworld) {
+		//combatScene();
+		inOverworld = true;
+	}
+
+	//while(gameOn) gameloop
+	   //render top viewport: render player, enemy, overworld
+	   //render bottom viewport: UI
+	   //movement
+	   //collision detection
+	   //when player collides into enemy
+	   // combatScene(vector of Type Characters);
 }
 
 void combatScene() {
@@ -670,18 +705,19 @@ int main(int argc, char *argv[]) {
 	Resistance r = Resistance("Resistance");
 	std::cout << r.to_string() << std::endl;
 	//*/
-	
+
 	if (!init()) {
 		std::cout << "Failed to initialize!" << std::endl;
 		close();
 		return 1;
 	}
+
 	bool keepPlaying = characterCreateScreen();
 	if (keepPlaying) {
 		playGame();
-		playCredits();
+		//playCredits();
 	}
 	close();
-	//*/
+	
 	return 0;
 }
