@@ -4,14 +4,13 @@
 class CombatManager
 {
 public:
-	vector<Character*> participants;
 	CombatManager();
 	~CombatManager();
 	void updateStatus(Character* c);
 	void takeAction(Character* c);
 	void combatManager(std::vector<Character*>& c);
 	bool gameOn;
-	vector<Character *> participants;
+	vector<Character*> participants;
 
 };
 class QueueManager

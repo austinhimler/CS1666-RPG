@@ -27,6 +27,7 @@
 		Character("Character 1");
 	}
 
+	int Character::getDex() { return attributes[DEX].current;}
 	int Character::getHPMax() { return hpMax; }
 	int Character::getMPMax() { return mpMax; }
 	int Character::getEnergyMax() { return energyMax; }
