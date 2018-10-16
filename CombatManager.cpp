@@ -115,6 +115,12 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 		If a skill is clicked wait for user to click on character to use the skill on
 		If energy = 0 or player clicks End Turn, return
 	*/
+
+	int charImageX = 0;
+	int charImageY = 0;
+	int charImageW = 200;
+	int charImageH = 148;
+
 	if (c->isEnemy == true)
 	{
 		//Enemy attack player
@@ -206,24 +212,26 @@ bool CombatManager::combatManager(std::vector<Character*>& p)
 	//Character participants[2];
 	gameOn = true;
 	participants = p;
-	vector<int> ailments;
+	std::vector<int> ailments;
 	// Create QueueManager obj which contains sorting of participant array. 
 	QueueManager qm = QueueManager(participants);
-	/*
 	std::vector<Button *> buttons;
 	SDL_Event e;
 	SDL_Texture* background = loadImage("Images/UI/CombatScene/combatScene.png");
 	SDL_Rect scene_box = { 0,0,720,540 };
 	SDL_Rect ui_box = { 0,540,720,180 };
 
-	vector<Button*> buttons;
+	std::vector<Button*> buttons;
+		buttons.push_back(new Button("player", scene_box.x + 10, scene_box.y + 10, 20, 20, "Image/Player/Character_Combat_Idle.png", "Player", gRenderer));
+		buttons.push_back(new Button("attack", ui_box.x + 10, ui_box.y + 10, 20, 20, "Images/UI/CombatScene/Button.png", "Enemy", gRenderer));
 		buttons.push_back(new Button("attack", ui_box.x+10, ui_box.y + 10, 20, 20, "Images/UI/CombatScene/Button.png", "Attack", gRenderer));
 		buttons.push_back(new Button("defend", ui_box.x + 40, ui_box.y + 40, 20, 20, "Images/UI/CombatScene/Button.png", "Defend", gRenderer));
 	
 	SDL_RenderCopy(gRenderer, background, NULL, NULL);
-	for (auto i : button_box) {
-		SDL_RenderCopy(gRenderer, button, NULL, &i);
-	}*/
+	for (auto i : buttons) {
+		SDL_RenderCopy(gRenderer, i->texture, NULL, &(i->rect));
+	}
+
 	//Test to check that the background appears
 	while (gameOn)
 	{
