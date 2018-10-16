@@ -13,6 +13,7 @@
 #include "Headers/Character.h"
 #include "Headers/Tile.h"
 #include "Headers/CombatManager.h"
+#include "Headers/Cluster.h"
 
 // Function declarations
 bool init();
@@ -98,24 +99,36 @@ bool init() {
 	return true;
 }
 
-bool check_collision(SDL_Rect* a, SDL_Rect* b) {
+bool check_collision(SDL_Rect a, SDL_Rect b) {
 	// Check vertical overlap
-	if (a->y + a->h <= b->y)
+	if (a.y + a.h <= b.y)
 		return false;
-	if (a->y >= b->y + b->h)
+	if (a.y >= b.y + b.h)
 		return false;
 
 	// Check horizontal overlap
-	if (a->x >= b->x + b->w)
+	if (a.x >= b.x + b.w)
 		return false;
-	if (a->x + a->w <= b->x)
+	if (a.x + a.w <= b.x)
 		return false;
 
 	// Must overlap in both
 	return true;
 }
 
-
+void combatTransition(){
+	SDL_Rect wipe = { 0,0,72,72 };
+	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+	for (; wipe.x < 720; wipe.x += 72)
+	{
+		for (wipe.y = 0; wipe.y < 720; wipe.y += 72)
+		{
+			SDL_RenderFillRect(gRenderer, &wipe);
+			SDL_RenderPresent(gRenderer);
+			SDL_Delay(10);
+		}
+	}
+}
 SDL_Texture* loadImage(std::string fname) {
 	SDL_Texture* newText = nullptr;
 
@@ -510,193 +523,217 @@ void combatScene() {
 
 }
 
+void combatScene(std::vector<Character> combatants) {
+	for (auto i : combatants) {
+		std::cout << i.getName();
+	}
+
+
+
+
+
+
+
+
+}
 void playGame() {
 
+	Cluster enemy1 = Cluster(1);
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
-	SDL_Rect enemyBox = { 400, 100, 384, 308 };
-	SDL_Texture* enemyTextureIdle = loadImage("Images/Enemies/Enemy1/Enemy_Idle.png");
+
 	player1.setTextureActive(player1.getTextureIdle());
 	player1.currentMaxFrame = player1.getNumIdleAnimationFrames();
-	std::vector<Character> charactersOnScreen;
+	
+	enemy1.setTextureActive(enemy1.getTextureIdle());
+	enemy1.currentMaxFrame = enemy1.getNumIdleAnimationFrames();
 
-	int enemyImageX = 0;
-	int enemyImageY = 0;
-	int enemyImageW = 384;
-	int enemyImageH = 308;
-	int delaysPerFrame = 0;
-	int frame = 0;
-	int maxFrame = 4;
+	std::vector<Character> charactersOnScreen;
+	std::vector<Character> combatants;
 
 
 	Uint32 timeSinceLastMovement = SDL_GetTicks();
 	Uint32 timeSinceLastAnimation = SDL_GetTicks();
 	player1.timeSinceLastMovement = timeSinceLastMovement;
 	player1.timeSinceLastAnimation = timeSinceLastAnimation;
+	enemy1.timeSinceLastAnimation = timeSinceLastAnimation;
+
 	double timePassed = 0;
 
 	charactersOnScreen.push_back(player1);
-
+	charactersOnScreen.push_back(enemy1);
 
 	SDL_Event e;
 	bool inOverworld = true;
-	while (inOverworld) {
-		while (SDL_PollEvent(&e))
-		{
-			if (e.type == SDL_QUIT) {
+	bool keepPlaying = true;
+	while (keepPlaying) {
+
+		while (inOverworld) {
+			while (SDL_PollEvent(&e)) {
+				if (e.type == SDL_QUIT) {
+					inOverworld = false;
+					return;
+				}
+			}
+
+			// figure out how much of a second has passed
+			timePassed = (SDL_GetTicks() - timeSinceLastMovement) / 1000.0;
+			player1.xDeltaVelocity = 0;
+			player1.yDeltaVelocity = 0;
+
+
+			const Uint8* keyState = SDL_GetKeyboardState(nullptr);
+			if (keyState[SDL_SCANCODE_W])
+				player1.yDeltaVelocity -= (player1.getAcceleration() * timePassed);
+			if (keyState[SDL_SCANCODE_A])
+				player1.xDeltaVelocity -= (player1.getAcceleration() * timePassed);
+			if (keyState[SDL_SCANCODE_S])
+				player1.yDeltaVelocity += (player1.getAcceleration() * timePassed);
+			if (keyState[SDL_SCANCODE_D])
+				player1.xDeltaVelocity += (player1.getAcceleration() * timePassed);
+
+			if (player1.xDeltaVelocity == 0) {
+				if (player1.xVelocity > 0)
+					if (player1.xVelocity < (player1.getAcceleration() * timePassed))
+						player1.xVelocity = 0;
+					else
+						player1.xVelocity -= (player1.getAcceleration() * timePassed);
+				else if (player1.xVelocity < 0)
+					if (-player1.xVelocity < (player1.getAcceleration() * timePassed))
+						player1.xVelocity = 0;
+					else
+						player1.xVelocity += (player1.getAcceleration() * timePassed);
+			}
+			else {
+				player1.xVelocity += player1.xDeltaVelocity;
+			}
+
+			if (player1.yDeltaVelocity == 0) {
+				if (player1.yVelocity > 0)
+					if (player1.yVelocity < (player1.getAcceleration() * timePassed))
+						player1.yVelocity = 0;
+					else
+						player1.yVelocity -= (player1.getAcceleration() * timePassed);
+				else if (player1.yVelocity < 0)
+					if (-player1.yVelocity < (player1.getAcceleration() * timePassed))
+						player1.yVelocity = 0;
+					else
+						player1.yVelocity += (player1.getAcceleration() * timePassed);
+			}
+			else {
+				player1.yVelocity += player1.yDeltaVelocity;
+			}
+
+			//bound within Max Speed
+			if (player1.xVelocity < -player1.getSpeedMax())
+				player1.xVelocity = -player1.getSpeedMax();
+			else if (player1.xVelocity > player1.getSpeedMax())
+				player1.xVelocity = player1.getSpeedMax();
+			//bound within Max Speed
+			if (player1.yVelocity < -player1.getSpeedMax())
+				player1.yVelocity = -player1.getSpeedMax();
+			else if (player1.yVelocity > player1.getSpeedMax())
+				player1.yVelocity = player1.getSpeedMax();
+
+			//Change sprite if character is in motion
+			if (player1.xVelocity != 0 || player1.yVelocity != 0) {
+				if (player1.getTextureActive() != player1.getTextureRun()) {
+					player1.setTextureActive(player1.getTextureRun());
+					player1.currentFrame = 0;
+					player1.currentMaxFrame = player1.getNumRunAnimationFrames();
+				}
+			}
+			else {
+				if (player1.getTextureActive() != player1.getTextureIdle()) {
+					player1.setTextureActive(player1.getTextureIdle());
+					player1.currentFrame = 0;
+					player1.currentMaxFrame = player1.getNumIdleAnimationFrames();
+				}
+			}
+
+			//Move vertically
+			player1.yPosition += (player1.yVelocity * timePassed);
+			if (player1.yPosition < 0 || (player1.yPosition + player1.getImageHeight() > SCREEN_HEIGHT)) {
+				//go back into window
+				player1.yPosition -= (player1.yVelocity * timePassed);
+			}
+
+			//Move horizontally
+			player1.xPosition += (player1.xVelocity * timePassed);
+			if (player1.xPosition < 0 || (player1.xPosition + player1.getImageWidth() > SCREEN_HEIGHT)) {
+				//go back into window
+				player1.xPosition -= (player1.xVelocity * timePassed);
+			}
+
+			timeSinceLastMovement = SDL_GetTicks();
+
+			if (player1.xVelocity > 0 && flip == SDL_FLIP_HORIZONTAL)
+				flip = SDL_FLIP_NONE;
+			else if (player1.xVelocity < 0 && flip == SDL_FLIP_NONE)
+				flip = SDL_FLIP_HORIZONTAL;
+
+			//Set Black
+			SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
+			SDL_RenderClear(gRenderer);
+
+			if (player1.getTextureActive() == player1.getTextureIdle()) {
+				if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenIdleAnimations()) {
+					player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
+					player1.timeSinceLastAnimation = SDL_GetTicks();
+				}
+			}
+			else {
+				if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenRunAnimations()) {
+					player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
+					player1.timeSinceLastAnimation = SDL_GetTicks();
+				}
+			}
+
+			if (enemy1.getTextureActive() == enemy1.getTextureIdle()) {
+				if (SDL_GetTicks() - enemy1.timeSinceLastAnimation > enemy1.getTimeBetweenIdleAnimations()) {
+					enemy1.currentFrame = (enemy1.currentFrame + 1) % enemy1.currentMaxFrame;
+					enemy1.timeSinceLastAnimation = SDL_GetTicks();
+				}
+			}
+
+			// Start drawing clusters
+			enemy1.drawRectangle.x = enemy1.currentFrame * enemy1.getPixelShiftAmountForAnimationInSpriteSheet();
+			enemy1.rectangle.x = (int)enemy1.xPosition;
+			enemy1.rectangle.y = (int)enemy1.yPosition;
+			SDL_RenderCopy(gRenderer, enemy1.getTextureActive(), &enemy1.drawRectangle, &enemy1.rectangle);
+			// Finish drawing clusters
+
+			// Start drawing player
+			player1.drawRectangle.x = player1.currentFrame * player1.getPixelShiftAmountForAnimationInSpriteSheet();
+			player1.rectangle.x = (int)player1.xPosition;
+			player1.rectangle.y = (int)player1.yPosition;
+			SDL_RenderCopyEx(gRenderer, player1.getTextureActive(), &player1.drawRectangle, &player1.rectangle, 0.0, nullptr, flip);
+			// Finish drawing player
+			SDL_RenderPresent(gRenderer);
+
+			if (check_collision(player1.rectangle, enemy1.rectangle)){
+				combatants = enemy1.characterGroup;
+				combatants.push_back(player1);
 				inOverworld = false;
-				return;
 			}
+
 		}
 
-		// figure out how much of a second has passed
-		timePassed = (SDL_GetTicks() - timeSinceLastMovement) / 1000.0;
-		player1.xDeltaVelocity = 0;
-		player1.yDeltaVelocity = 0;
-
-
-		const Uint8* keyState = SDL_GetKeyboardState(nullptr);
-		if (keyState[SDL_SCANCODE_W])
-			player1.yDeltaVelocity -= (player1.getAcceleration() * timePassed);
-		if (keyState[SDL_SCANCODE_A])
-			player1.xDeltaVelocity -= (player1.getAcceleration() * timePassed);
-		if (keyState[SDL_SCANCODE_S])
-			player1.yDeltaVelocity += (player1.getAcceleration() * timePassed);
-		if (keyState[SDL_SCANCODE_D])
-			player1.xDeltaVelocity += (player1.getAcceleration() * timePassed);
-
-		if (player1.xDeltaVelocity == 0) {
-			if (player1.xVelocity > 0)
-				if (player1.xVelocity < (player1.getAcceleration() * timePassed))
-					player1.xVelocity = 0;
-				else
-					player1.xVelocity -= (player1.getAcceleration() * timePassed);
-			else if (player1.xVelocity < 0)
-				if (-player1.xVelocity < (player1.getAcceleration() * timePassed))
-					player1.xVelocity = 0;
-				else
-					player1.xVelocity += (player1.getAcceleration() * timePassed);
-		}
-		else {
-			player1.xVelocity += player1.xDeltaVelocity;
+		while (!inOverworld) {
+			combatTransition();
+			combatScene(combatants);
+			enemy1.xPosition = 999;
+			enemy1.yPosition = 999;
+			inOverworld = true;
 		}
 
-		if (player1.yDeltaVelocity == 0) {
-			if (player1.yVelocity > 0)
-				if (player1.yVelocity < (player1.getAcceleration() * timePassed))
-					player1.yVelocity = 0;
-				else
-					player1.yVelocity -= (player1.getAcceleration() * timePassed);
-			else if (player1.yVelocity < 0)
-				if (-player1.yVelocity < (player1.getAcceleration() * timePassed))
-					player1.yVelocity = 0;
-				else
-					player1.yVelocity += (player1.getAcceleration() * timePassed);
-		}
-		else {
-			player1.yVelocity += player1.yDeltaVelocity;
-		}
-
-		//bound within Max Speed
-		if (player1.xVelocity < -player1.getSpeedMax())
-			player1.xVelocity = -player1.getSpeedMax();
-		else if (player1.xVelocity > player1.getSpeedMax())
-			player1.xVelocity = player1.getSpeedMax();
-		//bound within Max Speed
-		if (player1.yVelocity < -player1.getSpeedMax())
-			player1.yVelocity = -player1.getSpeedMax();
-		else if (player1.yVelocity > player1.getSpeedMax())
-			player1.yVelocity = player1.getSpeedMax();
-
-		//Change sprite if character is in motion
-		if (player1.xVelocity != 0 || player1.yVelocity != 0) {
-			if (player1.getTextureActive() != player1.getTextureRun()) {
-				player1.setTextureActive(player1.getTextureRun());
-				player1.currentFrame = 0;
-				player1.currentMaxFrame = player1.getNumRunAnimationFrames();
-			}
-		}
-		else {
-			if (player1.getTextureActive() != player1.getTextureIdle()) {
-				player1.setTextureActive(player1.getTextureIdle());
-				player1.currentFrame = 0;
-				player1.currentMaxFrame = player1.getNumIdleAnimationFrames();
-			}
-		}
-
-		//Move vertically
-		player1.yPosition += (player1.yVelocity * timePassed);
-		if (player1.yPosition < 0 || (player1.yPosition + player1.getImageHeight() > SCREEN_HEIGHT)) {
-			//go back into window
-			player1.yPosition -= (player1.yVelocity * timePassed);
-		}
-
-		//Move horizontally
-		player1.xPosition += (player1.xVelocity * timePassed);
-		if (player1.xPosition < 0 || (player1.xPosition + player1.getImageWidth() > SCREEN_HEIGHT)) {
-			//go back into window
-			player1.xPosition -= (player1.xVelocity * timePassed);
-		}
-
-		timeSinceLastMovement = SDL_GetTicks();
-
-		if (player1.xVelocity > 0 && flip == SDL_FLIP_HORIZONTAL)
-			flip = SDL_FLIP_NONE;
-		else if (player1.xVelocity < 0 && flip == SDL_FLIP_NONE)
-			flip = SDL_FLIP_HORIZONTAL;
-
-		//Set Black
-		SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
-		SDL_RenderClear(gRenderer);
-
-		enemyImageX = frame * 384;
-
-		if (player1.getTextureActive() == player1.getTextureIdle()) {
-			if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenIdleAnimations()) {
-				player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
-				player1.timeSinceLastAnimation = SDL_GetTicks();
-			}
-		}
-		else {
-			if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenRunAnimations()) {
-				player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
-				player1.timeSinceLastAnimation = SDL_GetTicks();
-			}
-		}
-		player1.drawRectangle.x = player1.currentFrame * player1.getPixelShiftAmountForAnimationInSpriteSheet();
-		player1.rectangle.x = (int) player1.xPosition;
-		player1.rectangle.y = (int) player1.yPosition;
-		SDL_RenderCopyEx(gRenderer, player1.getTextureActive(), &player1.drawRectangle, &player1.rectangle, 0.0, nullptr, flip);
-
-		SDL_Rect enemyRectangle = { enemyImageX, enemyImageY, enemyImageW, enemyImageH };
-		SDL_RenderCopy(gRenderer, enemyTextureIdle, &enemyRectangle, &enemyBox);
-
-		SDL_RenderPresent(gRenderer);
-
-
-		//BELOW CODE ONLY USED FOR MINOTAUR BASED ON OLD FRAME WAY
-		delaysPerFrame++;
-		if (delaysPerFrame >= 300) {
-			frame++;
-			delaysPerFrame = 0;
-		}
-		if (frame == maxFrame) {
-			frame = 0;
-		}
-		//SDL_Delay(16);
+		//while(gameOn) gameloop
+		   //render top viewport: render player, enemy, overworld
+		   //render bottom viewport: UI
+		   //movement
+		   //collision detection
+		   //when player collides into enemy
+		   // combatScene(vector of Type Characters);
 	}
-
-	while (!inOverworld) {
-		//combatScene();
-		inOverworld = true;
-	}
-
-	//while(gameOn) gameloop
-	   //render top viewport: render player, enemy, overworld
-	   //render bottom viewport: UI
-	   //movement
-	   //collision detection
-	   //when player collides into enemy
-	   // combatScene(vector of Type Characters);
 }
 
 int main(int argc, char *argv[]) {
