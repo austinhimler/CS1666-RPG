@@ -3,8 +3,9 @@
 #include "Headers/Character.h"
 #include "Headers/Player.h"
 #include "Headers/Enemy.h"
+#include "Headers/Button.h"
 #include <vector>
-	QueueManager::QueueManager(vector<Character> c)
+	QueueManager::QueueManager(vector<Character *> c)
 	{
 		for (auto C : c) {
 			currTurn.push_back(C);
@@ -20,7 +21,7 @@
 	}
 
 
-	void QueueManager::createRounds(vector<Character> c)
+	void QueueManager::createRounds(vector<Character *> c)
 	{
 		
 	}
@@ -31,15 +32,15 @@
 		insertionSort(nextTurn, nextTurn.size());
 	}
 
-	void QueueManager::insertionSort(std::vector<Character>& turn, int n)
+	void QueueManager::insertionSort(std::vector<Character *>& turn, int n)
 	{
 		int i, j;
-		Character key;
+		Character * key;
 		for (i = 1; i < n; i++)
 		{
 			key = turn[i];
 			j = i - 1;
-			while (j >= 0 && turn[j].getDex() > key.getDex())
+			while (j >= 0 && turn[j]->getDex() > key->getDex())
 			{
 				turn[j + 1] = turn[j];
 				j = j - 1;
@@ -48,7 +49,7 @@
 		}
 	}
 
-	void QueueManager::vectorCopy(vector<Character>& cT, vector<Character>& nT)
+	void QueueManager::vectorCopy(vector<Character *>& cT, vector<Character *>& nT)
 	{
 		cT.erase(cT.begin(), cT.end());
 		for (int i = 0; i < nT.size(); i++)
@@ -68,14 +69,14 @@ CombatManager::~CombatManager()
 }
 
 
-void updateStatus(Character& c) {
+void updateStatus(Character* c) {
 	/**
 	*	Turn - pre-turn:
 						pre-turn effect calculation (if we wanna add status effects that carry over from one battle to the next we can but for now let's just make all effects wiped at the end of combat)
 						check survival
 						start in-turn
 						*/
-	if (c.getHPCur() <= 0) {
+	if (c->getHPCur() <= 0) {
 		// game over
 		exit(0);
 	}
@@ -84,7 +85,7 @@ void updateStatus(Character& c) {
 
 	}
 }
-void takeAction(Character& c) {
+void takeAction(Character* c) {
 	/*
 		If c is an emeny, do enemy attack
 		Else, wait for user input
@@ -93,11 +94,33 @@ void takeAction(Character& c) {
 		If a skill is clicked wait for user to click on character to use the skill on
 		If energy = 0 or player clicks End Turn, return
 	*/
+	if (c->isEnemy == true)
+	{
+		//Enemy attack player
+	}
+	else
+	{
+		std::vector<Button *> buttons;
+		SDL_Event e;
+		while (SDL_PollEvent(&e))
+		{
+			int mouseX, mouseY;
+			SDL_GetMouseState(&mouseX, &mouseY);
+			for (auto i : buttons)
+			{
+				if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
+					((mouseY >= i->y) && (mouseY <= (i->y + i->h))) && (i->type == "character"))
+				{
+					//Display in info screen
+				}
+			}
+		}
+	}
 
 
 }
 bool gameOn = true;
-void combatManager(Player& p) 
+void CombatManager::combatManager(vector<Character *> p) 
 {
 	/**
 	*	Combat Manager - Start Battle:
@@ -109,19 +132,15 @@ void combatManager(Player& p)
 						*/
 
 	// Create Enemy within combat class. Could be subject to change 
-	Enemy e1;
 	// Set up a Character array and populate it (not sorted by dex) 
-	//Character participants[2];
-	vector<Character> participants;
-	participants[0] = Character(p);
-	participants[1] = Character(e1);
+	participants = p;
 	// Create QueueManager obj which contains sorting of participant array. 
 	QueueManager qm = QueueManager(participants);
 	while (gameOn)
 	{
 		for (int i = 0; i < participants.size(); i++)
 		{
-			updateStatus(participants[i]);
+			//updateStatus(participants[i]);
 			takeAction(participants[i]);
 
 		}
