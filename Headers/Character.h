@@ -5,6 +5,8 @@
 #include <vector>
 #include "Attribute.h"
 #include "Globals.h"
+#include "Resistance.h"
+#include "Ability.h"
 
 /*
 #include "Attributes/Strength.h"
@@ -23,11 +25,40 @@ public:
 	Character(std::string n, int s, int i, int d, int c, int f);
 	Character(std::string n, std::vector<Attribute> attr);
 	int getHPMax();
+	int getHPCurrent();
+	int getMPCurrent();
 	int getMPMax();
+	int getEnergyCurrent();
 	int getEnergyMax();
-	int getXPosition();
-	int getYPosition();
-	
+	int getPixelShiftAmountForAnimationInSpriteSheet();
+	int currentFrame;
+	int getNumIdleAnimationFrames();
+	int getNumRunAnimationFrames();
+	int getTimeBetweenIdleAnimations();
+	int getTimeBetweenRunAnimations();
+	int getImageWidth();
+	int getImageHeight();
+	double getSpeedMax();
+	double getAcceleration();
+	double xVelocity;
+	double yVelocity;
+	double xDeltaVelocity;
+	double yDeltaVelocity;
+	int xPosition;
+	int yPosition;
+	std::string getImageIdleResource();
+	std::string getImageRunResource();
+	std::string getName();
+	SDL_Texture* getTextureIdle();
+	SDL_Texture* getTextureRun();
+	SDL_Texture* getTextureActive();
+	SDL_Rect getRectangle();
+	std::vector<Attribute> getAttributes();
+	std::vector<Ability> getAbilities();
+	int getDex();
+	int getHPCur();
+	void takeDamage(Ability a);
+
 protected:
 	int hpMax;
 	int hpCurrent;
@@ -42,23 +73,23 @@ protected:
 	SDL_Texture* textureRun;
 	SDL_Texture* textureActive;
 	int pixelShiftAmountForAnimationInSpriteSheet;
-	int currentFrame;
 	int numIdleAnimationFrames;
 	int numRunAnimatonFrames;
 	int timeBetweenIdleAnimations; //ms
 	int timeBetweenRunAnimations; //ms
 	SDL_Rect rectangle;
-	int speed; // pixels per second
-	int speedMax; 
-	int acceleration; // px/s^2
 	int imageWidth;
 	int imageHeight;
-	int xPosition;
-	int yPosition;
+	double speedMax; // px/s
+	double acceleration; // px/s^2
 
 	void setHPMax();
 	void setMPMax();
 	void setEnergyMax();
+	void setRectangle(SDL_Rect);
+	void setTextureActive(SDL_Texture*);
+	void setAttributes(std::vector<Attribute>);
+	void setAbilities(std::vector<Ability>);
 	/*
 	Strength strength;
 	Intelligence intelligence;

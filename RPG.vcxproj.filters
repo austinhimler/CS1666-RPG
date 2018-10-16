@@ -65,6 +65,15 @@
     <Image Include="..\..\..\..\..\Programming\cs1666\pointUpArrow.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Images\Tiles\64^64 Grasstiles.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Tiles\64^64 lake.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Tiles\singleGrass.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mainGame.cpp">
@@ -107,6 +116,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Classes\Enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Tile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -172,6 +184,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\CombatManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Tile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

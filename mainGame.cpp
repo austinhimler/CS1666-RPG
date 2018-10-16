@@ -11,6 +11,7 @@
 #include "Headers/Player.h"
 #include "Headers/Button.h"
 #include "Headers/Character.h"
+#include "Headers/Tile.h"
 
 // Function declarations
 bool init();
@@ -32,7 +33,7 @@ Mix_Chunk *gBSound = NULL;
 TTF_Font* font; 
 
 //Player ONE
-Player player1 = Player::Player("nlf4",1,1,1,1,1);
+Player player1 = Player("nlf4",1,1,1,1,1);
 
 bool init() {
 	// Flag what subsystems to initialize
@@ -95,6 +96,24 @@ bool init() {
 
 	return true;
 }
+
+bool check_collision(SDL_Rect* a, SDL_Rect* b) {
+	// Check vertical overlap
+	if (a->y + a->h <= b->y)
+		return false;
+	if (a->y >= b->y + b->h)
+		return false;
+
+	// Check horizontal overlap
+	if (a->x >= b->x + b->w)
+		return false;
+	if (a->x + a->w <= b->x)
+		return false;
+
+	// Must overlap in both
+	return true;
+}
+
 
 SDL_Texture* loadImage(std::string fname) {
 	SDL_Texture* newText = nullptr;
@@ -270,17 +289,17 @@ bool characterCreateScreen() {
 	
 	
 	//need attr objects
-	buttons.push_back(new Button("up", 340, 80, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "strength",gRenderer));
-	buttons.push_back(new Button("down", 340, 130, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "strength",gRenderer));
-	buttons.push_back(new Button("up", 340, 175, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence",gRenderer));
-	buttons.push_back(new Button("down", 340, 225, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "intelligence", gRenderer));
-	buttons.push_back(new Button("up", 340, 270, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "dexterity", gRenderer));
-	buttons.push_back(new Button("down", 340, 320, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "dexterity", gRenderer));
-	buttons.push_back(new Button("up", 340, 365, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "constitution", gRenderer));
-	buttons.push_back(new Button("down", 340, 415, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "constitution", gRenderer));
-	buttons.push_back(new Button("up", 340, 460, 46, 51, "Images/UI/CreateScreen/pointUpArrow.png", "faith",gRenderer));
-	buttons.push_back(new Button("down", 340, 510, 46, 51, "Images/UI/CreateScreen/pointDownArrow.png", "faith", gRenderer));
-	buttons.push_back(new Button("start", 450, 600, 244, 95, "Images/UI/CreateScreen/StartButton.png", "", gRenderer));
+	buttons.push_back(new Button("up", 340, 80, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "strength",gRenderer));
+	buttons.push_back(new Button("down", 340, 130, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "strength",gRenderer));
+	buttons.push_back(new Button("up", 340, 175, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence",gRenderer));
+	buttons.push_back(new Button("down", 340, 225, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "intelligence", gRenderer));
+	buttons.push_back(new Button("up", 340, 270, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "dexterity", gRenderer));
+	buttons.push_back(new Button("down", 340, 320, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "dexterity", gRenderer));
+	buttons.push_back(new Button("up", 340, 365, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "constitution", gRenderer));
+	buttons.push_back(new Button("down", 340, 415, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "constitution", gRenderer));
+	buttons.push_back(new Button("up", 340, 460, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "faith",gRenderer));
+	buttons.push_back(new Button("down", 340, 510, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "faith", gRenderer));
+	buttons.push_back(new Button("start", 450, 625, 230, 56, "Images/UI/CreateScreen/StartButton.png", "", gRenderer));
 
 	SDL_Texture* background = loadImage("Images/UI/CreateScreen/characterCreateV2NoButtons.png"); //Moved to fix memory leak
 	
@@ -500,18 +519,7 @@ void combatScene() {
 }
 
 void playGame() {
-	//max level size
-	const int LEVEL_WIDTH = 4200;
-	const int LEVEL_HEIGHT = 4200;
-	//TILE DEFINITIONS
-	const int TILE_WIDTH = 42;
-	const int TILE_HEIGHT = 42;
-	const int TOTAL_TILES = 10000;
-	const int NUM_SPRITES = 3;
-	//The different tile sprites
-	const int TILE_SOLID = 0;
-	const int TILE_WALL = 1;
-	const int TILE_FLOOR = 2;
+	
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	SDL_Rect characterBox = {0, 250, 200, 148 };
 	SDL_Rect enemyBox = { 400, 100, 384, 308 };
@@ -681,8 +689,12 @@ void playGame() {
 	}
 }
 
-
 int main(int argc, char *argv[]) {
+	/*
+	Resistance r = Resistance("Resistance");
+	std::cout << r.to_string() << std::endl;
+	//*/
+	
 	if (!init()) {
 		std::cout << "Failed to initialize!" << std::endl;
 		close();
@@ -694,5 +706,6 @@ int main(int argc, char *argv[]) {
 		playCredits();
 	}
 	close();
+	//*/
 	return 0;
 }
