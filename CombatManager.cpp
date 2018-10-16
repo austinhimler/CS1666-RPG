@@ -4,7 +4,7 @@
 #include "Headers/Player.h"
 #include "Headers/Enemy.h"
 #include <vector>
-	QueueManager::QueueManager(vector<Character> c)
+	QueueManager::QueueManager(vector<Character*> c)
 	{
 		for (auto C : c) {
 			currTurn.push_back(C);
@@ -20,7 +20,7 @@
 	}
 
 
-	void QueueManager::createRounds(vector<Character> c)
+	void QueueManager::createRounds(vector<Character*> c)
 	{
 		
 	}
@@ -31,15 +31,15 @@
 		insertionSort(nextTurn, nextTurn.size());
 	}
 
-	void QueueManager::insertionSort(std::vector<Character>& turn, int n)
+	void QueueManager::insertionSort(std::vector<Character*>& turn, int n)
 	{
 		int i, j;
-		Character key;
+		Character* key;
 		for (i = 1; i < n; i++)
 		{
 			key = turn[i];
 			j = i - 1;
-			while (j >= 0 && turn[j].getDex() > key.getDex())
+			while (j >= 0 && turn[j]->getDex() > key->getDex())
 			{
 				turn[j + 1] = turn[j];
 				j = j - 1;
@@ -48,7 +48,7 @@
 		}
 	}
 
-	void QueueManager::vectorCopy(vector<Character>& cT, vector<Character>& nT)
+	void QueueManager::vectorCopy(vector<Character*>& cT, vector<Character*>& nT)
 	{
 		cT.erase(cT.begin(), cT.end());
 		for (int i = 0; i < nT.size(); i++)
@@ -94,10 +94,9 @@ void takeAction(Character& c) {
 		If energy = 0 or player clicks End Turn, return
 	*/
 
-
 }
 bool gameOn = true;
-void combatManager(Player& p) 
+void CombatManager::combatManager(std::vector<Character*>& p) 
 {
 	/**
 	*	Combat Manager - Start Battle:
@@ -112,9 +111,7 @@ void combatManager(Player& p)
 	Enemy e1;
 	// Set up a Character array and populate it (not sorted by dex) 
 	//Character participants[2];
-	vector<Character> participants;
-	participants[0] = Character(p);
-	participants[1] = Character(e1);
+	participants = p;
 	// Create QueueManager obj which contains sorting of participant array. 
 	QueueManager qm = QueueManager(participants);
 	while (gameOn)
@@ -123,7 +120,6 @@ void combatManager(Player& p)
 		{
 			updateStatus(participants[i]);
 			takeAction(participants[i]);
-
 		}
 		qm.changeRounds();
 	}

@@ -8,7 +8,7 @@ enum AILMENTS {
 
 class Ailment {
 public:
-	Ailment(std::string n, double c);
+	Ailment(int n, double c);
 protected:
 	int name;
 	double chance;

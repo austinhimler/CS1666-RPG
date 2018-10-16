@@ -1,8 +1,15 @@
 #include "../Headers/Character.h"
 
-	Character::Character() : Character("Character 1") {
-	}
-	Character::Character(std::string n) : Character(n, 1, 1, 1, 1, 1) {
+
+	Character::Character(std::string n, std::vector<Attribute> attr) {
+		attributes = attr;
+		setHPMax();
+		setMPMax();
+		setEnergyMax();
+		hpCurrent = hpMax;
+		mpCurrent = mpMax;
+		energyCurrent = energyMax;
+		name = n;
 	}
 	Character::Character(std::string n, int s, int i, int d, int c, int f) {
 		attributes = std::vector<Attribute>(5);
@@ -13,15 +20,11 @@
 		attributes[FAI] = Attribute("Faith", f);
 		new Character(n, attributes);
 	}
-	Character::Character(std::string n, std::vector<Attribute> attr) {
-		attributes = attr;
-		setHPMax();
-		setMPMax();
-		setEnergyMax();
-		hpCurrent = hpMax;
-		mpCurrent = mpMax;
-		energyCurrent = energyMax;
-		name = n;
+	Character::Character(std::string n) {
+		Character(n, 1, 1, 1, 1, 1);
+	}
+	Character::Character() {
+		Character("Character 1");
 	}
 
 	int Character::getHPMax() {

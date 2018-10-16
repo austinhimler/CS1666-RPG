@@ -1,6 +1,6 @@
 #include "../Headers/Ailment.h"
 
-Ailment::Ailment(std::string n, double c) {
+Ailment::Ailment(int n, double c) {
 	name = n;
 	chance = c;
 }
