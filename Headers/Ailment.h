@@ -1,5 +1,15 @@
 #pragma once
 #include <string>
 
-	std::string name;
+enum AILMENTS {
+	SILENCE,
+	POISON,
+};
+
+class Ailment {
+public:
+	Ailment(std::string n, double c);
+protected:
+	int name;
 	double chance;
+};
