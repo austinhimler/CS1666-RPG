@@ -1,5 +1,6 @@
 #pragma once
 #include "Character.h"
+#include <vector>
 
 class CombatManager
 {
@@ -7,7 +8,7 @@ public:
 	CombatManager();
 	~CombatManager();
 	void updateStatus(Character* c);
-	void takeAction(Character* c);
+	void takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e);
 	void combatManager(std::vector<Character*>& c);
 	bool gameOn;
 	vector<Character*> participants;

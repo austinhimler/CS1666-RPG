@@ -113,7 +113,7 @@ SDL_Texture* CombatManager::loadImage(std::string fname) {
 
 	return newText;
 }
-void CombatManager::takeAction(Character* c) {
+void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e) {
 	/*
 		If c is an emeny, do enemy attack
 		Else, wait for user input
@@ -122,15 +122,13 @@ void CombatManager::takeAction(Character* c) {
 		If a skill is clicked wait for user to click on character to use the skill on
 		If energy = 0 or player clicks End Turn, return
 	*/
-	SDL_Texture* background = loadImage("Images/UI/CombatScene/combatScene.png");
 	if (c->isEnemy == true)
 	{
 		//Enemy attack player
 	}
 	else
 	{
-		std::vector<Button *> buttons;
-		SDL_Event e;
+		
 		while (SDL_PollEvent(&e))
 		{
 			int mouseX, mouseY;
@@ -186,12 +184,16 @@ void CombatManager::combatManager(std::vector<Character*>& p)
 	vector<int> ailments;
 	// Create QueueManager obj which contains sorting of participant array. 
 	QueueManager qm = QueueManager(participants);
+	std::vector<Button *> buttons;
+	SDL_Event e;
+	SDL_Texture* background = loadImage("Images/UI/CombatScene/combatScene.png");
+	SDL_RenderCopy(gRenderer, background, NULL, NULL);
 	while (gameOn)
 	{
 		for (int i = 0; i < participants.size(); i++)
 		{
 			//updateStatus(participants[i]);
-			takeAction(participants[i]);
+			takeAction(participants[i], buttons, e);
 		}
 		qm.changeRounds();
 	}
