@@ -144,30 +144,33 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 
 						if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN && (i->type == "button"))
 						{
-							//Display buttons in info sheet
-							
-							/*
-							if(Escape button is clicked) {
+							bool abil_button = true;
+							/*while (abil_button) {
+								//Display buttons in info sheet
+
+								
+								if(Escape button is clicked) {
 								Ability* a = c->abilities[c->getHelp(ESCAPE)];
-								if(c->beingTarget(a)) {
-									// escape successfully
-									// play animation
-									// end combat
+									if(c->beingTarget(a) == -1) {
+										// escape successfully
+										// play animation
+										// end combat
+									}
+									else {
+										//escape failed
+										//play animation
+									}
 								}
-								else {
-									//escape failed
-									//play animation
+								if(Ability buttons are clicked) {
+									Ability* a = c->abilities[c->getHelp(the abilities whose button is clicked)];
+									// create/activate character buttons
+									while(Character buttons are clicked) {
+										Character* target = the character whose button is clicked
+										int result = target->beingTarget(a); // result gives the how many hp increased or decresed
+									}
 								}
-							}
-							if(Ability buttons are clicked) {
-								Ability* a = c->abilities[c->getHelp(the abilities whose button is clicked)];
-								// create/activate character buttons
-								if(Character buttons are clicked) {
-									Character* target = the character whose button is clicked
-									target->beingTarget(a);
-								}
-							}
-							*/
+							
+							}*/
 						}
 					}
 				}

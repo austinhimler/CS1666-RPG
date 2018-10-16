@@ -32,24 +32,30 @@
 		Character("Character 1");
 	}
 
-	bool Character::beingTarget(Ability* a) {
+	int Character::beingTarget(Ability* a) {
 		int i;
-		bool result = true;
+		int result = -1;
 		switch (a->getType()) {
 		case AbilityResource::tDAMAGE:
+			result = hpCurrent;
 			hpCurrent -= a->getVal();
-			if (hpCurrent < 0) hpCurrent = 0;
+			if (hpCurrent < 0)hpCurrent = 0;
+			else result = a->getVal();
 			break;
 		case AbilityResource::tHEALING:
+			result = hpMax - hpCurrent;
 			hpCurrent += a->getVal();
 			if (hpCurrent > hpMax) hpCurrent = hpMax;
+			else result = a->getVal();
 			break;
 		case AbilityResource::tESCAPE:
 			i = rand() % 2;
-			if (i == 0) result = false;
+			if (i == 0) result = -2;
+			else result = -1;
 			break;
 		case AbilityResource::tDEFENSE:
 			buff[ENERGYREGEN]++;
+			result = 1;
 			break;
 		case AbilityResource::tSUMMON:
 			break;

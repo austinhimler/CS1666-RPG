@@ -67,7 +67,7 @@ public:
 	std::vector<Attribute> getAttributes();
 	std::vector<Ability> getAbilities();
 	
-	bool beingTarget(Ability* a);
+	int beingTarget(Ability* a); // return -1 for succesful escape, -2 for failed escape, non-negative integers for HP healed or damaged
 	//void takeDamage(Ability a);
 	void learnAbility(int a);
 
