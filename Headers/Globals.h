@@ -33,7 +33,11 @@ enum BUFF {
 	BUFFCOUNT
 };
 
-
+enum AILMENTS {
+	SILENCE,
+	POISON,
+};
+	
 
 
 extern SDL_Window* gWindow;
