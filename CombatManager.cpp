@@ -2,7 +2,12 @@
 #include "Headers/Player.h"
 #include "Headers/Enemy.h"
 #include "Headers/Button.h"
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_mixer.h>
+#include <SDL_ttf.h>
 #include <vector>
+#include <iostream>
 	QueueManager::QueueManager(vector<Character *> c)
 	{
 		for (auto C : c) {
@@ -87,7 +92,28 @@ void updateStatus(Character& c) {
 	}
 }
 */
-void CombatManager::takeAction(Character* c) {
+//SAME CODE FROM MAINGAME.CPP EVENTUALLY MOVE THIS
+SDL_Texture* CombatManager::loadImage(std::string fname) {
+	SDL_Texture* newText = nullptr;
+
+	SDL_Surface* startSurf = IMG_Load(fname.c_str());
+	if (startSurf == nullptr) {
+		std::cout << "Unable to load image " << fname << "! SDL Error: " << SDL_GetError() << std::endl;
+		return nullptr;
+	}
+
+	SDL_SetColorKey(startSurf, SDL_TRUE, SDL_MapRGB(startSurf->format, 0, 0xFF, 0xFF));//if the color is 0, 0xFF, 0xFF, it should be cleaned
+
+	newText = SDL_CreateTextureFromSurface(gRenderer, startSurf);
+	if (newText == nullptr) {
+		std::cout << "Unable to create texture from " << fname << "! SDL Error: " << SDL_GetError() << std::endl;
+	}
+
+	SDL_FreeSurface(startSurf);
+
+	return newText;
+}
+void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e) {
 	/*
 		If c is an emeny, do enemy attack
 		Else, wait for user input
@@ -102,8 +128,7 @@ void CombatManager::takeAction(Character* c) {
 	}
 	else
 	{
-		std::vector<Button *> buttons;
-		SDL_Event e;
+		
 		while (SDL_PollEvent(&e))
 		{
 			int mouseX, mouseY;
@@ -111,9 +136,17 @@ void CombatManager::takeAction(Character* c) {
 			for (auto i : buttons)
 			{
 				if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
-					((mouseY >= i->y) && (mouseY <= (i->y + i->h))) && (i->type == "character"))
+					((mouseY >= i->y) && (mouseY <= (i->y + i->h))) )
 				{
-					//Display in info screen
+					if (i->type == "character")
+					{
+						//Display character info in info sheet
+					}
+
+					if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN && (i->type == "button"))
+					{
+						//Display buttons in info sheet
+					}
 				}
 			}
 		}
@@ -151,12 +184,16 @@ void CombatManager::combatManager(std::vector<Character*>& p)
 	vector<int> ailments;
 	// Create QueueManager obj which contains sorting of participant array. 
 	QueueManager qm = QueueManager(participants);
+	std::vector<Button *> buttons;
+	SDL_Event e;
+	SDL_Texture* background = loadImage("Images/UI/CombatScene/combatScene.png");
+	SDL_RenderCopy(gRenderer, background, NULL, NULL);
 	while (gameOn)
 	{
 		for (int i = 0; i < participants.size(); i++)
 		{
 			//updateStatus(participants[i]);
-			takeAction(participants[i]);
+			takeAction(participants[i], buttons, e);
 		}
 		qm.changeRounds();
 	}
