@@ -116,7 +116,19 @@ bool check_collision(SDL_Rect a, SDL_Rect b) {
 	return true;
 }
 
-
+void combatTransition(){
+	SDL_Rect wipe = { 0,0,72,72 };
+	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+	for (; wipe.x < 720; wipe.x += 72)
+	{
+		for (wipe.y = 0; wipe.y < 720; wipe.y += 72)
+		{
+			SDL_RenderFillRect(gRenderer, &wipe);
+			SDL_RenderPresent(gRenderer);
+			SDL_Delay(10);
+		}
+	}
+}
 SDL_Texture* loadImage(std::string fname) {
 	SDL_Texture* newText = nullptr;
 
@@ -707,7 +719,10 @@ void playGame() {
 		}
 
 		while (!inOverworld) {
+			combatTransition();
 			combatScene(combatants);
+			enemy1.xPosition = 999;
+			enemy1.yPosition = 999;
 			inOverworld = true;
 		}
 
