@@ -76,13 +76,9 @@ void updateStatus(Character& c) {
 						start in-turn
 						*/
 	if (c.getHPCur() <= 0) {
-		// game over
-		exit(0);
+		gameOn = false;
 	}
 	// Game on!
-	else {
-
-	}
 }
 void takeAction(Character& c) {
 	/*
@@ -93,6 +89,8 @@ void takeAction(Character& c) {
 		If a skill is clicked wait for user to click on character to use the skill on
 		If energy = 0 or player clicks End Turn, return
 	*/
+	
+
 
 
 }
@@ -113,7 +111,7 @@ void combatManager(Player& p)
 	// Set up a Character array and populate it (not sorted by dex) 
 	//Character participants[2];
 	vector<Character> participants;
-	participants[0] = Character(p);
+	participants[0] = Character(p); 
 	participants[1] = Character(e1);
 	// Create QueueManager obj which contains sorting of participant array. 
 	QueueManager qm = QueueManager(participants);
@@ -127,11 +125,17 @@ void combatManager(Player& p)
 		}
 		qm.changeRounds();
 	}
+
 	
 	 
 	
 
 }
+
+
+
+
+
 
 
 
