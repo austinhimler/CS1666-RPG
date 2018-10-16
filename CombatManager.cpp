@@ -121,7 +121,6 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 	}
 	else
 	{
-		
 		bool takingAction = true;
 		while(takingAction) {
 			if (c->getEnergyCurrent() == 0) {
@@ -210,12 +209,21 @@ bool CombatManager::combatManager(std::vector<Character*>& p)
 	vector<int> ailments;
 	// Create QueueManager obj which contains sorting of participant array. 
 	QueueManager qm = QueueManager(participants);
+	/*
 	std::vector<Button *> buttons;
 	SDL_Event e;
 	SDL_Texture* background = loadImage("Images/UI/CombatScene/combatScene.png");
-	SDL_Texture* button = loadImage("Images/UI/CombatScene/Button.png");
-	SDL_RenderCopy(gRenderer, button, NULL, NULL);
+	SDL_Rect scene_box = { 0,0,720,540 };
+	SDL_Rect ui_box = { 0,540,720,180 };
+
+	vector<Button*> buttons;
+		buttons.push_back(new Button("attack", ui_box.x+10, ui_box.y + 10, 20, 20, "Images/UI/CombatScene/Button.png", "Attack", gRenderer));
+		buttons.push_back(new Button("defend", ui_box.x + 40, ui_box.y + 40, 20, 20, "Images/UI/CombatScene/Button.png", "Defend", gRenderer));
 	
+	SDL_RenderCopy(gRenderer, background, NULL, NULL);
+	for (auto i : button_box) {
+		SDL_RenderCopy(gRenderer, button, NULL, &i);
+	}*/
 	//Test to check that the background appears
 	while (gameOn)
 	{
