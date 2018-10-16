@@ -1,5 +1,10 @@
 #pragma once
 #include <string>
 
-	std::string name;
+class Ailment {
+public:
+	Ailment(int n, double c);
+protected:
+	int name;
 	double chance;
+};

@@ -1,7 +1,6 @@
-#include <string>
-#include <vector>
-class Ailment {
-public:
-	std::string name;
-	double chance; //%
-};
+#include "../Headers/Ailment.h"
+
+Ailment::Ailment(int n, double c) {
+	name = n;
+	chance = c;
+}

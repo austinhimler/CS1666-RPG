@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Classes\Ability.cpp" />
+    <ClCompile Include="Classes\Ailment.cpp" />
     <ClCompile Include="Classes\Attribute.cpp" />
     <ClCompile Include="Classes\Attributes\Constitution.cpp" />
     <ClCompile Include="Classes\Attributes\Dexterity.cpp" />
@@ -152,10 +153,14 @@
     <ClCompile Include="Classes\Attributes\Strength.cpp" />
     <ClCompile Include="Classes\Button.cpp" />
     <ClCompile Include="Classes\Character.cpp" />
+    <ClCompile Include="Classes\Cluster.cpp" />
     <ClCompile Include="Classes\Enemy.cpp" />
     <ClCompile Include="Classes\Inventory.cpp" />
+    <ClCompile Include="Classes\Item.cpp" />
     <ClCompile Include="Classes\Player.cpp" />
+    <ClCompile Include="Classes\Resistance.cpp" />
     <ClCompile Include="Classes\Tile.cpp" />
+    <ClCompile Include="CombatManager.cpp" />
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="mainGame.cpp" />
   </ItemGroup>
@@ -184,6 +189,8 @@
   <ItemGroup>
     <ClInclude Include="Ability.h" />
     <ClInclude Include="Ailment.h" />
+    <ClInclude Include="Headers\Abilities\AbilityResource.h" />
+    <ClInclude Include="Headers\Abilities\Attack.h" />
     <ClInclude Include="Headers\Ability.h" />
     <ClInclude Include="Headers\Ailment.h" />
     <ClInclude Include="Headers\Attribute.h" />
@@ -194,6 +201,7 @@
     <ClInclude Include="Headers\Attributes\Strength.h" />
     <ClInclude Include="Headers\Button.h" />
     <ClInclude Include="Headers\Character.h" />
+    <ClInclude Include="Headers\Cluster.h" />
     <ClInclude Include="Headers\CombatManager.h" />
     <ClInclude Include="Headers\Enemy.h" />
     <ClInclude Include="Headers\Globals.h" />
