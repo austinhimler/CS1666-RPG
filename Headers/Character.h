@@ -46,8 +46,10 @@ public:
 	double yVelocity;
 	double xDeltaVelocity;
 	double yDeltaVelocity;
-	int xPosition;
-	int yPosition;
+	double xPosition;
+	double yPosition;
+	Uint32 timeSinceLastMovement;
+	Uint32 timeSinceLastAnimation;
 	SDL_Rect rectangle;
 	SDL_Rect drawRectangle;
 	std::string getImageIdleResource();

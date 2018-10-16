@@ -27,6 +27,7 @@
 		Character("Character 1");
 	}
 
+	int Character::getDex() { return attributes[DEX].current;}
 	int Character::getHPMax() { return hpMax; }
 	int Character::getMPMax() { return mpMax; }
 	int Character::getEnergyMax() { return energyMax; }
@@ -53,4 +54,6 @@
 	SDL_Rect Character::getRectangle() { return rectangle; }
 	std::vector<Attribute> Character::getAttributes() { return attributes; }
 	std::vector<Ability> Character::getAbilities() { return abilities; }
+	double Character::getSpeedMax() { return speedMax; }
+	double Character::getAcceleration() { return acceleration; }
 

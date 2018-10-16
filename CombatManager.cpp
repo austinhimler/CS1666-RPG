@@ -1,6 +1,4 @@
 #include "Headers/CombatManager.h"
-//#include "Headers/QueueManager.h"
-#include "Headers/Character.h"
 #include "Headers/Player.h"
 #include "Headers/Enemy.h"
 #include "Headers/Button.h"
@@ -68,7 +66,7 @@ CombatManager::~CombatManager()
 {
 }
 
-
+/*
 void updateStatus(Character& c) {
 	//First check if character is dead
 	if (c.getHPCur() <= 0) {
@@ -88,7 +86,8 @@ void updateStatus(Character& c) {
 		}
 	}
 }
-void takeAction(Character* c) {
+*/
+void CombatManager::takeAction(Character* c) {
 	/*
 		If c is an emeny, do enemy attack
 		Else, wait for user input

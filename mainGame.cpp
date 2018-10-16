@@ -501,29 +501,12 @@ bool characterCreateScreen() {
 void playGame() {
 
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
-
-	//SDL_Rect characterBox = {250, 250, 200, 148 };
 	SDL_Rect enemyBox = { 400, 100, 384, 308 };
-
-	//SDL_Texture* characterTextureActive = NULL;
-	//SDL_Texture* characterTextureRun = loadImage("Images/Player/Character_Run.png");
-	//SDL_Texture* characterTextureIdle = loadImage("Images/Player/Character_Idle.png");
 	SDL_Texture* enemyTextureIdle = loadImage("Images/Enemies/Enemy1/Enemy_Idle.png");
-	//characterTextureActive = characterTextureIdle;
 	player1.setTextureActive(player1.getTextureIdle());
+	player1.currentMaxFrame = player1.getNumIdleAnimationFrames();
+	std::vector<Character> charactersOnScreen;
 
-	//int charMoveSpeed = 2;
-	//int characterMoveAcceleration = 2;
-	//int characterMoveMaxSpeed = 4;
-
-	/*int xVelocity = 0;
-	int yVelocity = 0;
-	int xDeltaVelocity;
-	int yDeltaVelocity;
-	int charImageX = 0;
-	int charImageY = 0;
-	int charImageW = 200;
-	int charImageH = 148;*/
 	int enemyImageX = 0;
 	int enemyImageY = 0;
 	int enemyImageW = 384;
@@ -533,12 +516,13 @@ void playGame() {
 	int maxFrame = 4;
 
 
-	// Keep track of time
-	Uint32 fps_last_time = SDL_GetTicks();
-	Uint32 fps_cur_time = 0;
-	Uint32 move_last_time = SDL_GetTicks();
-	Uint32 anim_last_time = SDL_GetTicks();
+	Uint32 timeSinceLastMovement = SDL_GetTicks();
+	Uint32 timeSinceLastAnimation = SDL_GetTicks();
+	player1.timeSinceLastMovement = timeSinceLastMovement;
+	player1.timeSinceLastAnimation = timeSinceLastAnimation;
 	double timePassed = 0;
+
+	charactersOnScreen.push_back(player1);
 
 
 	SDL_Event e;
@@ -553,7 +537,7 @@ void playGame() {
 		}
 
 		// figure out how much of a second has passed
-		timePassed = (SDL_GetTicks() - move_last_time) / 1000.0;
+		timePassed = (SDL_GetTicks() - timeSinceLastMovement) / 1000.0;
 		player1.xDeltaVelocity = 0;
 		player1.yDeltaVelocity = 0;
 
@@ -641,66 +625,56 @@ void playGame() {
 			player1.xPosition -= (player1.xVelocity * timePassed);
 		}
 
-		move_last_time = SDL_GetTicks();
+		timeSinceLastMovement = SDL_GetTicks();
 
 		if (player1.xVelocity > 0 && flip == SDL_FLIP_HORIZONTAL)
 			flip = SDL_FLIP_NONE;
 		else if (player1.xVelocity < 0 && flip == SDL_FLIP_NONE)
 			flip = SDL_FLIP_HORIZONTAL;
+
 		//Set Black
 		SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
 		SDL_RenderClear(gRenderer);
 
 		enemyImageX = frame * 384;
-		//charImageX = frame * 200;
 
 		if (player1.getTextureActive() == player1.getTextureIdle()) {
-			if (SDL_GetTicks() - anim_last_time > player1.getTimeBetweenIdleAnimations()) {
+			if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenIdleAnimations()) {
 				player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
-				anim_last_time = SDL_GetTicks();
+				player1.timeSinceLastAnimation = SDL_GetTicks();
 			}
 		}
 		else {
-			if (SDL_GetTicks() - anim_last_time > player1.getTimeBetweenRunAnimations()) {
+			if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenRunAnimations()) {
 				player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
-				anim_last_time = SDL_GetTicks();
+				player1.timeSinceLastAnimation = SDL_GetTicks();
 			}
 		}
 		player1.drawRectangle.x = player1.currentFrame * player1.getPixelShiftAmountForAnimationInSpriteSheet();
-
-		//SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH};
-		//player1.drawRectangle = { player1.currentFrame * player1.getPixelShiftAmountForAnimationInSpriteSheet(),
-		//	0, player1.getImageWidth(), player1.getImageHeight()};
-
-		player1.rectangle.x = player1.xPosition;
-		player1.rectangle.y = player1.yPosition;
-
-
-		//player1.rectangle = { player1.xPosition, player1.yPosition, player1.getImageWidth(), player1.getImageHeight() };
-		SDL_Rect enemyRectangle = { enemyImageX, enemyImageY, enemyImageW, enemyImageH };
-		//SDL_RenderCopyEx(gRenderer, characterTextureActive, &charactersRectangle, &characterBox,0.0,nullptr, flip);
+		player1.rectangle.x = (int) player1.xPosition;
+		player1.rectangle.y = (int) player1.yPosition;
 		SDL_RenderCopyEx(gRenderer, player1.getTextureActive(), &player1.drawRectangle, &player1.rectangle, 0.0, nullptr, flip);
 
+		SDL_Rect enemyRectangle = { enemyImageX, enemyImageY, enemyImageW, enemyImageH };
 		SDL_RenderCopy(gRenderer, enemyTextureIdle, &enemyRectangle, &enemyBox);
 
 		SDL_RenderPresent(gRenderer);
 
-		//to add more frames per image to make it more fluid
-		//definitely not the best way to do this, need to sync to a consistent gametime
 
-		//delaysPerFrame++;
-		//if (delaysPerFrame >= 6) {
-		//	frame++;
-		//	delaysPerFrame = 0;
-		//}
-		//if (frame == maxFrame) {
-		//	frame = 0;
-		//}
+		//BELOW CODE ONLY USED FOR MINOTAUR BASED ON OLD FRAME WAY
+		delaysPerFrame++;
+		if (delaysPerFrame >= 300) {
+			frame++;
+			delaysPerFrame = 0;
+		}
+		if (frame == maxFrame) {
+			frame = 0;
+		}
 		//SDL_Delay(16);
 	}
 
 	while (!inOverworld) {
-		combatScene();
+		//combatScene();
 		inOverworld = true;
 	}
 
