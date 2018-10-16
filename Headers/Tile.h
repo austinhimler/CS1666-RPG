@@ -27,7 +27,7 @@ public:
 	Tile(int x, int y, int tileType);
 
 	//Shows the tile
-	void render(SDL_Rect* camera);
+	bool render(SDL_Rect* camera);
 
 	//Get the tile type
 	int getType();
