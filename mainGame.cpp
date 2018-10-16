@@ -641,6 +641,8 @@ void playGame() {
 			player1.xPosition -= (player1.xVelocity * timePassed);
 		}
 
+		move_last_time = SDL_GetTicks();
+
 		if (player1.xVelocity > 0 && flip == SDL_FLIP_HORIZONTAL)
 			flip = SDL_FLIP_NONE;
 		else if (player1.xVelocity < 0 && flip == SDL_FLIP_NONE)
