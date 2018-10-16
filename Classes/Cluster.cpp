@@ -5,7 +5,7 @@
 Cluster::Cluster(int q) {
 	for (int temp = 0;temp < q;temp++)
 	{
-		Enemy c = Enemy("Owl");
+		Character c = Character("Owl");
 		characterGroup.push_back(c);
 	}
 	clusterSize = q;
@@ -36,8 +36,9 @@ Cluster::Cluster(std::string n) {
 	name = n;
 	Cluster(1);
 }
+/*
 Cluster::Cluster(std::string n, int q) {
 	name = n;
 	Cluster(q);
 }
-
+*/

@@ -526,7 +526,7 @@ void combatScene(std::vector<Character> combatants) {
 }
 void playGame() {
 
-	Cluster enemy1 = Cluster("Sample",1);
+	Cluster enemy1 = Cluster("Sample");
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 
 	player1.setTextureActive(player1.getTextureIdle());
