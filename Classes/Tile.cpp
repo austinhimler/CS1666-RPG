@@ -30,7 +30,7 @@ void Tile::render(SDL_Rect* camera)
 {
 	
 	//If the tile is on screen
-	if (SDL_IntersectRect(camera, mBox, NULL))
+	if (SDL_HasIntersection(camera, mBox))
 	{
 		//Show the tile
 		SDL_RenderCopy(gRenderer,texture,NULL,mBox);
