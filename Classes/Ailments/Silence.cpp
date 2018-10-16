@@ -1,5 +1,6 @@
+#include "../../Headers/Ailments/Silence.h"
 #include <string>
-#include <vector>
-class Silence : public Ailment {
 
-};
+Silence::Silence(double c) : Ailment("Silence", c) {
+	
+}
