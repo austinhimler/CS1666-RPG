@@ -625,7 +625,7 @@ void playGame() {
 			timePassed = (SDL_GetTicks() - timeSinceLastMovement) / 1000.0;
 			player1.xDeltaVelocity = 0;
 			player1.yDeltaVelocity = 0;
-
+			double runingAddSpeed = 0; 
 
 			const Uint8* keyState = SDL_GetKeyboardState(nullptr);
 			if (keyState[SDL_SCANCODE_W])
@@ -636,6 +636,9 @@ void playGame() {
 				player1.yDeltaVelocity += (player1.getAcceleration() * timePassed);
 			if (keyState[SDL_SCANCODE_D])
 				player1.xDeltaVelocity += (player1.getAcceleration() * timePassed);
+			if (keyState[SDL_SCANCODE_LSHIFT])
+				runingAddSpeed = 200;
+
 
 			if (player1.xDeltaVelocity == 0) {
 				if (player1.xVelocity > 0)
@@ -670,15 +673,15 @@ void playGame() {
 			}
 
 			//bound within Max Speed
-			if (player1.xVelocity < -player1.getSpeedMax())
-				player1.xVelocity = -player1.getSpeedMax();
-			else if (player1.xVelocity > player1.getSpeedMax())
-				player1.xVelocity = player1.getSpeedMax();
+			if (player1.xVelocity < -(player1.getSpeedMax()+runingAddSpeed))
+				player1.xVelocity = -(player1.getSpeedMax() + runingAddSpeed);
+			else if (player1.xVelocity > (player1.getSpeedMax() + runingAddSpeed))
+				player1.xVelocity = (player1.getSpeedMax() + runingAddSpeed);
 			//bound within Max Speed
-			if (player1.yVelocity < -player1.getSpeedMax())
-				player1.yVelocity = -player1.getSpeedMax();
-			else if (player1.yVelocity > player1.getSpeedMax())
-				player1.yVelocity = player1.getSpeedMax();
+			if (player1.yVelocity < -(player1.getSpeedMax() + runingAddSpeed))
+				player1.yVelocity = -(player1.getSpeedMax() + runingAddSpeed);
+			else if (player1.yVelocity > (player1.getSpeedMax() + runingAddSpeed))
+				player1.yVelocity = (player1.getSpeedMax() + runingAddSpeed);
 
 			//Change sprite if character is in motion
 			if (player1.xVelocity != 0 || player1.yVelocity != 0) {
