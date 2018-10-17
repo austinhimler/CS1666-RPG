@@ -7,8 +7,7 @@
 Cluster::Cluster(int q) {
 	for (int temp = 0;temp < q;temp++)
 	{
-		Enemy c = Enemy("Owl", 1, 1, 1, 1, 1);
-		characterGroup.push_back(&c);
+		characterGroup.push_back(new Enemy("Owl", 1, 1, 1, 1, 1));
 	}
 	clusterSize = q;
 	pixelShiftAmountForAnimationInSpriteSheet = 200;
