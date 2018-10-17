@@ -17,7 +17,7 @@ public:
 	/*
 	Cluster(Enemy e, int q);
 	*/
-	vector<Character> characterGroup;
+	vector<Character*> characterGroup;
 	int clusterSize;
 };
 #endif // !_____CLUSTER_H_____
