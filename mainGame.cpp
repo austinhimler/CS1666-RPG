@@ -705,9 +705,10 @@ void playGame() {
 			if (check_collision(player1.rectangle, enemy1.rectangle)){
 				//combatants = enemy1.characterGroup;
 				combatants.push_back(&player1);
+				std::cout << enemy1.characterGroup[0]->toString() << std::endl;
 				for (auto i : enemy1.characterGroup)
 				{
-					combatants.push_back(&i);
+					combatants.push_back(i);
 				}
 				inOverworld = false;
 			}
@@ -740,10 +741,10 @@ void playGame() {
 
 int main(int argc, char *argv[]) {
 	/*
-	Resistance r = Resistance("Resistance");
-	std::cout << r.to_string() << std::endl;
+	Character r = Character("Owl", 1, 1, 1, 1, 1);
+	std::cout << r.toString() << std::endl;
 	//*/
-
+	
 	if (!init()) {
 		std::cout << "Failed to initialize!" << std::endl;
 		close();
@@ -755,6 +756,6 @@ int main(int argc, char *argv[]) {
 		playCredits();
 	}
 	close();
-	
+	//*/
 	return 0;
 }

@@ -6,6 +6,3 @@ Enemy::Enemy()
 {
 	isEnemy = true;
 }
-	std::string description;
-	std::vector<Item> loot;
-	int experienceGiven;

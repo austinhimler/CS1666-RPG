@@ -20,6 +20,6 @@ int Attribute::getCur() {
 
 	std::string Attribute::toString() {
 		std::string s = name;
-		s += "base: " + std::to_string(base) + " cur: " + std::to_string(current);
+		s += " base: " + std::to_string(base) + " cur: " + std::to_string(current);
 		return s;
 	}

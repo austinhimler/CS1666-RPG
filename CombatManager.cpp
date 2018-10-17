@@ -34,20 +34,22 @@
 		Character* key;
 		for (i = 1; i < n; i++)
 		{
-			key = turn[i];
+			//key = turn[i];
 			j = i - 1;
-			/*
+			
 			using namespace std;
-			Player* tempp = (Player*)turn[j];
-			cout << string(*tempp) << endl;
+			Enemy* tempp = (Enemy*)turn[j];
+			cout << tempp->toString() << endl;
 			cout << turn.size() << " "<< j<<endl;
+			cout << turn[j]->getDex() << endl;
+			cout << turn[i]->toString() << endl;
 			//*/
-			while (j >= 0 && turn[j]->getDex() > key->getDex())
+			while (j >= 0 && turn[j]->getDex() > turn[i]->getDex())
 			{
 				turn[j + 1] = turn[j];
 				j = j - 1;
 			}
-			turn[j + 1] = key;
+			turn[j + 1] = turn[i];
 		}
 	}
 
@@ -205,9 +207,10 @@ void poisoned(Character& c) {
 bool CombatManager::combatManager(std::vector<Character*> p) 
 {
 	
+	p[1] = new Enemy();
 	using namespace std;
-	Player* tempp = (Player*)p[0];
-	cout << string(*tempp) << endl;
+	Enemy* tempp = (Enemy*)p[0];
+	cout << tempp->toString() << endl;
 	
 	/**
 	*	Combat Manager - Start Battle:
