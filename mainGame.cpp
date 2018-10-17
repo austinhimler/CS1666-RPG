@@ -388,7 +388,10 @@ bool characterCreateScreen() {
 								if (nameInputText == "nlf4" || nameInputText != "") {
 									Mix_PlayChannel(-1, gBSound, 0);
 									onCharacterCreate = false;
-									player1.setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
+									if (nameInputText == "nlf4")
+										player1.setAll(nameInputText, 10, 10, 10, 10, 10);
+									else
+										player1.setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
 									std::cout << std::string(player1); //displays player 1
 									//make Character Object, validate, return to main
 									for (auto i : buttons) {
