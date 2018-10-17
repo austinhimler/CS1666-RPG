@@ -1,4 +1,6 @@
 #include "Headers/CombatManager.h"
+#include "Headers/LoadTexture.h"
+
 
 
 	QueueManager::QueueManager(vector<Character *> c)
@@ -93,27 +95,7 @@ void updateStatus(Character& c) {
 	}
 }
 */
-//SAME CODE FROM MAINGAME.CPP EVENTUALLY MOVE THIS
-SDL_Texture* CombatManager::loadImage(std::string fname) {
-	SDL_Texture* newText = nullptr;
 
-	SDL_Surface* startSurf = IMG_Load(fname.c_str());
-	if (startSurf == nullptr) {
-		std::cout << "Unable to load image " << fname << "! SDL Error: " << SDL_GetError() << std::endl;
-		return nullptr;
-	}
-
-	SDL_SetColorKey(startSurf, SDL_TRUE, SDL_MapRGB(startSurf->format, 0, 0xFF, 0xFF));//if the color is 0, 0xFF, 0xFF, it should be cleaned
-
-	newText = SDL_CreateTextureFromSurface(gRenderer, startSurf);
-	if (newText == nullptr) {
-		std::cout << "Unable to create texture from " << fname << "! SDL Error: " << SDL_GetError() << std::endl;
-	}
-
-	SDL_FreeSurface(startSurf);
-
-	return newText;
-}
 void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e) {
 	/*
 		If c is an emeny, do enemy attack
@@ -231,16 +213,16 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 	vector<int> ailments;
 	// Create QueueManager obj which contains sorting of participant array. 
 	QueueManager qm = QueueManager(p);
-	
+	LoadTexture background;
 	SDL_Event e;
-	SDL_Texture* background = loadImage("Images/UI/CombatScene/combatScene.png");
+	background.loadFromFile("Images/UI/CombatScene/combatScene.png");
 	SDL_Rect scene_box = { 0,0,720,540 };
 	SDL_Rect ui_box = { 17,529,685,167 };
 
 	int bw = 100;
 	int bh = 50;
 	std::vector<Button*> buttons;
-		buttons.push_back(new Button("player", scene_box.x + 10, scene_box.y + 10, bw, bh, "Image/Player/Player_Idle.png", "Player", gRenderer));
+		buttons.push_back(new Button("player", scene_box.x + 10, scene_box.y + 10, bw, bh, "Images/Player/Player_Idle.png", "Player", gRenderer));
 		buttons.push_back(new Button("attack", ui_box.x , ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", "Enemy", gRenderer));
 		buttons.push_back(new Button("attack", ui_box.x , ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", "Attack", gRenderer));
 		buttons.push_back(new Button("defend", ui_box.x , ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "Defend", gRenderer));
@@ -249,11 +231,12 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 	while (gameOn) {
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
-			
+				background.free();
 				return false; 
+				
 			}
 		}
-		SDL_RenderCopy(gRenderer, background, NULL, NULL);
+		background.renderBackground();
 
 		for (auto i : buttons) {
 			SDL_RenderCopy(gRenderer, i->texture, NULL, &(i->rect));
