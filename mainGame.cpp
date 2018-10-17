@@ -528,13 +528,6 @@ void combatScene(std::vector<Character> combatants) {
 		std::cout << i.getName();
 	}
 
-
-
-
-
-
-
-
 }
 void playGame() {
 
@@ -711,7 +704,11 @@ void playGame() {
 			SDL_RenderPresent(gRenderer);
 
 			if (check_collision(player1.rectangle, enemy1.rectangle)){
-				combatants = enemy1.characterGroup;
+				//combatants = enemy1.characterGroup;
+				for (auto i : enemy1.characterGroup)
+				{
+					combatants.push_back(i);
+				}
 				combatants.push_back(player1);
 				inOverworld = false;
 			}
@@ -724,7 +721,7 @@ void playGame() {
 			CombatManager cm;
 			//convert combatants vector of characters to pointer of characters
 			vector<Character *> c;
-			for (Character i : combatants)
+			for (auto i : combatants)
 				c.push_back(&i);
 			bool inCombat = cm.combatManager(c);
 			enemy1.xPosition = 999;
@@ -753,9 +750,6 @@ int main(int argc, char *argv[]) {
 		close();
 		return 1;
 	}
-	/*CombatManager cm;
-	vector<Character*> c;
-	bool keepFighting = cm.combatManager(c);*/
 	bool keepPlaying = characterCreateScreen();
 	if (keepPlaying) {
 		playGame();
