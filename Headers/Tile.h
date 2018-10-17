@@ -41,6 +41,7 @@ public:
 
 	//The tile type
 	int mType;
+	SDL_RendererFlip flip;
 };
 
 #endif

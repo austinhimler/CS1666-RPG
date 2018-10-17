@@ -12,16 +12,43 @@ Tile::Tile(int x, int y, int tileType)
 	//Set the collision box
 	mBox.w = TILE_WIDTH;
 	mBox.h = TILE_HEIGHT;
-
+	flip = SDL_FLIP_NONE;
 	//Get the tile type
 	mType = tileType;
 	Helper temp = Helper();
 	switch (tileType)
 	{
-	case 1:
-		texture = temp.loadImage("Images/Tiles/64^64 lake.png", gRenderer);
+	case 9://pond right edge
+		texture = temp.loadImage("Images/Tiles/pondLeft.png", gRenderer);
+		flip = SDL_FLIP_HORIZONTAL;
 		break;
-	case 0:
+	case 8://pond top right corner
+		texture = temp.loadImage("Images/Tiles/pondTopLeft.png", gRenderer);
+		flip=SDL_FLIP_HORIZONTAL;
+		break;
+	case 7://pond top left corner
+		texture = temp.loadImage("Images/Tiles/pondTopLeft.png", gRenderer);
+		break;
+	case 6://pond bottom right corner
+		texture = temp.loadImage("Images/Tiles/pondBottomLeft.png", gRenderer);
+		flip = SDL_FLIP_HORIZONTAL;
+		break;
+	case 5://pond bottom left corner
+		texture = temp.loadImage("Images/Tiles/pondBottomLeft.png", gRenderer);
+		break;
+	case 4://pond bottom edge
+		texture = temp.loadImage("Images/Tiles/pondBottom.png", gRenderer);
+		break;
+	case 3://pond top edge
+		texture = temp.loadImage("Images/Tiles/pondTop.png", gRenderer);
+		break;
+	case 2://pond left edge
+		texture = temp.loadImage("Images/Tiles/pondLeft.png", gRenderer);
+		break;
+	case 1://pond
+		texture = temp.loadImage("Images/Tiles/pond.png", gRenderer);
+		break;
+	case 0://grass
 		texture = temp.loadImage("Images/Tiles/singleGrass.png", gRenderer);
 		break;
 	}
@@ -36,7 +63,7 @@ bool Tile::render(SDL_Rect* camera)
 	if (SDL_HasIntersection(camera, &mBox))
 	{
 		SDL_Rect Temp = {mBox.x-camera->x,mBox.y-camera->y, mBox.w,mBox.h};
-		SDL_RenderCopy(gRenderer,texture,NULL,&Temp);
+		SDL_RenderCopyEx(gRenderer,texture,NULL,&Temp,0.0,nullptr,flip);
 		return true;
 	}
 	return false;
