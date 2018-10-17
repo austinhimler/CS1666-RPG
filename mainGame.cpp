@@ -306,7 +306,7 @@ bool characterCreateScreen() {
 
 
 	bool onCharacterCreate = true;
-	int pointsToAllocate = 1;
+	int pointsToAllocate = 25;
 	int maxStat = 10;
 	int minStat = 1;
 	int strength = 1;
@@ -910,10 +910,16 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	bool keepPlaying = characterCreateScreen();
-	if (keepPlaying) {
-		playGame();
-		//playCredits();
+	int a = mainMenu();
+	bool b;
+
+	switch (a) {
+	case 0 :
+		b = characterCreateScreen();
+		if (b) playGame();
+		break;
+	case 1:
+		playCredits();
 	}
 	close();
 	//*/
