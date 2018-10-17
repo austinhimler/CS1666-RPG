@@ -118,6 +118,7 @@ bool check_collision(SDL_Rect a, SDL_Rect b) {
 }
 
 void loadMap(Tile* tiles[]) {
+	Tile::loadTiles();
 	bool tilesLoaded = true;
 	int x = 0, y = 0;
 	std::ifstream map("map1.txt");

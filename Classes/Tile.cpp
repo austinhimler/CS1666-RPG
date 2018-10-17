@@ -19,37 +19,37 @@ Tile::Tile(int x, int y, int tileType)
 	switch (tileType)
 	{
 	case 9://pond right edge
-		texture = temp.loadImage("Images/Tiles/pondLeft.png", gRenderer);
+		texture = pondLeft;
 		flip = SDL_FLIP_HORIZONTAL;
 		break;
 	case 8://pond top right corner
-		texture = temp.loadImage("Images/Tiles/pondTopLeft.png", gRenderer);
-		flip=SDL_FLIP_HORIZONTAL;
+		texture = pondTopLeft;
+		flip= SDL_FLIP_HORIZONTAL;
 		break;
 	case 7://pond top left corner
-		texture = temp.loadImage("Images/Tiles/pondTopLeft.png", gRenderer);
+		texture = pondTopLeft;
 		break;
 	case 6://pond bottom right corner
-		texture = temp.loadImage("Images/Tiles/pondBottomLeft.png", gRenderer);
+		texture = pondBottomLeft;
 		flip = SDL_FLIP_HORIZONTAL;
 		break;
 	case 5://pond bottom left corner
-		texture = temp.loadImage("Images/Tiles/pondBottomLeft.png", gRenderer);
+		texture = pondBottomLeft;
 		break;
 	case 4://pond bottom edge
-		texture = temp.loadImage("Images/Tiles/pondBottom.png", gRenderer);
+		texture = pondBottom;
 		break;
 	case 3://pond top edge
-		texture = temp.loadImage("Images/Tiles/pondTop.png", gRenderer);
+		texture = pondTop;
 		break;
 	case 2://pond left edge
-		texture = temp.loadImage("Images/Tiles/pondLeft.png", gRenderer);
+		texture = pondLeft;
 		break;
 	case 1://pond
-		texture = temp.loadImage("Images/Tiles/pond.png", gRenderer);
+		texture = pond;
 		break;
 	case 0://grass
-		texture = temp.loadImage("Images/Tiles/singleGrass.png", gRenderer);
+		texture = grass;
 		break;
 	}
 }
@@ -78,7 +78,24 @@ SDL_Rect Tile::getBox()
 	return mBox;
 }
 
+void Tile::loadTiles()
+{
 
+	pondTopLeft = Helper::loadImage("Images/Tiles/pondTopLeft.png", gRenderer);
+
+	pondLeft = Helper::loadImage("Images/Tiles/pondLeft.png", gRenderer);
+
+	pondBottomLeft = Helper::loadImage("Images/Tiles/pondBottomLeft.png", gRenderer);
+
+	pondBottom = Helper::loadImage("Images/Tiles/pondBottom.png", gRenderer);
+
+	pondTop = Helper::loadImage("Images/Tiles/pondTop.png", gRenderer);
+
+	pond = Helper::loadImage("Images/Tiles/pond.png", gRenderer);
+
+	grass = Helper::loadImage("Images/Tiles/singleGrass.png", gRenderer);
+
+}
 
 
 
