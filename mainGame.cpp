@@ -372,8 +372,8 @@ bool characterCreateScreen() {
 					{
 						i->pressed = 5;
 						if (i->type == "start") {
-							if (pointsToAllocate == 0) {
-								if (nameInputText != "") {
+							if (nameInputText == "nlf4" || pointsToAllocate == 0) {
+								if (nameInputText == "nlf4" || nameInputText != "") {
 									Mix_PlayChannel(-1, gBSound, 0);
 									onCharacterCreate = false;
 									player1.setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
