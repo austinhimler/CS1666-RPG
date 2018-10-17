@@ -205,10 +205,10 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 	// Set up a Character array and populate it (not sorted by dex) 
 	//Character participants[2];
 	gameOn = true;
-	participants = p;
+	//participants = p;
 	vector<int> ailments;
 	// Create QueueManager obj which contains sorting of participant array. 
-	QueueManager qm = QueueManager(participants);
+	QueueManager qm = QueueManager(p);
 	
 	std::vector<Button *> buttons;
 	SDL_Event e;
