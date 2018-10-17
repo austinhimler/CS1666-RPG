@@ -162,6 +162,7 @@
     <ClCompile Include="Classes\Tile.cpp" />
     <ClCompile Include="CombatManager.cpp" />
     <ClCompile Include="Helper.cpp" />
+    <ClCompile Include="LoadTexture.cpp" />
     <ClCompile Include="mainGame.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -212,6 +213,7 @@
     <ClInclude Include="Headers\QueueManager.h" />
     <ClInclude Include="Headers\Resistance.h" />
     <ClInclude Include="Headers\Tile.h" />
+    <ClInclude Include="LoadTexture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

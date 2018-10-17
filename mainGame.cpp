@@ -14,6 +14,7 @@
 #include "Headers/Tile.h"
 #include "Headers/CombatManager.h"
 #include "Headers/Cluster.h"
+#include "Headers/LoadTexture.h"
 
 // Function declarations
 bool init();
