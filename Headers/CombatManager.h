@@ -8,6 +8,7 @@
 #include <SDL_ttf.h>
 #include <vector>
 #include <iostream>
+#include "Helper.h"
 #include "Globals.h"
 
 class CombatManager
