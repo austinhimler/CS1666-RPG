@@ -18,8 +18,8 @@ Ending dates Name
 
 11-14 Mitchell Leng
 
-11-26 James Finkel
+11-26 By Week
 
 11-28 Sanketh Kolli
 
-12-5 Brandon Badger (I can present again on the last day)
+12-5 James Finkel
