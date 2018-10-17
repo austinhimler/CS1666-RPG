@@ -192,6 +192,14 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 	using namespace std;
 	Enemy* tempp = (Enemy*)p[1];
 	cout << tempp->toString() << endl;
+	int charImageX = 0;
+	int charImageY = 0;
+	int charImageW = 128;
+	int charImageH = 128;
+	SDL_Rect characterBox = { 472, 225, 128, 128 };
+	int charAnimationPixelShift = 128;
+	int delaysPerFrame = 0;
+	int frame = 0;
 	
 	/**
 	*	Combat Manager - Start Battle:
@@ -222,11 +230,13 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 	int bw = 100;
 	int bh = 50;
 	std::vector<Button*> buttons;
-		buttons.push_back(new Button("player", scene_box.x + 10, scene_box.y + 10, bw, bh, "Images/Player/Player_Idle.png", "Player", gRenderer));
+		buttons.push_back(new Button("player", scene_box.x + 10, scene_box.y + 200, bw, bh, "Images/Player/Player_Idle.png", "Player", gRenderer));
+		buttons.push_back(new Button("player", scene_box.x + 500, scene_box.y + 200, bw, bh, "Images/Enemies/shadow_cluster/owl.png", "Player", gRenderer));
 		buttons.push_back(new Button("attack", ui_box.x , ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", "Enemy", gRenderer));
 		buttons.push_back(new Button("attack", ui_box.x , ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", "Attack", gRenderer));
 		buttons.push_back(new Button("defend", ui_box.x , ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "Defend", gRenderer));
-	
+		
+		
 		
 	while (gameOn) {
 		while (SDL_PollEvent(&e)) {
@@ -237,9 +247,23 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 			}
 		}
 		background.renderBackground();
-
+		delaysPerFrame++;
+		if (delaysPerFrame >= 6) {
+			frame++;
+			delaysPerFrame = 0;
+		}
+		if (frame == 4) {
+			frame = 0;
+		}
+		charImageX = frame * charAnimationPixelShift;
 		for (auto i : buttons) {
-			SDL_RenderCopy(gRenderer, i->texture, NULL, &(i->rect));
+			if (i->type == "player")
+			{
+				SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };
+				SDL_RenderCopy(gRenderer, i->texture, &charactersRectangle, &(i->rect));
+			}
+			else
+				SDL_RenderCopy(gRenderer, i->texture, NULL, &(i->rect));
 		}
 		SDL_RenderPresent(gRenderer);
 		SDL_Delay(16);
