@@ -306,10 +306,11 @@ bool characterCreateScreen() {
 	int charImageY = 0;
 	int charImageW = 128;
 	int charImageH = 128;
+	int charAnimationPixelShift = 128;
 	int delaysPerFrame = 0;
 	int frame = 0;
 
-	SDL_Rect characterBox = { 436, 205, 200, 148 };
+	SDL_Rect characterBox = { 472, 225, 128, 128 };
 	SDL_Rect pointsAllocatedRectangle = { 227, 32, 0, 0 };
 	SDL_Rect strengthTextRectangle = { 250, 115, 0, 0 };
 	SDL_Rect intelligenceTextRectangle = { 250, 205, 0, 0 };
@@ -371,8 +372,8 @@ bool characterCreateScreen() {
 					{
 						i->pressed = 5;
 						if (i->type == "start") {
-							if (nameInputText == "nlf4" || pointsToAllocate == 0) {
-								if (nameInputText=="nlf4"||nameInputText != "") {
+							if (pointsToAllocate == 0) {
+								if (nameInputText != "") {
 									Mix_PlayChannel(-1, gBSound, 0);
 									onCharacterCreate = false;
 									player1.setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
@@ -509,7 +510,7 @@ bool characterCreateScreen() {
 		}
 
 
-		charImageX = frame * charImageW;
+		charImageX = frame * charAnimationPixelShift;
 
 
 		SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };

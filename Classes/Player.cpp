@@ -29,9 +29,9 @@
 		name = n;
 
 
-	    
+	    pixelShiftAmountForAnimationInSpriteSheet = 128;
 		numIdleAnimationFrames = 4;
-		numRunAnimatonFrames = 6;
+		numRunAnimatonFrames = 7;
 		currentFrame = 0;
 		timeBetweenIdleAnimations = 120;
 		timeBetweenRunAnimations = 100;
@@ -43,7 +43,6 @@
 		textureActive = NULL;
 		imageWidth = 128;
 		imageHeight = 128;
-		pixelShiftAmountForAnimationInSpriteSheet = imageWidth;
 		xPosition = 0; //will need to edit for starting level
 		yPosition = 250.0; //will need to edit for starting level
 		rectangle = {(int)xPosition, (int)yPosition, imageWidth, imageHeight};
