@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <time.h>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
@@ -572,25 +573,6 @@ bool characterCreateScreen() {
 	}
 }
 
-void combatScene() {
-
-
-
-
-
-
-
-
-
-
-}
-
-void combatScene(std::vector<Character*> combatants) {
-	/*for (auto i : combatants) {
-		std::cout << i->getName();
-	}*/
-
-}
 void playGame() {
 
 	Cluster enemy1 = Cluster(1);
@@ -601,6 +583,10 @@ void playGame() {
 	
 	enemy1.setTextureActive(enemy1.getTextureIdle());
 	enemy1.currentMaxFrame = enemy1.getNumIdleAnimationFrames();
+
+	// Randomly spawn the enemy
+	enemy1.xPosition = rand() % (LEVEL_WIDTH - enemy1.getImageWidth());
+	enemy1.yPosition = rand() % (LEVEL_HEIGHT - enemy1.getImageHeight());
 
 	std::vector<Character> charactersOnScreen;
 	std::vector<Character*> combatants;
@@ -792,7 +778,7 @@ void playGame() {
 			SDL_RenderPresent(gRenderer);
 
 			if (check_collision(player1.rectangle, enemy1.rectangle)){
-				//combatants = enemy1.characterGroup;
+				combatants.clear();
 				combatants.push_back(&player1);
 				for (auto i : enemy1.characterGroup)
 				{
@@ -805,15 +791,15 @@ void playGame() {
 
 		while (!inOverworld) {
 			combatTransition();
-			combatScene(combatants);
 			CombatManager cm;
+			std::cout << combatants.size();
 			//convert combatants vector of characters to pointer of characters
 			//vector<Character *> c;
 			//for (auto i : combatants)
 				//c.push_back(&i);
 			bool inCombat = cm.combatManager(combatants);
-			enemy1.xPosition = 999;
-			enemy1.yPosition = 999;
+			enemy1.xPosition = rand() % (LEVEL_WIDTH - enemy1.getImageWidth());
+			enemy1.yPosition = rand() % (LEVEL_HEIGHT - enemy1.getImageHeight());
 			inOverworld = true;
 		}
 
@@ -908,6 +894,7 @@ int mainMenu() {
 	}
 }
 int main(int argc, char *argv[]) {
+	srand(time(NULL));
 	/*
 	Character r = Character("Owl", 1, 1, 1, 1, 1);
 	std::cout << r.toString() << std::endl;
