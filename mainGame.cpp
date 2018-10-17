@@ -10,7 +10,6 @@
 #include "Headers/Globals.h"
 #include "Headers/Player.h"
 #include "Headers/Button.h"
-#include "Headers/Character.h"
 #include "Headers/Tile.h"
 #include "Headers/CombatManager.h"
 #include "Headers/Cluster.h"
@@ -249,7 +248,7 @@ bool characterCreateScreen() {
 
 
 	bool onCharacterCreate = true;
-	int pointsToAllocate = 25;
+	int pointsToAllocate = 1;
 	int maxStat = 10;
 	int minStat = 1;
 	int strength = 1;
@@ -523,9 +522,9 @@ void combatScene() {
 
 }
 
-void combatScene(std::vector<Character> combatants) {
+void combatScene(std::vector<Character*> combatants) {
 	for (auto i : combatants) {
-		std::cout << i.getName();
+		std::cout << i->getName();
 	}
 
 }
@@ -541,7 +540,7 @@ void playGame() {
 	enemy1.currentMaxFrame = enemy1.getNumIdleAnimationFrames();
 
 	std::vector<Character> charactersOnScreen;
-	std::vector<Character> combatants;
+	std::vector<Character*> combatants;
 
 
 	Uint32 timeSinceLastMovement = SDL_GetTicks();
@@ -705,11 +704,11 @@ void playGame() {
 
 			if (check_collision(player1.rectangle, enemy1.rectangle)){
 				//combatants = enemy1.characterGroup;
+				combatants.push_back(&player1);
 				for (auto i : enemy1.characterGroup)
 				{
-					combatants.push_back(i);
+					combatants.push_back(&i);
 				}
-				combatants.push_back(player1);
 				inOverworld = false;
 			}
 
@@ -720,10 +719,10 @@ void playGame() {
 			combatScene(combatants);
 			CombatManager cm;
 			//convert combatants vector of characters to pointer of characters
-			vector<Character *> c;
-			for (auto i : combatants)
-				c.push_back(&i);
-			bool inCombat = cm.combatManager(c);
+			//vector<Character *> c;
+			//for (auto i : combatants)
+				//c.push_back(&i);
+			bool inCombat = cm.combatManager(combatants);
 			enemy1.xPosition = 999;
 			enemy1.yPosition = 999;
 			inOverworld = true;

@@ -88,7 +88,11 @@
 	}
 	//*/
 	std::string Character::toString() {
-		std::string s = name + "\nHP: "+ std::to_string(hpCurrent) + "/"+ std::to_string(hpMax);
+		std::string s = "Name: " + name + "\n";
+		s += to_string(getHPCurrent()) + "/" + to_string(getHPMax())+"\n";
+		for (auto i : attributes) {
+			s += i.toString() + "\n";
+		}
 		return s;
 	}
 

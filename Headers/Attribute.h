@@ -8,7 +8,10 @@ class Attribute {
 public:
 	Attribute();
 	Attribute(std::string n);
-	Attribute(std::string name, int stat);
+	Attribute(std::string n, int stat);
+
+	int getCur();
+
 	std::string toString();
 protected:
 	int base;

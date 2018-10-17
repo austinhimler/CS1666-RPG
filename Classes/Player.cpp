@@ -53,9 +53,11 @@
 
 
 	Player::operator std::string() {
+		
 		std::string s = "Name: " +	name + "\n";
 		for (auto i : attributes) {
 			s += i.toString() + "\n";
 		}
 		return s;
+		
 	}

@@ -1,9 +1,9 @@
 #include "../Headers/Attribute.h"
 
-Attribute::Attribute(std::string name, int stat) {
+Attribute::Attribute(std::string n, int stat) {
 	base = stat;
 	current = stat;
-	name = name;
+	name = n;
 }
 
 Attribute::Attribute(std::string n) {
@@ -14,7 +14,9 @@ Attribute::Attribute() {
 	Attribute("Attribute 1");
 }
 
-	
+int Attribute::getCur() {
+	return current;
+}
 
 	std::string Attribute::toString() {
 		std::string s = name;

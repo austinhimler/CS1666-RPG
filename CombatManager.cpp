@@ -36,6 +36,12 @@
 		{
 			key = turn[i];
 			j = i - 1;
+			/*
+			using namespace std;
+			Player* tempp = (Player*)turn[j];
+			cout << string(*tempp) << endl;
+			cout << turn.size() << " "<< j<<endl;
+			//*/
 			while (j >= 0 && turn[j]->getDex() > key->getDex())
 			{
 				turn[j + 1] = turn[j];
@@ -198,6 +204,11 @@ void poisoned(Character& c) {
 
 bool CombatManager::combatManager(std::vector<Character*> p) 
 {
+	
+	using namespace std;
+	Player* tempp = (Player*)p[0];
+	cout << string(*tempp) << endl;
+	
 	/**
 	*	Combat Manager - Start Battle:
 						get participants
@@ -210,13 +221,15 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 	// Create Enemy within combat class. Could be subject to change 
 	// Set up a Character array and populate it (not sorted by dex) 
 	//Character participants[2];
+	//p[0] = (Character*)(new Player("nlf4", 1, 1, 1, 1,1));
+	//p[1] = (Character*)(new Enemy());
+	
 	gameOn = true;
-	//participants = p;
+
 	vector<int> ailments;
 	// Create QueueManager obj which contains sorting of participant array. 
 	QueueManager qm = QueueManager(p);
 	
-	std::vector<Button *> buttons;
 	SDL_Event e;
 	SDL_Texture* background = loadImage("Images/UI/CombatScene/combatScene.png");
 	SDL_Rect scene_box = { 0,0,720,540 };
