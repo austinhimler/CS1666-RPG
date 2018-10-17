@@ -1,5 +1,6 @@
-#include "../Headers/Character.h"
 #include <iostream>
+
+#include "../Headers/Character.h"
 
 	Character::Character(std::string n, std::vector<Attribute> attr) {
 		attributes = attr;

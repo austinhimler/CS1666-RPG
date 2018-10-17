@@ -1,5 +1,4 @@
-#ifndef _____ABILITY_H_____
-#define _____ABILITY_H_____
+#pragma once
 
 #include <string>
 #include <vector>
@@ -52,5 +51,3 @@ private:
 	//Attribute abilityAttributeType;
 
 };
-
-#endif // !_____ABILITY_H_____

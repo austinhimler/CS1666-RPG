@@ -1,15 +1,18 @@
 #pragma once
-#include "Headers/Player.h"
-#include "Headers/Enemy.h"
-#include "Headers/Button.h"
+
+#include <vector>
+#include <iostream>
+
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
-#include <vector>
-#include <iostream>
+
 #include "Helper.h"
 #include "Globals.h"
+#include "Player.h"
+#include "Enemy.h"
+#include "Button.h"
 
 class CombatManager
 {

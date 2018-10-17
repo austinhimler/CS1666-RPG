@@ -1,5 +1,5 @@
-#ifndef _____BUTTON_H_____
-#define _____BUTTON_H_____
+#pragma once
+
 #include <string>
 #include <vector>
 #include <SDL.h>
@@ -23,5 +23,3 @@ public:
 private:
 
 };
-
-#endif

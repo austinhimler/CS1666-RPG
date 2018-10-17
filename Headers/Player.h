@@ -1,8 +1,8 @@
-#ifndef _____PLAYER_H_____
-#define _____PLAYER_H_____
+#pragma once
 
 #include <string>
 #include <vector>
+
 #include "Inventory.h"
 #include "Ability.h"
 #include "Character.h"
@@ -22,4 +22,3 @@ private:
 	Inventory inventory;
 			
 };
-#endif // !_____PLAYER_H_____

@@ -1,7 +1,9 @@
-#include "../Headers/Enemy.h"
-#include "../Headers/Item.h"
 #include <string>
 #include <vector>
+
+#include "../Headers/Enemy.h"
+#include "../Headers/Item.h"
+
 Enemy::Enemy()
 {
 	isEnemy = true;

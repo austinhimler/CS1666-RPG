@@ -1,7 +1,9 @@
+#include <iostream>
+
 #include "../Headers/Player.h"
 #include "../Headers/Globals.h"
 #include "../Headers/Helper.h"
-#include <iostream>
+
 	/*
 	int strength = 1;
 	int intelligence = 1;

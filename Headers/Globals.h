@@ -1,5 +1,4 @@
-#ifndef _____GLOBALS_H_____
-#define _____GLOBALS_H_____
+#pragma once
 
 #include <vector>
 #include <string>
@@ -37,8 +36,6 @@ enum AILMENTS {
 	SILENCE,
 	POISON,
 };
-	
-
 
 extern SDL_Window* gWindow;
 extern SDL_Renderer* gRenderer;
@@ -46,7 +43,3 @@ extern std::vector<SDL_Texture*> gTex;
 
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
-
-
-
-#endif // !_____GLOBALS_H_____

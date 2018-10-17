@@ -1,6 +1,5 @@
 #include "Headers/LoadTexture.h"
 
-
 LoadTexture::LoadTexture()
 {
 	//Initialize

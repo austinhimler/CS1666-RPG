@@ -1,10 +1,12 @@
-#ifndef _____TILE_H_____
-#define _____TILE_H_____
-#include <SDL.h>
-#include <SDL_image.h>
+#pragma once
+
 #include <stdio.h>
 #include <string>
 #include <fstream>
+
+#include <SDL.h>
+#include <SDL_image.h>
+
 #include "Helper.h"
 #include "Globals.h"
 
@@ -54,5 +56,3 @@ public:
 	//The tile type
 	int mType;
 };
-
-#endif

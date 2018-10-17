@@ -1,7 +1,5 @@
 #include "Headers/Helper.h"
 
-
-
 SDL_Texture* Helper::loadImage(std::string fname, SDL_Renderer* gRenderer) 
 {
 	SDL_Texture* newText = nullptr;

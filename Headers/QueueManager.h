@@ -1,5 +1,7 @@
 #pragma once
-#include "../Headers/Character.h"
+
+#include "Character.h"
+
 class QueueManager
 {
 public:

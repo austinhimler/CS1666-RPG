@@ -1,24 +1,22 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <cmath>
+#include <fstream>
+
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
-#include <cmath>
-#include <fstream>
+
 #include "Headers/Globals.h"
+#include "Headers/mainGame.h"
 #include "Headers/Player.h"
 #include "Headers/Button.h"
 #include "Headers/Tile.h"
 #include "Headers/CombatManager.h"
 #include "Headers/Cluster.h"
 #include "Headers/LoadTexture.h"
-
-// Function declarations
-bool init();
-SDL_Texture* loadImage(std::string fname);
-void close();
 
 // Globals
 SDL_Window* gWindow = nullptr;

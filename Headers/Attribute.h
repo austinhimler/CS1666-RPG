@@ -1,5 +1,4 @@
-#ifndef _____ATTRIBUTE_H_____
-#define _____ATTRIBUTE_H_____
+#pragma once
 
 #include <string>
 #include <vector>
@@ -20,5 +19,3 @@ protected:
 
 	friend class Character;
 };
-
-#endif

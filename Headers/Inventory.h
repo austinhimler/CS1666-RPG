@@ -1,8 +1,8 @@
-#ifndef _____INVENTORY_H_____
-#define _____INVENTORY_H_____
+#pragma once
 
 #include <string>
 #include <vector>
+
 class Inventory {
 	public:
 		Inventory();
@@ -11,5 +11,3 @@ class Inventory {
 		int maxLoad;
 		int curLoad;
 };
-
-#endif

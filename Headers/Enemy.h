@@ -1,8 +1,11 @@
 #pragma once
-#include "Character.h"
-#include "Item.h"
+
 #include <string>
 #include <vector>
+
+#include "Character.h"
+#include "Item.h"
+
 class Enemy : public Character {
 public:
 	Enemy();

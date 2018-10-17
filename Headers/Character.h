@@ -1,5 +1,4 @@
-#ifndef _____CHARACTER_H_____
-#define _____CHARACTER_H_____
+#pragma once
 
 #include <string>
 #include <vector>
@@ -114,8 +113,6 @@ protected:
 	
 };
 
-
-
 /*Resistance evasion;
 Resistance physical;
 Resistance fire;
@@ -124,4 +121,3 @@ Resistance water;
 Resistance air;
 Resistance light;
 Resistance dark;*/
-#endif
