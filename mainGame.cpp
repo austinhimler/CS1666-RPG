@@ -839,17 +839,22 @@ int mainMenu() {
 	SDL_Texture* credits = loadImage("Images/UI/MainMenu/CreditsButton.png");
 	SDL_Texture* load = loadImage("Images/UI/MainMenu/NewButton.png");
 	SDL_Texture* title = loadImage("Images/UI/MainMenu/title.png");
-	SDL_Rect space = { 240, 40, 240, 140 };
+	SDL_Rect space = { 240, 40, 240, 64 };
 	//need attr objects
-	buttons.push_back(new Button("start", 240, 200, 240, 140, "Images/UI/MainMenu/StartButton.png", "", gRenderer));
-	buttons.push_back(new Button("credits", 240, 350, 240, 140, "Images/UI/MainMenu/CreditsButton.png", "", gRenderer));
-	buttons.push_back(new Button("load", 240, 500, 240, 140, "Images/UI/MainMenu/NewButton.png", "", gRenderer));
+	buttons.push_back(new Button("start", 240, 200, 240, 64, "Images/UI/MainMenu/StartButton.png", "", gRenderer));
+	buttons.push_back(new Button("credits", 240, 350, 240, 64, "Images/UI/MainMenu/CreditsButton.png", "", gRenderer));
+	buttons.push_back(new Button("load", 240, 500, 240, 64, "Images/UI/MainMenu/NewButton.png", "", gRenderer));
 
 	SDL_Texture* background = loadImage("Images/UI/MainMenu/MainMenuNoButtons.png"); //Moved to fix memory leak
 
 	SDL_Event e;
 	while (run) {
 		while (SDL_PollEvent(&e)) {
+
+			if (e.type == SDL_QUIT) {
+
+				close();
+			}
 			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN) {
 				std::cout << "button clicked";
 				int mouseX, mouseY;

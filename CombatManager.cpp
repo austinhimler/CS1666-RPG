@@ -1,4 +1,6 @@
 #include "Headers/CombatManager.h"
+#include "Headers/LoadTexture.h"
+
 
 
 	QueueManager::QueueManager(vector<Character *> c)
@@ -211,25 +213,38 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 	vector<int> ailments;
 	// Create QueueManager obj which contains sorting of participant array. 
 	QueueManager qm = QueueManager(p);
-	
+	LoadTexture background;
 	SDL_Event e;
-	SDL_Texture* background = Helper::loadImage("Images/UI/CombatScene/combatScene.png", gRenderer);
+	background.loadFromFile("Images/UI/CombatScene/combatScene.png");
 	SDL_Rect scene_box = { 0,0,720,540 };
-	SDL_Rect ui_box = { 0,540,720,180 };
+	SDL_Rect ui_box = { 17,529,685,167 };
 
 	int bw = 100;
 	int bh = 50;
 	std::vector<Button*> buttons;
-		buttons.push_back(new Button("player", scene_box.x + 10, scene_box.y + 10, bw, bh, "Image/Player/Character_Combat_Idle.png", "Player", gRenderer));
-		buttons.push_back(new Button("attack", ui_box.x + 10, ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", "Enemy", gRenderer));
-		buttons.push_back(new Button("attack", ui_box.x+10, ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", "Attack", gRenderer));
-		buttons.push_back(new Button("defend", ui_box.x + 40, ui_box.y + 40, bw, bh, "Images/UI/CombatScene/Button.png", "Defend", gRenderer));
+		buttons.push_back(new Button("player", scene_box.x + 10, scene_box.y + 10, bw, bh, "Images/Player/Player_Idle.png", "Player", gRenderer));
+		buttons.push_back(new Button("attack", ui_box.x , ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", "Enemy", gRenderer));
+		buttons.push_back(new Button("attack", ui_box.x , ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", "Attack", gRenderer));
+		buttons.push_back(new Button("defend", ui_box.x , ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "Defend", gRenderer));
 	
-	SDL_RenderCopy(gRenderer, background, NULL, NULL);
-	for (auto i : buttons) {
-		SDL_RenderCopy(gRenderer, i->texture, NULL, &(i->rect));
-	}
-	SDL_RenderPresent(gRenderer);
+		
+	while (gameOn) {
+		while (SDL_PollEvent(&e)) {
+			if (e.type == SDL_QUIT) {
+				background.free();
+				return false; 
+				
+			}
+		}
+		background.renderBackground();
+
+		for (auto i : buttons) {
+			SDL_RenderCopy(gRenderer, i->texture, NULL, &(i->rect));
+		}
+		SDL_RenderPresent(gRenderer);
+		SDL_Delay(16);
+		}
+
 
 	//Test to check that the background appears
 	/*
