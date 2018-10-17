@@ -1,11 +1,14 @@
 #include "../Headers/Cluster.h"
 #include "../Headers/Helper.h"
+#include "../Headers/Globals.h"
+
 
 
 Cluster::Cluster(int q) {
 	for (int temp = 0;temp < q;temp++)
 	{
-		characterGroup.push_back(new Enemy());
+		Character c = Character("Owl", 1, 1, 1, 1, 1);
+		characterGroup.push_back(&c);
 	}
 	clusterSize = q;
 	pixelShiftAmountForAnimationInSpriteSheet = 200;
