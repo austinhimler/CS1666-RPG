@@ -190,7 +190,7 @@ void poisoned(Character& c) {
 	//poison effects
 }
 
-bool CombatManager::combatManager(std::vector<Character*>& p) 
+bool CombatManager::combatManager(std::vector<Character*> p) 
 {
 	/**
 	*	Combat Manager - Start Battle:

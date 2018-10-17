@@ -17,7 +17,7 @@ public:
 	~CombatManager();
 	void updateStatus(Character* c);
 	void takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e);
-	bool combatManager(std::vector<Character*>& c);
+	bool combatManager(std::vector<Character*> c);
 	bool gameOn;
 	vector<Character*> participants;
 	SDL_Texture* loadImage(std::string fname);

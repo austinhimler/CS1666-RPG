@@ -721,6 +721,12 @@ void playGame() {
 		while (!inOverworld) {
 			combatTransition();
 			combatScene(combatants);
+			CombatManager cm;
+			//convert combatants vector of characters to pointer of characters
+			vector<Character *> c;
+			for (Character i : combatants)
+				c.push_back(&i);
+			bool inCombat = cm.combatManager(c);
 			enemy1.xPosition = 999;
 			enemy1.yPosition = 999;
 			inOverworld = true;
@@ -747,14 +753,14 @@ int main(int argc, char *argv[]) {
 		close();
 		return 1;
 	}
-	CombatManager cm;
+	/*CombatManager cm;
 	vector<Character*> c;
-	bool keepFighting = cm.combatManager(c);
-	/*bool keepPlaying = characterCreateScreen();
+	bool keepFighting = cm.combatManager(c);*/
+	bool keepPlaying = characterCreateScreen();
 	if (keepPlaying) {
 		playGame();
-		//playCredits();
-	}*/
+		playCredits();
+	}
 	close();
 	
 	return 0;
