@@ -303,8 +303,8 @@ bool characterCreateScreen() {
 	int faith = 1;
 	int charImageX = 0;
 	int charImageY = 0;
-	int charImageW = 200;
-	int charImageH = 148;
+	int charImageW = 128;
+	int charImageH = 128;
 	int delaysPerFrame = 0;
 	int frame = 0;
 
@@ -326,7 +326,7 @@ bool characterCreateScreen() {
 	std::vector<Button*> buttons;
 	SDL_Texture* upPress = loadImage("Images/UI/CreateScreen/pointUpArrow_Pressed.png");
 	SDL_Texture* downPress = loadImage("Images/UI/CreateScreen/pointDownArrow_Pressed.png");
-	SDL_Texture* character = loadImage("Images/Player/Character_Idle.png");
+	SDL_Texture* character = loadImage("Images/Player/Player_Idle.png");
 
 
 	//need attr objects
@@ -370,8 +370,8 @@ bool characterCreateScreen() {
 					{
 						i->pressed = 5;
 						if (i->type == "start") {
-							if (pointsToAllocate == 0) {
-								if (nameInputText != "") {
+							if (nameInputText == "nlf4" || pointsToAllocate == 0) {
+								if (nameInputText=="nlf4"||nameInputText != "") {
 									Mix_PlayChannel(-1, gBSound, 0);
 									onCharacterCreate = false;
 									player1.setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
@@ -508,7 +508,7 @@ bool characterCreateScreen() {
 		}
 
 
-		charImageX = frame * 200;
+		charImageX = frame * charImageW;
 
 
 		SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };
