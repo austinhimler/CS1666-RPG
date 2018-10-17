@@ -597,7 +597,6 @@ void playGame() {
 
 	Uint32 timeSinceLastMovement = SDL_GetTicks();
 	Uint32 timeSinceLastAnimation = SDL_GetTicks();
-	player1.timeSinceLastMovement = timeSinceLastMovement;
 	player1.timeSinceLastAnimation = timeSinceLastAnimation;
 	enemy1.timeSinceLastAnimation = timeSinceLastAnimation;
 
@@ -624,7 +623,7 @@ void playGame() {
 				}
 			}
 
-			// figure out how much of a second has passed
+			// (s) time passed since movement calculated in last frame
 			timePassed = (SDL_GetTicks() - timeSinceLastMovement) / 1000.0;
 			player1.xDeltaVelocity = 0;
 			player1.yDeltaVelocity = 0;
