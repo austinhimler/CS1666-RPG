@@ -14,7 +14,7 @@
 #include <fstream>
 class Helper {
 public:
-	SDL_Texture* loadImage(std::string fname,SDL_Renderer* gRenderer);
+	static SDL_Texture* loadImage(std::string fname,SDL_Renderer* gRenderer);
 
 private:
 

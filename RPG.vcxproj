@@ -162,6 +162,7 @@
     <ClCompile Include="Classes\Tile.cpp" />
     <ClCompile Include="CombatManager.cpp" />
     <ClCompile Include="Helper.cpp" />
+    <ClCompile Include="LoadTexture.cpp" />
     <ClCompile Include="mainGame.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -184,6 +185,12 @@
     <Image Include="CREDIT_IMG\SankethKolliCredit.jpg" />
     <Image Include="Images\Tiles\64^64 Grasstiles.png" />
     <Image Include="Images\Tiles\64^64 lake.png" />
+    <Image Include="Images\Tiles\pond.png" />
+    <Image Include="Images\Tiles\pondBottom.png" />
+    <Image Include="Images\Tiles\pondBottomLeft.png" />
+    <Image Include="Images\Tiles\pondLeft.png" />
+    <Image Include="Images\Tiles\pondTop.png" />
+    <Image Include="Images\Tiles\pondTopLeft.png" />
     <Image Include="Images\Tiles\singleGrass.png" />
   </ItemGroup>
   <ItemGroup>
@@ -212,6 +219,10 @@
     <ClInclude Include="Headers\QueueManager.h" />
     <ClInclude Include="Headers\Resistance.h" />
     <ClInclude Include="Headers\Tile.h" />
+    <ClInclude Include="LoadTexture.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="map1.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
