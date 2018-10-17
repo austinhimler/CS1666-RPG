@@ -18,7 +18,7 @@ Ending dates Name
 
 11-14 Mitchell Leng
 
-11-26 By Week
+11-26 NO MANAGER
 
 11-28 Sanketh Kolli
 
