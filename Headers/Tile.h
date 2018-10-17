@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <string>
 #include <fstream>
+#include "Helper.h"
+#include "Globals.h"
 
 //max level size
 const int LEVEL_WIDTH = 1920;
@@ -18,10 +20,20 @@ const int NUM_SPRITES = 2;
 const int TILE_LAKE = 0;
 const int TILE_GRASS = 1;
 //const int TILE_FLOOR = 2;
+static SDL_Texture* grass;
+static SDL_Texture* pond;
+static SDL_Texture* pondLeft;
+static SDL_Texture* pondBottom;
+static SDL_Texture* pondTopLeft;
+static SDL_Texture* pondTop;
+static SDL_Texture* pondBottomLeft;
+//loads tile textures
+
 
 
 class Tile {
 public:
+	static void loadTiles();
 	SDL_Texture* texture;
 	//Initializes position and type
 	Tile(int x, int y, int tileType);
@@ -35,7 +47,7 @@ public:
 	//Get the collision box
 	SDL_Rect getBox();
 
-	
+	SDL_RendererFlip flip;
 	//The attributes of the tile
 	SDL_Rect mBox;
 

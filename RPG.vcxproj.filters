@@ -74,6 +74,24 @@
     <Image Include="Images\Tiles\singleGrass.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Images\Tiles\pond.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Tiles\pondBottom.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Tiles\pondBottomLeft.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Tiles\pondLeft.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Tiles\pondTop.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\Tiles\pondTopLeft.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mainGame.cpp">
@@ -134,6 +152,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Classes\Cluster.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -213,5 +234,13 @@
     <ClInclude Include="Headers\Cluster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LoadTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="map1.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
