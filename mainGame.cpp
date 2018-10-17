@@ -287,8 +287,8 @@ bool characterCreateScreen() {
 	buttons.push_back(new Button("down", 340, 510, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "faith", gRenderer));
 	buttons.push_back(new Button("start", 450, 625, 230, 56, "Images/UI/CreateScreen/StartButton.png", "", gRenderer));
 
-	SDL_Texture* background = loadImage("Images/UI/CreateScreen/characterCreateV2NoButtons.png"); //Moved to fix memory leak
-
+	LoadTexture background; 
+	background.loadFromFile("Images/UI/CreateScreen/characterCreateV2NoButtons.png");
 	SDL_Event e;
 	while (onCharacterCreate) {
 		while (SDL_PollEvent(&e)) {
@@ -325,7 +325,7 @@ bool characterCreateScreen() {
 									for (auto i : buttons) {
 										delete(i);
 									}
-									SDL_DestroyTexture(background);
+									background.free();
 									Mix_HaltMusic();
 									return true;
 								}
@@ -437,7 +437,7 @@ bool characterCreateScreen() {
 			}
 		}
 
-		SDL_RenderCopy(gRenderer, background, NULL, NULL);
+		background.renderBackground();
 		//Renders buttons and shows pressed image if pressed
 		for (auto i : buttons) {
 			if (!i->pressed > 0 || i->attribute == "")
