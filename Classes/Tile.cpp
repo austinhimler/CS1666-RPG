@@ -2,7 +2,7 @@
 #include "../Headers/Helper.h"
 #include "../Headers/Globals.h"
 
-//0 lake 1 grass
+//0: grass 1:water
 Tile::Tile(int x, int y, int tileType)
 {
 	//Get the offsets
