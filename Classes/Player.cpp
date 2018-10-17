@@ -29,20 +29,20 @@
 		name = n;
 
 
-	    pixelShiftAmountForAnimationInSpriteSheet = 200;
+	    pixelShiftAmountForAnimationInSpriteSheet = 128;
 		numIdleAnimationFrames = 4;
-		numRunAnimatonFrames = 6;
+		numRunAnimatonFrames = 7;
 		currentFrame = 0;
 		timeBetweenIdleAnimations = 120;
 		timeBetweenRunAnimations = 100;
-		imageIdleResource = "Images/Player/Character_Idle.png";
-		imageRunResource = "Images/Player/Character_Run.png";
+		imageIdleResource = "Images/Player/Player_Idle.png";
+		imageRunResource = "Images/Player/Player_Run.png";
 		Helper helper = Helper();
 		textureIdle = helper.loadImage(imageIdleResource.c_str(), gRenderer);
 		textureRun = helper.loadImage(imageRunResource.c_str(), gRenderer);
 		textureActive = NULL;
-		imageWidth = 200;
-		imageHeight = 148;
+		imageWidth = 128;
+		imageHeight = 128;
 		xPosition = 0; //will need to edit for starting level
 		yPosition = 250.0; //will need to edit for starting level
 		rectangle = {(int)xPosition, (int)yPosition, imageWidth, imageHeight};

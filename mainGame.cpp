@@ -303,12 +303,13 @@ bool characterCreateScreen() {
 	int faith = 1;
 	int charImageX = 0;
 	int charImageY = 0;
-	int charImageW = 200;
-	int charImageH = 148;
+	int charImageW = 128;
+	int charImageH = 128;
+	int charAnimationPixelShift = 128;
 	int delaysPerFrame = 0;
 	int frame = 0;
 
-	SDL_Rect characterBox = { 436, 205, 200, 148 };
+	SDL_Rect characterBox = { 472, 225, 128, 128 };
 	SDL_Rect pointsAllocatedRectangle = { 227, 32, 0, 0 };
 	SDL_Rect strengthTextRectangle = { 250, 115, 0, 0 };
 	SDL_Rect intelligenceTextRectangle = { 250, 205, 0, 0 };
@@ -326,7 +327,7 @@ bool characterCreateScreen() {
 	std::vector<Button*> buttons;
 	SDL_Texture* upPress = loadImage("Images/UI/CreateScreen/pointUpArrow_Pressed.png");
 	SDL_Texture* downPress = loadImage("Images/UI/CreateScreen/pointDownArrow_Pressed.png");
-	SDL_Texture* character = loadImage("Images/Player/Character_Idle.png");
+	SDL_Texture* character = loadImage("Images/Player/Player_Idle.png");
 
 
 	//need attr objects
@@ -508,7 +509,7 @@ bool characterCreateScreen() {
 		}
 
 
-		charImageX = frame * 200;
+		charImageX = frame * charAnimationPixelShift;
 
 
 		SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };
