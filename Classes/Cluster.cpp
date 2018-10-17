@@ -9,8 +9,8 @@ Cluster::Cluster(int q) {
 		characterGroup.push_back(c);
 	}
 	clusterSize = q;
-	pixelShiftAmountForAnimationInSpriteSheet = 200;
-	imageWidth = 200;
+	pixelShiftAmountForAnimationInSpriteSheet = 160;
+	imageWidth = 160;
 	imageHeight = 148;
 
 	numIdleAnimationFrames = 6;

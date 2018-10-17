@@ -570,10 +570,11 @@ void combatScene() {
 }
 
 void combatScene(std::vector<Character> combatants) {
+	/*
 	for (auto i : combatants) {
 		std::cout << i.getName();
 	}
-
+	*/
 
 
 
