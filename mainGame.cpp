@@ -722,6 +722,81 @@ void playGame() {
 	}
 }
 
+/*
+if return...
+-1 - SDL_QUIT
+0 - character creation screen
+1 - farnan memes (credits)
+2 - load game (currently inactive)
+*/
+int mainMenu() {
+
+	bool run = true;
+	std::vector<Button*> buttons;
+
+	SDL_Texture* start = loadImage("Images/UI/MainMenu/StartButton.png");
+	SDL_Texture* credits = loadImage("Images/UI/MainMenu/CreditsButton.png");
+	SDL_Texture* load = loadImage("Images/UI/MainMenu/NewButton.png");
+	SDL_Texture* title = loadImage("Images/UI/MainMenu/title.png");
+	SDL_Rect space = { 240, 40, 240, 140 };
+	//need attr objects
+	buttons.push_back(new Button("start", 240, 200, 240, 140, "Images/UI/MainMenu/StartButton.png", "", gRenderer));
+	buttons.push_back(new Button("credits", 240, 350, 240, 140, "Images/UI/MainMenu/CreditsButton.png", "", gRenderer));
+	buttons.push_back(new Button("load", 240, 500, 240, 140, "Images/UI/MainMenu/NewButton.png", "", gRenderer));
+
+	SDL_Texture* background = loadImage("Images/UI/MainMenu/MainMenuNoButtons.png"); //Moved to fix memory leak
+
+	SDL_Event e;
+	while (run) {
+		while (SDL_PollEvent(&e)) {
+			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN) {
+				std::cout << "button clicked";
+				int mouseX, mouseY;
+				SDL_GetMouseState(&mouseX, &mouseY);
+
+				for (auto i : buttons) {
+					//if mouse is clicked inside a button
+					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) && ((mouseY >= i->y) && (mouseY <= (i->y + i->h)))) {
+						if (i->type == "start") {
+							for (auto i : buttons) {
+								delete(i);
+							}
+							SDL_DestroyTexture(background);
+							run = false;
+							return 0;
+						}
+						else if (i->type == "credits") {
+							for (auto i : buttons) {
+								delete(i);
+							}
+							SDL_DestroyTexture(background);
+							run = false;
+							return 1;
+						}
+						else if (i->type == "load") {
+							for (auto i : buttons) {
+								delete(i);
+							}
+							SDL_DestroyTexture(background);
+							run = false;
+							return 2;
+						}
+						break;
+					}
+				}
+			}
+			SDL_RenderCopy(gRenderer, background, NULL, NULL);
+			SDL_RenderCopy(gRenderer, title, NULL, &space);
+			for (auto i : buttons) {
+				if (i->type == "start") SDL_RenderCopy(gRenderer, start, NULL, &i->rect);
+				else if (i->type == "credits") SDL_RenderCopy(gRenderer, credits, NULL, &i->rect);
+				else if (i->type == "load")  SDL_RenderCopy(gRenderer, load, NULL, &i->rect);
+			}
+			SDL_RenderPresent(gRenderer);
+			SDL_Delay(16);
+		}
+	}
+}
 int main(int argc, char *argv[]) {
 	/*
 	Resistance r = Resistance("Resistance");
@@ -734,10 +809,16 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	bool keepPlaying = characterCreateScreen();
-	if (keepPlaying) {
-		playGame();
-		//playCredits();
+	int a = mainMenu();
+	bool b;
+
+	switch (a) {
+	case 0 :
+		b = characterCreateScreen();
+		if (b) playGame();
+		break;
+	case 1:
+		playCredits();
 	}
 	close();
 	
