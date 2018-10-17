@@ -226,18 +226,21 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 	background.loadFromFile("Images/UI/CombatScene/combatScene.png");
 	SDL_Rect scene_box = { 0,0,720,540 };
 	SDL_Rect ui_box = { 17,529,685,167 };
-
+	TTF_Font* font = Helper::setFont("Fonts/Stacked pixel.ttf", 30);
+	SDL_Color txt_color = {0,0,0,0};
+	
 	int bw = 100;
 	int bh = 50;
 	std::vector<Button*> buttons;
-		buttons.push_back(new Button("player", scene_box.x + 10, scene_box.y + 200, bw, bh, "Images/Player/Player_Idle.png", "Player", gRenderer));
-		buttons.push_back(new Button("player", scene_box.x + 500, scene_box.y + 200, bw, bh, "Images/Enemies/shadow_cluster/owl.png", "Player", gRenderer));
-		buttons.push_back(new Button("attack", ui_box.x , ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", "Enemy", gRenderer));
-		buttons.push_back(new Button("attack", ui_box.x , ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", "Attack", gRenderer));
-		buttons.push_back(new Button("defend", ui_box.x , ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "Defend", gRenderer));
-		
-		
-		
+	buttons.push_back(new Button("character", scene_box.x + 10, scene_box.y + 200, bw, bh, "Images/Player/Player_Idle.png", "", gRenderer));
+	buttons.push_back(new Button("character", scene_box.x + 500, scene_box.y + 200, bw, bh, "Images/Enemies/shadow_cluster/owl.png", "", gRenderer));
+	buttons.push_back(new Button(ATTR_NAMES[STR], ui_box.x , ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", "", gRenderer));
+	buttons.push_back(new Button(ATTR_NAMES[INT], ui_box.x, ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", "", gRenderer));
+	buttons.push_back(new Button(ATTR_NAMES[DEX], ui_box.x, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "", gRenderer));
+	buttons.push_back(new Button(ATTR_NAMES[CON], ui_box.x + 200, ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", "", gRenderer));
+	buttons.push_back(new Button(ATTR_NAMES[FAI], ui_box.x + 200, ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", "", gRenderer));
+	buttons.push_back(new Button("Inventory", ui_box.x + 200, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "", gRenderer));
+
 	while (gameOn) {
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
@@ -256,13 +259,16 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 		}
 		charImageX = frame * charAnimationPixelShift;
 		for (auto i : buttons) {
-			if (i->type == "player")
+			if (i->type == "character")
 			{
 				SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };
 				SDL_RenderCopy(gRenderer, i->texture, &charactersRectangle, &(i->rect));
 			}
 			else
+			{
 				SDL_RenderCopy(gRenderer, i->texture, NULL, &(i->rect));
+				Helper::renderText(i->type.c_str(), &(i->rect), &txt_color, font);
+			}
 		}
 		SDL_RenderPresent(gRenderer);
 		SDL_Delay(16);

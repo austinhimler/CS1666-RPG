@@ -30,13 +30,12 @@ Cluster::Cluster(int q) {
 	speedMax = 250.0;
 	acceleration = 2000.0;
 }
-Cluster::Cluster() {
-	Cluster("Sample");
-}
 Cluster::Cluster(std::string n) {
 	name = n;
 	Cluster(1);
 }
+Cluster::Cluster() : Cluster("Sample"){}
+
 /*
 Cluster::Cluster(std::string n, int q) {
 	name = n;

@@ -21,6 +21,7 @@ SDL_Texture* loadImage(std::string fname);
 void close();
 
 // Globals
+
 SDL_Window* gWindow = nullptr;
 SDL_Renderer* gRenderer = nullptr;
 std::vector<SDL_Texture*> gTex;

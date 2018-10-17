@@ -28,6 +28,15 @@ namespace AbilityResource {
 		return base_energy_cost[n];
 	}
 
+	// ability names in stirng
+	const std::string abilityNames[] = {
+		"Attack",
+		"Fireball",
+		"Escape",
+		"Defend",
+		"Summon",
+	};
+
 	//ability base CD
 	const int abilityCD[] = {
 		0,

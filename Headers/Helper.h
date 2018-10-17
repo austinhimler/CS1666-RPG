@@ -12,12 +12,15 @@
 #include <SDL_ttf.h>
 #include <cmath>
 #include <fstream>
+#include "Globals.h"
+
 class Helper {
 public:
 	static SDL_Texture* loadImage(std::string fname,SDL_Renderer* gRenderer);
-
+	static void renderText(const char* text, SDL_Rect* rect, SDL_Color* color, TTF_Font* font);
+	static TTF_Font* setFont(const char* path, int n);
+protected:
 private:
-
 
 };
 

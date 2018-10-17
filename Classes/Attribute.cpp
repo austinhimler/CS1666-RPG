@@ -6,13 +6,9 @@ Attribute::Attribute(std::string n, int stat) {
 	name = n;
 }
 
-Attribute::Attribute(std::string n) {
-	Attribute(n, 1);
-}
+Attribute::Attribute(std::string n) : Attribute(n, 1) {}
 
-Attribute::Attribute() {
-	Attribute("Attribute 1");
-}
+Attribute::Attribute() : Attribute("Attribute 1"){}
 
 int Attribute::getCur() {
 	return current;

@@ -9,6 +9,23 @@
 #include <SDL_ttf.h>
 #include "Abilities/AbilityResource.h"
 
+/*
+//namespace Char_Help {
+	
+	const std::string char_type_string[] = {
+		"player",
+		"enemy"
+	};
+	
+
+//}//*/
+
+
+enum CHAR_TYPE {
+	PLAYER,
+	ENEMY
+};
+
 enum attr_index {
 	STR,
 	INT,
@@ -16,6 +33,14 @@ enum attr_index {
 	CON,
 	FAI,
 	ATTRCOUNT
+};
+
+const std::string ATTR_NAMES[] = {
+	"Strength",
+	"Intelligence",
+	"Dexerity",
+	"Constitution",
+	"Faith"
 };
 
 enum ABILITY {
