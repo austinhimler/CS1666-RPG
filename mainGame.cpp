@@ -116,7 +116,19 @@ bool check_collision(SDL_Rect a, SDL_Rect b) {
 	return true;
 }
 
-
+void combatTransition(){
+	SDL_Rect wipe = { 0,0,72,72 };
+	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+	for (; wipe.x < 720; wipe.x += 72)
+	{
+		for (wipe.y = 0; wipe.y < 720; wipe.y += 72)
+		{
+			SDL_RenderFillRect(gRenderer, &wipe);
+			SDL_RenderPresent(gRenderer);
+			SDL_Delay(10);
+		}
+	}
+}
 SDL_Texture* loadImage(std::string fname) {
 	SDL_Texture* newText = nullptr;
 
@@ -516,13 +528,6 @@ void combatScene(std::vector<Character> combatants) {
 		std::cout << i.getName();
 	}
 
-
-
-
-
-
-
-
 }
 void playGame() {
 
@@ -699,7 +704,11 @@ void playGame() {
 			SDL_RenderPresent(gRenderer);
 
 			if (check_collision(player1.rectangle, enemy1.rectangle)){
-				combatants = enemy1.characterGroup;
+				//combatants = enemy1.characterGroup;
+				for (auto i : enemy1.characterGroup)
+				{
+					combatants.push_back(i);
+				}
 				combatants.push_back(player1);
 				inOverworld = false;
 			}
@@ -707,7 +716,16 @@ void playGame() {
 		}
 
 		while (!inOverworld) {
+			combatTransition();
 			combatScene(combatants);
+			CombatManager cm;
+			//convert combatants vector of characters to pointer of characters
+			vector<Character *> c;
+			for (auto i : combatants)
+				c.push_back(&i);
+			bool inCombat = cm.combatManager(c);
+			enemy1.xPosition = 999;
+			enemy1.yPosition = 999;
 			inOverworld = true;
 		}
 
@@ -732,14 +750,11 @@ int main(int argc, char *argv[]) {
 		close();
 		return 1;
 	}
-	CombatManager cm;
-	vector<Character*> c;
-	bool keepFighting = cm.combatManager(c);
-	/*bool keepPlaying = characterCreateScreen();
+	bool keepPlaying = characterCreateScreen();
 	if (keepPlaying) {
 		playGame();
-		//playCredits();
-	}*/
+		playCredits();
+	}
 	close();
 	
 	return 0;
