@@ -233,9 +233,8 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 			if (e.type == SDL_QUIT) {
 				background.free();
 				return false; 
-				
 			}
-		}
+		
 		background.renderBackground();
 
 		for (auto i : buttons) {
@@ -244,7 +243,13 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 		SDL_RenderPresent(gRenderer);
 		SDL_Delay(16);
 		}
-
+		for (int i = 0; i < participants.size(); i++)
+		{
+			//updateStatus(participants[i]);
+			takeAction(participants[i], buttons, e);
+		}
+		qm.changeRounds();
+	}
 
 	//Test to check that the background appears
 	/*

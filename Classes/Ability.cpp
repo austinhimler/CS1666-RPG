@@ -12,13 +12,7 @@
 		value = v;
 		if (value < 0) value = 1;
 	}
-	Ability::Ability(int n, std::vector<int> re, std::vector<Attribute> attr) {
-		int ec = AbilityResource::baseEnergyCost(n) - DEX/10;
-		int cd = AbilityResource::abilityCD[n];
-		int t = AbilityResource::abilityType[n];
-		int v = 6 * re[0] + 3 * re[1] + 2 * re[2];
-		Ability(n, AbilityResource::abilityDescrip(n), ec, cd, v, t, re);
-	}
+	Ability::Ability(int n, std::vector<int> re, std::vector<Attribute> attr) : Ability(n, AbilityResource::abilityDescrip(n), AbilityResource::baseEnergyCost(n) - DEX / 10, AbilityResource::abilityCD[n], 6 * re[0] + 3 * re[1] + 2 * re[2], AbilityResource::abilityType[n], re) {}
 
 	Ability::Ability() {}
 
