@@ -18,10 +18,10 @@ Tile::Tile(int x, int y, int tileType)
 	Helper temp = Helper();
 	switch (tileType)
 	{
-	case 0:
+	case 1:
 		texture = temp.loadImage("Images/Tiles/64^64 lake.png", gRenderer);
 		break;
-	case 1:
+	case 0:
 		texture = temp.loadImage("Images/Tiles/singleGrass.png", gRenderer);
 		break;
 	}

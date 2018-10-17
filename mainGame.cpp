@@ -14,6 +14,7 @@
 #include "Headers/Tile.h"
 #include "Headers/CombatManager.h"
 #include "Headers/Cluster.h"
+#include "Headers/LoadTexture.h"
 
 // Function declarations
 bool init();
@@ -114,6 +115,61 @@ bool check_collision(SDL_Rect a, SDL_Rect b) {
 
 	// Must overlap in both
 	return true;
+}
+
+void loadMap(Tile* tiles[]) {
+	bool tilesLoaded = true;
+	int x = 0, y = 0;
+	std::ifstream map("map1.txt");
+	if (!map.is_open())
+	{
+		printf("Unable to load map file!\n");
+		tilesLoaded = false;
+	}
+	else {
+		for (int i = 0; i < TOTAL_TILES; ++i)
+		{
+			//Determines what kind of tile will be made
+			int tileType = -1;
+
+			//Read tile from map file
+			map >> tileType;
+
+			//If the was a problem in reading the map
+			if (map.fail())
+			{
+				//Stop loading map
+				printf("Error loading map: Unexpected end of file!\n");
+				tilesLoaded = false;
+				break;
+			}
+
+			//If the number is a valid tile number
+			if ((tileType >= 0) && (tileType != 0 || tileType != 1))
+			{
+				tiles[i] = new Tile(x, y, tileType);
+			}
+			//If we don't recognize the tile type
+			else
+			{
+				//Stop loading map
+				printf("Error loading map: Invalid tile type at %d!\n", i);
+				tilesLoaded = false;
+				break;
+			}
+			x += TILE_WIDTH;
+
+			//If we've gone too far
+			if (x >= LEVEL_WIDTH)
+			{
+				//Move back
+				x = 0;
+
+				//Move to the next row
+				y += TILE_HEIGHT;
+			}
+		}
+	}
 }
 
 
@@ -286,8 +342,8 @@ bool characterCreateScreen() {
 	buttons.push_back(new Button("down", 340, 510, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "faith", gRenderer));
 	buttons.push_back(new Button("start", 450, 625, 230, 56, "Images/UI/CreateScreen/StartButton.png", "", gRenderer));
 
-	SDL_Texture* background = loadImage("Images/UI/CreateScreen/characterCreateV2NoButtons.png"); //Moved to fix memory leak
-
+	LoadTexture background; 
+	background.loadFromFile("Images/UI/CreateScreen/characterCreateV2NoButtons.png");
 	SDL_Event e;
 	while (onCharacterCreate) {
 		while (SDL_PollEvent(&e)) {
@@ -324,7 +380,7 @@ bool characterCreateScreen() {
 									for (auto i : buttons) {
 										delete(i);
 									}
-									SDL_DestroyTexture(background);
+									background.free();
 									Mix_HaltMusic();
 									return true;
 								}
@@ -436,7 +492,7 @@ bool characterCreateScreen() {
 			}
 		}
 
-		SDL_RenderCopy(gRenderer, background, NULL, NULL);
+		background.renderBackground();
 		//Renders buttons and shows pressed image if pressed
 		for (auto i : buttons) {
 			if (!i->pressed > 0 || i->attribute == "")
@@ -550,7 +606,12 @@ void playGame() {
 	charactersOnScreen.push_back(player1);
 	charactersOnScreen.push_back(enemy1);
 
+	Tile*  tiles[TOTAL_TILES];
+	//tiles
+	loadMap(tiles);
+
 	SDL_Event e;
+	SDL_Rect camera = { 0,0,SCREEN_WIDTH, SCREEN_HEIGHT };
 	bool inOverworld = true;
 	bool keepPlaying = true;
 	while (keepPlaying) {
@@ -640,16 +701,31 @@ void playGame() {
 
 			//Move vertically
 			player1.yPosition += (player1.yVelocity * timePassed);
-			if (player1.yPosition < 0 || (player1.yPosition + player1.getImageHeight() > SCREEN_HEIGHT)) {
+			if (player1.yPosition < 0 || (player1.yPosition + player1.getImageHeight() > LEVEL_HEIGHT)) {
 				//go back into window
 				player1.yPosition -= (player1.yVelocity * timePassed);
 			}
 
 			//Move horizontally
 			player1.xPosition += (player1.xVelocity * timePassed);
-			if (player1.xPosition < 0 || (player1.xPosition + player1.getImageWidth() > SCREEN_HEIGHT)) {
+			if (player1.xPosition < 0 || (player1.xPosition + player1.getImageWidth() > LEVEL_WIDTH)) {
 				//go back into window
 				player1.xPosition -= (player1.xVelocity * timePassed);
+			}
+				camera.x = (player1.xPosition + player1.rectangle.w / 2) - SCREEN_WIDTH / 2;
+			camera.y = (player1.yPosition + player1.rectangle.h / 2) - SCREEN_HEIGHT / 2;
+			if (camera.x < 0)
+			{
+				camera.x = 0;
+			}
+			if (camera.y < 0) {
+				camera.y = 0;
+			}
+			if (camera.x > LEVEL_WIDTH - camera.w) {
+				camera.x = LEVEL_WIDTH - camera.w;
+			}
+			if (camera.y > LEVEL_HEIGHT - camera.h) {
+				camera.y = LEVEL_HEIGHT - camera.h;
 			}
 
 			timeSinceLastMovement = SDL_GetTicks();
@@ -660,8 +736,14 @@ void playGame() {
 				flip = SDL_FLIP_HORIZONTAL;
 
 			//Set Black
-			SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
+			SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 			SDL_RenderClear(gRenderer);
+			
+			
+
+			for (int i = 0; i < 900; i++) {
+				tiles[i]->render(&camera);
+			}	
 
 			if (player1.getTextureActive() == player1.getTextureIdle()) {
 				if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenIdleAnimations()) {
@@ -685,15 +767,15 @@ void playGame() {
 
 			// Start drawing clusters
 			enemy1.drawRectangle.x = enemy1.currentFrame * enemy1.getPixelShiftAmountForAnimationInSpriteSheet();
-			enemy1.rectangle.x = (int)enemy1.xPosition;
-			enemy1.rectangle.y = (int)enemy1.yPosition;
+			enemy1.rectangle.x = (int)enemy1.xPosition-camera.x;
+			enemy1.rectangle.y = (int)enemy1.yPosition-camera.y;
 			SDL_RenderCopy(gRenderer, enemy1.getTextureActive(), &enemy1.drawRectangle, &enemy1.rectangle);
 			// Finish drawing clusters
 
 			// Start drawing player
 			player1.drawRectangle.x = player1.currentFrame * player1.getPixelShiftAmountForAnimationInSpriteSheet();
-			player1.rectangle.x = (int)player1.xPosition;
-			player1.rectangle.y = (int)player1.yPosition;
+			player1.rectangle.x = (int)player1.xPosition - camera.x;
+			player1.rectangle.y = (int)player1.yPosition - camera.y;
 			SDL_RenderCopyEx(gRenderer, player1.getTextureActive(), &player1.drawRectangle, &player1.rectangle, 0.0, nullptr, flip);
 			// Finish drawing player
 			SDL_RenderPresent(gRenderer);
@@ -721,6 +803,81 @@ void playGame() {
 	}
 }
 
+/*
+if return...
+-1 - SDL_QUIT
+0 - character creation screen
+1 - farnan memes (credits)
+2 - load game (currently inactive)
+*/
+int mainMenu() {
+
+	bool run = true;
+	std::vector<Button*> buttons;
+
+	SDL_Texture* start = loadImage("Images/UI/MainMenu/StartButton.png");
+	SDL_Texture* credits = loadImage("Images/UI/MainMenu/CreditsButton.png");
+	SDL_Texture* load = loadImage("Images/UI/MainMenu/NewButton.png");
+	SDL_Texture* title = loadImage("Images/UI/MainMenu/title.png");
+	SDL_Rect space = { 240, 40, 240, 140 };
+	//need attr objects
+	buttons.push_back(new Button("start", 240, 200, 240, 140, "Images/UI/MainMenu/StartButton.png", "", gRenderer));
+	buttons.push_back(new Button("credits", 240, 350, 240, 140, "Images/UI/MainMenu/CreditsButton.png", "", gRenderer));
+	buttons.push_back(new Button("load", 240, 500, 240, 140, "Images/UI/MainMenu/NewButton.png", "", gRenderer));
+
+	SDL_Texture* background = loadImage("Images/UI/MainMenu/MainMenuNoButtons.png"); //Moved to fix memory leak
+
+	SDL_Event e;
+	while (run) {
+		while (SDL_PollEvent(&e)) {
+			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN) {
+				std::cout << "button clicked";
+				int mouseX, mouseY;
+				SDL_GetMouseState(&mouseX, &mouseY);
+
+				for (auto i : buttons) {
+					//if mouse is clicked inside a button
+					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) && ((mouseY >= i->y) && (mouseY <= (i->y + i->h)))) {
+						if (i->type == "start") {
+							for (auto i : buttons) {
+								delete(i);
+							}
+							SDL_DestroyTexture(background);
+							run = false;
+							return 0;
+						}
+						else if (i->type == "credits") {
+							for (auto i : buttons) {
+								delete(i);
+							}
+							SDL_DestroyTexture(background);
+							run = false;
+							return 1;
+						}
+						else if (i->type == "load") {
+							for (auto i : buttons) {
+								delete(i);
+							}
+							SDL_DestroyTexture(background);
+							run = false;
+							return 2;
+						}
+						break;
+					}
+				}
+			}
+			SDL_RenderCopy(gRenderer, background, NULL, NULL);
+			SDL_RenderCopy(gRenderer, title, NULL, &space);
+			for (auto i : buttons) {
+				if (i->type == "start") SDL_RenderCopy(gRenderer, start, NULL, &i->rect);
+				else if (i->type == "credits") SDL_RenderCopy(gRenderer, credits, NULL, &i->rect);
+				else if (i->type == "load")  SDL_RenderCopy(gRenderer, load, NULL, &i->rect);
+			}
+			SDL_RenderPresent(gRenderer);
+			SDL_Delay(16);
+		}
+	}
+}
 int main(int argc, char *argv[]) {
 	/*
 	Resistance r = Resistance("Resistance");
@@ -733,10 +890,16 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	bool keepPlaying = characterCreateScreen();
-	if (keepPlaying) {
-		playGame();
-		//playCredits();
+	int a = mainMenu();
+	bool b;
+
+	switch (a) {
+	case 0 :
+		b = characterCreateScreen();
+		if (b) playGame();
+		break;
+	case 1:
+		playCredits();
 	}
 	close();
 	
