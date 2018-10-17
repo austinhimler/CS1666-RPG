@@ -705,7 +705,6 @@ void playGame() {
 			if (check_collision(player1.rectangle, enemy1.rectangle)){
 				//combatants = enemy1.characterGroup;
 				combatants.push_back(&player1);
-				std::cout << enemy1.characterGroup[0]->toString() << std::endl;
 				for (auto i : enemy1.characterGroup)
 				{
 					combatants.push_back(i);

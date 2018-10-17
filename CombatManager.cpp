@@ -36,7 +36,7 @@
 		{
 			//key = turn[i];
 			j = i - 1;
-			
+			/*
 			using namespace std;
 			Enemy* tempp = (Enemy*)turn[j];
 			cout << tempp->toString() << endl;
@@ -207,9 +207,8 @@ void poisoned(Character& c) {
 bool CombatManager::combatManager(std::vector<Character*> p) 
 {
 	
-	p[1] = new Enemy();
 	using namespace std;
-	Enemy* tempp = (Enemy*)p[0];
+	Enemy* tempp = (Enemy*)p[1];
 	cout << tempp->toString() << endl;
 	
 	/**
@@ -238,23 +237,28 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 	SDL_Rect scene_box = { 0,0,720,540 };
 	SDL_Rect ui_box = { 0,540,720,180 };
 
+	int bw = 100;
+	int bh = 50;
 	std::vector<Button*> buttons;
-		buttons.push_back(new Button("player", scene_box.x + 10, scene_box.y + 10, 20, 20, "Image/Player/Character_Combat_Idle.png", "Player", gRenderer));
-		buttons.push_back(new Button("attack", ui_box.x + 10, ui_box.y + 10, 20, 20, "Images/UI/CombatScene/Button.png", "Enemy", gRenderer));
-		buttons.push_back(new Button("attack", ui_box.x+10, ui_box.y + 10, 20, 20, "Images/UI/CombatScene/Button.png", "Attack", gRenderer));
-		buttons.push_back(new Button("defend", ui_box.x + 40, ui_box.y + 40, 20, 20, "Images/UI/CombatScene/Button.png", "Defend", gRenderer));
+		buttons.push_back(new Button("player", scene_box.x + 10, scene_box.y + 10, bw, bh, "Image/Player/Character_Combat_Idle.png", "Player", gRenderer));
+		buttons.push_back(new Button("attack", ui_box.x + 10, ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", "Enemy", gRenderer));
+		buttons.push_back(new Button("attack", ui_box.x+10, ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", "Attack", gRenderer));
+		buttons.push_back(new Button("defend", ui_box.x + 40, ui_box.y + 40, bw, bh, "Images/UI/CombatScene/Button.png", "Defend", gRenderer));
 	
 	SDL_RenderCopy(gRenderer, background, NULL, NULL);
 	for (auto i : buttons) {
 		SDL_RenderCopy(gRenderer, i->texture, NULL, &(i->rect));
 	}
+	SDL_RenderPresent(gRenderer);
 
 	//Test to check that the background appears
+	/*
 	while (gameOn)
 	{
 		printf("Keep Fighting");
-	}
-	/*while (gameOn)
+	}//*/
+	/*
+	while (gameOn)
 	{
 		for (int i = 0; i < participants.size(); i++)
 		{
@@ -262,7 +266,7 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 			takeAction(participants[i], buttons, e);
 		}
 		qm.changeRounds();
-	}*/
+	}//*/
 	return false;
 	
 	 
