@@ -9,6 +9,7 @@
 	//int h;
 	//int w;
 	//int pressed = 0;
+    //bool locked = false;
 	//std::string imageResource;
 	//std::string attribute; //change to Attribute object later
 	//SDL_Rect rect;

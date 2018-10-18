@@ -93,7 +93,7 @@ bool init() {
 		std::cout << "TTF could not initialize. Error: %s\n", TTF_GetError();
 		return false;
 	}
-	font = TTF_OpenFont("Fonts/Stacked pixel.ttf", 30);
+	font = TTF_OpenFont("Fonts/ka1.ttf", 20);
 	if (font == NULL) {
 		std::cout << "font was null";
 	}
@@ -342,6 +342,11 @@ bool characterCreateScreen() {
 	std::vector<Button*> buttons;
 	SDL_Texture* upPress = loadImage("Images/UI/CreateScreen/pointUpArrow_Pressed.png");
 	SDL_Texture* downPress = loadImage("Images/UI/CreateScreen/pointDownArrow_Pressed.png");
+	SDL_Texture* upLocked = loadImage("Images/UI/CreateScreen/pointUpArrow_Locked.png");
+	SDL_Texture* downLocked = loadImage("Images/UI/CreateScreen/pointDownArrow_Locked.png");
+	SDL_Texture* upUnLocked = loadImage("Images/UI/CreateScreen/pointUpArrow.png");
+	SDL_Texture* downUnLocked = loadImage("Images/UI/CreateScreen/pointUpArrow.png");
+
 	SDL_Texture* character = loadImage("Images/Player/Player_Idle.png");
 
 
@@ -385,6 +390,7 @@ bool characterCreateScreen() {
 						((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
 					{
 						i->pressed = 5;
+						i->locked = false;
 						if (i->type == "start") {
 							if (nameInputText == "nlf4" || pointsToAllocate == 0) {
 								if (nameInputText == "nlf4" || nameInputText != "") {
@@ -417,33 +423,55 @@ bool characterCreateScreen() {
 							if (pointsToAllocate > 0) {
 								Mix_PlayChannel(-1, gBSound, 0);
 								deltaAttribute = 1;
+								
 							}
 							else {
 								errorInputText = "No Points Remaining!";
 								deltaAttribute = 0;
+								
 							}
 						}
 						else if (i->type == "down") {
 							Mix_PlayChannel(-1, gBSound, 0);
 							deltaAttribute = -1;
+							
 						}
 
 						if (i->attribute == "strength") {
 							if ((deltaAttribute + strength) <= maxStat && (deltaAttribute + strength) >= minStat) {
+								if ((deltaAttribute + strength) == maxStat) {
+									i->locked = true;
+								}
+								else {
+									i->locked = false;
+									
+								}
+
+								
+								
+
+								
+
 								strength += deltaAttribute;
 								pointsToAllocate -= deltaAttribute;
 							}
 							else if ((deltaAttribute + strength) > maxStat) {
+								i->locked = true;
+		
 								errorInputText = "Max Strength!";
+								
 							}
 							else if ((deltaAttribute + strength) < minStat) {
 								errorInputText = "Min Strength!";
+								
 							}
 						}
 						else if (i->attribute == "intelligence") {
 							if ((deltaAttribute + intelligence) <= maxStat && (deltaAttribute + intelligence) >= minStat) {
 								intelligence += deltaAttribute;
 								pointsToAllocate -= deltaAttribute;
+
+						     
 							}
 							else if ((deltaAttribute + intelligence) > maxStat) {
 								errorInputText = "Max Intelligence!";
@@ -514,15 +542,25 @@ bool characterCreateScreen() {
 		background.renderBackground();
 		//Renders buttons and shows pressed image if pressed
 		for (auto i : buttons) {
-			if (!i->pressed > 0 || i->attribute == "")
-				SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
-			else
-			{
-				if (i->type == "up")
-					SDL_RenderCopy(gRenderer, upPress, NULL, &i->rect);
+			if (!i->locked) {
+				if (!i->pressed > 0 || i->attribute == "")
+					SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
 				else
-					SDL_RenderCopy(gRenderer, downPress, NULL, &i->rect);
-				i->pressed--;
+				{
+					if (i->type == "up")
+						SDL_RenderCopy(gRenderer, upPress, NULL, &i->rect);
+					else
+						SDL_RenderCopy(gRenderer, downPress, NULL, &i->rect);
+					i->pressed--;
+				}
+		
+			}
+			else {
+				
+				if (i->type == "up")
+					SDL_RenderCopy(gRenderer, upLocked, NULL, &i->rect);
+				else
+					SDL_RenderCopy(gRenderer, downLocked, NULL, &i->rect);
 			}
 		}
 
