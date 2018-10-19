@@ -397,7 +397,7 @@ bool characterCreateScreen() {
 	SDL_Rect nameTextRectangle = { 143, 640, 0,0 };
 	SDL_Rect errorTextRectangle = { 465, 580, 0, 0 };
 	SDL_Rect errorTextRectangleLong = { 445, 580, 0, 0 };
-	SDL_Color textColor = { 0, 0, 0, 0 };
+	SDL_Color textColor = { 112, 96, 80, 0 };
 	SDL_Color errorColor = { 255, 0, 0, 0 };
 	std::string nameInputText;
 	std::string errorInputText;
@@ -512,8 +512,7 @@ bool characterCreateScreen() {
 									
 								}
 
-								
-								
+						
 
 								
 
@@ -1001,7 +1000,7 @@ int mainMenu() {
 	SDL_Texture* credits = loadImage("Images/UI/MainMenu/CreditsButton.png");
 	SDL_Texture* load = loadImage("Images/UI/MainMenu/NewButton.png");
 	SDL_Texture* title = loadImage("Images/UI/MainMenu/title.png");
-	SDL_Rect space = { 240, 40, 240, 64 };
+	SDL_Rect space = { 100, 50, 526, 72 };
 	//need attr objects
 	buttons.push_back(new Button("start", 240, 200, 240, 64, "Images/UI/MainMenu/StartButton.png", "", gRenderer));
 	buttons.push_back(new Button("credits", 240, 350, 240, 64, "Images/UI/MainMenu/CreditsButton.png", "", gRenderer));
