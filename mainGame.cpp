@@ -20,16 +20,36 @@
 #include "Headers/LoadTexture.h"
 
 // Function declarations
-bool init();
+
+bool init();//Starts up SDL, creates window, and initializes OpenGL
+
+bool initGL();//Initializes rendering program and clear color
+
+void close();//Frees media and shuts down SDL
+
+void printProgramLog(GLuint program);//Shader loading utility programs
+
+void printShaderLog(GLuint shader);
+
 SDL_Texture* loadImage(std::string fname);
-void close();
+
 
 // Globals
 
-SDL_Window* gWindow = nullptr;
+SDL_Window* gWindow = nullptr;//The window rendering to
+
 SDL_Renderer* gRenderer = nullptr;
-SDL_GLContext context = NULL;
+
+SDL_GLContext gContext;//OpenGL context
+
+
 std::vector<SDL_Texture*> gTex;
+
+//Graphics program
+GLuint gProgramID = 0;
+GLint  gVertexPos2DLocation = -1;
+GLuint gVBO = 0;
+GLuint gIBO = 0;
 
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
@@ -47,16 +67,19 @@ bool init() {
 	// Flag what subsystems to initialize
 	// For now, just video
 	//added audio init
+
+    
+	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 		std::cout << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
 		return false;
 	}
 
-	//set all the required Options for GLFW
+	//set all the required Options for GLFW, Use OpenGL 3.1 core
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION,3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION,3);//set openGL version to 3.3
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION,1); 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+	
 
 
 	// Set texture filtering to linear
@@ -64,22 +87,43 @@ bool init() {
 		std::cout << "Warning: Linear texture filtering not enabled!" << std::endl;
 	}
 
-
-	gWindow = SDL_CreateWindow("CS1666-RPG", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
+	//Create window
+	gWindow = SDL_CreateWindow("CS1666-RPG", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN);
 	if (gWindow == nullptr) {
 		std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
-		return  false;
+		return false;
+	}
+	
+	//Create context
+	gContext = SDL_GL_CreateContext(gWindow);
+
+	if (gContext == NULL)
+	{
+		std::cout << "OpenGL context could not be created! SDL Error: %s\n" << SDL_GetError() << std::endl;
+		return false;
 	}
 
-	SDL_GLContext context = SDL_GL_CreateContext(gWindow);
-	glewExperimental = GL_TRUE; //use the new OpenGL functions and extensions
 
-	if (GLEW_OK != glewInit()) {
-		std::cout << "Failed to initialize GLEW!" << std::endl;
-		return EXIT_FAILURE;
+
+	//Initialize GLEW
+	glewExperimental = GL_TRUE; //use the new OpenGL functions and extensions
+	GLenum glewError = glewInit();
+	if (glewError != GLEW_OK)
+	{
+		printf("Error initializing GLEW! %s\n", glewGetErrorString(glewError));
 	}
     
-	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	//Use Vsync
+	if (SDL_GL_SetSwapInterval(1) < 0)
+	{
+		printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+	}
+
+	if (!initGL())
+	{
+		printf("Unable to initialize OpenGL!\n");
+		return false;
+	}
 
 	/* Create a renderer for our window
 	 * Use hardware acceleration (last arg)
@@ -129,6 +173,129 @@ bool init() {
 	return true;
 }
 
+bool initGL()
+{
+	//Success flag
+	bool success = true;
+
+	//Generate program
+	gProgramID = glCreateProgram();
+
+	//Create vertex shader
+	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+
+	//Get vertex source
+	const GLchar* vertexShaderSource[] =
+	{
+		"#version 140\nin vec2 LVertexPos2D; void main() { gl_Position = vec4( LVertexPos2D.x, LVertexPos2D.y, 0, 1 ); }"
+	};
+
+	//Set vertex source
+	glShaderSource(vertexShader, 1, vertexShaderSource, NULL);
+
+	//Compile vertex source
+	glCompileShader(vertexShader);
+
+	//Check vertex shader for errors
+	GLint vShaderCompiled = GL_FALSE;
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vShaderCompiled);
+	if (vShaderCompiled != GL_TRUE)
+	{
+		printf("Unable to compile vertex shader %d!\n", vertexShader);
+		printShaderLog(vertexShader);
+		success = false;
+	}
+	else
+	{
+		//Attach vertex shader to program
+		glAttachShader(gProgramID, vertexShader);
+
+
+		//Create fragment shader
+		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+		//Get fragment source
+		const GLchar* fragmentShaderSource[] =
+		{
+			"#version 140\nout vec4 LFragment; void main() { LFragment = vec4( 1.0, 1.0, 1.0, 1.0 ); }"
+		};
+
+		//Set fragment source
+		glShaderSource(fragmentShader, 1, fragmentShaderSource, NULL);
+
+		//Compile fragment source
+		glCompileShader(fragmentShader);
+
+		//Check fragment shader for errors
+		GLint fShaderCompiled = GL_FALSE;
+		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fShaderCompiled);
+		if (fShaderCompiled != GL_TRUE)
+		{
+			printf("Unable to compile fragment shader %d!\n", fragmentShader);
+			printShaderLog(fragmentShader);
+			success = false;
+		}
+		else
+		{
+			//Attach fragment shader to program
+			glAttachShader(gProgramID, fragmentShader);
+
+
+			//Link program
+			glLinkProgram(gProgramID);
+
+			//Check for errors
+			GLint programSuccess = GL_TRUE;
+			glGetProgramiv(gProgramID, GL_LINK_STATUS, &programSuccess);
+			if (programSuccess != GL_TRUE)
+			{
+				printf("Error linking program %d!\n", gProgramID);
+				printProgramLog(gProgramID);
+				success = false;
+			}
+			else
+			{
+				//Get vertex attribute location
+				gVertexPos2DLocation = glGetAttribLocation(gProgramID, "LVertexPos2D");
+				if (gVertexPos2DLocation == -1)
+				{
+					printf("LVertexPos2D is not a valid glsl program variable!\n");
+					success = false;
+				}
+				else
+				{
+					//Initialize clear color
+					glClearColor(0.f, 0.f, 0.f, 1.f);
+
+					//VBO data
+					GLfloat vertexData[] =
+					{
+						-0.5f, -0.5f,
+						 0.5f, -0.5f,
+						 0.5f,  0.5f,
+						-0.5f,  0.5f
+					};
+
+					//IBO data
+					GLuint indexData[] = { 0, 1, 2, 3 };
+
+					//Create VBO
+					glGenBuffers(1, &gVBO);
+					glBindBuffer(GL_ARRAY_BUFFER, gVBO);
+					glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(GLfloat), vertexData, GL_STATIC_DRAW);
+
+					//Create IBO
+					glGenBuffers(1, &gIBO);
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
+					glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(GLuint), indexData, GL_STATIC_DRAW);
+				}
+			}
+		}
+	}
+
+	return success;
+}
+
 bool check_collision(SDL_Rect a, SDL_Rect b) {
 	// Check vertical overlap
 	if (a.y + a.h <= b.y)
@@ -159,6 +326,7 @@ void combatTransition(){
 		}
 	}
 }
+
 void loadMap(Tile* tiles[]) {
 	Tile::loadTiles();
 	bool tilesLoaded = true;
@@ -238,11 +406,15 @@ SDL_Texture* loadImage(std::string fname) {
 }
 
 void close() {
+	
+	
+
 	for (auto i : gTex) {
 		SDL_DestroyTexture(i);
 		i = nullptr;
 	}
-	SDL_GL_DeleteContext(context);
+	glDeleteProgram(gProgramID);
+	SDL_GL_DeleteContext(gContext);
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);
 	gWindow = nullptr;
@@ -307,6 +479,33 @@ void playCredits() {
 	Mix_HaltMusic();
 }
 
+void renderOpenGL()
+{
+	//Clear color buffer
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	
+		//Bind program
+		glUseProgram(gProgramID);
+
+		//Enable vertex position
+		glEnableVertexAttribArray(gVertexPos2DLocation);
+
+		//Set vertex data
+		glBindBuffer(GL_ARRAY_BUFFER, gVBO);
+		glVertexAttribPointer(gVertexPos2DLocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
+
+		//Set index data and render
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
+		glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL);
+
+		//Disable vertex position
+		glDisableVertexAttribArray(gVertexPos2DLocation);
+
+		//Unbind program
+		glUseProgram(NULL);
+	
+}
 
 void renderText(const char* text, SDL_Rect* rect, SDL_Color* color) {
 	SDL_Surface* surface;
@@ -401,6 +600,8 @@ bool characterCreateScreen() {
 				Mix_HaltMusic();
 				return false; //end game
 			}
+
+		
 
 			if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_KEYDOWN) {
 				errorInputText = "";
@@ -565,6 +766,8 @@ bool characterCreateScreen() {
 					nameInputText += e.text.text;
 				}
 			}
+
+		    
 		}
 
 		background.renderBackground();
@@ -778,8 +981,8 @@ void playGame() {
 				//go back into window
 				player1.xPosition -= (player1.xVelocity * timePassed);
 			}
-				camera.x = (player1.xPosition + player1.rectangle.w / 2) - SCREEN_WIDTH / 2;
-			camera.y = (player1.yPosition + player1.rectangle.h / 2) - SCREEN_HEIGHT / 2;
+				camera.x = (int)((player1.xPosition + player1.rectangle.w /2) - SCREEN_WIDTH / 2);
+			    camera.y = (int)((player1.yPosition + player1.rectangle.h / 2) - SCREEN_HEIGHT / 2);
 			if (camera.x < 0)
 			{
 				camera.x = 0;
@@ -882,6 +1085,69 @@ void playGame() {
 	}
 }
 
+void printProgramLog(GLuint program)
+{
+	//Make sure name is shader
+	if (glIsProgram(program))
+	{
+		//Program log length
+		int infoLogLength = 0;
+		int maxLength = infoLogLength;
+
+		//Get info string length
+		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+
+		//Allocate string
+		char* infoLog = new char[maxLength];
+
+		//Get info log
+		glGetProgramInfoLog(program, maxLength, &infoLogLength, infoLog);
+		if (infoLogLength > 0)
+		{
+			//Print Log
+			printf("%s\n", infoLog);
+		}
+
+		//Deallocate string
+		delete[] infoLog;
+	}
+	else
+	{
+		printf("Name %d is not a program\n", program);
+	}
+}
+
+void printShaderLog(GLuint shader)
+{
+	//Make sure name is shader
+	if (glIsShader(shader))
+	{
+		//Shader log length
+		int infoLogLength = 0;
+		int maxLength = infoLogLength;
+
+		//Get info string length
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+
+		//Allocate string
+		char* infoLog = new char[maxLength];
+
+		//Get info log
+		glGetShaderInfoLog(shader, maxLength, &infoLogLength, infoLog);
+		if (infoLogLength > 0)
+		{
+			//Print Log
+			printf("%s\n", infoLog);
+		}
+
+		//Deallocate string
+		delete[] infoLog;
+	}
+	else
+	{
+		printf("Name %d is not a shader\n", shader);
+	}
+}
 /*
 if return...
 -1 - SDL_QUIT
@@ -889,6 +1155,7 @@ if return...
 1 - farnan memes (credits)
 2 - load game (currently inactive)
 */
+
 int mainMenu() {
 
 	bool run = true;
@@ -962,6 +1229,7 @@ int mainMenu() {
 		}
 	}
 }
+
 int main(int argc, char *argv[]) {
 	srand(time(NULL));
 	/*
