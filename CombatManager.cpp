@@ -241,14 +241,20 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 	buttons.push_back(new Button(ATTR_NAMES[FAI], ui_box.x + 200, ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", "", gRenderer));
 	buttons.push_back(new Button("Inventory", ui_box.x + 200, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "", gRenderer));
 
+
+	glClearColor(0.2, 0.4, 0.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	SDL_GL_SwapWindow(gWindow);
+
+
 	while (gameOn) {
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
-				background.free();
+				//background.free();
 				return false; 
 			}
 		
-		background.renderBackground();
+		//background.renderBackground();
 		delaysPerFrame++;
 		if (delaysPerFrame >= 6) {
 			frame++;
@@ -262,15 +268,15 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 			if (i->type == "character")
 			{
 				SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };
-				SDL_RenderCopy(gRenderer, i->texture, &charactersRectangle, &(i->rect));
+				//SDL_RenderCopy(gRenderer, i->texture, &charactersRectangle, &(i->rect));
 			}
 			else
 			{
-				SDL_RenderCopy(gRenderer, i->texture, NULL, &(i->rect));
+				//SDL_RenderCopy(gRenderer, i->texture, NULL, &(i->rect));
 				Helper::renderText(i->type.c_str(), &(i->rect), &txt_color, font);
 			}
 		}
-		SDL_RenderPresent(gRenderer);
+		//SDL_RenderPresent(gRenderer);
 		SDL_Delay(16);
 		}
 		for (int i = 0; i < participants.size(); i++)

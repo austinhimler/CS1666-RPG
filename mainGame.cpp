@@ -7,7 +7,6 @@
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 #include <GL/glew.h>
-#include <GL/glu.h>
 #include <SDL_opengl.h>
 #include <cmath>
 #include <fstream>
@@ -23,13 +22,8 @@
 
 bool init();//Starts up SDL, creates window, and initializes OpenGL
 
-bool initGL();//Initializes rendering program and clear color
-
 void close();//Frees media and shuts down SDL
 
-void printProgramLog(GLuint program);//Shader loading utility programs
-
-void printShaderLog(GLuint shader);
 
 SDL_Texture* loadImage(std::string fname);
 
@@ -45,11 +39,7 @@ SDL_GLContext gContext;//OpenGL context
 
 std::vector<SDL_Texture*> gTex;
 
-//Graphics program
-GLuint gProgramID = 0;
-GLint  gVertexPos2DLocation = -1;
-GLuint gVBO = 0;
-GLuint gIBO = 0;
+
 
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
@@ -75,13 +65,7 @@ bool init() {
 		return false;
 	}
 
-	//set all the required Options for GLFW, Use OpenGL 3.1 core
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION,3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION,1); 
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_CORE);
 	
-
-
 	// Set texture filtering to linear
 	if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
 		std::cout << "Warning: Linear texture filtering not enabled!" << std::endl;
@@ -94,7 +78,14 @@ bool init() {
 		return false;
 	}
 	
-	//Create context
+	//set all the required Options for GLFW, Use OpenGL 3.2 core
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);//Double-buffering
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+
+	//Create rendering context for OpenGL
 	gContext = SDL_GL_CreateContext(gWindow);
 
 	if (gContext == NULL)
@@ -102,8 +93,6 @@ bool init() {
 		std::cout << "OpenGL context could not be created! SDL Error: %s\n" << SDL_GetError() << std::endl;
 		return false;
 	}
-
-
 
 	//Initialize GLEW
 	glewExperimental = GL_TRUE; //use the new OpenGL functions and extensions
@@ -119,12 +108,8 @@ bool init() {
 		printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 	}
 
-	if (!initGL())
-	{
-		printf("Unable to initialize OpenGL!\n");
-		return false;
-	}
-
+	
+	
 	/* Create a renderer for our window
 	 * Use hardware acceleration (last arg)
 	 * Choose first driver that can provide hardware acceleration
@@ -173,128 +158,6 @@ bool init() {
 	return true;
 }
 
-bool initGL()
-{
-	//Success flag
-	bool success = true;
-
-	//Generate program
-	gProgramID = glCreateProgram();
-
-	//Create vertex shader
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-	//Get vertex source
-	const GLchar* vertexShaderSource[] =
-	{
-		"#version 140\nin vec2 LVertexPos2D; void main() { gl_Position = vec4( LVertexPos2D.x, LVertexPos2D.y, 0, 1 ); }"
-	};
-
-	//Set vertex source
-	glShaderSource(vertexShader, 1, vertexShaderSource, NULL);
-
-	//Compile vertex source
-	glCompileShader(vertexShader);
-
-	//Check vertex shader for errors
-	GLint vShaderCompiled = GL_FALSE;
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vShaderCompiled);
-	if (vShaderCompiled != GL_TRUE)
-	{
-		printf("Unable to compile vertex shader %d!\n", vertexShader);
-		printShaderLog(vertexShader);
-		success = false;
-	}
-	else
-	{
-		//Attach vertex shader to program
-		glAttachShader(gProgramID, vertexShader);
-
-
-		//Create fragment shader
-		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-		//Get fragment source
-		const GLchar* fragmentShaderSource[] =
-		{
-			"#version 140\nout vec4 LFragment; void main() { LFragment = vec4( 1.0, 1.0, 1.0, 1.0 ); }"
-		};
-
-		//Set fragment source
-		glShaderSource(fragmentShader, 1, fragmentShaderSource, NULL);
-
-		//Compile fragment source
-		glCompileShader(fragmentShader);
-
-		//Check fragment shader for errors
-		GLint fShaderCompiled = GL_FALSE;
-		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fShaderCompiled);
-		if (fShaderCompiled != GL_TRUE)
-		{
-			printf("Unable to compile fragment shader %d!\n", fragmentShader);
-			printShaderLog(fragmentShader);
-			success = false;
-		}
-		else
-		{
-			//Attach fragment shader to program
-			glAttachShader(gProgramID, fragmentShader);
-
-
-			//Link program
-			glLinkProgram(gProgramID);
-
-			//Check for errors
-			GLint programSuccess = GL_TRUE;
-			glGetProgramiv(gProgramID, GL_LINK_STATUS, &programSuccess);
-			if (programSuccess != GL_TRUE)
-			{
-				printf("Error linking program %d!\n", gProgramID);
-				printProgramLog(gProgramID);
-				success = false;
-			}
-			else
-			{
-				//Get vertex attribute location
-				gVertexPos2DLocation = glGetAttribLocation(gProgramID, "LVertexPos2D");
-				if (gVertexPos2DLocation == -1)
-				{
-					printf("LVertexPos2D is not a valid glsl program variable!\n");
-					success = false;
-				}
-				else
-				{
-					//Initialize clear color
-					glClearColor(0.f, 0.f, 0.f, 1.f);
-
-					//VBO data
-					GLfloat vertexData[] =
-					{
-						-0.5f, -0.5f,
-						 0.5f, -0.5f,
-						 0.5f,  0.5f,
-						-0.5f,  0.5f
-					};
-
-					//IBO data
-					GLuint indexData[] = { 0, 1, 2, 3 };
-
-					//Create VBO
-					glGenBuffers(1, &gVBO);
-					glBindBuffer(GL_ARRAY_BUFFER, gVBO);
-					glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(GLfloat), vertexData, GL_STATIC_DRAW);
-
-					//Create IBO
-					glGenBuffers(1, &gIBO);
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
-					glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(GLuint), indexData, GL_STATIC_DRAW);
-				}
-			}
-		}
-	}
-
-	return success;
-}
 
 bool check_collision(SDL_Rect a, SDL_Rect b) {
 	// Check vertical overlap
@@ -413,7 +276,7 @@ void close() {
 		SDL_DestroyTexture(i);
 		i = nullptr;
 	}
-	glDeleteProgram(gProgramID);
+	
 	SDL_GL_DeleteContext(gContext);
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);
@@ -479,33 +342,6 @@ void playCredits() {
 	Mix_HaltMusic();
 }
 
-void renderOpenGL()
-{
-	//Clear color buffer
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	
-		//Bind program
-		glUseProgram(gProgramID);
-
-		//Enable vertex position
-		glEnableVertexAttribArray(gVertexPos2DLocation);
-
-		//Set vertex data
-		glBindBuffer(GL_ARRAY_BUFFER, gVBO);
-		glVertexAttribPointer(gVertexPos2DLocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
-
-		//Set index data and render
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
-		glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL);
-
-		//Disable vertex position
-		glDisableVertexAttribArray(gVertexPos2DLocation);
-
-		//Unbind program
-		glUseProgram(NULL);
-	
-}
 
 void renderText(const char* text, SDL_Rect* rect, SDL_Color* color) {
 	SDL_Surface* surface;
