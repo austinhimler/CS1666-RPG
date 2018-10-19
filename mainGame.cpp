@@ -6,6 +6,9 @@
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
+#include <GL/glew.h>
+#include <GL/glu.h>
+#include <SDL_opengl.h>
 #include <cmath>
 #include <fstream>
 #include "Headers/Globals.h"
@@ -25,6 +28,7 @@ void close();
 
 SDL_Window* gWindow = nullptr;
 SDL_Renderer* gRenderer = nullptr;
+SDL_GLContext context = NULL;
 std::vector<SDL_Texture*> gTex;
 
 const int SCREEN_WIDTH = 720;
@@ -48,17 +52,34 @@ bool init() {
 		return false;
 	}
 
+	//set all the required Options for GLFW
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION,3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION,3);//set openGL version to 3.3
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+
+
 	// Set texture filtering to linear
 	if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
 		std::cout << "Warning: Linear texture filtering not enabled!" << std::endl;
 	}
 
 
-	gWindow = SDL_CreateWindow("CS1666-RPG", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+	gWindow = SDL_CreateWindow("CS1666-RPG", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
 	if (gWindow == nullptr) {
 		std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
 		return  false;
 	}
+
+	SDL_GLContext context = SDL_GL_CreateContext(gWindow);
+	glewExperimental = GL_TRUE; //use the new OpenGL functions and extensions
+
+	if (GLEW_OK != glewInit()) {
+		std::cout << "Failed to initialize GLEW!" << std::endl;
+		return EXIT_FAILURE;
+	}
+    
+	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	/* Create a renderer for our window
 	 * Use hardware acceleration (last arg)
@@ -74,6 +95,13 @@ bool init() {
 	// Set renderer draw/clear color
 	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
 
+	
+	//glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	//glClear(GL_COLOR_BUFFER_BIT);
+	//draw OpenGL; 
+	//SDL_GL_SwapWindow(SDL_Window* window)-> Use this function to update a window with OpenGL rendering.
+	
+	
 	// Initialize PNG loading via SDL_image extension library
 	int imgFlags = IMG_INIT_PNG;
 	imgFlags = imgFlags | IMG_INIT_JPG;//add jpg support
@@ -214,7 +242,7 @@ void close() {
 		SDL_DestroyTexture(i);
 		i = nullptr;
 	}
-
+	SDL_GL_DeleteContext(context);
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);
 	gWindow = nullptr;
