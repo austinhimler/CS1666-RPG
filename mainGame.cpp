@@ -9,7 +9,7 @@
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 
-#include "Headers/Globals.h"
+
 #include "Headers/mainGame.h"
 #include "Headers/Player.h"
 #include "Headers/Button.h"
@@ -17,6 +17,7 @@
 #include "Headers/CombatManager.h"
 #include "Headers/Cluster.h"
 #include "Headers/LoadTexture.h"
+#include "Headers/Globals.h"
 
 // Globals
 SDL_Window* gWindow = nullptr;

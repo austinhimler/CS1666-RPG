@@ -1,5 +1,4 @@
 #include "Headers/LoadTexture.h"
-#include "Headers/Globals.h"
 
 LoadTexture::LoadTexture()
 {
