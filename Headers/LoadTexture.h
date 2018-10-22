@@ -19,7 +19,7 @@ public:
 
 
 	//Creates blank texture
-	bool createBlank(int width, int height, SDL_TextureAccess = SDL_TEXTUREACCESS_STREAMING);
+	bool createBlank(int width, int height, SDL_TextureAccess  SDL_TEXTUREACCESS_STREAMING, SDL_Renderer* gRenderer);
 
 	//Deallocates texture
 	void free();
@@ -34,10 +34,10 @@ public:
 	void setAlpha(Uint8 alpha);
 
 	//Renders texture at given point
-	void render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
-	void renderBackground();
+	void render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE,SDL_Renderer* gRenderer);
+	void renderBackground(SDL_Renderer* gRenderer);
 	//Set self as render target
-	void setAsRenderTarget();
+	void setAsRenderTarget(SDL_Renderer* gRenderer);
 
 	//Gets image dimensions
 	int getWidth();

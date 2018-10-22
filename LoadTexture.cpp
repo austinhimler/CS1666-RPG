@@ -96,7 +96,7 @@ bool LoadTexture::loadFromFile(std::string path,SDL_Renderer* gRenderer)
 	return mTexture != NULL;
 }
 
-bool LoadTexture::createBlank(int width, int height, SDL_TextureAccess access)
+bool LoadTexture::createBlank(int width, int height, SDL_TextureAccess access,SDL_Renderer* gRenderer)
 {
 	//Create uninitialized texture
 	mTexture = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, access, width, height);
@@ -145,7 +145,7 @@ void LoadTexture::setAlpha(Uint8 alpha)
 	SDL_SetTextureAlphaMod(mTexture, alpha);
 }
 
-void LoadTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
+void LoadTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip, SDL_Renderer* gRenderer)
 {
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
@@ -161,14 +161,14 @@ void LoadTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* 
 	SDL_RenderCopyEx(gRenderer, mTexture, clip, &renderQuad, angle, center, flip);
 }
 
-void LoadTexture::renderBackground()
+void LoadTexture::renderBackground(SDL_Renderer* gRenderer)
 {
 	SDL_RenderCopy(gRenderer, mTexture, NULL, NULL);
 }
 
 
 
-void LoadTexture::setAsRenderTarget()
+void LoadTexture::setAsRenderTarget(SDL_Renderer* gRenderer)
 {
 	//Make self render target
 	SDL_SetRenderTarget(gRenderer, mTexture);
