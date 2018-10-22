@@ -139,10 +139,11 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 						else if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN)
 						{
 							bool abil_button = true;
+							/*
 							while (abil_button) {
 								std::vector<Button*> Abil_Buttons;
 								setNewButtons(Abil_Buttons, i->attribute);
-
+								
 								
 								if(Escape button is clicked) {
 								Ability* a = c->abilities[c->getHelp(ESCAPE)];
