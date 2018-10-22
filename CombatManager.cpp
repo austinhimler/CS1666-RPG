@@ -246,7 +246,7 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 				
 			}
 		}
-		background.renderBackground();
+		background.renderBackground(gRenderer);
 		delaysPerFrame++;
 		if (delaysPerFrame >= 6) {
 			frame++;

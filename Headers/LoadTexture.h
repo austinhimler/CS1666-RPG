@@ -34,7 +34,7 @@ public:
 	void setAlpha(Uint8 alpha);
 
 	//Renders texture at given point
-	void render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE,SDL_Renderer* gRenderer);
+	void render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE,SDL_Renderer* gRenderer=NULL);
 	void renderBackground(SDL_Renderer* gRenderer);
 	//Set self as render target
 	void setAsRenderTarget(SDL_Renderer* gRenderer);

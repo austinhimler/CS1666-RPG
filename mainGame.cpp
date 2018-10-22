@@ -508,7 +508,7 @@ bool characterCreateScreen() {
 			}
 		}
 
-		background.renderBackground();
+		background.renderBackground(gRenderer);
 		//Renders buttons and shows pressed image if pressed
 		for (auto i : buttons) {
 			if (!i->pressed > 0 || i->attribute == "")
