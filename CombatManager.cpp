@@ -247,6 +247,12 @@ bool CombatManager::combatMain(std::vector<Character*> p)
 	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[FAI], gRenderer));
 	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "Inventory", gRenderer));
 
+
+	glClearColor(0.2, 0.4, 0.0, 1.0); //(float red,float green,float blue,float alpha)just like SDL_SetRenderDrawColor(&renderer, r, g, b, a)
+	glClear(GL_COLOR_BUFFER_BIT);  //just like SDL_RenderClear(&renderer);
+	SDL_GL_SwapWindow(gWindow); //just like SDL_RenderPresent(&renderer);
+
+
 	while (gameOn) {
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
@@ -277,7 +283,7 @@ bool CombatManager::combatMain(std::vector<Character*> p)
 				Helper::renderText(i->type.c_str(), &(i->rect), &txt_color, font);
 			}
 		}
-		SDL_RenderPresent(gRenderer);
+		//SDL_RenderPresent(gRenderer);
 		SDL_Delay(16);
 		}
 		for (int i = 0; i < participants.size(); i++)

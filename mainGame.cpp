@@ -6,6 +6,8 @@
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
+#include <GL/glew.h>
+#include <SDL_opengl.h>
 #include <cmath>
 #include <fstream>
 #include "Headers/Globals.h"
@@ -17,15 +19,27 @@
 #include "Headers/LoadTexture.h"
 
 // Function declarations
-bool init();
+
+bool init();//Starts up SDL, creates window, and initializes OpenGL
+
+void close();//Frees media and shuts down SDL
+
+
 SDL_Texture* loadImage(std::string fname);
-void close();
+
 
 // Globals
 
-SDL_Window* gWindow = nullptr;
+SDL_Window* gWindow = nullptr;//The window rendering to
+
 SDL_Renderer* gRenderer = nullptr;
+
+SDL_GLContext gContext;//OpenGL context
+
+
 std::vector<SDL_Texture*> gTex;
+
+
 
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
@@ -43,23 +57,59 @@ bool init() {
 	// Flag what subsystems to initialize
 	// For now, just video
 	//added audio init
+
+    
+	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 		std::cout << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
 		return false;
 	}
 
+	
 	// Set texture filtering to linear
 	if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
 		std::cout << "Warning: Linear texture filtering not enabled!" << std::endl;
 	}
 
-
-	gWindow = SDL_CreateWindow("CS1666-RPG", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+	//Create window
+	gWindow = SDL_CreateWindow("CS1666-RPG", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN);
 	if (gWindow == nullptr) {
 		std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
-		return  false;
+		return false;
+	}
+	
+	//set all the required Options for GLFW, Use OpenGL 3.2 core
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);//Double-buffering
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+
+	//Create rendering context for OpenGL
+	gContext = SDL_GL_CreateContext(gWindow);
+
+	if (gContext == NULL)
+	{
+		std::cout << "OpenGL context could not be created! SDL Error: %s\n" << SDL_GetError() << std::endl;
+		return false;
 	}
 
+	//Initialize GLEW
+	glewExperimental = GL_TRUE; //use the new OpenGL functions and extensions
+	GLenum glewError = glewInit();
+	if (glewError != GLEW_OK)
+	{
+		printf("Error initializing GLEW! %s\n", glewGetErrorString(glewError));
+	}
+    
+	//Use Vsync
+	if (SDL_GL_SetSwapInterval(1) < 0)
+	{
+		printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+	}
+
+	
+	
 	/* Create a renderer for our window
 	 * Use hardware acceleration (last arg)
 	 * Choose first driver that can provide hardware acceleration
@@ -74,6 +124,13 @@ bool init() {
 	// Set renderer draw/clear color
 	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
 
+	
+	//glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	//glClear(GL_COLOR_BUFFER_BIT);
+	//draw OpenGL; 
+	//SDL_GL_SwapWindow(SDL_Window* window)-> Use this function to update a window with OpenGL rendering.
+	
+	
 	// Initialize PNG loading via SDL_image extension library
 	int imgFlags = IMG_INIT_PNG;
 	imgFlags = imgFlags | IMG_INIT_JPG;//add jpg support
@@ -93,13 +150,14 @@ bool init() {
 		std::cout << "TTF could not initialize. Error: %s\n", TTF_GetError();
 		return false;
 	}
-	font = TTF_OpenFont("Fonts/Stacked pixel.ttf", 30);
+	font = TTF_OpenFont("Fonts/ka1.ttf", 20);
 	if (font == NULL) {
 		std::cout << "font was null";
 	}
 
 	return true;
 }
+
 
 bool check_collision(SDL_Rect a, SDL_Rect b) {
 	// Check vertical overlap
@@ -131,6 +189,7 @@ void combatTransition(){
 		}
 	}
 }
+
 void loadMap(Tile* tiles[]) {
 	Tile::loadTiles();
 	bool tilesLoaded = true;
@@ -210,11 +269,15 @@ SDL_Texture* loadImage(std::string fname) {
 }
 
 void close() {
+	
+	
+
 	for (auto i : gTex) {
 		SDL_DestroyTexture(i);
 		i = nullptr;
 	}
-
+	
+	SDL_GL_DeleteContext(gContext);
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);
 	gWindow = nullptr;
@@ -334,7 +397,7 @@ bool characterCreateScreen() {
 	SDL_Rect nameTextRectangle = { 143, 640, 0,0 };
 	SDL_Rect errorTextRectangle = { 465, 580, 0, 0 };
 	SDL_Rect errorTextRectangleLong = { 445, 580, 0, 0 };
-	SDL_Color textColor = { 0, 0, 0, 0 };
+	SDL_Color textColor = { 112, 96, 80, 0 };
 	SDL_Color errorColor = { 255, 0, 0, 0 };
 	std::string nameInputText;
 	std::string errorInputText;
@@ -342,6 +405,11 @@ bool characterCreateScreen() {
 	std::vector<Button*> buttons;
 	SDL_Texture* upPress = loadImage("Images/UI/CreateScreen/pointUpArrow_Pressed.png");
 	SDL_Texture* downPress = loadImage("Images/UI/CreateScreen/pointDownArrow_Pressed.png");
+	SDL_Texture* upLocked = loadImage("Images/UI/CreateScreen/pointUpArrow_Locked.png");
+	SDL_Texture* downLocked = loadImage("Images/UI/CreateScreen/pointDownArrow_Locked.png");
+	SDL_Texture* upUnLocked = loadImage("Images/UI/CreateScreen/pointUpArrow.png");
+	SDL_Texture* downUnLocked = loadImage("Images/UI/CreateScreen/pointUpArrow.png");
+
 	SDL_Texture* character = loadImage("Images/Player/Player_Idle.png");
 
 
@@ -369,6 +437,8 @@ bool characterCreateScreen() {
 				return false; //end game
 			}
 
+		
+
 			if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_KEYDOWN) {
 				errorInputText = "";
 			}
@@ -385,6 +455,7 @@ bool characterCreateScreen() {
 						((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
 					{
 						i->pressed = 5;
+						i->locked = false;
 						if (i->type == "start") {
 							if (nameInputText == "nlf4" || pointsToAllocate == 0) {
 								if (nameInputText == "nlf4" || nameInputText != "") {
@@ -417,33 +488,54 @@ bool characterCreateScreen() {
 							if (pointsToAllocate > 0) {
 								Mix_PlayChannel(-1, gBSound, 0);
 								deltaAttribute = 1;
+								
 							}
 							else {
 								errorInputText = "No Points Remaining!";
 								deltaAttribute = 0;
+								
 							}
 						}
 						else if (i->type == "down") {
 							Mix_PlayChannel(-1, gBSound, 0);
 							deltaAttribute = -1;
+							
 						}
 
 						if (i->attribute == "strength") {
 							if ((deltaAttribute + strength) <= maxStat && (deltaAttribute + strength) >= minStat) {
+								if ((deltaAttribute + strength) == maxStat) {
+									i->locked = true;
+								}
+								else {
+									i->locked = false;
+									
+								}
+
+						
+
+								
+
 								strength += deltaAttribute;
 								pointsToAllocate -= deltaAttribute;
 							}
 							else if ((deltaAttribute + strength) > maxStat) {
+								i->locked = true;
+		
 								errorInputText = "Max Strength!";
+								
 							}
 							else if ((deltaAttribute + strength) < minStat) {
 								errorInputText = "Min Strength!";
+								
 							}
 						}
 						else if (i->attribute == "intelligence") {
 							if ((deltaAttribute + intelligence) <= maxStat && (deltaAttribute + intelligence) >= minStat) {
 								intelligence += deltaAttribute;
 								pointsToAllocate -= deltaAttribute;
+
+						     
 							}
 							else if ((deltaAttribute + intelligence) > maxStat) {
 								errorInputText = "Max Intelligence!";
@@ -509,20 +601,32 @@ bool characterCreateScreen() {
 					nameInputText += e.text.text;
 				}
 			}
+
+		    
 		}
 
 		background.renderBackground();
 		//Renders buttons and shows pressed image if pressed
 		for (auto i : buttons) {
-			if (!i->pressed > 0 || i->attribute == "")
-				SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
-			else
-			{
-				if (i->type == "up")
-					SDL_RenderCopy(gRenderer, upPress, NULL, &i->rect);
+			if (!i->locked) {
+				if (!i->pressed > 0 || i->attribute == "")
+					SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
 				else
-					SDL_RenderCopy(gRenderer, downPress, NULL, &i->rect);
-				i->pressed--;
+				{
+					if (i->type == "up")
+						SDL_RenderCopy(gRenderer, upPress, NULL, &i->rect);
+					else
+						SDL_RenderCopy(gRenderer, downPress, NULL, &i->rect);
+					i->pressed--;
+				}
+		
+			}
+			else {
+				
+				if (i->type == "up")
+					SDL_RenderCopy(gRenderer, upLocked, NULL, &i->rect);
+				else
+					SDL_RenderCopy(gRenderer, downLocked, NULL, &i->rect);
 			}
 		}
 
@@ -625,7 +729,7 @@ void playGame() {
 			timePassed = (SDL_GetTicks() - timeSinceLastMovement) / 1000.0;
 			player1.xDeltaVelocity = 0;
 			player1.yDeltaVelocity = 0;
-
+			double runingAddSpeed = 0; 
 
 			const Uint8* keyState = SDL_GetKeyboardState(nullptr);
 			if (keyState[SDL_SCANCODE_W])
@@ -636,6 +740,9 @@ void playGame() {
 				player1.yDeltaVelocity += (player1.getAcceleration() * timePassed);
 			if (keyState[SDL_SCANCODE_D])
 				player1.xDeltaVelocity += (player1.getAcceleration() * timePassed);
+			if (keyState[SDL_SCANCODE_LSHIFT])
+				runingAddSpeed = 200;
+
 
 			if (player1.xDeltaVelocity == 0) {
 				if (player1.xVelocity > 0)
@@ -670,15 +777,15 @@ void playGame() {
 			}
 
 			//bound within Max Speed
-			if (player1.xVelocity < -player1.getSpeedMax())
-				player1.xVelocity = -player1.getSpeedMax();
-			else if (player1.xVelocity > player1.getSpeedMax())
-				player1.xVelocity = player1.getSpeedMax();
+			if (player1.xVelocity < -(player1.getSpeedMax()+runingAddSpeed))
+				player1.xVelocity = -(player1.getSpeedMax() + runingAddSpeed);
+			else if (player1.xVelocity > (player1.getSpeedMax() + runingAddSpeed))
+				player1.xVelocity = (player1.getSpeedMax() + runingAddSpeed);
 			//bound within Max Speed
-			if (player1.yVelocity < -player1.getSpeedMax())
-				player1.yVelocity = -player1.getSpeedMax();
-			else if (player1.yVelocity > player1.getSpeedMax())
-				player1.yVelocity = player1.getSpeedMax();
+			if (player1.yVelocity < -(player1.getSpeedMax() + runingAddSpeed))
+				player1.yVelocity = -(player1.getSpeedMax() + runingAddSpeed);
+			else if (player1.yVelocity > (player1.getSpeedMax() + runingAddSpeed))
+				player1.yVelocity = (player1.getSpeedMax() + runingAddSpeed);
 
 			//Change sprite if character is in motion
 			if (player1.xVelocity != 0 || player1.yVelocity != 0) {
@@ -709,8 +816,8 @@ void playGame() {
 				//go back into window
 				player1.xPosition -= (player1.xVelocity * timePassed);
 			}
-				camera.x = (player1.xPosition + player1.rectangle.w / 2) - SCREEN_WIDTH / 2;
-			camera.y = (player1.yPosition + player1.rectangle.h / 2) - SCREEN_HEIGHT / 2;
+				camera.x = (int)((player1.xPosition + player1.rectangle.w /2) - SCREEN_WIDTH / 2);
+			    camera.y = (int)((player1.yPosition + player1.rectangle.h / 2) - SCREEN_HEIGHT / 2);
 			if (camera.x < 0)
 			{
 				camera.x = 0;
@@ -813,6 +920,69 @@ void playGame() {
 	}
 }
 
+void printProgramLog(GLuint program)
+{
+	//Make sure name is shader
+	if (glIsProgram(program))
+	{
+		//Program log length
+		int infoLogLength = 0;
+		int maxLength = infoLogLength;
+
+		//Get info string length
+		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+
+		//Allocate string
+		char* infoLog = new char[maxLength];
+
+		//Get info log
+		glGetProgramInfoLog(program, maxLength, &infoLogLength, infoLog);
+		if (infoLogLength > 0)
+		{
+			//Print Log
+			printf("%s\n", infoLog);
+		}
+
+		//Deallocate string
+		delete[] infoLog;
+	}
+	else
+	{
+		printf("Name %d is not a program\n", program);
+	}
+}
+
+void printShaderLog(GLuint shader)
+{
+	//Make sure name is shader
+	if (glIsShader(shader))
+	{
+		//Shader log length
+		int infoLogLength = 0;
+		int maxLength = infoLogLength;
+
+		//Get info string length
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+
+		//Allocate string
+		char* infoLog = new char[maxLength];
+
+		//Get info log
+		glGetShaderInfoLog(shader, maxLength, &infoLogLength, infoLog);
+		if (infoLogLength > 0)
+		{
+			//Print Log
+			printf("%s\n", infoLog);
+		}
+
+		//Deallocate string
+		delete[] infoLog;
+	}
+	else
+	{
+		printf("Name %d is not a shader\n", shader);
+	}
+}
 /*
 if return...
 -1 - SDL_QUIT
@@ -820,6 +990,7 @@ if return...
 1 - farnan memes (credits)
 2 - load game (currently inactive)
 */
+
 int mainMenu() {
 
 	bool run = true;
@@ -829,7 +1000,7 @@ int mainMenu() {
 	SDL_Texture* credits = loadImage("Images/UI/MainMenu/CreditsButton.png");
 	SDL_Texture* load = loadImage("Images/UI/MainMenu/NewButton.png");
 	SDL_Texture* title = loadImage("Images/UI/MainMenu/title.png");
-	SDL_Rect space = { 240, 40, 240, 64 };
+	SDL_Rect space = { 100, 50, 526, 72 };
 	//need attr objects
 	buttons.push_back(new Button("start", 240, 200, 240, 64, "Images/UI/MainMenu/StartButton.png", "", gRenderer));
 	buttons.push_back(new Button("credits", 240, 350, 240, 64, "Images/UI/MainMenu/CreditsButton.png", "", gRenderer));
@@ -893,6 +1064,7 @@ int mainMenu() {
 		}
 	}
 }
+
 int main(int argc, char *argv[]) {
 	srand(time(NULL));
 	/*

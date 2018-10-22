@@ -47,7 +47,7 @@
 		yPosition = 250.0; //will need to edit for starting level
 		rectangle = {(int)xPosition, (int)yPosition, imageWidth, imageHeight};
 		drawRectangle = { 0, 0, imageWidth, imageHeight };
-		speedMax = 250.0;
+		speedMax = 150.0;
 		acceleration = 2000.0;
 	}
 
