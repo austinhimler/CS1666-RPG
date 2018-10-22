@@ -234,7 +234,7 @@
     <ClInclude Include="Headers\Cluster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LoadTexture.h">
+    <ClInclude Include="Headers\LoadTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

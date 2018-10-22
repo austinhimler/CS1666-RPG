@@ -4,7 +4,7 @@
 #include <SDL_ttf.h>
 #include <stdio.h>
 #include <string>
-#include "Headers/Globals.h"
+#include "Globals.h"
 class LoadTexture
 {
 public:
