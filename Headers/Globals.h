@@ -1,6 +1,7 @@
 #ifndef _____GLOBALS_H_____
 #define _____GLOBALS_H_____
 
+#include <map>
 #include <vector>
 #include <string>
 #include <SDL.h>
@@ -20,6 +21,8 @@
 
 //}//*/
 
+
+//const map<string, attr_index> attr_map = (ATTR_NAME[]);
 
 enum CHAR_TYPE {
 	PLAYER,
@@ -42,6 +45,9 @@ const std::string ATTR_NAMES[] = {
 	"Constitution",
 	"Faith"
 };
+
+
+//const std::map<std::string, attr_index> attr_map;
 
 enum ABILITY {
 	ATTACK,

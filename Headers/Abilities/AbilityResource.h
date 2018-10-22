@@ -29,12 +29,27 @@ namespace AbilityResource {
 	}
 
 	// ability names in stirng
-	const std::string abilityNames[] = {
-		"Attack",
-		"Fireball",
-		"Escape",
-		"Defend",
-		"Summon",
+	const std::vector<std::string> strNames = {
+		"Attack"
+	};
+	const std::vector<std::string> intNames = {
+		"Fireball"
+	};
+	const std::vector<std::string> dexNames = {
+		"Escape"
+	};
+	const std::vector<std::string> conNames = {
+		"Defend"
+	};
+	const std::vector<std::string> faiNames = {
+		"Summon"
+	};
+	const std::vector<std::string> abilityNames[5] = {
+		strNames,
+		intNames,
+		dexNames,
+		conNames,
+		faiNames
 	};
 
 	//ability base CD
@@ -58,12 +73,14 @@ namespace AbilityResource {
 		tSUMMON
 	};
 
+	// types of the respective abilities
 	const int abilityType[] = {
-		tDAMAGE,
-		tDAMAGE,
-		tESCAPE,
-		tDEFENSE,
-		tSUMMON
+		tDAMAGE, // attack
+		tDAMAGE, // fireball
+		tESCAPE, // escape
+		tDEFENSE, // defend
+		tSUMMON // summon
+				//etc.
 	};
 
 	//ability related attributes

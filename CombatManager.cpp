@@ -1,5 +1,4 @@
 #include "Headers/CombatManager.h"
-#include "Headers/LoadTexture.h"
 
 
 
@@ -127,6 +126,7 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 			{
 				int mouseX, mouseY;
 				SDL_GetMouseState(&mouseX, &mouseY);
+				
 				for (auto i : buttons)
 				{
 					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
@@ -136,12 +136,12 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 						{
 							//Display character info in info sheet
 						}
-
-						if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN && (i->type == "button"))
+						else if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN)
 						{
 							bool abil_button = true;
-							/*while (abil_button) {
-								//Display buttons in info sheet
+							while (abil_button) {
+								std::vector<Button*> Abil_Buttons;
+								setNewButtons(Abil_Buttons, i->attribute);
 
 								
 								if(Escape button is clicked) {
@@ -165,7 +165,7 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 									}
 								}
 							
-							}*/
+							}//*/
 						}
 					}
 				}
@@ -178,15 +178,22 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 
 
 }
-void silenced(Character& c) {
-	// silence effects
-}
 
-void poisoned(Character& c) {
-	//poison effects
-}
+// t gives which of the intial 6 buttons are pressed
+void CombatManager::setNewButtons(std::vector<Button*>& buttons, int t) {
+	int bw = 100, bh = 50;
+	int num_per_row = 1, num_per_col = 1;
+	if (t >= STR && t <= FAI) { // if the button pressed is an attribute button
+		for (int i = 0; i < AbilityResource::abilityNames[t].size(); i++) {
+			buttons.push_back(new Button("Abilty", info_box.x + 5 * (i%num_per_row * 50), info_box.y + 10 * ((i / num_per_row) % num_per_col * 50), bw, bh, "Images/UI/CombatScene/Button.png", AbilityResource::abilityNames[t][i], gRenderer));
+		}
+	}
+	else { // if the button is the inventory button
+		// create button for every item in inveotry
+	}
+}	
 
-bool CombatManager::combatManager(std::vector<Character*> p) 
+bool CombatManager::combatMain(std::vector<Character*> p) 
 {
 	
 	using namespace std;
@@ -224,9 +231,8 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 	LoadTexture background;
 	SDL_Event e;
 	background.loadFromFile("Images/UI/CombatScene/combatScene.png");
-	SDL_Rect scene_box = { 0,0,720,540 };
-	SDL_Rect ui_box = { 17,529,685,167 };
-	TTF_Font* font = Helper::setFont("Fonts/Stacked pixel.ttf", 30);
+	
+	TTF_Font* font = Helper::setFont("Fonts/Stacked pixel.ttf", 25);
 	SDL_Color txt_color = {0,0,0,0};
 	
 	int bw = 100;
@@ -234,12 +240,12 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 	std::vector<Button*> buttons;
 	buttons.push_back(new Button("character", scene_box.x + 10, scene_box.y + 200, bw, bh, "Images/Player/Player_Idle.png", "", gRenderer));
 	buttons.push_back(new Button("character", scene_box.x + 500, scene_box.y + 200, bw, bh, "Images/Enemies/shadow_cluster/owl.png", "", gRenderer));
-	buttons.push_back(new Button(ATTR_NAMES[STR], ui_box.x , ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", "", gRenderer));
-	buttons.push_back(new Button(ATTR_NAMES[INT], ui_box.x, ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", "", gRenderer));
-	buttons.push_back(new Button(ATTR_NAMES[DEX], ui_box.x, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "", gRenderer));
-	buttons.push_back(new Button(ATTR_NAMES[CON], ui_box.x + 200, ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", "", gRenderer));
-	buttons.push_back(new Button(ATTR_NAMES[FAI], ui_box.x + 200, ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", "", gRenderer));
-	buttons.push_back(new Button("Inventory", ui_box.x + 200, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "", gRenderer));
+	buttons.push_back(new Button("button", ui_box.x , ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[STR], gRenderer));
+	buttons.push_back(new Button("button", ui_box.x, ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[INT], gRenderer));
+	buttons.push_back(new Button("button", ui_box.x, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[DEX], gRenderer));
+	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[CON], gRenderer));
+	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[FAI], gRenderer));
+	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "Inventory", gRenderer));
 
 	while (gameOn) {
 		while (SDL_PollEvent(&e)) {
@@ -259,13 +265,14 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 		}
 		charImageX = frame * charAnimationPixelShift;
 		for (auto i : buttons) {
-			if (i->type == "character")
+			if (i->type == "character")	// render participants
 			{
 				SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };
 				SDL_RenderCopy(gRenderer, i->texture, &charactersRectangle, &(i->rect));
 			}
-			else
+			else // render UI in initial state
 			{
+				// render buttons on the buttom
 				SDL_RenderCopy(gRenderer, i->texture, NULL, &(i->rect));
 				Helper::renderText(i->type.c_str(), &(i->rect), &txt_color, font);
 			}
