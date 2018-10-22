@@ -16,7 +16,7 @@ LoadTexture::~LoadTexture()
 	free();
 }
 
-bool LoadTexture::loadFromFile(std::string path)
+bool LoadTexture::loadFromFile(std::string path,SDL_Renderer* gRenderer)
 {
 	//Get rid of preexisting texture
 	free();

@@ -223,7 +223,7 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 	QueueManager qm = QueueManager(p);
 	LoadTexture background;
 	SDL_Event e;
-	background.loadFromFile("Images/UI/CombatScene/combatScene.png");
+	background.loadFromFile("Images/UI/CombatScene/combatScene.png",gRenderer);
 	SDL_Rect scene_box = { 0,0,720,540 };
 	SDL_Rect ui_box = { 17,529,685,167 };
 

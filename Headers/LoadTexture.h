@@ -15,7 +15,7 @@ public:
 	~LoadTexture();
 
 	//Loads image at specified path
-	bool loadFromFile(std::string path);
+	bool loadFromFile(std::string path,SDL_Renderer* gRenderer);
 
 
 	//Creates blank texture

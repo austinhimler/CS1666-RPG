@@ -356,7 +356,7 @@ bool characterCreateScreen() {
 	buttons.push_back(new Button("start", 450, 625, 230, 56, "Images/UI/CreateScreen/StartButton.png", "", gRenderer));
 
 	LoadTexture background; 
-	background.loadFromFile("Images/UI/CreateScreen/characterCreateV2NoButtons.png");
+	background.loadFromFile("Images/UI/CreateScreen/characterCreateV2NoButtons.png",gRenderer);
 	SDL_Event e;
 	while (onCharacterCreate) {
 		while (SDL_PollEvent(&e)) {
