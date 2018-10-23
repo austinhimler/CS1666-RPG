@@ -434,11 +434,11 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "Inventory", gRenderer));
 
 
-//	glClearColor(0.2, 0.4, 0.0, 1.0); //(float red,float green,float blue,float alpha)just like SDL_SetRenderDrawColor(&renderer, r, g, b, a)
-//	glClear(GL_COLOR_BUFFER_BIT);  //just like SDL_RenderClear(&renderer);
-//	SDL_GL_SwapWindow(gWindow); //just like SDL_RenderPresent(&renderer);
+	glClearColor(0.2, 0.4, 0.0, 1.0); //(float red,float green,float blue,float alpha)just like SDL_SetRenderDrawColor(&renderer, r, g, b, a)
+	glClear(GL_COLOR_BUFFER_BIT);  //just like SDL_RenderClear(&renderer);
+	SDL_GL_SwapWindow(gWindow); //just like SDL_RenderPresent(&renderer);
 	
-	bool printed = false; // for text combat ui
+	//bool printed = false; // for text combat ui
 
 	while (inCombat) {
 		while (SDL_PollEvent(&e)) {
@@ -474,35 +474,17 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 		SDL_Delay(16);
 		}
 		
-		textMain(printed); // text combat ui initialization
+		//textMain(printed); // text combat ui initialization
 
 		for (int i = 0; i < participants.size(); i++)
 		{
 			//updateStatus(participants[i]);
 			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0)
-				textAction(participants[i]);//takeAction(participants[i], buttons, e);	
-			if (!inCombat) return false;
+				if(!takeAction(participants[i], buttons, e)) return false;//textAction(participants[i]);//	
 		}
-		printed = false; // for text combat ui
+		//printed = false; // for text combat ui
 		qm.changeRounds();
 	}
-
-	//Test to check that the background appears
-	/*
-	while (inCombat)
-	{
-		printf("Keep Fighting");
-	}//*/
-	/*
-	while (inCombat)
-	{
-		for (int i = 0; i < participants.size(); i++)
-		{
-			//updateStatus(participants[i]);
-			takeAction(participants[i], buttons, e);
-		}
-		qm.changeRounds();
-	}//*/
 	
 	return true;
 
