@@ -20,7 +20,7 @@ public:
 	CombatManager();
 	~CombatManager();
 	void updateStatus(Character* c);
-	void takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e);
+	bool takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e);
 	bool combatMain(std::vector<Character*>& c);
 	void setNewButtons(std::vector<Button*>& buttons, int t);
 	void outputEnemy();
