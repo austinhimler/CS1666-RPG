@@ -103,7 +103,7 @@ void CombatManager::outputEnemy() {
 	}
 }
 
-bool CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e) {
+void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e) {
 	/*
 		If c is an emeny, do enemy attack
 		Else, wait for user input
@@ -122,14 +122,8 @@ bool CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 	{
 		//Enemy attack player
 		std::vector<Ability> temp = c->getAbilities();
-		int target = rand() % player_index.size();
-		int result = participants[player_index[target]]->beingTarget(&temp[0]);
+		int result = participants[0]->beingTarget(&temp[0]);
 		std::cout << c->getName() <<" damages you slightly by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left." << std::endl;
-		if (participants[player_index[target]]->getHPCurrent() == 0) {
-			std::cout << "Why are your so weak? You are dead duded!" << std::endl;
-			inCombat = false;
-			return false;
-		}
 	}
 	else
 	{
@@ -175,10 +169,7 @@ bool CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 				while (true) {
 					std::cin >> abil_selection;
 					abil_selection--;
-
-					std::cout << AbilityResource::abilityNames[action].size() << std::endl;
-
-					if (abil_selection >= 0 && abil_selection < helper.size()) { // if a valid selection
+					if (abil_selection >= 0 && abil_selection < AbilityResource::abilityNames[action].size()) { // if a valid selection
 						a_cur = abil_temp[helper[abil_selection]];
 						if (c->getEnergyCurrent() < a_cur.getEnergyCost()) { // if not enough energy
 							std::cout << AbilityResource::abilityNames[a_cur.getName()] << " needs " << a_cur.getEnergyCost() << ", you only have " << c->getEnergyCurrent() << " YOU FOOL" << std::endl;
@@ -188,8 +179,6 @@ bool CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 				}
 
 				c->updateEnergy(&a_cur);
-
-
 				switch (abil_temp[helper[abil_selection]].getType()) {
 				case AbilityResource::tSUMMON:
 						std::cout << "NLF4 is lecturing, can't make it." << std::endl;
@@ -400,10 +389,10 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 
 	while (inCombat) {
 		while (SDL_PollEvent(&e)) {
-		if (e.type == SDL_QUIT) {
-			background.free();
-			return false; 
-		}
+			if (e.type == SDL_QUIT) {
+				background.free();
+				return false; 
+			}
 		
 		background.renderBackground();
 		delaysPerFrame++;
@@ -452,9 +441,9 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 			//updateStatus(participants[i]);
 			if(participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0)
 				takeAction(participants[i], buttons, e);	
-			if (!inCombat) return false;
+			if (!inCombat) break;
+			std::cerr << "here" << std::endl;
 		}
-		printed = false;
 		qm.changeRounds();
 	}
 
@@ -474,7 +463,7 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 		}
 		qm.changeRounds();
 	}//*/
-	return true;
+	return false;
 	
 	 
 	
