@@ -23,7 +23,7 @@ public:
 	bool takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e);
 	bool textAction(Character* c);
 	bool combatMain(std::vector<Character*>& c);
-	bool textMain(Character* c);
+	void textMain(bool& printed);
 	void setNewButtons(std::vector<Button*>& buttons, int t);
 	void outputEnemy();
 	
