@@ -135,7 +135,7 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 			int char_selection;
 			switch (action) {
 			case 6:
-				std::cout << "Just kidding. You don't have SHEET here\n" << std::endl;
+				std::cout << "You don't have SHEET here" << std::endl;
 				break;
 			case 7:
 			case 8:
@@ -175,6 +175,14 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 					}
 				}
 
+				std::cout << "Pick your target" << std::endl;
+				outputEnemy(); // output all surviving enemies
+				// get target selection
+				int target = -1;
+				while (target <= 0 || target > enemy_index.size()) {
+					std::cin >> target;
+				}
+				target--;
 				c->updateEnergy(&a_cur);
 				switch (abil_temp[helper[abil_selection]].getType()) {
 				case AbilityResource::tSUMMON:
@@ -197,14 +205,6 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 					takingAction = false;
 					break;
 				default:
-					std::cout << "Pick your target" << std::endl;
-					outputEnemy(); // output all surviving enemies
-					// get target selection
-					int target = -1;
-					while (target <= 0 || target > enemy_index.size()) {
-						std::cin >> target;
-					}
-					target--;
 					int result = participants[enemy_index[target]]->beingTarget(&abil_temp[helper[abil_selection]]);
 					std::cout << "You damage the enemy amazingly by " << result << " HP!" <<" "<<participants[enemy_index[target]]->getName() <<" now has only " <<participants[enemy_index[target]]->getHPCurrent() << " HP left."<< std::endl;
 					break;
@@ -222,7 +222,6 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 				if (participants[i]->getHPCurrent() != 0) temp = true;
 			}
 			if (!temp) {
-				std::cout << "You win" << std::endl;
 				takingAction = false;
 				inCombat = false;
 				break;
@@ -437,9 +436,7 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 		{
 			//updateStatus(participants[i]);
 			if(participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0)
-				takeAction(participants[i], buttons, e);	
-			if (!inCombat) break;
-			std::cerr << "here" << std::endl;
+				takeAction(participants[i], buttons, e);
 		}
 		qm.changeRounds();
 	}
