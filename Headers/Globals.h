@@ -46,6 +46,10 @@ const std::string ATTR_NAMES[] = {
 	"Faith"
 };
 
+const map<std::string, ATTR_NAMES> attr_map = {
+
+};
+
 enum ABILITY {
 	ATTACK,
 	FIREBALL,

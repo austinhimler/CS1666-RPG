@@ -53,6 +53,18 @@
     <Image Include="CREDIT_IMG\SankethKolliCredit.jpg">
       <Filter>Resource Files\CREDIT_IMAGES</Filter>
     </Image>
+    <Image Include="..\..\..\..\..\Programming\cs1666\characterCreateV2NoButtons.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\..\..\Programming\cs1666\StartButton.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\..\..\Programming\cs1666\pointDownArrow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\..\..\Programming\cs1666\pointUpArrow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
     <Image Include="Images\Tiles\64^64 Grasstiles.png">
       <Filter>Resource Files</Filter>
     </Image>
@@ -142,11 +154,20 @@
     <ClCompile Include="Classes\Cluster.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LoadTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Classes\LoadTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Ability.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ailment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Headers\Attribute.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -214,6 +235,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\Cluster.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\LoadTexture.h">
