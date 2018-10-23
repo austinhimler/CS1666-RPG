@@ -21,12 +21,15 @@ public:
 	~CombatManager();
 	void updateStatus(Character* c);
 	void takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e);
-	bool combatMain(std::vector<Character*> c);
+	bool combatMain(std::vector<Character*>& c);
 	void setNewButtons(std::vector<Button*>& buttons, int t);
+	void outputEnemy();
 
 private:
-	bool gameOn;
-	vector<Character*> participants;
+	bool inCombat;
+	std::vector<Character*> participants;
+	std::vector<int> enemy_index;
+	std::vector<int> player_index;
 	SDL_Texture* loadImage(std::string fname);
 	SDL_Rect scene_box = { 0,0,720,540 };
 	SDL_Rect ui_box = { 17,529,685,167 };

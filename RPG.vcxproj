@@ -165,14 +165,12 @@
     <ClCompile Include="Classes\Tile.cpp" />
     <ClCompile Include="CombatManager.cpp" />
     <ClCompile Include="Helper.cpp" />
-    <ClCompile Include="LoadTexture.cpp" />
     <ClCompile Include="mainGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="CREDIT_IMG\BGM.wav" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\..\Programming\cs1666\characterCreateV2NoButtons.png" />
     <Image Include="..\..\..\..\..\Programming\cs1666\pointDownArrow.png" />
     <Image Include="..\..\..\..\..\Programming\cs1666\pointUpArrow.png" />
     <Image Include="..\..\..\..\..\Programming\cs1666\StartButton.png" />
@@ -197,8 +195,6 @@
     <Image Include="Images\Tiles\singleGrass.png" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Ability.h" />
-    <ClInclude Include="Ailment.h" />
     <ClInclude Include="Headers\Abilities\AbilityResource.h" />
     <ClInclude Include="Headers\Abilities\Attack.h" />
     <ClInclude Include="Headers\Ability.h" />
@@ -209,6 +205,7 @@
     <ClInclude Include="Headers\Attributes\Faith.h" />
     <ClInclude Include="Headers\Attributes\Intelligence.h" />
     <ClInclude Include="Headers\Attributes\Strength.h" />
+    <ClInclude Include="Headers\Attributes\Attr_Globals.h" />
     <ClInclude Include="Headers\Button.h" />
     <ClInclude Include="Headers\Character.h" />
     <ClInclude Include="Headers\Cluster.h" />
@@ -223,10 +220,12 @@
     <ClInclude Include="Headers\QueueManager.h" />
     <ClInclude Include="Headers\Resistance.h" />
     <ClInclude Include="Headers\Tile.h" />
-    <ClInclude Include="LoadTexture.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="map1.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="glew32.dll" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
