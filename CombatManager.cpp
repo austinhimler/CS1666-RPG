@@ -121,9 +121,6 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 	if (c->is_Enemy() == true)
 	{
 		//Enemy attack player
-		std::vector<Ability> temp = c->getAbilities();
-		int result = participants[0]->beingTarget(&temp[0]);
-		std::cout << c->getName() <<" damages you slightly by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left." << std::endl;
 	}
 	else
 	{
@@ -209,7 +206,7 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 					}
 					target--;
 					int result = participants[enemy_index[target]]->beingTarget(&abil_temp[helper[abil_selection]]);
-					std::cout << "You damage " << participants[enemy_index[target]]->getName() <<" amazingly by " << result << " HP!" <<" "<<participants[enemy_index[target]]->getName() <<" now has only " <<participants[enemy_index[target]]->getHPCurrent() << " HP left."<< std::endl;
+					std::cout << "You damage the enemy amazingly by " << result << " HP!" <<" "<<participants[enemy_index[target]]->getName() <<" now has only " <<participants[enemy_index[target]]->getHPCurrent() << " HP left."<< std::endl;
 					break;
 				}
 				break;
