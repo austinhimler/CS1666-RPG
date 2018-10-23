@@ -1,8 +1,20 @@
 #pragma once
 #include <vector>
+#include "../Attributes/Attr_Globals.h"
 
 namespace AbilityResource {
 
+
+	// ability names in stirng
+	// always exhaustingly list abilities of the previous attribute before starting to list abilites of the next attribute, same apply to all other const arrays / vectors / enum
+
+	const std::string abilityNames[] = {
+		"Attack",
+		"Fireball",
+		"Escape",
+		"Defend",
+		"Summon"
+	};
 
 	//ability descriptions
 	inline std::string const &abilityDescrip(int n) {
@@ -28,29 +40,6 @@ namespace AbilityResource {
 		return base_energy_cost[n];
 	}
 
-	// ability names in stirng
-	const std::vector<std::string> strNames = {
-		"Attack"
-	};
-	const std::vector<std::string> intNames = {
-		"Fireball"
-	};
-	const std::vector<std::string> dexNames = {
-		"Escape"
-	};
-	const std::vector<std::string> conNames = {
-		"Defend"
-	};
-	const std::vector<std::string> faiNames = {
-		"Summon"
-	};
-	const std::vector<std::string> abilityNames[5] = {
-		strNames,
-		intNames,
-		dexNames,
-		conNames,
-		faiNames
-	};
 
 	//ability base CD
 	const int abilityCD[] = {
@@ -81,6 +70,15 @@ namespace AbilityResource {
 		tDEFENSE, // defend
 		tSUMMON // summon
 				//etc.
+	};
+
+	// related attributes of each abiility in the order of influence
+	const std::vector<int> abilityAttr[5] = {
+		{STR, DEX, CON},
+		{INT, DEX, FAI},
+		{DEX, CON, STR},
+		{CON, STR, DEX},
+		{FAI, INT, DEX}
 	};
 
 	//ability related attributes

@@ -25,7 +25,7 @@ public:
 	Character(std::string n);
 	Character(std::string n, int s, int i, int d, int c, int f);
 	Character(std::string n, std::vector<Attribute> attr);
-	bool isEnemy;
+	
 	int getHPMax();
 	int getHPCurrent();
 	int getMPCurrent();
@@ -44,8 +44,8 @@ public:
 	double getSpeedMax();
 	double getAcceleration();
 	int getDex();
-	int getHPCur();
 	int getHelp(int n);
+	bool is_Enemy();
 
 	double xVelocity;
 	double yVelocity;
@@ -71,12 +71,15 @@ public:
 	//void takeDamage(Ability a);
 	void learnAbility(int a);
 
-	void updateEnergy();
+
+
+	int updateEnergy(Ability* a);
 
 	string toString();
 	void setTextureActive(SDL_Texture*);
 
 protected:
+	bool isEnemy;
 	int hpMax;
 	int hpCurrent;
 	int energyMax;

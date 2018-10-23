@@ -37,13 +37,13 @@
 			else result = a->getVal();
 			break;
 		case AbilityResource::tESCAPE:
-			i = rand() % 2;
-			if (i == 0) result = -2;
-			else result = -1;
+			i = rand() % 100;
+			if (i <= 49 + FAI) result = -2; // successful escape
+			else result = -1; // failing escape
 			break;
 		case AbilityResource::tDEFENSE:
 			buff[ENERGYREGEN]++;
-			result = 1;
+			result = 0;
 			break;
 		case AbilityResource::tSUMMON:
 			break;
@@ -57,7 +57,7 @@
 
 	
 	void Character::learnAbility(int a) {
-		Ability* abil = new Ability(a, {1,2,4}/*currently only str, int, con affect abilities*/, attributes);
+		Ability* abil = new Ability(a, AbilityResource::abilityAttr[a], attributes);
 		for (auto& i : abilities) {
 			if (i.cmp(a)) {
 				i = *abil;//used for updating learned abilities
@@ -68,11 +68,19 @@
 		abil_helper[a] = abilities.size() - 1;
 	}
 
-	void Character::updateEnergy() {
-		int temp = energyRegen + buff[ENERGYREGEN];
-		energyCurrent += (temp >= 0) ? temp : 0;
-		if (energyCurrent > energyMax) energyCurrent = energyMax;
-		buff[ENERGYREGEN] = 0;
+	int Character::updateEnergy(Ability* a) {
+		if (a == nullptr) {
+			int temp = energyRegen + buff[ENERGYREGEN];
+			energyCurrent += (temp >= 0) ? temp : 0;
+			if (energyCurrent > energyMax) energyCurrent = energyMax;
+			buff[ENERGYREGEN] = 0;
+		}
+		else {
+			if (energyCurrent < a->getEnergyCost())
+				return -1;
+			energyCurrent -= a->getEnergyCost();
+		}
+		return energyCurrent;
 	}
 	//*/
 	std::string Character::toString() {
@@ -114,4 +122,4 @@
 	std::vector<Ability> Character::getAbilities() { return abilities; }
 	double Character::getSpeedMax() { return speedMax; }
 	double Character::getAcceleration() { return acceleration; }
-
+	bool Character::is_Enemy() { return isEnemy; }
