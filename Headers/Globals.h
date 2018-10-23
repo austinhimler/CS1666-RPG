@@ -8,8 +8,8 @@
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
-#include "Attributes/Attr_Globals.h"
 #include "Abilities/AbilityResource.h"
+
 /*
 //namespace Char_Help {
 	
@@ -29,10 +29,26 @@ enum CHAR_TYPE {
 	ENEMY
 };
 
+enum attr_index {
+	STR,
+	INT,
+	DEX,
+	CON,
+	FAI,
+	ATTRCOUNT
+};
 
-//const map<std::string, ATTR_NAMES> attr_map = {
+const std::string ATTR_NAMES[] = {
+	"Strength",
+	"Intelligence",
+	"Dexerity",
+	"Constitution",
+	"Faith"
+};
 
-//};
+const map<std::string, ATTR_NAMES> attr_map = {
+
+};
 
 enum ABILITY {
 	ATTACK,

@@ -15,15 +15,10 @@
 	//stores stats
 	Player::Player() : Character("Player 1") {}
 	Player::Player(std::string n) : Character(n) {}
-	Player::Player(std::string n, int s, int i, int d, int c, int f) : Character(n, s,i,d,c,f){
-		learnAbility(FIREBALL);
-		learnAbility(SUMMON);
-		isEnemy = false;
-	}
+	Player::Player(std::string n, int s, int i, int d, int c, int f) : Character(n, s,i,d,c,f){}
 	Player::Player(std::string n, std::vector<Attribute> attr) : Character(n, attr) {
 		learnAbility(FIREBALL);
 		learnAbility(SUMMON);
-		isEnemy = false;
 	}
 	void Player::setAll(std::string n, int s, int i, int d, int c, int f) {
 		attributes[STR] = Attribute("Strength", s);
@@ -32,7 +27,7 @@
 		attributes[CON] = Attribute("Constitution", c);
 		attributes[FAI] = Attribute("Faith", f);
 		name = n;
-		isEnemy = false;
+
 
 	    pixelShiftAmountForAnimationInSpriteSheet = 128;
 		numIdleAnimationFrames = 4;
