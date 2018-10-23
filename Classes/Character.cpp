@@ -85,7 +85,9 @@
 	//*/
 	std::string Character::toString() {
 		std::string s = "Name: " + name + "\n";
-		s += to_string(getHPCurrent()) + "/" + to_string(getHPMax())+"\n";
+		s += "HP: " + to_string(getHPCurrent()) + "/" + to_string(getHPMax())+"\n";
+		s += "MP: " + to_string(getMPCurrent()) + "/" + to_string(getMPMax()) + "\n";
+		s += "Energy: " + to_string(getEnergyCurrent()) + "/" + to_string(getEnergyMax()) + " Energy Regenerated: " + to_string(energyRegen) + "\n";
 		for (auto i : attributes) {
 			s += i.toString() + "\n";
 		}
