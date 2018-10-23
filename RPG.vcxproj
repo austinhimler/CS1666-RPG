@@ -165,17 +165,12 @@
     <ClCompile Include="Classes\Tile.cpp" />
     <ClCompile Include="CombatManager.cpp" />
     <ClCompile Include="Helper.cpp" />
-    <ClCompile Include="LoadTexture.cpp" />
     <ClCompile Include="mainGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="CREDIT_IMG\BGM.wav" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\..\Programming\cs1666\characterCreateV2NoButtons.png" />
-    <Image Include="..\..\..\..\..\Programming\cs1666\pointDownArrow.png" />
-    <Image Include="..\..\..\..\..\Programming\cs1666\pointUpArrow.png" />
-    <Image Include="..\..\..\..\..\Programming\cs1666\StartButton.png" />
     <Image Include="CREDIT_IMG\bmbCredits.jpg" />
     <Image Include="CREDIT_IMG\dank_farnan_meme.jpg" />
     <Image Include="CREDIT_IMG\dsgCredits.png" />
@@ -197,8 +192,6 @@
     <Image Include="Images\Tiles\singleGrass.png" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Ability.h" />
-    <ClInclude Include="Ailment.h" />
     <ClInclude Include="Headers\Abilities\AbilityResource.h" />
     <ClInclude Include="Headers\Abilities\Attack.h" />
     <ClInclude Include="Headers\Ability.h" />
@@ -223,7 +216,6 @@
     <ClInclude Include="Headers\QueueManager.h" />
     <ClInclude Include="Headers\Resistance.h" />
     <ClInclude Include="Headers\Tile.h" />
-    <ClInclude Include="LoadTexture.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="map1.txt" />
