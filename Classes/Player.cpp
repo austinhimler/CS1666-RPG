@@ -19,6 +19,27 @@
 		learnAbility(FIREBALL);
 		learnAbility(SUMMON);
 		isEnemy = false;
+
+		pixelShiftAmountForAnimationInSpriteSheet = 128;
+		numIdleAnimationFrames = 4;
+		numRunAnimatonFrames = 7;
+		currentFrame = 0;
+		timeBetweenIdleAnimations = 120;
+		timeBetweenRunAnimations = 100;
+		imageIdleResource = "Images/Player/Player_Idle.png";
+		imageRunResource = "Images/Player/Player_Run.png";
+		Helper helper = Helper();
+		textureIdle = helper.loadImage(imageIdleResource.c_str(), gRenderer);
+		textureRun = helper.loadImage(imageRunResource.c_str(), gRenderer);
+		textureActive = NULL;
+		imageWidth = 128;
+		imageHeight = 128;
+		xPosition = 0; //will need to edit for starting level
+		yPosition = 250.0; //will need to edit for starting level
+		rectangle = { (int)xPosition, (int)yPosition, imageWidth, imageHeight };
+		drawRectangle = { 0, 0, imageWidth, imageHeight };
+		speedMax = 150.0;
+		acceleration = 2000.0;
 	}
 	Player::Player(std::string n, std::vector<Attribute> attr) : Character(n, attr) {
 		learnAbility(FIREBALL);

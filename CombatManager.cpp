@@ -95,36 +95,14 @@ void updateStatus(Character& c) {
 }
 */
 
-void CombatManager::outputEnemy() {
-	int i = 1;
-	for (int j = 0; j < participants.size(); j++) {
-		if ((Enemy*)participants[j]->is_Enemy())
-			std::cout << i++ << ". " << participants[j]->getName() << std::endl;
-	}
-}
-
-bool CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e) {
-	/*
-		If c is an emeny, do enemy attack
-		Else, wait for user input
-		If mouse hovers over player or enemy, display stats in info screen
-		If attribute/inventory buttons are clicked, display options in info screen
-		If a skill is clicked wait for user to click on character to use the skill on
-		If energy = 0 or player clicks End Turn, return
-	*/
-
-	int charImageX = 0;
-	int charImageY = 0;
-	int charImageW = 200;
-	int charImageH = 148;
-
+bool CombatManager::textAction(Character* c) {
 	if (c->is_Enemy() == true)
 	{
 		//Enemy attack player
 		std::vector<Ability> temp = c->getAbilities();
 		int target = rand() % player_index.size();
 		int result = participants[player_index[target]]->beingTarget(&temp[0]);
-		std::cout << c->getName() <<" damages you slightly by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left." << std::endl;
+		std::cout << c->getName() << " damages you slightly by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left." << std::endl;
 		if (participants[player_index[target]]->getHPCurrent() == 0) {
 			std::cout << "Why are your so weak? You are dead duded!" << std::endl;
 			inCombat = false;
@@ -150,7 +128,7 @@ bool CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 			case 8:
 				if (action == 7) index_helper = player_index;
 				for (int i = 0; i < index_helper.size(); i++) {
-					std::cout << i+1 << ". " << participants[index_helper[i]]->getName() << std::endl;
+					std::cout << i + 1 << ". " << participants[index_helper[i]]->getName() << std::endl;
 				}
 				char_selection = -1;
 				while (char_selection <= 0 || char_selection > index_helper.size()) {
@@ -192,7 +170,7 @@ bool CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 
 				switch (abil_temp[helper[abil_selection]].getType()) {
 				case AbilityResource::tSUMMON:
-						std::cout << "NLF4 is lecturing, can't make it." << std::endl;
+					std::cout << "NLF4 is lecturing, can't make it." << std::endl;
 					break;
 				case AbilityResource::tESCAPE:
 					if (c->beingTarget(&abil_temp[helper[abil_selection]]) == -2) {
@@ -220,12 +198,12 @@ bool CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 					}
 					target--;
 					int result = participants[enemy_index[target]]->beingTarget(&abil_temp[helper[abil_selection]]);
-					std::cout << "You damage " << participants[enemy_index[target]]->getName() <<" amazingly by " << result << " HP!" <<" "<<participants[enemy_index[target]]->getName() <<" now has only " <<participants[enemy_index[target]]->getHPCurrent() << " HP left."<< std::endl;
+					std::cout << "You damage " << participants[enemy_index[target]]->getName() << " amazingly by " << result << " HP!" << " " << participants[enemy_index[target]]->getName() << " now has only " << participants[enemy_index[target]]->getHPCurrent() << " HP left." << std::endl;
 					break;
 				}
 				break;
 
-				
+
 			}
 			if (c->getEnergyCurrent() == 0) {
 				takingAction = false;
@@ -253,7 +231,45 @@ bool CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 				std::cout << "7. Player Stats" << std::endl;
 				std::cout << "8. Enemy Stats" << std::endl;
 			}
-			/*
+		}
+	}
+
+	return true;
+}
+
+void CombatManager::outputEnemy() {
+	int i = 1;
+	for (int j = 0; j < participants.size(); j++) {
+		if ((Enemy*)participants[j]->is_Enemy())
+			std::cout << i++ << ". " << participants[j]->getName() << std::endl;
+	}
+}
+
+bool CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e) {
+	/*
+		If c is an emeny, do enemy attack
+		Else, wait for user input
+		If mouse hovers over player or enemy, display stats in info screen
+		If attribute/inventory buttons are clicked, display options in info screen
+		If a skill is clicked wait for user to click on character to use the skill on
+		If energy = 0 or player clicks End Turn, return
+	*/
+
+	int charImageX = 0;
+	int charImageY = 0;
+	int charImageW = 200;
+	int charImageH = 148;
+
+	if (c->is_Enemy() == true)
+	{
+		//Enemy attack player
+	}
+	else
+	{
+		bool takingAction = true;
+		while (takingAction) {
+			
+
 			while (SDL_PollEvent(&e))
 			{
 				int mouseX, mouseY;
@@ -299,17 +315,29 @@ bool CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 									}
 								}
 							
-							}//
+							}//*/
 						}
 					}
 				}
 			}//*/
+
+			if (c->getEnergyCurrent() == 0) {
+				takingAction = false;
+				break;
+			}
+			bool temp = false;
+			for (auto& i : enemy_index) { // check whether at least 1 enemy survives
+				if (participants[i]->getHPCurrent() != 0) temp = true;
+			}
+			if (!temp) {
+				takingAction = false;
+				inCombat = false;
+				break;
+			}
 		}
 	}
 
-	
-
-
+	return true;
 
 }
 
@@ -327,6 +355,20 @@ void CombatManager::setNewButtons(std::vector<Button*>& buttons, int t) {
 		// create button for every item in inveotry
 	}
 }	//*/
+
+void CombatManager::textMain(bool& printed) {
+	if (printed) return;
+	std::cout << "What do you want to do? Select by option number" << std::endl;
+	std::cout << "1. Strength Abilities" << std::endl;
+	std::cout << "2. Intelligent Abilities" << std::endl;
+	std::cout << "3. Dexerity Abilities" << std::endl;
+	std::cout << "4. Constitution Abilities" << std::endl;
+	std::cout << "5. Faith Abilities" << std::endl;
+	std::cout << "6. Inventory" << std::endl;
+	std::cout << "7. Player Stats" << std::endl;
+	std::cout << "8. Enemy Stats" << std::endl;
+	printed = true;
+}
 
 bool CombatManager::combatMain(std::vector<Character*>& p) 
 {
@@ -392,11 +434,11 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "Inventory", gRenderer));
 
 
-//	glClearColor(0.2, 0.4, 0.0, 1.0); //(float red,float green,float blue,float alpha)just like SDL_SetRenderDrawColor(&renderer, r, g, b, a)
-//	glClear(GL_COLOR_BUFFER_BIT);  //just like SDL_RenderClear(&renderer);
-//	SDL_GL_SwapWindow(gWindow); //just like SDL_RenderPresent(&renderer);
+	glClearColor(0.2, 0.4, 0.0, 1.0); //(float red,float green,float blue,float alpha)just like SDL_SetRenderDrawColor(&renderer, r, g, b, a)
+	glClear(GL_COLOR_BUFFER_BIT);  //just like SDL_RenderClear(&renderer);
+	SDL_GL_SwapWindow(gWindow); //just like SDL_RenderPresent(&renderer);
 	
-	bool printed = false;
+	//bool printed = false; // for text combat ui
 
 	while (inCombat) {
 		while (SDL_PollEvent(&e)) {
@@ -431,53 +473,20 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 		SDL_RenderPresent(gRenderer);
 		SDL_Delay(16);
 		}
-		/*	
-		*	Text-based initialization
-		*/
-		if (!printed) {
-			std::cout << "What do you want to do? Select by option number" << std::endl;
-			std::cout << "1. Strength Abilities" << std::endl;
-			std::cout << "2. Intelligent Abilities" << std::endl;
-			std::cout << "3. Dexerity Abilities" << std::endl;
-			std::cout << "4. Constitution Abilities" << std::endl;
-			std::cout << "5. Faith Abilities" << std::endl;
-			std::cout << "6. Inventory" << std::endl;
-			std::cout << "7. Player Stats" << std::endl;
-			std::cout << "8. Enemy Stats" << std::endl;
-			printed = true;
-		}
+		
+		//textMain(printed); // text combat ui initialization
 
 		for (int i = 0; i < participants.size(); i++)
 		{
 			//updateStatus(participants[i]);
-			if(participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0)
-				takeAction(participants[i], buttons, e);	
-			if (!inCombat) return false;
+			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0)
+				if(!takeAction(participants[i], buttons, e)) return false;//textAction(participants[i]);//	
 		}
-		printed = false;
+		//printed = false; // for text combat ui
 		qm.changeRounds();
 	}
-
-	//Test to check that the background appears
-	/*
-	while (inCombat)
-	{
-		printf("Keep Fighting");
-	}//*/
-	/*
-	while (inCombat)
-	{
-		for (int i = 0; i < participants.size(); i++)
-		{
-			//updateStatus(participants[i]);
-			takeAction(participants[i], buttons, e);
-		}
-		qm.changeRounds();
-	}//*/
+	
 	return true;
-	
-	 
-	
 
 }
 

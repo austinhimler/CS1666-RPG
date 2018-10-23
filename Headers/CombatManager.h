@@ -20,10 +20,18 @@ public:
 	CombatManager();
 	~CombatManager();
 	void updateStatus(Character* c);
+
+	/*
+	*	the folloiwng 3 fucntions return true if player wins the combat, return false if player dies and thus lose the combat
+	*/
 	bool takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e);
+	bool textAction(Character* c);					
 	bool combatMain(std::vector<Character*>& c);
+	
+	void textMain(bool& printed);
 	void setNewButtons(std::vector<Button*>& buttons, int t);
 	void outputEnemy();
+	
 
 private:
 	bool inCombat;
