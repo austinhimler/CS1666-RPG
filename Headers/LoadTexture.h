@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef _____LOADTEXTURE_H_____
+#define _____LOADTEXTURE_H_____
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -62,3 +64,4 @@ private:
 	int mHeight;
 };
 
+#endif
