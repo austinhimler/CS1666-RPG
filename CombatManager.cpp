@@ -161,11 +161,14 @@ bool CombatManager::textAction(Character* c) {
 						if (c->getEnergyCurrent() < a_cur.getEnergyCost()) { // if not enough energy
 							std::cout << AbilityResource::abilityNames[a_cur.getName()] << " needs " << a_cur.getEnergyCost() << ", you only have " << c->getEnergyCurrent() << " YOU FOOL" << std::endl;
 						}
+						else if (c->getMPCurrent() < a_cur.getMPCost()) {
+							std::cout << AbilityResource::abilityNames[a_cur.getName()] << " needs " << a_cur.getMPCost() << ", you only have " << c->getMPCurrent() << " YOU FOOL" << std::endl;
+						}
 						else break;
 					}
 				}
 
-				c->updateEnergy(&a_cur);
+				c->useAbility(&a_cur);
 
 
 				switch (abil_temp[helper[abil_selection]].getType()) {

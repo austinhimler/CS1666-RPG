@@ -68,20 +68,27 @@
 		abil_helper[a] = abilities.size() - 1;
 	}
 
-	int Character::updateEnergy(Ability* a) {
-		if (a == nullptr) {
-			int temp = energyRegen + buff[ENERGYREGEN];
-			energyCurrent += (temp >= 0) ? temp : 0;
-			if (energyCurrent > energyMax) energyCurrent = energyMax;
-			buff[ENERGYREGEN] = 0;
-		}
+	std::vector<int> Character::useAbility(Ability* a) {
+		std::vector<int> temp;
+		if (energyCurrent < a->getEnergyCost())
+			temp.push_back(-1);
+		else if (mpCurrent < a->getMPCost())
+			temp.push_back(-2);
 		else {
-			if (energyCurrent < a->getEnergyCost())
-				return -1;
 			energyCurrent -= a->getEnergyCost();
+			mpCurrent -= a->getMPCost();
+			temp = { a->getEnergyCost(), a->getMPCost() };
 		}
-		return energyCurrent;
+		return temp;
 	}
+
+	void Character::regenEnenrgy() {
+		int temp = energyRegen + buff[ENERGYREGEN];
+		energyCurrent += (temp >= 0) ? temp : 0;
+		if (energyCurrent > energyMax) energyCurrent = energyMax;
+		buff[ENERGYREGEN] = 0;
+	}
+
 	//*/
 	std::string Character::toString() {
 		std::string s = "Name: " + name + "\n";

@@ -35,7 +35,7 @@ namespace AbilityResource {
 			10,
 			1,
 			0,
-			1
+			10
 		};
 		return base_energy_cost[n];
 	}
@@ -46,7 +46,7 @@ namespace AbilityResource {
 		10,
 		0,
 		0,
-		50,
+		50
 	};
 
 	//ability base CD

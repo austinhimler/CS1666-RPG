@@ -71,9 +71,8 @@ public:
 	//void takeDamage(Ability a);
 	void learnAbility(int a);
 
-
-
-	int updateEnergy(Ability* a);
+	std::vector<int> useAbility(Ability* a); // return vector containing only one -1 if not enough of enenry, return vector of only one -2 if not enough of MP, otherwise return vector containing energy and mp used
+	void regenEnenrgy();
 
 	string toString();
 	void setTextureActive(SDL_Texture*);

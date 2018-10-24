@@ -23,6 +23,7 @@ public:
 	//getters
 	int getName();
 	int getEnergyCost();
+	int getMPCost();
 	int getCD();
 	int getVal();
 	int getType();

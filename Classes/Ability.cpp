@@ -4,6 +4,7 @@
 		name = n;
 		description = d;
 		energyCost = ec;
+		MPCost = AbilityResource::abilityMPCost[n];
 		if (energyCost < 1) energyCost = 1;
 		cooldown = cd;
 		if (cooldown < 0) cooldown = 0;
@@ -29,6 +30,9 @@
 	//getters
 	int Ability::getName() {
 		return name;
+	}
+	int Ability::getMPCost() {
+		return MPCost;
 	}
 	int Ability::getEnergyCost() {
 		return energyCost;
