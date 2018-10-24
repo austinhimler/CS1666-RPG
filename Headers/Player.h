@@ -1,5 +1,6 @@
-#pragma once
 
+#ifndef _____PLAYER_H_____
+#define _____PLAYER_H_____
 #include <string>
 #include <vector>
 
@@ -23,3 +24,4 @@ private:
 	
 			
 };
+#endif

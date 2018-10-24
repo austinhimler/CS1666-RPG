@@ -1,5 +1,5 @@
-#pragma once
-
+#ifndef _____TILE_H_____
+#define _____TILE_H_____
 #include <stdio.h>
 #include <string>
 #include <fstream>
@@ -57,3 +57,4 @@ public:
 	int mType;
 
 };
+#endif
