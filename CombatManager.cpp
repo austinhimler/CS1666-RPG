@@ -480,7 +480,7 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 		{
 			//updateStatus(participants[i]);
 			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0)
-				if(!takeAction(participants[i], buttons, e)) return false;//textAction(participants[i]);//	
+				if(!textAction(participants[i])) return false;////	takeAction(participants[i], buttons, e)
 		}
 		printed = false; // for text combat ui
 		qm.changeRounds();
