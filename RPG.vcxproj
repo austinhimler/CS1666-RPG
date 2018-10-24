@@ -194,8 +194,6 @@
     <Image Include="Images\Tiles\singleGrass.png" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Ability.h" />
-    <ClInclude Include="Ailment.h" />
     <ClInclude Include="Headers\Abilities\AbilityResource.h" />
     <ClInclude Include="Headers\Abilities\Attack.h" />
     <ClInclude Include="Headers\Ability.h" />

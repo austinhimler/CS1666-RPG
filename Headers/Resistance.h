@@ -1,5 +1,6 @@
-#pragma once
 
+#ifndef _____RESISTANCE_H_____
+#define _____RESISTANCE_H_____
 #include <string>
 #include <vector>
 
@@ -19,3 +20,4 @@ private:
 	double base;
 	double current;
 };
+#endif

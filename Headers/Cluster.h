@@ -1,5 +1,6 @@
-#pragma once
 
+#ifndef _____CLUSTER_H_____
+#define _____CLUSTER_H_____
 #include <string>
 #include <vector>
 #include "Enemy.h"
@@ -18,3 +19,4 @@ public:
 	vector<Character*> characterGroup;
 	int clusterSize;
 };
+#endif

@@ -1,5 +1,6 @@
-#pragma once
 
+#ifndef _____CHARACTER_H_____
+#define _____CHARACTER_H_____
 #include <string>
 #include <vector>
 #include "Attribute.h"
@@ -121,3 +122,4 @@ Resistance water;
 Resistance air;
 Resistance light;
 Resistance dark;*/
+#endif

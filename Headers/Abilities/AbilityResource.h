@@ -1,5 +1,6 @@
-#pragma once
 
+#ifndef _____ABILITYRESOURCE_H_____
+#define _____ABILITYRESOURCE_H_____
 #include <vector>
 
 namespace AbilityResource {
@@ -62,3 +63,4 @@ namespace AbilityResource {
 	const int MAX_RELATED_ATTR = 3;
 
 }
+#endif

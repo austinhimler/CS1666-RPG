@@ -1,5 +1,6 @@
-#pragma once
 
+#ifndef _____ABILITY_H_____
+#define _____ABILITY_H_____
 #include <string>
 #include <vector>
 #include "Attribute.h"
@@ -51,3 +52,4 @@ private:
 	//Attribute abilityAttributeType;
 
 };
+#endif
