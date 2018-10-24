@@ -163,7 +163,7 @@ SDL_Rect * loadMap(Tile* tiles[]) {
 			if ((tileType >= 0) && (tileType != 0 || tileType != 1))
 			{
 				tiles[i] = new Tile(x, y, tileType);
-				if (tiles[i]->impassable = true)
+				if (tiles[i]->solid = true)
 					blockedTiles.push_back(tiles[i]->getBox());
 			}
 			//If we don't recognize the tile type
