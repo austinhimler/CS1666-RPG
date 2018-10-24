@@ -104,10 +104,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)/dev_lib/GLEW/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>$(SolutionDir)/dev_lib/GLEW/lib/Release/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -157,19 +159,18 @@
     <ClCompile Include="Classes\Enemy.cpp" />
     <ClCompile Include="Classes\Inventory.cpp" />
     <ClCompile Include="Classes\Item.cpp" />
+    <ClCompile Include="Classes\LoadTexture.cpp" />
     <ClCompile Include="Classes\Player.cpp" />
     <ClCompile Include="Classes\Resistance.cpp" />
     <ClCompile Include="Classes\Tile.cpp" />
     <ClCompile Include="CombatManager.cpp" />
     <ClCompile Include="Helper.cpp" />
-    <ClCompile Include="LoadTexture.cpp" />
     <ClCompile Include="mainGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="CREDIT_IMG\BGM.wav" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\..\Programming\cs1666\characterCreateV2NoButtons.png" />
     <Image Include="..\..\..\..\..\Programming\cs1666\pointDownArrow.png" />
     <Image Include="..\..\..\..\..\Programming\cs1666\pointUpArrow.png" />
     <Image Include="..\..\..\..\..\Programming\cs1666\StartButton.png" />
@@ -204,6 +205,7 @@
     <ClInclude Include="Headers\Attributes\Faith.h" />
     <ClInclude Include="Headers\Attributes\Intelligence.h" />
     <ClInclude Include="Headers\Attributes\Strength.h" />
+    <ClInclude Include="Headers\Attributes\Attr_Globals.h" />
     <ClInclude Include="Headers\Button.h" />
     <ClInclude Include="Headers\Character.h" />
     <ClInclude Include="Headers\Cluster.h" />
@@ -221,6 +223,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="map1.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="glew32.dll" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,5 +1,4 @@
 #include "Headers/CombatManager.h"
-#include "Headers/LoadTexture.h"
 
 
 
@@ -77,8 +76,8 @@ CombatManager::~CombatManager()
 /*
 void updateStatus(Character& c) {
 	//First check if character is dead
-	if (c.getHPCurrent() <= 0) {
-		gameOn = false;
+	if (c.getHPCur() <= 0) {
+		inCombat = false;
 	}
 	// Next check the ailments of given character
 	else {
@@ -96,7 +95,165 @@ void updateStatus(Character& c) {
 }
 */
 
-void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e) {
+bool CombatManager::textAction(Character* c) {
+	vector<int> ailments;
+	if (c->is_Enemy() == true)
+	{
+		//Enemy attack player
+		std::vector<Ability> temp = c->getAbilities();
+		int target = rand() % player_index.size();
+		int result = participants[player_index[target]]->beingTarget(&temp[0]);
+		std::cout << c->getName() << " damages you slightly by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left." << std::endl;
+		if (ailments.size() == 0) 
+		{
+			std::cout << "Their attack did not have any status effect on you." << std::endl;
+		}
+		else {
+
+		}
+		if (participants[player_index[target]]->getHPCurrent() == 0) {
+			std::cout << "Why are your so weak? You are dead, dude!" << std::endl;
+			inCombat = false;
+			return false;
+		}
+	}
+	else
+	{
+		bool takingAction = true;
+		while (takingAction) {
+			int action = -1;
+			std::vector<int> index_helper = enemy_index;
+			while (action <= 0 || action > 8) {
+				std::cin >> action;
+			}
+			std::cout << "Which one? Select by option number" << std::endl;
+			int char_selection;
+			switch (action) {
+			case 6:
+				std::cout << "Just kidding. You don't have SHEET here\n" << std::endl;
+				break;
+			case 7:
+			case 8:
+				if (action == 7) index_helper = player_index;
+				for (int i = 0; i < index_helper.size(); i++) {
+					std::cout << i + 1 << ". " << participants[index_helper[i]]->getName() << std::endl;
+				}
+				char_selection = -1;
+				while (char_selection <= 0 || char_selection > index_helper.size()) {
+					std::cin >> char_selection;
+				}
+				char_selection--;
+				std::cout << participants[index_helper[char_selection]]->toString() << std::endl;
+				break;
+			default: // if an attribute is selected
+				std::vector<Ability> abil_temp = c->getAbilities(); // get ability lists of the character
+				std::vector<int> helper; // stores relative index of the abilites within the same attribute category
+				int k = 1;
+				for (int i = 0; i < abil_temp.size(); i++) {
+					if (action == AbilityResource::abilityAttr[abil_temp[i].getName()][0] + 1) { //if the ability is of current attribute
+						std::cout << k << ". " << AbilityResource::abilityNames[abil_temp[i].getName()] << std::endl; // print as an option
+						helper.push_back(i); // stores index to helper vector
+					}
+				}
+				// get ability selection
+				int abil_selection = -1;
+				Ability& a_cur = abil_temp[0];
+				while (true) {
+					std::cin >> abil_selection;
+					abil_selection--;
+
+					std::cout << AbilityResource::abilityNames[action].size() << std::endl;
+
+					if (abil_selection >= 0 && abil_selection < helper.size()) { // if a valid selection
+						a_cur = abil_temp[helper[abil_selection]];
+						if (c->getEnergyCurrent() < a_cur.getEnergyCost()) { // if not enough energy
+							std::cout << AbilityResource::abilityNames[a_cur.getName()] << " needs " << a_cur.getEnergyCost() << ", you only have " << c->getEnergyCurrent() << " YOU FOOL" << std::endl;
+						}
+						else break;
+					}
+				}
+
+				c->updateEnergy(&a_cur);
+
+
+				switch (abil_temp[helper[abil_selection]].getType()) {
+				case AbilityResource::tSUMMON:
+					std::cout << "NLF4 is lecturing, can't make it." << std::endl;
+					break;
+				case AbilityResource::tESCAPE:
+					if (c->beingTarget(&abil_temp[helper[abil_selection]]) == -2) {
+						takingAction = false;
+						inCombat = false;
+						std::cout << "You escape succesfully COWARD!" << std::endl;
+					}
+					else {
+						std::cout << "You are not going anywhere." << std::endl;
+						takingAction = false;
+					}
+					break;
+				case AbilityResource::tDEFENSE:
+					c->beingTarget(&abil_temp[helper[abil_selection]]);
+					std::cout << "Your Energy Regeneration for next round will be increased                                           you tactical fool" << std::endl;
+					takingAction = false;
+					break;
+				default:
+					std::cout << "Pick your target" << std::endl;
+					outputEnemy(); // output all surviving enemies
+					// get target selection
+					int target = -1;
+					while (target <= 0 || target > enemy_index.size()) {
+						std::cin >> target;
+					}
+					target--;
+					int result = participants[enemy_index[target]]->beingTarget(&abil_temp[helper[abil_selection]]);
+					std::cout << "You damage " << participants[enemy_index[target]]->getName() << " amazingly by " << result << " HP!" << " " << participants[enemy_index[target]]->getName() << " now has only " << participants[enemy_index[target]]->getHPCurrent() << " HP left." << std::endl;
+					break;
+				}
+				break;
+
+
+			}
+			if (c->getEnergyCurrent() == 0) {
+				takingAction = false;
+				break;
+			}
+			bool temp = false;
+			for (auto& i : enemy_index) { // check whether at least 1 enemy survives
+				if (participants[i]->getHPCurrent() != 0) temp = true;
+			}
+			if (!temp) {
+				std::cout << "You win" << std::endl;
+				takingAction = false;
+				inCombat = false;
+				break;
+			}
+			if (takingAction) {
+				std::cout << "What else do you want to do? Select by option number." << std::endl;
+				std::cout << "What do you want to do? Select by option number" << std::endl;
+				std::cout << "1. Strength Abilities" << std::endl;
+				std::cout << "2. Intelligent Abilities" << std::endl;
+				std::cout << "3. Dexerity Abilities" << std::endl;
+				std::cout << "4. Constitution Abilities" << std::endl;
+				std::cout << "5. Faith Abilities" << std::endl;
+				std::cout << "6. Inventory" << std::endl;
+				std::cout << "7. Player Stats" << std::endl;
+				std::cout << "8. Enemy Stats" << std::endl;
+			}
+		}
+	}
+
+	return true;
+}
+
+void CombatManager::outputEnemy() {
+	int i = 1;
+	for (int j = 0; j < participants.size(); j++) {
+		if ((Enemy*)participants[j]->is_Enemy())
+			std::cout << i++ << ". " << participants[j]->getName() << std::endl;
+	}
+}
+
+bool CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e) {
 	/*
 		If c is an emeny, do enemy attack
 		Else, wait for user input
@@ -111,22 +268,21 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 	int charImageW = 200;
 	int charImageH = 148;
 
-	if (c->isEnemy == true)
+	if (c->is_Enemy() == true)
 	{
 		//Enemy attack player
 	}
 	else
 	{
 		bool takingAction = true;
-		while(takingAction) {
-			if (c->getEnergyCurrent() == 0) {
-				takingAction = false;
-				break;
-			}
+		while (takingAction) {
+			
+
 			while (SDL_PollEvent(&e))
 			{
 				int mouseX, mouseY;
 				SDL_GetMouseState(&mouseX, &mouseY);
+				
 				for (auto i : buttons)
 				{
 					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
@@ -136,13 +292,15 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 						{
 							//Display character info in info sheet
 						}
-
-						if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN && (i->type == "button"))
+						else if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN)
 						{
 							bool abil_button = true;
-							/*while (abil_button) {
-								//Display buttons in info sheet
-
+							
+							/*
+							while (abil_button) {
+								std::vector<Button*> Abil_Buttons;
+								setNewButtons(Abil_Buttons, i->attribute);
+								
 								
 								if(Escape button is clicked) {
 								Ability* a = c->abilities[c->getHelp(ESCAPE)];
@@ -165,33 +323,76 @@ void CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 									}
 								}
 							
-							}*/
+							}//*/
 						}
 					}
 				}
+			}//*/
+
+			if (c->getEnergyCurrent() == 0) {
+				takingAction = false;
+				break;
+			}
+			bool temp = false;
+			for (auto& i : enemy_index) { // check whether at least 1 enemy survives
+				if (participants[i]->getHPCurrent() != 0) temp = true;
+			}
+			if (!temp) {
+				takingAction = false;
+				inCombat = false;
+				break;
 			}
 		}
 	}
 
-	
-
-
+	return true;
 
 }
-void silenced(Character& c) {
-	// silence effects
+
+/*
+// t gives which of the intial 6 buttons are pressed
+void CombatManager::setNewButtons(std::vector<Button*>& buttons, int t) {
+	int bw = 100, bh = 50;
+	int num_per_row = 1, num_per_col = 1;
+	if (t >= STR && t <= FAI) { // if the button pressed is an attribute button
+		for (int i = 0; i < AbilityResource::abilityNames[t].size(); i++) {
+			buttons.push_back(new Button("Abilty", info_box.x + 5 * (i%num_per_row * 50), info_box.y + 10 * ((i / num_per_row) % num_per_col * 50), bw, bh, "Images/UI/CombatScene/Button.png", AbilityResource::abilityNames[t][i], gRenderer));
+		}
+	}
+	else { // if the button is the inventory button
+		// create button for every item in inveotry
+	}
+}	//*/
+
+void CombatManager::textMain(bool& printed) {
+	if (printed) return;
+	std::cout << "What do you want to do? Select by option number" << std::endl;
+	std::cout << "1. Strength Abilities" << std::endl;
+	std::cout << "2. Intelligent Abilities" << std::endl;
+	std::cout << "3. Dexerity Abilities" << std::endl;
+	std::cout << "4. Constitution Abilities" << std::endl;
+	std::cout << "5. Faith Abilities" << std::endl;
+	std::cout << "6. Inventory" << std::endl;
+	std::cout << "7. Player Stats" << std::endl;
+	std::cout << "8. Enemy Stats" << std::endl;
+	printed = true;
 }
 
-void poisoned(Character& c) {
-	//poison effects
-}
-
-bool CombatManager::combatManager(std::vector<Character*> p) 
+bool CombatManager::combatMain(std::vector<Character*>& p) 
 {
-	
-	using namespace std;
-	Enemy* tempp = (Enemy*)p[1];
-	cout << tempp->toString() << endl;
+	participants = p;
+
+	std::cerr << participants.size() << std::endl;
+	if (participants[0] != nullptr) {
+		std::cerr << participants[0]->toString() << std::endl;
+	}
+
+	//initialize enemy_index and player_index
+	for (int i = 0; i < participants.size(); i++) {
+		if (participants[i]->is_Enemy()) enemy_index.push_back(i);
+		else player_index.push_back(i);
+	}
+
 	int charImageX = 0;
 	int charImageY = 0;
 	int charImageW = 128;
@@ -213,40 +414,48 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 	// Create Enemy within combat class. Could be subject to change 
 	// Set up a Character array and populate it (not sorted by dex) 
 	//Character participants[2];
-	//p[0] = (Character*)(new Player("nlf4", 1, 1, 1, 1, 1, 1));
-	//p[1] = (Character*)(new Enemy());
+	//participants[0] = (Character*)(new Player("nlf4", 1, 1, 1, 1,1));
+	//participants[1] = (Character*)(new Enemy());
 	
-	gameOn = true;
+	inCombat = true;
 
 	vector<int> ailments;
 	// Create QueueManager obj which contains sorting of participant array. 
-	QueueManager qm = QueueManager(p);
+	QueueManager qm = QueueManager(participants);
 	LoadTexture background;
 	SDL_Event e;
-	background.loadFromFile("Images/UI/CombatScene/combatScene.png",gRenderer);
-	SDL_Rect scene_box = { 0,0,720,540 };
-	SDL_Rect ui_box = { 17,529,685,167 };
-
+	background.loadFromFile("Images/UI/CombatScene/combatScene.png");
+	
+	TTF_Font* font = Helper::setFont("Fonts/Stacked pixel.ttf", 25);
+	SDL_Color txt_color = {0,0,0,0};
+	
 	int bw = 100;
 	int bh = 50;
 	std::vector<Button*> buttons;
-		buttons.push_back(new Button("player", scene_box.x + 10, scene_box.y + 200, bw, bh, "Images/Player/Player_Idle.png", "Player", gRenderer));
-		buttons.push_back(new Button("player", scene_box.x + 500, scene_box.y + 200, bw, bh, "Images/Enemies/shadow_cluster/owl.png", "Player", gRenderer));
-		buttons.push_back(new Button("attack", ui_box.x , ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", "Enemy", gRenderer));
-		buttons.push_back(new Button("attack", ui_box.x , ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", "Attack", gRenderer));
-		buttons.push_back(new Button("defend", ui_box.x , ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "Defend", gRenderer));
-		
-		
-		
-	while (gameOn) {
+	buttons.push_back(new Button("character", scene_box.x + 10, scene_box.y + 200, bw, bh, "Images/Player/Player_Idle.png", "", gRenderer));
+	buttons.push_back(new Button("character", scene_box.x + 500, scene_box.y + 200, bw, bh, "Images/Enemies/shadow_cluster/owl.png", "", gRenderer));
+	buttons.push_back(new Button("button", ui_box.x , ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[STR], gRenderer));
+	buttons.push_back(new Button("button", ui_box.x, ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[INT], gRenderer));
+	buttons.push_back(new Button("button", ui_box.x, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[DEX], gRenderer));
+	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[CON], gRenderer));
+	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[FAI], gRenderer));
+	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "Inventory", gRenderer));
+
+
+	glClearColor(0.2, 0.4, 0.0, 1.0); //(float red,float green,float blue,float alpha)just like SDL_SetRenderDrawColor(&renderer, r, g, b, a)
+	glClear(GL_COLOR_BUFFER_BIT);  //just like SDL_RenderClear(&renderer);
+	SDL_GL_SwapWindow(gWindow); //just like SDL_RenderPresent(&renderer);
+	
+	bool printed = false; // for text combat ui
+
+	while (inCombat) {
 		while (SDL_PollEvent(&e)) {
-			if (e.type == SDL_QUIT) {
-				background.free();
-				return false; 
-				
-			}
+		if (e.type == SDL_QUIT) {
+			background.free();
+			return false; 
 		}
-		background.renderBackground(gRenderer);
+		
+		background.renderBackground();
 		delaysPerFrame++;
 		if (delaysPerFrame >= 6) {
 			frame++;
@@ -257,39 +466,35 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 		}
 		charImageX = frame * charAnimationPixelShift;
 		for (auto i : buttons) {
-			if (i->type == "player")
+			if (i->type == "character")	// render participants
 			{
 				SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };
 				SDL_RenderCopy(gRenderer, i->texture, &charactersRectangle, &(i->rect));
 			}
-			else
+			else // render UI in initial state
+			{
+				// render buttons on the buttom
 				SDL_RenderCopy(gRenderer, i->texture, NULL, &(i->rect));
+				Helper::renderText(i->type.c_str(), &(i->rect), &txt_color, font);
+			}
 		}
-		SDL_RenderPresent(gRenderer);
+		//SDL_RenderPresent(gRenderer);
 		SDL_Delay(16);
 		}
+		
+		textMain(printed); // text combat ui initialization
 
-
-	//Test to check that the background appears
-	/*
-	while (gameOn)
-	{
-		printf("Keep Fighting");
-	}//*/
-	/*
-	while (gameOn)
-	{
 		for (int i = 0; i < participants.size(); i++)
 		{
 			//updateStatus(participants[i]);
-			takeAction(participants[i], buttons, e);
+			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0)
+				if(!textAction(participants[i])) return false;////	takeAction(participants[i], buttons, e)
 		}
+		printed = false; // for text combat ui
 		qm.changeRounds();
-	}//*/
-	return false;
+	}
 	
-	 
-	
+	return true;
 
 }
 

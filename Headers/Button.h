@@ -13,6 +13,7 @@ public:
 	int h;
 	int w;
 	int pressed;
+	bool locked;
 	std::string imageResource;
 	std::string attribute; //change to Attribute object later
 	SDL_Rect rect;

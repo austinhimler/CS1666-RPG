@@ -5,7 +5,7 @@
 Cluster::Cluster(int q) {
 	for (int temp = 0;temp < q;temp++)
 	{
-		characterGroup.push_back(new Enemy("Owl", 1, 1, 1, 1, 1));
+		characterGroup.push_back(new Enemy("Owl", 8, 10, 10, 8, 10));
 	}
 	clusterSize = q;
 	pixelShiftAmountForAnimationInSpriteSheet = 160;
@@ -28,13 +28,12 @@ Cluster::Cluster(int q) {
 	speedMax = 250.0;
 	acceleration = 2000.0;
 }
-Cluster::Cluster() {
-	Cluster("Sample");
-}
 Cluster::Cluster(std::string n) {
 	name = n;
 	Cluster(1);
 }
+Cluster::Cluster() : Cluster("Sample"){}
+
 /*
 Cluster::Cluster(std::string n, int q) {
 	name = n;

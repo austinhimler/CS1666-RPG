@@ -1,24 +1,18 @@
 #include "../Headers/Ability.h"
 
-	Ability::Ability(int n, std::string d, int ec, int cd, int v, int t, std::vector<int> re) {
+	Ability::Ability(int n, std::string d, int ec, int cd, int v, int t) {
 		name = n;
 		description = d;
 		energyCost = ec;
+		MPCost = AbilityResource::abilityMPCost[n];
 		if (energyCost < 1) energyCost = 1;
 		cooldown = cd;
 		if (cooldown < 0) cooldown = 0;
+		value = v; 
 		type = t;
-		relatedAttr = re;
-		value = v;
 		if (value < 0) value = 1;
 	}
-	Ability::Ability(int n, std::vector<int> re, std::vector<Attribute> attr) {
-		int ec = AbilityResource::baseEnergyCost(n) - DEX/10;
-		int cd = AbilityResource::abilityCD[n];
-		int t = AbilityResource::abilityType[n];
-		int v = 6 * re[0] + 3 * re[1] + 2 * re[2];
-		Ability(n, AbilityResource::abilityDescrip(n), ec, cd, v, t, re);
-	}
+	Ability::Ability(int n, std::vector<int> re, std::vector<Attribute> attr) : Ability(n, AbilityResource::abilityDescrip(n), AbilityResource::baseEnergyCost(n) - DEX / 10, AbilityResource::abilityCD[n], 6 * attr[re[0]].getCur() + 3 * attr[re[1]].getCur() + 2 * attr[re[2]].getCur(), AbilityResource::abilityType[n]) {}
 
 	Ability::Ability() {}
 
@@ -37,6 +31,9 @@
 	int Ability::getName() {
 		return name;
 	}
+	int Ability::getMPCost() {
+		return MPCost;
+	}
 	int Ability::getEnergyCost() {
 		return energyCost;
 	}
@@ -48,4 +45,14 @@
 	}
 	int Ability::getType() {
 		return type;
+	}
+
+	Ability::operator std::string() {
+		std::string s = AbilityResource::abilityNames[name] + "\n";
+		s += AbilityResource::abilityDescrip(name) + "\n";
+		s += "Energy Cost: " + energyCost;
+		s += "\nCool Down: " + cooldown;
+		s += "\nRelated Attributes: " + ATTR_NAMES[AbilityResource::abilityAttr[type][0]] + ", " + ATTR_NAMES[AbilityResource::abilityAttr[type][1]] + ", "+ ATTR_NAMES[AbilityResource::abilityAttr[type][2]] + "\n";
+		s += "Value: " + value;
+		return s;
 	}

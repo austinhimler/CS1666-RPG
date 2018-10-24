@@ -12,12 +12,13 @@
 	//int h;
 	//int w;
 	//int pressed = 0;
+    //bool locked = false;
 	//std::string imageResource;
 	//std::string attribute; //change to Attribute object later
 	//SDL_Rect rect;
 	//SDL_Texture* texture;
 Button::Button() {}
-	Button::Button(std::string type, int x, int y, int w, int h, std::string imageResource, std::string attribute, SDL_Renderer* gRenderer) {
+Button::Button(std::string type, int x, int y, int w, int h, std::string imageResource, std::string attribute, SDL_Renderer* gRenderer) {
 		this->type = type;
 		this->x = x;
 		this->y = y;
@@ -29,7 +30,7 @@ Button::Button() {}
 		this->gRenderer = gRenderer;
 		Helper temp = Helper();
 		this->texture = temp.loadImage(imageResource,gRenderer);
-	}
+}
 
 
 	//SDL_Texture* loadImage(std::string fname) {

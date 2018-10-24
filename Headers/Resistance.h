@@ -12,7 +12,7 @@ public:
 	Resistance(std::string n);
 	Resistance(std::string n, std::string d);
 	Resistance(std::string n, std::string d, double b);
-	string to_string();
+	string toString();
 
 private:
 	std::string name;
