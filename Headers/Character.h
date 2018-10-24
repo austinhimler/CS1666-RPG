@@ -7,6 +7,7 @@
 #include "Resistance.h"
 #include "Ability.h"
 #include "Globals.h"
+#include "Ailment.h"
 #include <map>
 
 /*
@@ -32,6 +33,7 @@ public:
 	int getMPMax();
 	int getEnergyCurrent();
 	int getEnergyMax();
+	int getStatus();
 	int getPixelShiftAmountForAnimationInSpriteSheet();
 	int currentFrame;
 	int currentMaxFrame;
@@ -71,8 +73,9 @@ public:
 	//void takeDamage(Ability a);
 	void learnAbility(int a);
 
-	std::vector<int> useAbility(Ability* a); // return vector containing only one -1 if not enough of enenry, return vector of only one -2 if not enough of MP, otherwise return vector containing energy and mp used
-	void regenEnenrgy();
+
+
+	int updateEnergy(Ability* a);
 
 	string toString();
 	void setTextureActive(SDL_Texture*);
