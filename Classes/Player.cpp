@@ -19,7 +19,7 @@
 		learnAbility(FIREBALL);
 		learnAbility(SUMMON);
 		isEnemy = false;
-
+		level = 10;
 		pixelShiftAmountForAnimationInSpriteSheet = 128;
 		numIdleAnimationFrames = 4;
 		numRunAnimatonFrames = 7;
@@ -53,6 +53,7 @@
 		attributes[CON] = Attribute("Constitution", c);
 		attributes[FAI] = Attribute("Faith", f);
 		name = n;
+		level = 10;
 		isEnemy = false;
 		//level = 1;//Temporary level calculation
 	    pixelShiftAmountForAnimationInSpriteSheet = 128;

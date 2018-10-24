@@ -178,7 +178,7 @@ bool CombatManager::textAction(Character* c) {
 
 				switch (abil_temp[helper[abil_selection]].getType()) {
 				case AbilityResource::tSUMMON:
-					std::cout << "NLF4 is lecturing, can't make it." << std::endl;
+					std::cout << "NLF4 has canceled office hours, he can't make it." << std::endl;
 					break;
 				case AbilityResource::tESCAPE:
 					if (c->beingTarget(&abil_temp[helper[abil_selection]]) == -2) {
