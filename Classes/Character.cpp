@@ -68,27 +68,20 @@
 		abil_helper[a] = abilities.size() - 1;
 	}
 
-	std::vector<int> Character::useAbility(Ability* a) {
-		std::vector<int> temp;
-		if (energyCurrent < a->getEnergyCost())
-			temp.push_back(-1);
-		else if (mpCurrent < a->getMPCost())
-			temp.push_back(-2);
-		else {
-			energyCurrent -= a->getEnergyCost();
-			mpCurrent -= a->getMPCost();
-			temp = { a->getEnergyCost(), a->getMPCost() };
+	int Character::updateEnergy(Ability* a) {
+		if (a == nullptr) {
+			int temp = energyRegen + buff[ENERGYREGEN];
+			energyCurrent += (temp >= 0) ? temp : 0;
+			if (energyCurrent > energyMax) energyCurrent = energyMax;
+			buff[ENERGYREGEN] = 0;
 		}
-		return temp;
+		else {
+			if (energyCurrent < a->getEnergyCost())
+				return -1;
+			energyCurrent -= a->getEnergyCost();
+		}
+		return energyCurrent;
 	}
-
-	void Character::regenEnenrgy() {
-		int temp = energyRegen + buff[ENERGYREGEN];
-		energyCurrent += (temp >= 0) ? temp : 0;
-		if (energyCurrent > energyMax) energyCurrent = energyMax;
-		buff[ENERGYREGEN] = 0;
-	}
-
 	//*/
 	std::string Character::toString() {
 		std::string s = "Name: " + name + "\n";
@@ -98,6 +91,10 @@
 		for (auto i : attributes) {
 			s += i.toString() + "\n";
 		}
+		s += "Current Status: ";
+		if (getStatus() == 0) {
+			s += "Normal\n";
+		}
 		return s;
 	}
 
@@ -106,6 +103,7 @@
 	int Character::getHPMax() { return hpMax; }
 	int Character::getMPMax() { return mpMax; }
 	int Character::getEnergyMax() { return energyMax; }
+	int Character::getStatus() { return 0; }
 	void Character::setHPMax() { hpMax = 100 * attributes[CON].current; }
 	void Character::setMPMax() { mpMax = 100 * attributes[INT].current; }
 	void Character::setEnergyMax() { energyMax = 100 * attributes[DEX].current; }
