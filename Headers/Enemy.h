@@ -1,5 +1,6 @@
-#pragma once
 
+#ifndef _____ENEMY_H_____
+#define _____ENEMY_H_____
 #include <string>
 #include <vector>
 
@@ -15,3 +16,4 @@ protected:
 	std::vector<Item> lost;
 	int experienceGiven;
 };
+#endif

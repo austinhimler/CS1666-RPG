@@ -1,5 +1,5 @@
-#pragma once
-
+#ifndef _____HELPER_H_____
+#define _____HELPER_H_____
 #include <string>
 #include <vector>
 #include <iostream>
@@ -21,3 +21,4 @@ private:
 
 
 };
+#endif

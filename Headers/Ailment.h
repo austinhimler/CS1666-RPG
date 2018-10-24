@@ -1,5 +1,6 @@
-#pragma once
 
+#ifndef _____AILMENT_H_____
+#define _____AILMENT_H_____
 #include <string>
 
 class Ailment {
@@ -9,3 +10,4 @@ protected:
 	int name;
 	double chance;
 };
+#endif

@@ -1,5 +1,6 @@
-#pragma once
 
+#ifndef _____INVENTORY_H_____
+#define _____INVENTORY_H_____
 #include <string>
 #include <vector>
 
@@ -11,3 +12,4 @@ class Inventory {
 		int maxLoad;
 		int curLoad;
 };
+#endif

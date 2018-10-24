@@ -683,6 +683,10 @@ void playGame() {
 	Tile*  tiles[TOTAL_TILES];
 	//tiles
 	loadMap(tiles);
+	std::cout << player1.xPosition;
+	std::cout << "\n";
+	std::cout << player1.yPosition;
+
 
 	SDL_Event e;
 	SDL_Rect camera = { 0,0,SCREEN_WIDTH, SCREEN_HEIGHT };
@@ -788,7 +792,24 @@ void playGame() {
 				//go back into window
 				player1.xPosition -= (player1.xVelocity * timePassed);
 			}
-				camera.x = (player1.xPosition + player1.rectangle.w / 2) - SCREEN_WIDTH / 2;
+			//calculate tile player is currently standing on
+			int currentTile = (int)(player1.xPosition + (player1.rectangle.w / 2)) / TILE_WIDTH;
+			currentTile += (int)((player1.yPosition+player1.rectangle.h) / TILE_HEIGHT) * 30;
+			int count = 0;
+			//debugging stuff, checing values of math above
+			if (count % 9999999999999999999 == 0){
+				//std::cout << currentTile;
+				//std::cout << "  ";
+			}
+			
+			if (tiles[currentTile]->mType != 0) {
+				//toDo
+				std::cout << "Water   ";
+			}
+			 
+
+				
+			camera.x = (player1.xPosition + player1.rectangle.w / 2) - SCREEN_WIDTH / 2;
 			camera.y = (player1.yPosition + player1.rectangle.h / 2) - SCREEN_HEIGHT / 2;
 			if (camera.x < 0){
 				camera.x = 0;
@@ -819,7 +840,6 @@ void playGame() {
 			for (int i = 0; i < 900; i++) {
 				tiles[i]->render(&camera);
 			}	
-
 			if (player1.getTextureActive() == player1.getTextureIdle()) {
 				if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenIdleAnimations()) {
 					player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;

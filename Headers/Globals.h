@@ -1,5 +1,6 @@
-#pragma once
 
+#ifndef _____GLOBALS_H_____
+#define _____GLOBALS_H_____
 #include <vector>
 #include <string>
 #include <SDL.h>
@@ -43,3 +44,4 @@ extern std::vector<SDL_Texture*> gTex;
 
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
+#endif

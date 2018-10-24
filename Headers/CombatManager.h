@@ -1,5 +1,6 @@
-#pragma once
 
+#ifndef _____COMBATMANAGER_H_____
+#define _____COMBATMANAGER_H_____
 #include <vector>
 #include <iostream>
 
@@ -40,3 +41,4 @@ public:
 private:
 	void insertionSort(std::vector<Character*>& turn, int n);
 };
+#endif
