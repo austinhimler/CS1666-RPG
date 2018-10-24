@@ -77,7 +77,7 @@ CombatManager::~CombatManager()
 /*
 void updateStatus(Character& c) {
 	//First check if character is dead
-	if (c.getHPCur() <= 0) {
+	if (c.getHPCurrent() <= 0) {
 		gameOn = false;
 	}
 	// Next check the ailments of given character
@@ -213,7 +213,7 @@ bool CombatManager::combatManager(std::vector<Character*> p)
 	// Create Enemy within combat class. Could be subject to change 
 	// Set up a Character array and populate it (not sorted by dex) 
 	//Character participants[2];
-	//p[0] = (Character*)(new Player("nlf4", 1, 1, 1, 1,1));
+	//p[0] = (Character*)(new Player("nlf4", 1, 1, 1, 1, 1, 1));
 	//p[1] = (Character*)(new Enemy());
 	
 	gameOn = true;

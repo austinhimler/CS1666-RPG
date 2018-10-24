@@ -44,7 +44,6 @@ public:
 	double getSpeedMax();
 	double getAcceleration();
 	int getDex();
-	int getHPCur();
 	int getHelp(int n);
 
 	double xVelocity;

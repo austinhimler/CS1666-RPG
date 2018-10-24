@@ -35,7 +35,7 @@ Mix_Chunk *gBSound = NULL;
 TTF_Font* font;
 
 //Player ONE
-Player player1 = Player("nlf4",1,1,1,1,1);
+Player player1 = Player("nlf4",1,1,1,1,1,1);
 
 bool init() {
 	// Flag what subsystems to initialize
@@ -395,9 +395,9 @@ bool characterCreateScreen() {
 									Mix_PlayChannel(-1, gBSound, 0);
 									onCharacterCreate = false;
 									if (nameInputText == "nlf4")
-										player1.setAll(nameInputText, 10, 10, 10, 10, 10);
+										player1.setAll(nameInputText, 10, 10, 10, 10, 10, 10);
 									else
-										player1.setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
+										player1.setAll(nameInputText, strength, intelligence, dexterity, constitution, faith, 1);
 									std::cout << std::string(player1); //displays player 1
 									//make Character Object, validate, return to main
 									for (auto i : buttons) {
@@ -709,6 +709,12 @@ void playGame() {
 	player1.timeSinceLastAnimation = timeSinceLastAnimation;
 	enemy1.timeSinceLastAnimation = timeSinceLastAnimation;
 
+	std::string hudHealthString = "Health: " + to_string(player1.getHPCurrent());
+	std::string hudLevelString = "Level: " + to_string(player1.getLevel());
+	SDL_Rect hudHealthTextRectangle = { 10, 10, 0, 0 };
+	SDL_Rect hudLevelTextRectangle = { 10, 35, 0, 0 };
+	SDL_Color hudTextColor = { 0, 0, 0, 0 };
+
 	double timePassed = 0;
 	int response = 0;
 
@@ -908,6 +914,11 @@ void playGame() {
 				i->rectangle.y = (int)i->yPosition - camera.y;
 				SDL_RenderCopyEx(gRenderer, i->getTextureActive(), &i->drawRectangle, &i->rectangle, 0.0, nullptr, i->flip);
 			}
+
+			hudHealthString = "Health: " + to_string(player1.getHPCurrent());
+			hudLevelString = "Level: " + to_string(player1.getLevel());
+			renderText(hudHealthString.c_str(), &hudHealthTextRectangle, &hudTextColor);
+			renderText(hudLevelString.c_str(), &hudLevelTextRectangle, &hudTextColor);
 
 			SDL_RenderPresent(gRenderer);
 

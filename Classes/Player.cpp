@@ -17,19 +17,19 @@
 	//stores stats
 	Player::Player() : Character("Player 1") {}
 	Player::Player(std::string n) : Character(n) {}
-	Player::Player(std::string n, int s, int i, int d, int c, int f) : Character(n, s,i,d,c,f){}
+	Player::Player(std::string n, int s, int i, int d, int c, int f, int l) : Character(n, s,i,d,c,f){}
 	Player::Player(std::string n, std::vector<Attribute> attr) : Character(n, attr) {
 		learnAbility(FIREBALL);
 		learnAbility(SUMMON);
 	}
-	void Player::setAll(std::string n, int s, int i, int d, int c, int f) {
+	void Player::setAll(std::string n, int s, int i, int d, int c, int f, int l) {
 		attributes[STR] = Attribute("Strength", s);
 		attributes[INT] = Attribute("Intelligence", i);
 		attributes[DEX] = Attribute("Dexerity", d);
 		attributes[CON] = Attribute("Constitution", c);
 		attributes[FAI] = Attribute("Faith", f);
 		name = n;
-
+		level = l;
 
 	    pixelShiftAmountForAnimationInSpriteSheet = 128;
 		numIdleAnimationFrames = 4;
@@ -53,6 +53,8 @@
 		acceleration = 2000.0;
 	}
 
+	int Player::getLevel() { return level; }
+	int Player::getCurrentExperience() { return currentExperience; }
 
 	Player::operator std::string() {
 		
