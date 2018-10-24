@@ -15,7 +15,7 @@
 	//stores stats
 	Player::Player() : Character("Player 1") {}
 	Player::Player(std::string n) : Character(n) {}
-	Player::Player(std::string n, int s, int i, int d, int c, int f) : Character(n, s,i,d,c,f){
+	Player::Player(std::string n, int s, int i, int d, int c, int f){
 		learnAbility(FIREBALL);
 		learnAbility(SUMMON);
 		isEnemy = false;
@@ -54,7 +54,7 @@
 		attributes[FAI] = Attribute("Faith", f);
 		name = n;
 		isEnemy = false;
-
+		level = (s*i*d*c*f) / 5;
 	    pixelShiftAmountForAnimationInSpriteSheet = 128;
 		numIdleAnimationFrames = 4;
 		numRunAnimatonFrames = 7;
@@ -76,7 +76,8 @@
 		speedMax = 150.0;
 		acceleration = 2000.0;
 	}
-
+	int Player::getLevel() { return level; }
+	int Player::getCurrentExperience() { return currentExperience; }
 
 	Player::operator std::string() {
 		

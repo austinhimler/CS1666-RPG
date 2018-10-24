@@ -34,12 +34,12 @@ void close();//Frees media and shuts down SDL
 
 SDL_Texture* loadImage(std::string fname);
 
-
+SDL_Renderer* gRenderer = nullptr;
 // Globals
 
 SDL_Window* gWindow = nullptr;//The window rendering to
 
-SDL_Renderer* gRenderer = nullptr;
+//SDL_Renderer* gRenderer = nullptr;
 
 SDL_GLContext gContext;//OpenGL context
 
@@ -59,7 +59,7 @@ Mix_Chunk *gBSound = NULL;
 TTF_Font* font;
 
 //Player ONE
-Player player1 = Player("nlf4",1,1,1,1,1,1);
+Player player1 = Player("nlf4",1,1,1,1,1);
 
 bool init() {
 	// Flag what subsystems to initialize
@@ -807,7 +807,7 @@ void playGame() {
 
 	player1.setTextureActive(player1.getTextureIdle());
 	player1.currentMaxFrame = player1.getNumIdleAnimationFrames();
-	
+
 	enemy1.setTextureActive(enemy1.getTextureIdle());
 	enemy1.currentMaxFrame = enemy1.getNumIdleAnimationFrames();
 
@@ -815,7 +815,7 @@ void playGame() {
 	enemy1.xPosition = player1.xPosition + 50;//rand() % (LEVEL_WIDTH - enemy1.getImageWidth());
 	enemy1.yPosition = player1.yPosition + 50; //rand() % (LEVEL_HEIGHT - enemy1.getImageHeight());
 
-	std::vector<Character> charactersOnScreen;
+	std::vector<Character*> charactersOnScreen;
 	std::vector<Character*> combatants;
 
 
@@ -867,7 +867,7 @@ void playGame() {
 			timePassed = (SDL_GetTicks() - timeSinceLastMovement) / 1000.0;
 			player1.xDeltaVelocity = 0;
 			player1.yDeltaVelocity = 0;
-			double runingAddSpeed = 0; 
+			double runingAddSpeed = 0;
 
 			const Uint8* keyState = SDL_GetKeyboardState(nullptr);
 			if (keyState[SDL_SCANCODE_W])
@@ -915,7 +915,7 @@ void playGame() {
 			}
 
 			//bound within Max Speed
-			if (player1.xVelocity < -(player1.getSpeedMax()+runingAddSpeed))
+			if (player1.xVelocity < -(player1.getSpeedMax() + runingAddSpeed))
 				player1.xVelocity = -(player1.getSpeedMax() + runingAddSpeed);
 			else if (player1.xVelocity > (player1.getSpeedMax() + runingAddSpeed))
 				player1.xVelocity = (player1.getSpeedMax() + runingAddSpeed);
@@ -940,7 +940,7 @@ void playGame() {
 					player1.currentMaxFrame = player1.getNumIdleAnimationFrames();
 				}
 			}
-			
+
 
 			//Move vertically
 			player1.yPosition += (player1.yVelocity * timePassed);
@@ -980,13 +980,13 @@ void playGame() {
 				//player1.xPosition -= 1;
 				//player1.yPosition -= 1;
 			}
-			
-			
 
-				
+
+
+
 			camera.x = (player1.xPosition + player1.rectangle.w / 2) - SCREEN_WIDTH / 2;
 			camera.y = (player1.yPosition + player1.rectangle.h / 2) - SCREEN_HEIGHT / 2;
-			if (camera.x < 0){
+			if (camera.x < 0) {
 				camera.x = 0;
 			}
 			if (camera.y < 0) {
@@ -1007,7 +1007,7 @@ void playGame() {
 
 			for (int i = 0; i < 900; i++) {
 				tiles[i]->render(&camera);
-			}	
+			}
 
 			for (auto &i : charactersOnScreen) {
 				if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
@@ -1046,7 +1046,7 @@ void playGame() {
 				inPauseMenu = true;
 			}
 
-			if (check_collision(player1.rectangle, enemy1.rectangle)){
+			if (check_collision(player1.rectangle, enemy1.rectangle)) {
 				combatants.clear();
 				combatants.push_back(&player1);
 				for (auto i : enemy1.characterGroup)
@@ -1086,12 +1086,13 @@ void playGame() {
 			inOverworld = true;
 		}
 
-	if (response == 1) { //backToMainMenu
-		//for (auto i : charactersOnScreen) {
-		//	delete(&i);
-		//}
-		//destroy tiles etc?
-		handleMain();
+		if (response == 1) { //backToMainMenu
+			//for (auto i : charactersOnScreen) {
+			//	delete(&i);
+			//}
+			//destroy tiles etc?
+			handleMain();
+		}
 	}
 }
 
@@ -1247,13 +1248,14 @@ int main(int argc, char *argv[]) {
 	combatants.push_back(new Enemy("W.G.", 10, 10, 10, 5, 10));
 	bool inCombat = cm.combatMain(combatants);
 	//*/
-	
+
 	if (!init()) {
 		std::cout << "Failed to initialize!" << std::endl;
 		close();
 		return 1;
 	}
-
+	handleMain();
+}
 void handleMain() {
 	int a = mainMenu();
 	bool b;
@@ -1268,5 +1270,5 @@ void handleMain() {
 	}
 	close();
 	//*/
-	return 0;
+	return;
 }

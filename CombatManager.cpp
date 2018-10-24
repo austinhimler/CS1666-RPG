@@ -424,7 +424,7 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	QueueManager qm = QueueManager(participants);
 	LoadTexture background;
 	SDL_Event e;
-	background.loadFromFile("Images/UI/CombatScene/combatScene.png");
+	background.loadFromFile("Images/UI/CombatScene/combatScene.png",gRenderer);
 	
 	TTF_Font* font = Helper::setFont("Fonts/Stacked pixel.ttf", 25);
 	SDL_Color txt_color = {0,0,0,0};
@@ -455,7 +455,7 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 			return false; 
 		}
 		
-		background.renderBackground();
+		background.renderBackground(gRenderer);
 		delaysPerFrame++;
 		if (delaysPerFrame >= 6) {
 			frame++;

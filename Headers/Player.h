@@ -14,9 +14,9 @@ public:
 		//stores stats
 	Player();
 	Player(std::string n);
-	Player(std::string n, int s, int i, int d, int c, int f, int l);
+	Player(std::string n, int s, int i, int d, int c, int f);
 	Player(std::string n, std::vector<Attribute> attr);
-	void setAll(std::string n, int s, int i, int d, int c, int f, int l);
+	void setAll(std::string n, int s, int i, int d, int c, int f);
 	int getLevel();
 	int getCurrentExperience();
 	operator std::string();
