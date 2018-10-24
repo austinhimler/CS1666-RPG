@@ -55,4 +55,5 @@ public:
 
 	//The tile type
 	int mType;
+
 };

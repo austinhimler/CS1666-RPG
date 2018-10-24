@@ -20,5 +20,6 @@ public:
 private:
 	int currentExprience;
 	Inventory inventory;
+	
 			
 };
