@@ -23,6 +23,7 @@
 SDL_Window* gWindow = nullptr;
 SDL_Renderer* gRenderer = nullptr;
 std::vector<SDL_Texture*> gTex;
+void handleMain();
 
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
@@ -97,6 +98,7 @@ bool init() {
 
 	return true;
 }
+
 
 bool check_collision(SDL_Rect a, SDL_Rect b) {
 	// Check vertical overlap
@@ -570,17 +572,79 @@ bool characterCreateScreen() {
 	}
 }
 
+
 void combatScene() {
 
+}
 
+void saveGame() {
 
+}
 
+int handlePauseMenu(bool inPauseMenu) {
+	std::vector<Button*> buttons;
+	buttons.push_back(new Button("continue", 240, 100, 260, 64, "Images/UI/PauseMenu/ContinueButton.png", "", gRenderer));
+	buttons.push_back(new Button("save",     240, 300, 260, 64, "Images/UI/PauseMenu/SaveButton.png", "", gRenderer));
+	buttons.push_back(new Button("mainMenu", 240, 500, 260, 64, "Images/UI/PauseMenu/MainMenuButton.png", "", gRenderer));
+	SDL_Texture* background = loadImage("Images/UI/PauseMenu/PauseMenuNoButtons.png"); 
 
+	int backToOverworld = 0;
+	int backToMainMenu = 1;
 
+	SDL_Event e;
+	while (inPauseMenu) {
+		while (SDL_PollEvent(&e)) {
+			if (e.type == SDL_QUIT) {
+				inPauseMenu = false;
+				return backToOverworld;
+			}
 
+			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN) {
+				int mouseX, mouseY;
+				SDL_GetMouseState(&mouseX, &mouseY);
+				for (auto i : buttons) {
+					//if mouse is clicked inside a button
+					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
+						((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
+					{
+						if (i->type == "continue") {
+							for (auto i : buttons) {
+								delete(i);
+							}
+							SDL_DestroyTexture(background);
+							inPauseMenu = false;
+							return backToOverworld;
+						}
+						else if (i->type == "save") {
+							saveGame();
+						}
+						else if (i->type == "mainMenu") {
+							for (auto i : buttons) {
+								delete(i);
+							}
+							SDL_DestroyTexture(background);
+							inPauseMenu = false;
+							return backToMainMenu;
+						}
 
+					}
 
+				}
 
+			}
+			//Set Black
+			SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+			SDL_RenderClear(gRenderer);
+
+			SDL_RenderCopy(gRenderer, background, NULL, NULL);
+			for (auto &i : buttons) {
+				SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
+			}
+
+			SDL_RenderPresent(gRenderer);
+			SDL_Delay(16);
+		}
+	}
 }
 
 void combatScene(std::vector<Character*> combatants) {
@@ -611,6 +675,7 @@ void playGame() {
 	enemy1.timeSinceLastAnimation = timeSinceLastAnimation;
 
 	double timePassed = 0;
+	int response = 0;
 
 	charactersOnScreen.push_back(player1);
 	charactersOnScreen.push_back(enemy1);
@@ -622,6 +687,8 @@ void playGame() {
 	SDL_Event e;
 	SDL_Rect camera = { 0,0,SCREEN_WIDTH, SCREEN_HEIGHT };
 	bool inOverworld = true;
+	bool combatStarted = false;
+	bool inPauseMenu = false;
 	bool keepPlaying = true;
 	while (keepPlaying) {
 
@@ -723,8 +790,7 @@ void playGame() {
 			}
 				camera.x = (player1.xPosition + player1.rectangle.w / 2) - SCREEN_WIDTH / 2;
 			camera.y = (player1.yPosition + player1.rectangle.h / 2) - SCREEN_HEIGHT / 2;
-			if (camera.x < 0)
-			{
+			if (camera.x < 0){
 				camera.x = 0;
 			}
 			if (camera.y < 0) {
@@ -789,6 +855,11 @@ void playGame() {
 			// Finish drawing player
 			SDL_RenderPresent(gRenderer);
 
+			if (keyState[SDL_SCANCODE_ESCAPE]) {
+				inOverworld = false;
+				inPauseMenu = true;
+			}
+
 			if (check_collision(player1.rectangle, enemy1.rectangle)){
 				//combatants = enemy1.characterGroup;
 				combatants.push_back(&player1);
@@ -797,11 +868,25 @@ void playGame() {
 					combatants.push_back(i);
 				}
 				inOverworld = false;
+				combatStarted = true;
 			}
 
 		}
 
-		while (!inOverworld) {
+		if (inPauseMenu) {
+			response = handlePauseMenu(inPauseMenu);
+			int backToOverWorld = 0;
+			int backToMainMenu = 1;
+			if (response == backToOverWorld) {
+				inOverworld = true;
+			}
+			else if (response == backToMainMenu) {
+				keepPlaying = false;
+			}
+			inPauseMenu = false;
+		}
+
+		while (combatStarted) {
 			combatTransition();
 			combatScene(combatants);
 			CombatManager cm;
@@ -812,16 +897,18 @@ void playGame() {
 			bool inCombat = cm.combatManager(combatants);
 			enemy1.xPosition = 999;
 			enemy1.yPosition = 999;
-			inOverworld = true;
+			inOverworld = true; // Not sure purpose of the original function made by combat team
+			combatStarted = false;
 		}
 
-		//while(gameOn) gameloop
-		   //render top viewport: render player, enemy, overworld
-		   //render bottom viewport: UI
-		   //movement
-		   //collision detection
-		   //when player collides into enemy
-		   // combatScene(vector of Type Characters);
+	}
+
+	if (response == 1) { //backToMainMenu
+		//for (auto i : charactersOnScreen) {
+		//	delete(&i);
+		//}
+		//destroy tiles etc?
+		handleMain();
 	}
 }
 
@@ -852,9 +939,7 @@ int mainMenu() {
 	SDL_Event e;
 	while (run) {
 		while (SDL_PollEvent(&e)) {
-
 			if (e.type == SDL_QUIT) {
-
 				close();
 			}
 			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN) {
@@ -905,6 +990,23 @@ int mainMenu() {
 		}
 	}
 }
+
+
+void handleMain() {
+	int a = mainMenu();
+	bool b;
+
+	switch (a) {
+	case 0:
+		b = characterCreateScreen();
+		if (b) playGame();
+		break;
+	case 1:
+		playCredits();
+	}
+	close();
+}
+
 int main(int argc, char *argv[]) {
 	/*
 	Character r = Character("Owl", 1, 1, 1, 1, 1);
@@ -916,8 +1018,9 @@ int main(int argc, char *argv[]) {
 		close();
 		return 1;
 	}
+	handleMain();
 
-	int a = mainMenu();
+	/*int a = mainMenu();
 	bool b;
 
 	switch (a) {
@@ -928,7 +1031,7 @@ int main(int argc, char *argv[]) {
 	case 1:
 		playCredits();
 	}
-	close();
+	close();*/
 	//*/
 	return 0;
 }
