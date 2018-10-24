@@ -664,7 +664,7 @@ void playGame() {
 	enemy1.setTextureActive(enemy1.getTextureIdle());
 	enemy1.currentMaxFrame = enemy1.getNumIdleAnimationFrames();
 
-	std::vector<Character> charactersOnScreen;
+	std::vector<Character*> charactersOnScreen;
 	std::vector<Character*> combatants;
 
 
@@ -677,8 +677,8 @@ void playGame() {
 	double timePassed = 0;
 	int response = 0;
 
-	charactersOnScreen.push_back(player1);
-	charactersOnScreen.push_back(enemy1);
+	charactersOnScreen.push_back(&player1);
+	charactersOnScreen.push_back(&enemy1);
 
 	Tile*  tiles[TOTAL_TILES];
 	//tiles
@@ -840,39 +840,60 @@ void playGame() {
 			for (int i = 0; i < 900; i++) {
 				tiles[i]->render(&camera);
 			}	
-			if (player1.getTextureActive() == player1.getTextureIdle()) {
-				if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenIdleAnimations()) {
-					player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
-					player1.timeSinceLastAnimation = SDL_GetTicks();
+			//if (player1.getTextureActive() == player1.getTextureIdle()) {
+			//	if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenIdleAnimations()) {
+			//		player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
+			//		player1.timeSinceLastAnimation = SDL_GetTicks();
+			//	}
+			//}
+			//else {
+			//	if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenRunAnimations()) {
+			//		player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
+			//		player1.timeSinceLastAnimation = SDL_GetTicks();
+			//	}
+			//}
+
+			//if (enemy1.getTextureActive() == enemy1.getTextureIdle()) {
+			//	if (SDL_GetTicks() - enemy1.timeSinceLastAnimation > enemy1.getTimeBetweenIdleAnimations()) {
+			//		enemy1.currentFrame = (enemy1.currentFrame + 1) % enemy1.currentMaxFrame;
+			//		enemy1.timeSinceLastAnimation = SDL_GetTicks();
+			//	}
+			//}
+
+			//// Start drawing clusters
+			//enemy1.drawRectangle.x = enemy1.currentFrame * enemy1.getPixelShiftAmountForAnimationInSpriteSheet();
+			//enemy1.rectangle.x = (int)enemy1.xPosition-camera.x;
+			//enemy1.rectangle.y = (int)enemy1.yPosition-camera.y;
+			//SDL_RenderCopy(gRenderer, enemy1.getTextureActive(), &enemy1.drawRectangle, &enemy1.rectangle);
+			//// Finish drawing clusters
+
+			//// Start drawing player
+			//player1.drawRectangle.x = player1.currentFrame * player1.getPixelShiftAmountForAnimationInSpriteSheet();
+			//player1.rectangle.x = (int)player1.xPosition - camera.x;
+			//player1.rectangle.y = (int)player1.yPosition - camera.y;
+			//SDL_RenderCopyEx(gRenderer, player1.getTextureActive(), &player1.drawRectangle, &player1.rectangle, 0.0, nullptr, flip);
+			//// Finish drawing player
+
+			for (auto &i : charactersOnScreen) {
+				if (i->getTextureActive() == i->getTextureIdle()) {
+					if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
+						i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+						i->timeSinceLastAnimation = SDL_GetTicks();
+					}
 				}
-			}
-			else {
-				if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenRunAnimations()) {
-					player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
-					player1.timeSinceLastAnimation = SDL_GetTicks();
+				else {
+					if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenRunAnimations()) {
+						i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+						i->timeSinceLastAnimation = SDL_GetTicks();
+					}
 				}
+
+				i->drawRectangle.x = i->currentFrame *i->getPixelShiftAmountForAnimationInSpriteSheet();
+				i->rectangle.x = (int)i->xPosition - camera.x;
+				i->rectangle.y = (int)i->yPosition - camera.y;
+				SDL_RenderCopy(gRenderer, i->getTextureActive(), &i->drawRectangle, &i->rectangle);
 			}
 
-			if (enemy1.getTextureActive() == enemy1.getTextureIdle()) {
-				if (SDL_GetTicks() - enemy1.timeSinceLastAnimation > enemy1.getTimeBetweenIdleAnimations()) {
-					enemy1.currentFrame = (enemy1.currentFrame + 1) % enemy1.currentMaxFrame;
-					enemy1.timeSinceLastAnimation = SDL_GetTicks();
-				}
-			}
-
-			// Start drawing clusters
-			enemy1.drawRectangle.x = enemy1.currentFrame * enemy1.getPixelShiftAmountForAnimationInSpriteSheet();
-			enemy1.rectangle.x = (int)enemy1.xPosition-camera.x;
-			enemy1.rectangle.y = (int)enemy1.yPosition-camera.y;
-			SDL_RenderCopy(gRenderer, enemy1.getTextureActive(), &enemy1.drawRectangle, &enemy1.rectangle);
-			// Finish drawing clusters
-
-			// Start drawing player
-			player1.drawRectangle.x = player1.currentFrame * player1.getPixelShiftAmountForAnimationInSpriteSheet();
-			player1.rectangle.x = (int)player1.xPosition - camera.x;
-			player1.rectangle.y = (int)player1.yPosition - camera.y;
-			SDL_RenderCopyEx(gRenderer, player1.getTextureActive(), &player1.drawRectangle, &player1.rectangle, 0.0, nullptr, flip);
-			// Finish drawing player
 			SDL_RenderPresent(gRenderer);
 
 			if (keyState[SDL_SCANCODE_ESCAPE]) {
@@ -1040,18 +1061,5 @@ int main(int argc, char *argv[]) {
 	}
 	handleMain();
 
-	/*int a = mainMenu();
-	bool b;
-
-	switch (a) {
-	case 0 :
-		b = characterCreateScreen();
-		if (b) playGame();
-		break;
-	case 1:
-		playCredits();
-	}
-	close();*/
-	//*/
 	return 0;
 }
