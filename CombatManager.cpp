@@ -438,7 +438,7 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	glClear(GL_COLOR_BUFFER_BIT);  //just like SDL_RenderClear(&renderer);
 	SDL_GL_SwapWindow(gWindow); //just like SDL_RenderPresent(&renderer);
 	
-	//bool printed = false; // for text combat ui
+	bool printed = false; // for text combat ui
 
 	while (inCombat) {
 		while (SDL_PollEvent(&e)) {
@@ -470,11 +470,11 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 				Helper::renderText(i->type.c_str(), &(i->rect), &txt_color, font);
 			}
 		}
-		SDL_RenderPresent(gRenderer);
+		//SDL_RenderPresent(gRenderer);
 		SDL_Delay(16);
 		}
 		
-		//textMain(printed); // text combat ui initialization
+		textMain(printed); // text combat ui initialization
 
 		for (int i = 0; i < participants.size(); i++)
 		{
@@ -482,7 +482,7 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0)
 				if(!takeAction(participants[i], buttons, e)) return false;//textAction(participants[i]);//	
 		}
-		//printed = false; // for text combat ui
+		printed = false; // for text combat ui
 		qm.changeRounds();
 	}
 	

@@ -31,15 +31,23 @@ namespace AbilityResource {
 	//abiilty base stats
 	inline int const &baseEnergyCost(int n) {
 		static int base_energy_cost[] = {
+			0,
+			10,
 			1,
-			1,
-			1,
-			1,
+			0,
 			1
 		};
 		return base_energy_cost[n];
 	}
 
+	// ability base MP cost
+	const int abilityMPCost[] = {
+		0,
+		10,
+		0,
+		0,
+		50,
+	};
 
 	//ability base CD
 	const int abilityCD[] = {

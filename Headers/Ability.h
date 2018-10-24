@@ -32,6 +32,7 @@ private:
 	int name;
 	std::string description;
 	int energyCost;
+	int MPCost;
 	int cooldown; //might not add
 	int value;	// the possiblity of succes for escape and summon
 	int type;
