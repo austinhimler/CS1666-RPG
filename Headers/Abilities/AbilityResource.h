@@ -46,7 +46,7 @@ namespace AbilityResource {
 		10,
 		0,
 		0,
-		50
+		10000
 	};
 
 	//ability base CD
