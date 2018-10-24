@@ -586,7 +586,7 @@ void saveGame() {
 
 }
 
-int handlePauseMenu(bool inPauseMenu) {
+int handlePauseMenu(bool inPauseMenu, std::vector<Character*> charactersOnScreen, Tile *tiles[900], SDL_Rect camera) {
 	std::vector<Button*> buttons;
 	buttons.push_back(new Button("continue", 240, 100, 260, 64, "Images/UI/PauseMenu/ContinueButton.png", "", gRenderer));
 	buttons.push_back(new Button("save",     240, 300, 260, 64, "Images/UI/PauseMenu/SaveButton.png", "", gRenderer));
@@ -641,7 +641,36 @@ int handlePauseMenu(bool inPauseMenu) {
 			SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 			SDL_RenderClear(gRenderer);
 
-			SDL_RenderCopy(gRenderer, background, NULL, NULL);
+			for (int i = 0; i < 900; i++) {
+				tiles[i]->render(&camera);
+			}
+
+			for (auto &i : charactersOnScreen) {
+				if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
+					i->flip = SDL_FLIP_NONE;
+				else if (i->xVelocity < 0 && i->flip == SDL_FLIP_NONE)
+					i->flip = SDL_FLIP_HORIZONTAL;
+
+				if (i->getTextureActive() == i->getTextureIdle()) {
+					if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
+						i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+						i->timeSinceLastAnimation = SDL_GetTicks();
+					}
+				}
+				else {
+					if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenRunAnimations()) {
+						i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+						i->timeSinceLastAnimation = SDL_GetTicks();
+					}
+				}
+
+				i->drawRectangle.x = i->currentFrame *i->getPixelShiftAmountForAnimationInSpriteSheet();
+				i->rectangle.x = (int)i->xPosition - camera.x;
+				i->rectangle.y = (int)i->yPosition - camera.y;
+				SDL_RenderCopyEx(gRenderer, i->getTextureActive(), &i->drawRectangle, &i->rectangle, 0.0, nullptr, i->flip);
+			}
+
+			//SDL_RenderCopy(gRenderer, background, NULL, NULL);
 			for (auto &i : buttons) {
 				SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
 			}
@@ -900,7 +929,7 @@ void playGame() {
 		}
 
 		if (inPauseMenu) {
-			response = handlePauseMenu(inPauseMenu);
+			response = handlePauseMenu(inPauseMenu, charactersOnScreen, tiles, camera);
 			int backToOverWorld = 0;
 			int backToMainMenu = 1;
 			if (response == backToOverWorld) {
