@@ -637,47 +637,48 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Character*> charactersOnScreen
 				}
 
 			}
-			//Set Black
-			SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-			SDL_RenderClear(gRenderer);
-
-			for (int i = 0; i < 900; i++) {
-				tiles[i]->render(&camera);
-			}
-
-			for (auto &i : charactersOnScreen) {
-				if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
-					i->flip = SDL_FLIP_NONE;
-				else if (i->xVelocity < 0 && i->flip == SDL_FLIP_NONE)
-					i->flip = SDL_FLIP_HORIZONTAL;
-
-				if (i->getTextureActive() == i->getTextureIdle()) {
-					if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
-						i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
-						i->timeSinceLastAnimation = SDL_GetTicks();
-					}
-				}
-				else {
-					if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenRunAnimations()) {
-						i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
-						i->timeSinceLastAnimation = SDL_GetTicks();
-					}
-				}
-
-				i->drawRectangle.x = i->currentFrame *i->getPixelShiftAmountForAnimationInSpriteSheet();
-				i->rectangle.x = (int)i->xPosition - camera.x;
-				i->rectangle.y = (int)i->yPosition - camera.y;
-				SDL_RenderCopyEx(gRenderer, i->getTextureActive(), &i->drawRectangle, &i->rectangle, 0.0, nullptr, i->flip);
-			}
-
-			//SDL_RenderCopy(gRenderer, background, NULL, NULL);
-			for (auto &i : buttons) {
-				SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
-			}
-
-			SDL_RenderPresent(gRenderer);
-			SDL_Delay(16);
+			
 		}
+		//Set Black
+		SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+		SDL_RenderClear(gRenderer);
+
+		for (int i = 0; i < 900; i++) {
+			tiles[i]->render(&camera);
+		}
+
+		for (auto &i : charactersOnScreen) {
+			if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
+				i->flip = SDL_FLIP_NONE;
+			else if (i->xVelocity < 0 && i->flip == SDL_FLIP_NONE)
+				i->flip = SDL_FLIP_HORIZONTAL;
+
+			if (i->getTextureActive() == i->getTextureIdle()) {
+				if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
+					i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+					i->timeSinceLastAnimation = SDL_GetTicks();
+				}
+			}
+			else {
+				if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenRunAnimations()) {
+					i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+					i->timeSinceLastAnimation = SDL_GetTicks();
+				}
+			}
+
+			i->drawRectangle.x = i->currentFrame *i->getPixelShiftAmountForAnimationInSpriteSheet();
+			i->rectangle.x = (int)i->xPosition - camera.x;
+			i->rectangle.y = (int)i->yPosition - camera.y;
+			SDL_RenderCopyEx(gRenderer, i->getTextureActive(), &i->drawRectangle, &i->rectangle, 0.0, nullptr, i->flip);
+		}
+
+		//SDL_RenderCopy(gRenderer, background, NULL, NULL);
+		for (auto &i : buttons) {
+			SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
+		}
+
+		SDL_RenderPresent(gRenderer);
+		SDL_Delay(16);
 	}
 }
 
