@@ -96,6 +96,7 @@ void updateStatus(Character& c) {
 */
 
 bool CombatManager::textAction(Character* c) {
+	vector<int> ailments;
 	if (c->is_Enemy() == true)
 	{
 		//Enemy attack player
@@ -103,8 +104,15 @@ bool CombatManager::textAction(Character* c) {
 		int target = rand() % player_index.size();
 		int result = participants[player_index[target]]->beingTarget(&temp[0]);
 		std::cout << c->getName() << " damages you slightly by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left." << std::endl;
+		if (ailments.size() == 0) 
+		{
+			std::cout << "Their attack did not have any status effect on you." << std::endl;
+		}
+		else {
+
+		}
 		if (participants[player_index[target]]->getHPCurrent() == 0) {
-			std::cout << "Why are your so weak? You are dead duded!" << std::endl;
+			std::cout << "Why are your so weak? You are dead, dude!" << std::endl;
 			inCombat = false;
 			return false;
 		}
@@ -130,17 +138,12 @@ bool CombatManager::textAction(Character* c) {
 				for (int i = 0; i < index_helper.size(); i++) {
 					std::cout << i + 1 << ". " << participants[index_helper[i]]->getName() << std::endl;
 				}
-				std::cout << index_helper.size()+1 << ". Main Menu" << std::endl;
 				char_selection = -1;
-				while (char_selection <= 0 || char_selection > index_helper.size() + 1) {
+				while (char_selection <= 0 || char_selection > index_helper.size()) {
 					std::cin >> char_selection;
 				}
-				if (char_selection == index_helper.size() + 1) {
-					bool b = false;
-					textMain(b);
-					continue;
-				}
-				std::cout << participants[index_helper[char_selection - 1]]->toString() << std::endl;
+				char_selection--;
+				std::cout << participants[index_helper[char_selection]]->toString() << std::endl;
 				break;
 			default: // if an attribute is selected
 				std::vector<Ability> abil_temp = c->getAbilities(); // get ability lists of the character
@@ -148,12 +151,10 @@ bool CombatManager::textAction(Character* c) {
 				int k = 1;
 				for (int i = 0; i < abil_temp.size(); i++) {
 					if (action == AbilityResource::abilityAttr[abil_temp[i].getName()][0] + 1) { //if the ability is of current attribute
-						std::cout << k++ << ". " << AbilityResource::abilityNames[abil_temp[i].getName()] << std::endl; // print as an option
+						std::cout << k << ". " << AbilityResource::abilityNames[abil_temp[i].getName()] << std::endl; // print as an option
 						helper.push_back(i); // stores index to helper vector
 					}
 				}
-				std::cout << k << ". Main Menu" << endl;
-
 				// get ability selection
 				int abil_selection = -1;
 				Ability& a_cur = abil_temp[0];
@@ -163,26 +164,16 @@ bool CombatManager::textAction(Character* c) {
 
 					std::cout << AbilityResource::abilityNames[action].size() << std::endl;
 
-					if (abil_selection >= 0 && abil_selection <= helper.size()) { // if a valid selection
-						if (abil_selection == helper.size()) break;
+					if (abil_selection >= 0 && abil_selection < helper.size()) { // if a valid selection
 						a_cur = abil_temp[helper[abil_selection]];
 						if (c->getEnergyCurrent() < a_cur.getEnergyCost()) { // if not enough energy
 							std::cout << AbilityResource::abilityNames[a_cur.getName()] << " needs " << a_cur.getEnergyCost() << ", you only have " << c->getEnergyCurrent() << " YOU FOOL" << std::endl;
-						}
-						else if (c->getMPCurrent() < a_cur.getMPCost()) {
-							std::cout << AbilityResource::abilityNames[a_cur.getName()] << " needs " << a_cur.getMPCost() << ", you only have " << c->getMPCurrent() << " YOU FOOL" << std::endl;
 						}
 						else break;
 					}
 				}
 
-				if (abil_selection == helper.size()) {
-					bool b = false;
-					textMain(b);
-					continue;
-				}
-
-				c->useAbility(&a_cur);
+				c->updateEnergy(&a_cur);
 
 
 				switch (abil_temp[helper[abil_selection]].getType()) {
@@ -208,16 +199,10 @@ bool CombatManager::textAction(Character* c) {
 				default:
 					std::cout << "Pick your target" << std::endl;
 					outputEnemy(); // output all surviving enemies
-					std::cout << enemy_index.size()+1 << ". Main Menu" << std::endl;
 					// get target selection
 					int target = -1;
-					while (target <= 0 || target > enemy_index.size() + 1) {
+					while (target <= 0 || target > enemy_index.size()) {
 						std::cin >> target;
-					}
-					if (target == enemy_index.size() + 1) {
-						bool b = false;
-						textMain(b);
-						continue;
 					}
 					target--;
 					int result = participants[enemy_index[target]]->beingTarget(&abil_temp[helper[abil_selection]]);
@@ -243,8 +228,16 @@ bool CombatManager::textAction(Character* c) {
 				break;
 			}
 			if (takingAction) {
-				bool b = false;
-				textMain(b);
+				std::cout << "What else do you want to do? Select by option number." << std::endl;
+				std::cout << "What do you want to do? Select by option number" << std::endl;
+				std::cout << "1. Strength Abilities" << std::endl;
+				std::cout << "2. Intelligent Abilities" << std::endl;
+				std::cout << "3. Dexerity Abilities" << std::endl;
+				std::cout << "4. Constitution Abilities" << std::endl;
+				std::cout << "5. Faith Abilities" << std::endl;
+				std::cout << "6. Inventory" << std::endl;
+				std::cout << "7. Player Stats" << std::endl;
+				std::cout << "8. Enemy Stats" << std::endl;
 			}
 		}
 	}
@@ -389,7 +382,7 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 {
 	participants = p;
 
-	//std::cerr << participants.size() << std::endl;
+	std::cerr << participants.size() << std::endl;
 	if (participants[0] != nullptr) {
 		std::cerr << participants[0]->toString() << std::endl;
 	}
