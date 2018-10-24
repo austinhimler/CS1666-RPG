@@ -54,7 +54,7 @@
 		attributes[FAI] = Attribute("Faith", f);
 		name = n;
 		isEnemy = false;
-		level = (s*i*d*c*f) / 5;
+		//level = 1;//Temporary level calculation
 	    pixelShiftAmountForAnimationInSpriteSheet = 128;
 		numIdleAnimationFrames = 4;
 		numRunAnimatonFrames = 7;

@@ -812,8 +812,8 @@ void playGame() {
 	enemy1.currentMaxFrame = enemy1.getNumIdleAnimationFrames();
 
 	// Randomly spawn the enemy
-	enemy1.xPosition = player1.xPosition + 50;//rand() % (LEVEL_WIDTH - enemy1.getImageWidth());
-	enemy1.yPosition = player1.yPosition + 50; //rand() % (LEVEL_HEIGHT - enemy1.getImageHeight());
+	enemy1.xPosition = player1.xPosition + 150;//rand() % (LEVEL_WIDTH - enemy1.getImageWidth());
+	enemy1.yPosition = player1.yPosition + 150; //rand() % (LEVEL_HEIGHT - enemy1.getImageHeight());
 
 	std::vector<Character*> charactersOnScreen;
 	std::vector<Character*> combatants;

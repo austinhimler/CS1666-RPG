@@ -21,7 +21,7 @@ public:
 	int getCurrentExperience();
 	operator std::string();
 private:
-	int level;
+	int level=10;
 	int currentExperience;
 	Inventory inventory;
 	
