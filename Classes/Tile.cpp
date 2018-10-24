@@ -16,6 +16,7 @@ Tile::Tile(int x, int y, int tileType)
 	//Get the tile type
 	mType = tileType;
 	Helper temp = Helper();
+	impassable = true;
 	switch (tileType)
 	{
 	case 9://pond right edge
@@ -50,6 +51,7 @@ Tile::Tile(int x, int y, int tileType)
 		break;
 	case 0://grass
 		texture = grass;
+		impassable = false;
 		break;
 	}
 }
@@ -72,6 +74,7 @@ int Tile::getType()
 {
 	return mType;
 }
+
 
 SDL_Rect Tile::getBox()
 {

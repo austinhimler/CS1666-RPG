@@ -55,6 +55,7 @@ public:
 
 	//The tile type
 	int mType;
-
+	bool impassable;
 };
 #endif
+

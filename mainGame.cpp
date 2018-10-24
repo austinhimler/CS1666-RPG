@@ -130,10 +130,11 @@ void combatTransition(){
 		}
 	}
 }
-void loadMap(Tile* tiles[]) {
+SDL_Rect * loadMap(Tile* tiles[]) {
 	Tile::loadTiles();
 	bool tilesLoaded = true;
 	int x = 0, y = 0;
+	std::vector<SDL_Rect> blockedTiles;
 	std::ifstream map("map1.txt");
 	if (!map.is_open())
 	{
@@ -162,6 +163,8 @@ void loadMap(Tile* tiles[]) {
 			if ((tileType >= 0) && (tileType != 0 || tileType != 1))
 			{
 				tiles[i] = new Tile(x, y, tileType);
+				if (tiles[i]->impassable = true)
+					blockedTiles.push_back(tiles[i]->getBox());
 			}
 			//If we don't recognize the tile type
 			else
@@ -184,7 +187,9 @@ void loadMap(Tile* tiles[]) {
 			}
 		}
 	}
+	return &blockedTiles[0];
 }
+
 
 
 SDL_Texture* loadImage(std::string fname) {
@@ -681,8 +686,10 @@ void playGame() {
 	charactersOnScreen.push_back(&enemy1);
 
 	Tile*  tiles[TOTAL_TILES];
+
 	//tiles
-	loadMap(tiles);
+	//Need to delete this to stop memory leak if we load more than one map
+	SDL_Rect* BlockedTiles = loadMap(tiles);
 	std::cout << player1.xPosition;
 	std::cout << "\n";
 	std::cout << player1.yPosition;
@@ -778,6 +785,7 @@ void playGame() {
 					player1.currentMaxFrame = player1.getNumIdleAnimationFrames();
 				}
 			}
+			
 
 			//Move vertically
 			player1.yPosition += (player1.yVelocity * timePassed);
@@ -794,19 +802,31 @@ void playGame() {
 			}
 			//calculate tile player is currently standing on
 			int currentTile = (int)(player1.xPosition + (player1.rectangle.w / 2)) / TILE_WIDTH;
-			currentTile += (int)((player1.yPosition+player1.rectangle.h) / TILE_HEIGHT) * 30;
-			int count = 0;
-			//debugging stuff, checing values of math above
-			if (count % 9999999999999999999 == 0){
-				//std::cout << currentTile;
-				//std::cout << "  ";
-			}
-			
+			currentTile += (int)((player1.yPosition + player1.rectangle.h) / TILE_HEIGHT) * 30;
+
+
 			if (tiles[currentTile]->mType != 0) {
 				//toDo
-				std::cout << "Water   ";
+				bool xVelPos = player1.xVelocity > 0;
+				bool xVelNeg = player1.xVelocity < 0;
+				bool yVelPos = player1.yVelocity > 0;
+				bool yVelNeg = player1.yVelocity < 0;
+				player1.xVelocity = 0;
+				player1.yVelocity = 0;
+				if (xVelPos)
+					player1.xPosition -= 1;
+				if (xVelNeg)
+					player1.xPosition += 1;
+				if (yVelNeg)
+					player1.yPosition += 1;
+				if (yVelPos)
+					player1.yPosition -= 1;
+
+				//player1.xPosition -= 1;
+				//player1.yPosition -= 1;
 			}
-			 
+			
+			
 
 				
 			camera.x = (player1.xPosition + player1.rectangle.w / 2) - SCREEN_WIDTH / 2;
