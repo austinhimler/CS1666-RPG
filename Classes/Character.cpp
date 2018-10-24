@@ -9,6 +9,7 @@
 		setEnergyMax();
 		hpCurrent = hpMax;
 		mpCurrent = mpMax;
+		flip = SDL_FLIP_NONE;
 		energyCurrent = energyMax;
 		energyRegen = (energyMax < 10)?1:0.1 * energyMax;
 		name = n;

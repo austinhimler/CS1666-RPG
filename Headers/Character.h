@@ -57,6 +57,7 @@ public:
 	Uint32 timeSinceLastAnimation;
 	SDL_Rect rectangle;
 	SDL_Rect drawRectangle;
+	SDL_RendererFlip flip;
 	std::string getImageIdleResource();
 	std::string getImageRunResource();
 	std::string getName();
