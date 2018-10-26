@@ -414,76 +414,30 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	vector<int> ailments;
 	// Create QueueManager obj which contains sorting of participant array. 
 	QueueManager qm = QueueManager(participants);
-	LoadTexture background;
+
 	SDL_Event e;
-	background.loadFromFile("Images/UI/CombatScene/combatScene.png");
-	
-	TTF_Font* font = Helper::setFont("Fonts/Stacked pixel.ttf", 25);
-	SDL_Color txt_color = {0,0,0,0};
-	
-	int bw = 100;
-	int bh = 50;
-	std::vector<Button*> buttons;
-	buttons.push_back(new Button("character", scene_box.x + 10, scene_box.y + 200, bw, bh, "Images/Player/Player_Idle.png", "", gRenderer));
-	buttons.push_back(new Button("character", scene_box.x + 500, scene_box.y + 200, bw, bh, "Images/Enemies/shadow_cluster/owl.png", "", gRenderer));
-	buttons.push_back(new Button("button", ui_box.x , ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[STR], gRenderer));
-	buttons.push_back(new Button("button", ui_box.x, ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[INT], gRenderer));
-	buttons.push_back(new Button("button", ui_box.x, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[DEX], gRenderer));
-	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[CON], gRenderer));
-	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[FAI], gRenderer));
-	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "Inventory", gRenderer));
 
-
+	
 	glClearColor(0.2, 0.4, 0.0, 1.0); //(float red,float green,float blue,float alpha)just like SDL_SetRenderDrawColor(&renderer, r, g, b, a)
 	glClear(GL_COLOR_BUFFER_BIT);  //just like SDL_RenderClear(&renderer);
-	SDL_GL_SwapWindow(gWindow); //just like SDL_RenderPresent(&renderer);
+	 //just like SDL_RenderPresent(&renderer);
 	
 	//bool printed = false; // for text combat ui
 
 	while (inCombat) {
 		while (SDL_PollEvent(&e)) {
 		if (e.type == SDL_QUIT) {
-			background.free();
+		
 			return false; 
 		}
 		
-		background.renderBackground();
-		delaysPerFrame++;
-		if (delaysPerFrame >= 6) {
-			frame++;
-			delaysPerFrame = 0;
-		}
-		if (frame == 4) {
-			frame = 0;
-		}
-		charImageX = frame * charAnimationPixelShift;
-		for (auto i : buttons) {
-			if (i->type == "character")	// render participants
-			{
-				SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };
-				SDL_RenderCopy(gRenderer, i->texture, &charactersRectangle, &(i->rect));
-			}
-			else // render UI in initial state
-			{
-				// render buttons on the buttom
-				SDL_RenderCopy(gRenderer, i->texture, NULL, &(i->rect));
-				Helper::renderText(i->type.c_str(), &(i->rect), &txt_color, font);
-			}
-		}
-		SDL_RenderPresent(gRenderer);
+		SDL_GL_SwapWindow(gWindow);
 		SDL_Delay(16);
 		}
 		
 		//textMain(printed); // text combat ui initialization
 
-		for (int i = 0; i < participants.size(); i++)
-		{
-			//updateStatus(participants[i]);
-			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0)
-				if(!takeAction(participants[i], buttons, e)) return false;//textAction(participants[i]);//	
-		}
-		//printed = false; // for text combat ui
-		qm.changeRounds();
+	
 	}
 	
 	return true;
