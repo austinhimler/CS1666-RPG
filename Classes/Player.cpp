@@ -20,20 +20,20 @@
 		learnAbility(SUMMON);
 		isEnemy = false;
 
-		pixelShiftAmountForAnimationInSpriteSheet = 128;
-		numIdleAnimationFrames = 4;
-		numRunAnimatonFrames = 7;
+		pixelShiftAmountForAnimationInSpriteSheet = 144;
+		numIdleAnimationFrames = 6;
+		numRunAnimatonFrames = 6;
 		currentFrame = 0;
 		timeBetweenIdleAnimations = 120;
 		timeBetweenRunAnimations = 100;
-		imageIdleResource = "Images/Player/Player_Idle.png";
-		imageRunResource = "Images/Player/Player_Run.png";
+		imageIdleResource = "Images/Player/Idle_Down.png";
+		imageRunResource = "Images/Player/Run_Right.png";
 		Helper helper = Helper();
 		textureIdle = helper.loadImage(imageIdleResource.c_str(), gRenderer);
 		textureRun = helper.loadImage(imageRunResource.c_str(), gRenderer);
 		textureActive = NULL;
-		imageWidth = 128;
-		imageHeight = 128;
+		imageWidth = 144;
+		imageHeight = 144;
 		xPosition = 0; //will need to edit for starting level
 		yPosition = 250.0; //will need to edit for starting level
 		rectangle = { (int)xPosition, (int)yPosition, imageWidth, imageHeight };
@@ -55,20 +55,20 @@
 		name = n;
 		isEnemy = false;
 
-	    pixelShiftAmountForAnimationInSpriteSheet = 128;
-		numIdleAnimationFrames = 4;
-		numRunAnimatonFrames = 7;
+	    pixelShiftAmountForAnimationInSpriteSheet = 144;
+		numIdleAnimationFrames = 6;
+		numRunAnimatonFrames = 6;
 		currentFrame = 0;
 		timeBetweenIdleAnimations = 120;
 		timeBetweenRunAnimations = 100;
-		imageIdleResource = "Images/Player/Player_Idle.png";
-		imageRunResource = "Images/Player/Player_Run.png";
+		imageIdleResource = "Images/Player/Idle_Down.png";
+		imageRunResource = "Images/Player/Run_Right";
 		Helper helper = Helper();
 		textureIdle = helper.loadImage(imageIdleResource.c_str(), gRenderer);
 		textureRun = helper.loadImage(imageRunResource.c_str(), gRenderer);
 		textureActive = NULL;
-		imageWidth = 128;
-		imageHeight = 128;
+		imageWidth = 144;
+		imageHeight = 144;
 		xPosition = 0; //will need to edit for starting level
 		yPosition = 250.0; //will need to edit for starting level
 		rectangle = {(int)xPosition, (int)yPosition, imageWidth, imageHeight};

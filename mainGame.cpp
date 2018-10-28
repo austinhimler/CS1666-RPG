@@ -381,13 +381,13 @@ bool characterCreateScreen() {
 	int faith = 1;
 	int charImageX = 0;
 	int charImageY = 0;
-	int charImageW = 128;
-	int charImageH = 128;
-	int charAnimationPixelShift = 128;
+	int charImageW = 144;
+	int charImageH = 144;
+	int charAnimationPixelShift = 144;
 	int delaysPerFrame = 0;
 	int frame = 0;
 
-	SDL_Rect characterBox = { 472, 225, 128, 128 };
+	SDL_Rect characterBox = { 470, 225, 144, 144 };
 	SDL_Rect pointsAllocatedRectangle = { 227, 32, 0, 0 };
 	SDL_Rect strengthTextRectangle = { 250, 115, 0, 0 };
 	SDL_Rect intelligenceTextRectangle = { 250, 205, 0, 0 };
@@ -410,7 +410,7 @@ bool characterCreateScreen() {
 	SDL_Texture* upUnLocked = loadImage("Images/UI/CreateScreen/pointUpArrow.png");
 	SDL_Texture* downUnLocked = loadImage("Images/UI/CreateScreen/pointUpArrow.png");
 
-	SDL_Texture* character = loadImage("Images/Player/Player_Idle.png");
+	SDL_Texture* character = loadImage("Images/Player/Idle_Down.png");
 
 
 	//need attr objects
