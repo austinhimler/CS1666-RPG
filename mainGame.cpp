@@ -7,6 +7,7 @@
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 #include <GL/glew.h>
+#include <SOIL2.h>
 #include <SDL_opengl.h>
 #include <cmath>
 #include <fstream>
