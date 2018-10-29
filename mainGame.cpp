@@ -808,6 +808,26 @@ void playGame() {
 					}
 				}
 
+				
+
+				if (player1.xVelocity != 0 && player1.yVelocity > 0) {
+					if (player1.getTextureActive() != player1.getTextureDownRightRun()) {
+						player1.setTextureActive(player1.getTextureDownRightRun());
+						player1.currentFrame = 0;
+						player1.currentMaxFrame = player1.getNumRunAnimationFrames();
+					}
+				}
+
+				if (player1.xVelocity != 0 && player1.yVelocity < 0) {
+					if (player1.getTextureActive() != player1.getTextureUpRightRun()) {
+						player1.setTextureActive(player1.getTextureUpRightRun());
+						player1.currentFrame = 0;
+						player1.currentMaxFrame = player1.getNumRunAnimationFrames();
+					}
+				}
+
+
+
 				if (player1.xVelocity == 0 && player1.yVelocity < 0) {
 					if (player1.getTextureActive() != player1.getTextureUpRun()) {
 						player1.setTextureActive(player1.getTextureUpRun());
