@@ -456,7 +456,6 @@ bool characterCreateScreen() {
 						((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
 					{
 						i->pressed = 5;
-						i->locked = false;
 						if (i->type == "start") {
 							if (nameInputText == "nlf4" || pointsToAllocate == 0) {
 								if (nameInputText == "nlf4" || nameInputText != "") {
@@ -505,24 +504,10 @@ bool characterCreateScreen() {
 
 						if (i->attribute == "strength") {
 							if ((deltaAttribute + strength) <= maxStat && (deltaAttribute + strength) >= minStat) {
-								if ((deltaAttribute + strength) == maxStat) {
-									i->locked = true;
-								}
-								else {
-									i->locked = false;
-									
-								}
-
-						
-
-								
-
 								strength += deltaAttribute;
 								pointsToAllocate -= deltaAttribute;
 							}
 							else if ((deltaAttribute + strength) > maxStat) {
-								i->locked = true;
-		
 								errorInputText = "Max Strength!";
 								
 							}
@@ -609,6 +594,76 @@ bool characterCreateScreen() {
 		background.renderBackground();
 		//Renders buttons and shows pressed image if pressed
 		for (auto i : buttons) {
+			if (i->attribute == "strength") {
+				if (i->type == "up") {
+					if (strength == maxStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+				else {
+					if (strength == minStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+			}
+			else if (i->attribute == "intelligence") {
+				if (i->type == "up") {
+					if (intelligence == maxStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+				else {
+					if (intelligence == minStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+			}
+			else if (i->attribute == "dexterity") {
+				if (i->type == "up") {
+					if (dexterity == maxStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+				else {
+					if (dexterity == minStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+			}
+			else if (i->attribute == "constitution") {
+				if (i->type == "up") {
+					if (constitution == maxStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+				else {
+					if (constitution == minStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+			}
+			else if (i->attribute == "faith") {
+				if (i->type == "up") {
+					if (faith == maxStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+				else {
+					if (faith == minStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+			}
 			if (!i->locked) {
 				if (!i->pressed > 0 || i->attribute == "")
 					SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
