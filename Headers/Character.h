@@ -59,9 +59,13 @@ public:
 	SDL_Rect drawRectangle;
 	std::string getImageIdleResource();
 	std::string getImageRunResource();
+	std::string getImageDownRunResource();
+	std::string getImageUpRunResource();
 	std::string getName();
 	SDL_Texture* getTextureIdle();
 	SDL_Texture* getTextureRun();
+	SDL_Texture* getTextureDownRun();
+	SDL_Texture* getTextureUpRun();
 	SDL_Texture* getTextureActive();
 	SDL_Rect getRectangle();
 	std::vector<Attribute> getAttributes();
@@ -90,9 +94,13 @@ protected:
 	std::vector<int> buff;
 	std::string imageIdleResource;
 	std::string imageRunResource;
+	std::string imageDownRunResource;
+	std::string imageUpRunResource;
 	std::string name;
 	SDL_Texture* textureIdle;
 	SDL_Texture* textureRun;
+	SDL_Texture* textureDownRun;
+	SDL_Texture* textureUpRun;
 	SDL_Texture* textureActive;
 	int pixelShiftAmountForAnimationInSpriteSheet;
 	int numIdleAnimationFrames;

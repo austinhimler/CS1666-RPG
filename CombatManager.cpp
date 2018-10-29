@@ -432,7 +432,7 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 		while (SDL_PollEvent(&e)) {
 		if (e.type == SDL_QUIT) {
 		
-			return false;  
+			return false; 
 		}
 		
 		SDL_GL_SwapWindow(gWindow);

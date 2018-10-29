@@ -28,9 +28,13 @@
 		timeBetweenRunAnimations = 100;
 		imageIdleResource = "Images/Player/Idle_Down.png";
 		imageRunResource = "Images/Player/Run_Right.png";
+		imageDownRunResource = "Images/Player/Run_Down.png";
+		imageUpRunResource = "Images/Player/Run_Up.png";
 		Helper helper = Helper();
 		textureIdle = helper.loadImage(imageIdleResource.c_str(), gRenderer);
 		textureRun = helper.loadImage(imageRunResource.c_str(), gRenderer);
+		textureDownRun = helper.loadImage(imageDownRunResource.c_str(), gRenderer);
+		textureUpRun = helper.loadImage(imageUpRunResource.c_str(), gRenderer);
 		textureActive = NULL;
 		imageWidth = 144;
 		imageHeight = 144;

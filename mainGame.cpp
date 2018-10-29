@@ -790,12 +790,34 @@ void playGame() {
 
 			//Change sprite if character is in motion
 			if (player1.xVelocity != 0 || player1.yVelocity != 0) {
-				if (player1.getTextureActive() != player1.getTextureRun()) {
-					player1.setTextureActive(player1.getTextureRun());
-					player1.currentFrame = 0;
-					player1.currentMaxFrame = player1.getNumRunAnimationFrames();
+
+				if (player1.yVelocity == 0) {
+					if (player1.getTextureActive() != player1.getTextureRun()) {
+						player1.setTextureActive(player1.getTextureRun());
+						player1.currentFrame = 0;
+						player1.currentMaxFrame = player1.getNumRunAnimationFrames();
+					}
+				}
+
+
+				if (player1.xVelocity == 0 && player1.yVelocity > 0) {
+					if (player1.getTextureActive() != player1.getTextureDownRun()) {
+						player1.setTextureActive(player1.getTextureDownRun());
+						player1.currentFrame = 0;
+						player1.currentMaxFrame = player1.getNumRunAnimationFrames();
+					}
+				}
+
+				if (player1.xVelocity == 0 && player1.yVelocity < 0) {
+					if (player1.getTextureActive() != player1.getTextureUpRun()) {
+						player1.setTextureActive(player1.getTextureUpRun());
+						player1.currentFrame = 0;
+						player1.currentMaxFrame = player1.getNumRunAnimationFrames();
+
+					}
 				}
 			}
+
 			else {
 				if (player1.getTextureActive() != player1.getTextureIdle()) {
 					player1.setTextureActive(player1.getTextureIdle());
