@@ -386,17 +386,19 @@ bool characterCreateScreen() {
 	int charAnimationPixelShift = 144;
 	int delaysPerFrame = 0;
 	int frame = 0;
+	
+	int attributeX = 245;
 
 	SDL_Rect characterBox = { 470, 225, 144, 144 };
 	SDL_Rect pointsAllocatedRectangle = { 227, 32, 0, 0 };
-	SDL_Rect strengthTextRectangle = { 250, 115, 0, 0 };
-	SDL_Rect intelligenceTextRectangle = { 250, 205, 0, 0 };
-	SDL_Rect dexterityTextRectangle = { 250, 302, 0, 0 };
-	SDL_Rect constitutionTextRectangle = { 250, 395, 0, 0 };
-	SDL_Rect faithTextRectangle = { 250, 490, 0, 0 };
+	SDL_Rect strengthTextRectangle = { attributeX, 115, 0, 0 };
+	SDL_Rect intelligenceTextRectangle = { attributeX, 205, 0, 0 };
+	SDL_Rect dexterityTextRectangle = { attributeX, 302, 0, 0 };
+	SDL_Rect constitutionTextRectangle = { attributeX, 395, 0, 0 };
+	SDL_Rect faithTextRectangle = { attributeX, 490, 0, 0 };
 	SDL_Rect nameTextRectangle = { 143, 640, 0,0 };
 	SDL_Rect errorTextRectangle = { 465, 580, 0, 0 };
-	SDL_Rect errorTextRectangleLong = { 445, 580, 0, 0 };
+	SDL_Rect errorTextRectangleLong = { 415, 580, 0, 0 };
 	SDL_Color textColor = { 112, 96, 80, 0 };
 	SDL_Color errorColor = { 255, 0, 0, 0 };
 	std::string nameInputText;
@@ -580,8 +582,8 @@ bool characterCreateScreen() {
 
 			else if (e.type == SDL_TEXTINPUT) {
 				//add char
-				//set length limit to arbitrariy be 13 (fits textbox about right, depends on what user enters)
-				if (nameInputText.length() < 13) {
+				//set length limit to arbitrariy be 11 (fits textbox about right, depends on what user enters)
+				if (nameInputText.length() < 11) {
 					Mix_PlayChannel(-1, gBSound, 0);
 					nameInputText += e.text.text;
 				}
