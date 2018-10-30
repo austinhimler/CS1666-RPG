@@ -424,8 +424,70 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	
 	//bool printed = false; // for text combat ui
 
+	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	
+	// enable alpha support
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	GLfloat vertices[] =
+	{
+		// Positions          // Colors           // Texture Coords
+		 1.0f,  -0.4f, 0.0f,    1.0f, 0.0f, 0.0f,    1.0f, 1.0f, // Top Right
+		 1.0f, -1.0f, 0.0f,    0.0f, 1.0f, 0.0f,    1.0f, 0.0f, // Bottom Right
+		-1.0f, -1.0f, 0.0f,    0.0f, 0.0f, 1.0f,    0.0f, 0.0f, // Bottom Left
+		-1.0f,  -0.4f, 0.0f,    1.0f, 1.0f, 0.0f,    0.0f, 1.0f  // Top Left
+	};
+	GLuint indices[] =
+	{  // Note that we start from 0!
+		0, 1, 3, // First Triangle
+		1, 2, 3  // Second Triangle
+	};
+	GLuint VBO, VAO, EBO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	// Position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)0);
+	glEnableVertexAttribArray(0);
+	// Color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+	// Texture Coordinate attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
+
+	glBindVertexArray(0); // Unbind VAO
+	GLuint texture;
+
+	int width, height;
+	// ===================
+	   // Texture
+	   // ===================
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	// Set our texture parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// Set texture filtering
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Load, create texture and generate mipmaps
+	
+	
+	glGenerateMipmap(GL_TEXTURE_2D);
+	
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 
 	while (inCombat) {
@@ -433,8 +495,21 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 		if (e.type == SDL_QUIT) {
 		
 			return false; 
+
+			glDeleteVertexArrays(1, &VAO);
+			glDeleteBuffers(1, &VBO);
+			glDeleteBuffers(1, &EBO);
 		}
 		
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture);
+	
+
+		// Draw container
+		glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+
 		SDL_GL_SwapWindow(gWindow);
 		SDL_Delay(16);
 		}
