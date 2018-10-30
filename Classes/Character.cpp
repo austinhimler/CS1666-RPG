@@ -121,10 +121,20 @@
 	int Character::getImageWidth() { return imageWidth; }
 	int Character::getImageHeight() { return imageHeight; }
 	std::string Character::getImageIdleResource() { return imageIdleResource; }
+	std::string Character::getImageRightIdleResource() { return imageRightIdleResource; }
 	std::string Character::getImageRunResource() { return imageRunResource; }
+	std::string Character::getImageUpRunResource() { return imageUpRunResource; }
+	std::string Character::getImageDownRunResource() { return imageDownRunResource; }
+	std::string Character::getImageDownRightRunResource() { return imageDownRightRunResource; }
+	std::string Character::getImageUpRightRunResource() { return imageUpRightRunResource; }
 	std::string Character::getName() { return name; }
 	SDL_Texture* Character::getTextureIdle() { return textureIdle; }
+	SDL_Texture* Character::getTextureRightIdle() { return textureIdle; }
 	SDL_Texture* Character::getTextureRun() { return textureRun; }
+	SDL_Texture* Character::getTextureDownRun() { return textureDownRun; }
+	SDL_Texture* Character::getTextureDownRightRun() { return textureDownRightRun; }
+	SDL_Texture* Character::getTextureUpRightRun() { return textureUpRightRun; }
+	SDL_Texture* Character::getTextureUpRun() { return textureUpRun; }
 	SDL_Texture* Character::getTextureActive() { return textureActive; }
 	SDL_Rect Character::getRectangle() { return rectangle; }
 	std::vector<Attribute> Character::getAttributes() { return attributes; }
