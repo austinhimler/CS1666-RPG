@@ -1116,11 +1116,7 @@ void playGame() {
 
 			timeSinceLastMovement = SDL_GetTicks();
 
-			if (player1.xVelocity > 0 && flip == SDL_FLIP_HORIZONTAL)
-				flip = SDL_FLIP_NONE;
-			else if (player1.xVelocity < 0 && flip == SDL_FLIP_NONE)
-				flip = SDL_FLIP_HORIZONTAL;
-
+	
 			//Set Black
 			SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 			SDL_RenderClear(gRenderer);
