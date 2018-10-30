@@ -1081,6 +1081,7 @@ void playGame() {
 			//for (auto i : combatants)
 				//c.push_back(&i);
 			bool inCombat = cm.combatMain(combatants);
+			combatStarted = false;
 			enemy1.xPosition = rand() % (LEVEL_WIDTH - enemy1.getImageWidth());
 			enemy1.yPosition = rand() % (LEVEL_HEIGHT - enemy1.getImageHeight());
 			inOverworld = true;
