@@ -2,66 +2,66 @@
 
 
 
-	QueueManager::QueueManager(vector<Character *> c)
-	{
-		for (auto C : c) {
-			currTurn.push_back(C);
-			nextTurn.push_back(C);
-		}
-		insertionSort(currTurn, currTurn.size());
-		insertionSort(nextTurn, nextTurn.size());
+QueueManager::QueueManager(vector<Character *> c)
+{
+	for (auto C : c) {
+		currTurn.push_back(C);
+		nextTurn.push_back(C);
 	}
+	insertionSort(currTurn, currTurn.size());
+	insertionSort(nextTurn, nextTurn.size());
+}
 
-	QueueManager::~QueueManager()
+QueueManager::~QueueManager()
+{
+
+}
+
+
+void QueueManager::createRounds(vector<Character*> c)
+{
+
+}
+
+void QueueManager::changeRounds()
+{
+	vectorCopy(currTurn, nextTurn);
+	insertionSort(nextTurn, nextTurn.size());
+}
+
+void QueueManager::insertionSort(std::vector<Character*>& turn, int n)
+{
+	int i, j;
+	Character* key;
+	for (i = 1; i < n; i++)
 	{
-
-	}
-
-
-	void QueueManager::createRounds(vector<Character*> c)
-	{
-		
-	}
-
-	void QueueManager::changeRounds()
-	{
-		vectorCopy(currTurn, nextTurn);
-		insertionSort(nextTurn, nextTurn.size());
-	}
-
-	void QueueManager::insertionSort(std::vector<Character*>& turn, int n)
-	{
-		int i, j;
-		Character* key;
-		for (i = 1; i < n; i++)
+		//key = turn[i];
+		j = i - 1;
+		/*
+		using namespace std;
+		Enemy* tempp = (Enemy*)turn[j];
+		cout << tempp->toString() << endl;
+		cout << turn.size() << " "<< j<<endl;
+		cout << turn[j]->getDex() << endl;
+		cout << turn[i]->toString() << endl;
+		//*/
+		while (j >= 0 && turn[j]->getDex() > turn[i]->getDex())
 		{
-			//key = turn[i];
-			j = i - 1;
-			/*
-			using namespace std;
-			Enemy* tempp = (Enemy*)turn[j];
-			cout << tempp->toString() << endl;
-			cout << turn.size() << " "<< j<<endl;
-			cout << turn[j]->getDex() << endl;
-			cout << turn[i]->toString() << endl;
-			//*/
-			while (j >= 0 && turn[j]->getDex() > turn[i]->getDex())
-			{
-				turn[j + 1] = turn[j];
-				j = j - 1;
-			}
-			turn[j + 1] = turn[i];
+			turn[j + 1] = turn[j];
+			j = j - 1;
 		}
+		turn[j + 1] = turn[i];
 	}
+}
 
-	void QueueManager::vectorCopy(vector<Character*>& cT, vector<Character*>& nT)
+void QueueManager::vectorCopy(vector<Character*>& cT, vector<Character*>& nT)
+{
+	cT.erase(cT.begin(), cT.end());
+	for (int i = 0; i < nT.size(); i++)
 	{
-		cT.erase(cT.begin(), cT.end());
-		for (int i = 0; i < nT.size(); i++)
-		{
-			cT.push_back(nT[i]);
-		}
+		cT.push_back(nT[i]);
 	}
+}
 
 CombatManager::CombatManager()
 {
@@ -178,7 +178,7 @@ bool CombatManager::textAction(Character* c) {
 
 				switch (abil_temp[helper[abil_selection]].getType()) {
 				case AbilityResource::tSUMMON:
-					std::cout << "NLF4 has canceled office hours, he can't make it." << std::endl;
+					std::cout << "NLF4 is lecturing, can't make it." << std::endl;
 					break;
 				case AbilityResource::tESCAPE:
 					if (c->beingTarget(&abil_temp[helper[abil_selection]]) == -2) {
@@ -424,7 +424,7 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	QueueManager qm = QueueManager(participants);
 	LoadTexture background;
 	SDL_Event e;
-	background.loadFromFile("Images/UI/CombatScene/combatScene.png",gRenderer);
+	background.loadFromFile("Images/UI/CombatScene/combatScene.png", gRenderer);
 	
 	TTF_Font* font = Helper::setFont("Fonts/Stacked pixel.ttf", 25);
 	SDL_Color txt_color = {0,0,0,0};
@@ -497,7 +497,3 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	return true;
 
 }
-
-
-
-
