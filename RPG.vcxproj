@@ -156,7 +156,6 @@
     <ClCompile Include="Classes\Button.cpp" />
     <ClCompile Include="Classes\Character.cpp" />
     <ClCompile Include="Classes\Cluster.cpp" />
-    <ClCompile Include="Classes\QMFix.cpp" />
     <ClCompile Include="Classes\Enemy.cpp" />
     <ClCompile Include="Classes\Inventory.cpp" />
     <ClCompile Include="Classes\Item.cpp" />
@@ -218,7 +217,6 @@
     <ClInclude Include="Headers\Item.h" />
     <ClInclude Include="Headers\LoadTexture.h" />
     <ClInclude Include="Headers\Player.h" />
-    <ClInclude Include="Headers\QMFix.h" />
     <ClInclude Include="Headers\QueueManager.h" />
     <ClInclude Include="Headers\Resistance.h" />
     <ClInclude Include="Headers\Tile.h" />
