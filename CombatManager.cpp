@@ -131,7 +131,7 @@ bool CombatManager::textAction(Character* c) {
 			int char_selection;
 			switch (action) {
 			case 6:
-				std::cout << "Just kidding. You don't have SHEET here\n" << std::endl;
+				std::cout << "Just kidding. You don't have SHEETz coffee here\n" << std::endl;
 				break;
 			case 7:
 			case 8:
