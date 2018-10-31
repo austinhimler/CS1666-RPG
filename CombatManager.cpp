@@ -459,10 +459,10 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	GLfloat vertices[] =
 	{
 		// Positions          // Colors           // Texture Coords
-		 1.0f,  -0.4f, 0.0f,    1.0f, 0.0f, 0.0f,    1.0f, 1.0f, // Top Right
-		 1.0f, -1.0f, 0.0f,    0.0f, 1.0f, 0.0f,    1.0f, 0.0f, // Bottom Right
-		-1.0f, -1.0f, 0.0f,    0.0f, 0.0f, 1.0f,    0.0f, 0.0f, // Bottom Left
-		-1.0f,  -0.4f, 0.0f,    1.0f, 1.0f, 0.0f,    0.0f, 1.0f  // Top Left
+		0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // Top Right
+		0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // Bottom Right
+		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // Bottom Left
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // Top Left
 	};
 	GLuint indices[] =
 	{  // Note that we start from 0!
@@ -508,10 +508,10 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	// Load, create texture and generate mipmaps
-	
-	
+	 unsigned char *image = SOIL_load_image( "Images/UI/CombatScene/image1.jpg", &width, &height, 0, SOIL_LOAD_RGBA );
+	 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
-	
+	 SOIL_free_image_data( image );
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 
