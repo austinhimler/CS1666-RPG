@@ -518,15 +518,6 @@ bool characterCreateScreen() {
 
 						if (i->attribute == "strength") {
 							if ((deltaAttribute + strength) <= maxStat && (deltaAttribute + strength) >= minStat) {
-								/*
-								if ((deltaAttribute + strength) == maxStat) {
-									i->locked = true;
-								}
-								else {
-									i->locked = false;
-									
-								}
-								*/
 						
 
 								
@@ -535,7 +526,6 @@ bool characterCreateScreen() {
 								pointsToAllocate -= deltaAttribute;
 							}
 							else if ((deltaAttribute + strength) > maxStat) {
-								//i->locked = true;
 		
 								errorInputText = "Max Strength!";
 								
@@ -940,7 +930,7 @@ void playGame() {
 			timePassed = (SDL_GetTicks() - timeSinceLastMovement) / 1000.0;
 			player1.xDeltaVelocity = 0;
 			player1.yDeltaVelocity = 0;
-			double runingAddSpeed = 0;
+			double runningAddSpeed = 0;
 
 			const Uint8* keyState = SDL_GetKeyboardState(nullptr);
 			if (keyState[SDL_SCANCODE_W])
@@ -952,7 +942,7 @@ void playGame() {
 			if (keyState[SDL_SCANCODE_D])
 				player1.xDeltaVelocity += (player1.getAcceleration() * timePassed);
 			if (keyState[SDL_SCANCODE_LSHIFT])
-				runingAddSpeed = 200;
+				runningAddSpeed = 200;
 
 
 			if (player1.xDeltaVelocity == 0) {
@@ -988,15 +978,15 @@ void playGame() {
 			}
 
 			//bound within Max Speed
-			if (player1.xVelocity < -(player1.getSpeedMax() + runingAddSpeed))
-				player1.xVelocity = -(player1.getSpeedMax() + runingAddSpeed);
-			else if (player1.xVelocity > (player1.getSpeedMax() + runingAddSpeed))
-				player1.xVelocity = (player1.getSpeedMax() + runingAddSpeed);
+			if (player1.xVelocity < -(player1.getSpeedMax() + runningAddSpeed))
+				player1.xVelocity = -(player1.getSpeedMax() + runningAddSpeed);
+			else if (player1.xVelocity > (player1.getSpeedMax() + runningAddSpeed))
+				player1.xVelocity = (player1.getSpeedMax() + runningAddSpeed);
 			//bound within Max Speed
-			if (player1.yVelocity < -(player1.getSpeedMax() + runingAddSpeed))
-				player1.yVelocity = -(player1.getSpeedMax() + runingAddSpeed);
-			else if (player1.yVelocity > (player1.getSpeedMax() + runingAddSpeed))
-				player1.yVelocity = (player1.getSpeedMax() + runingAddSpeed);
+			if (player1.yVelocity < -(player1.getSpeedMax() + runningAddSpeed))
+				player1.yVelocity = -(player1.getSpeedMax() + runningAddSpeed);
+			else if (player1.yVelocity > (player1.getSpeedMax() + runningAddSpeed))
+				player1.yVelocity = (player1.getSpeedMax() + runningAddSpeed);
 
 			//Change sprite if character is in motion
 			if (player1.xVelocity != 0 || player1.yVelocity != 0) {
@@ -1056,7 +1046,8 @@ void playGame() {
 				}
 			}
 
-
+			int beforeMoveX = player1.xPosition;
+			int beforeMoveY = player1.yPosition;
 			//Move vertically
 			player1.yPosition += (player1.yVelocity * timePassed);
 			if (player1.yPosition < 0 || (player1.yPosition + player1.getImageHeight() > LEVEL_HEIGHT)) {
@@ -1076,6 +1067,9 @@ void playGame() {
 
 
 			if (tiles[currentTile]->mType != 0) {
+				player1.xPosition = beforeMoveX;
+				player1.yPosition = beforeMoveY;
+				/*
 				//toDo
 				bool xVelPos = player1.xVelocity > 0;
 				bool xVelNeg = player1.xVelocity < 0;
@@ -1094,6 +1088,7 @@ void playGame() {
 
 				//player1.xPosition -= 1;
 				//player1.yPosition -= 1;
+				*/
 			}
 
 
