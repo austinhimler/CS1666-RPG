@@ -29,6 +29,9 @@ static SDL_Texture* pondBottom;
 static SDL_Texture* pondTopLeft;
 static SDL_Texture* pondTop;
 static SDL_Texture* pondBottomLeft;
+static SDL_Texture* OutsideTopRight;
+static SDL_Texture* OutsideTopLeft;
+static SDL_Texture* OutsideBottomRight;
 //loads tile textures
 
 

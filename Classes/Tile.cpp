@@ -19,6 +19,15 @@ Tile::Tile(int x, int y, int tileType)
 	solid = true;
 	switch (tileType)
 	{
+	case 12://ouside Bottom Right edge
+		texture = OutsideBottomRight;
+		break;
+	case 11://ouside top left edge
+		texture = OutsideTopLeft;
+		break;
+	case 10://ouside top right edge
+		texture = OutsideTopRight;
+		break;
 	case 9://pond right edge
 		texture = pondLeft;
 		flip = SDL_FLIP_HORIZONTAL;
@@ -83,8 +92,13 @@ SDL_Rect Tile::getBox()
 
 void Tile::loadTiles()
 {
+	OutsideBottomRight = Helper::loadImage("Images/Tiles/OutsideBottomRight.png", gRenderer);
 
 	pondTopLeft = Helper::loadImage("Images/Tiles/pondTopLeft.png", gRenderer);
+
+	OutsideTopLeft = Helper::loadImage("Images/Tiles/OutsideTopLeft.png", gRenderer);
+
+	OutsideTopRight = Helper::loadImage("Images/Tiles/OutsideTopRight.png", gRenderer);
 
 	pondLeft = Helper::loadImage("Images/Tiles/pondLeft.png", gRenderer);
 
