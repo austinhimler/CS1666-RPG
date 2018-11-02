@@ -17,6 +17,8 @@
 		learnAbility(ATTACK);
 		learnAbility(DEFEND);
 		learnAbility(ESCAPE);
+		xVelocity = 0;
+		yVelocity = 0;
 	}
 	Character::Character(std::string n, int s, int i, int d, int c, int f) : Character(n, std::vector<Attribute>({ Attribute("Strength", s), Attribute("Intelligence", i) ,Attribute("Dexerity", d) , Attribute("Constitution", c) ,Attribute("Faith", f) })) {}
 	Character::Character(std::string n) : Character(n, 1, 1, 1, 1, 1) {}
