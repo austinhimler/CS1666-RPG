@@ -16,15 +16,16 @@ Tile::Tile(int x, int y, int tileType)
 	//Get the tile type
 	mType = tileType;
 	Helper temp = Helper();
-	solid = true;
+	
 	switch (tileType)
 	{
 	case 14://single grass 2 
 		texture = singleGrass2;
-		solid = false;
+		
 		break;
 	case 13://ouside Bottom Left edge
 		texture = OutsideBottomLeft;
+
 		break;
 	case 12://ouside Bottom Right edge
 		texture = OutsideBottomRight;
@@ -67,7 +68,7 @@ Tile::Tile(int x, int y, int tileType)
 		break;
 	case 0://grass
 		texture = grass;
-		solid = false;
+		
 		break;
 	}
 }

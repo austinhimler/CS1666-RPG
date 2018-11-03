@@ -8,14 +8,14 @@ Cluster::Cluster(int q) {
 		characterGroup.push_back(new Enemy("Owl", 8, 10, 10, 8, 10));
 	}
 	clusterSize = q;
-	pixelShiftAmountForAnimationInSpriteSheet = 160;
-	imageWidth = 160;
-	imageHeight = 148;
+	pixelShiftAmountForAnimationInSpriteSheet = 144;
+	imageWidth = 144;
+	imageHeight = 144;
 
-	numIdleAnimationFrames = 6;
+	numIdleAnimationFrames = 6 ;
 	currentFrame = 0;
 	timeBetweenIdleAnimations = 120;
-	imageIdleResource = "Images/Enemies/shadow_cluster/owl.png";
+	imageIdleResource = "Images/Enemies/shadow_cluster/OWL_BROWN.png";
 
 	Helper helper = Helper();
 	textureIdle = helper.loadImage(imageIdleResource.c_str(), gRenderer);
