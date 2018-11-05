@@ -10,6 +10,7 @@
 #include <SDL_ttf.h>
 #include "Attributes/Attr_Globals.h"
 #include "Abilities/AbilityResource.h"
+#include "Ailments/AilmentResource.h"
 /*
 //namespace Char_Help {
 	
@@ -51,6 +52,9 @@ enum BUFF {
 enum AILMENTS {
 	SILENCE,
 	POISON,
+	FIRE,
+	STUN,
+	CURSE
 };
 	
 

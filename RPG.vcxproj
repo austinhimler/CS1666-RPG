@@ -199,6 +199,7 @@
     <ClInclude Include="Headers\Abilities\Attack.h" />
     <ClInclude Include="Headers\Ability.h" />
     <ClInclude Include="Headers\Ailment.h" />
+    <ClInclude Include="Headers\Ailments\AilmentResource.h" />
     <ClInclude Include="Headers\Attribute.h" />
     <ClInclude Include="Headers\Attributes\Constitution.h" />
     <ClInclude Include="Headers\Attributes\Dexterity.h" />

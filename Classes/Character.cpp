@@ -12,6 +12,7 @@
 		energyRegen = (energyMax < 10)?1:0.1 * energyMax;
 		name = n;
 		buff = std::vector<int>(BUFFCOUNT, 0);
+		level = 1;
 		learnAbility(ATTACK);
 		learnAbility(DEFEND);
 		learnAbility(ESCAPE);
@@ -130,3 +131,5 @@
 	double Character::getSpeedMax() { return speedMax; }
 	double Character::getAcceleration() { return acceleration; }
 	bool Character::is_Enemy() { return isEnemy; }
+	int Character::getLevel() { return level; }
+	Attribute Character::getAttr(int i) { return attributes[i]; }

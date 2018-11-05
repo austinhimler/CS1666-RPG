@@ -27,6 +27,7 @@ public:
 	Character(std::string n, int s, int i, int d, int c, int f);
 	Character(std::string n, std::vector<Attribute> attr);
 	
+	int getLevel();
 	int getHPMax();
 	int getHPCurrent();
 	int getMPCurrent();
@@ -48,6 +49,9 @@ public:
 	int getDex();
 	int getHelp(int n);
 	bool is_Enemy();
+	std::vector<Attribute> getAttributes();
+	Attribute getAttr(int i);
+	std::vector<Ability> getAbilities();
 
 	double xVelocity;
 	double yVelocity;
@@ -66,8 +70,6 @@ public:
 	SDL_Texture* getTextureRun();
 	SDL_Texture* getTextureActive();
 	SDL_Rect getRectangle();
-	std::vector<Attribute> getAttributes();
-	std::vector<Ability> getAbilities();
 	
 	int beingTarget(Ability* a); // return -1 for succesful escape, -2 for failed escape, non-negative integers for HP healed or damaged
 	//void takeDamage(Ability a);
@@ -89,6 +91,7 @@ protected:
 	int energyRegen;
 	int mpMax;
 	int mpCurrent;
+	int level;
 	std::vector<int> buff;
 	std::string imageIdleResource;
 	std::string imageRunResource;
