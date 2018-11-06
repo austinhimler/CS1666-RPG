@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _____ATTR_GLOBALS_H_____
+#define _____ATTR_GLOBALS_H_____
 #include <string>
 
 
@@ -18,3 +19,4 @@ const std::string ATTR_NAMES[] = {
 	"Constitution",
 	"Faith"
 };
+#endif

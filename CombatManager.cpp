@@ -1,8 +1,4 @@
 #include "Headers/CombatManager.h"
-#include "SOIL2/SOIL2.h"
-#include "GL/glfw3.h"
-
-
 
 QueueManager::QueueManager(vector<Character *> c)
 {
@@ -67,7 +63,7 @@ void QueueManager::vectorCopy(vector<Character*>& cT, vector<Character*>& nT)
 
 CombatManager::CombatManager()
 {
-
+	
 }
 
 
@@ -444,102 +440,42 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "Inventory", gRenderer));
 	*/
 
-	glClearColor(0.2, 0.4, 0.0, 1.0); //(float red,float green,float blue,float alpha)just like SDL_SetRenderDrawColor(&renderer, r, g, b, a)
-	glClear(GL_COLOR_BUFFER_BIT);  //just like SDL_RenderClear(&renderer);
-	//SDL_GL_SwapWindow(gWindow); //just like SDL_RenderPresent(&renderer);
-	
 	bool printed = false; // for text combat ui
 
+	SDL_GLContext glcontext = SDL_GL_CreateContext(gWindow);
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
-	
-	// enable alpha support
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	GLfloat vertices[] =
-	{
-		// Positions          // Colors           // Texture Coords
-		 1.0f,  -0.4f, 0.0f,    1.0f, 0.0f, 0.0f,    1.0f, 1.0f, // Top Right
-		 1.0f, -1.0f, 0.0f,    0.0f, 1.0f, 0.0f,    1.0f, 0.0f, // Bottom Right
-		-1.0f, -1.0f, 0.0f,    0.0f, 0.0f, 1.0f,    0.0f, 0.0f, // Bottom Left
-		-1.0f,  -0.4f, 0.0f,    1.0f, 1.0f, 0.0f,    0.0f, 1.0f  // Top Left
-	};
-	GLuint indices[] =
-	{  // Note that we start from 0!
-		0, 1, 3, // First Triangle
-		1, 2, 3  // Second Triangle
-	};
-	GLuint VBO, VAO, EBO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
-
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	// Position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)0);
-	glEnableVertexAttribArray(0);
-	// Color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
-	// Texture Coordinate attribute
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)(6 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(2);
-
-	glBindVertexArray(0); // Unbind VAO
-	GLuint texture;
+	glewInit();
+	Graphics combatGraphics;
+	combatGraphics.init();
 
 	int width, height;
-	// ===================
-	   // Texture
-	   // ===================
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	// Set our texture parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// Set texture filtering
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// Load, create texture and generate mipmaps
-	 unsigned char *image = SOIL_load_image( "Images/UI/CombatScene/image1.jpg", &width, &height, 0, SOIL_LOAD_RGBA );
-	 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	 SOIL_free_image_data( image );
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-
+	
 	while (inCombat) {
-		while (SDL_PollEvent(&e)) {
+		combatGraphics.display();
+		/*while (SDL_PollEvent(&e)) {
+			
 		if (e.type == SDL_QUIT) {
 			//background.free();
 			return false; 
 
-			glDeleteVertexArrays(1, &VAO);
-			glDeleteBuffers(1, &VBO);
-			glDeleteBuffers(1, &EBO);
+			//glDeleteVertexArrays(1, &VAO);
+			//glDeleteBuffers(1, &VBO);
+			//glDeleteBuffers(1, &EBO);
 		}
 		
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, texture);
 	
 
 		// Draw container
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
+		//glBindVertexArray(VAO);
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//glBindVertexArray(0);
 
 
-		SDL_GL_SwapWindow(gWindow);
+		//SDL_GL_SwapWindow(gWindow);
 	
-		/*
+		
 		background.renderBackground(gRenderer);
 		delaysPerFrame++;
 		if (delaysPerFrame >= 6) {
@@ -564,9 +500,9 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 			}
 		}
 		//SDL_RenderPresent(gRenderer);
-		*/
+		
 		SDL_Delay(16);
-		}
+		}*/
 		
 		textMain(printed); // text combat ui initialization
 
@@ -579,7 +515,7 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 		printed = false; // for text combat ui
 		qm.changeRounds();
 	}
-	
+	SDL_GL_DeleteContext(glcontext);
 	return true;
 
 }

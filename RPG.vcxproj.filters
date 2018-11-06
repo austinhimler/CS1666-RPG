@@ -154,16 +154,10 @@
     <ClCompile Include="Classes\LoadTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SOIL2\etc1_utils.c">
+    <ClCompile Include="Classes\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SOIL2\image_DXT.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SOIL2\image_helper.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SOIL2\SOIL2.c">
+    <ClCompile Include="Classes\Graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -294,13 +288,16 @@
     <ClInclude Include="SOIL2\stb_image_write.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Graphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="map1.txt">
       <Filter>Resource Files</Filter>
     </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="glew32.dll" />
   </ItemGroup>
 </Project>

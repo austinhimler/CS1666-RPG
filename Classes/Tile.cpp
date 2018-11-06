@@ -16,9 +16,17 @@ Tile::Tile(int x, int y, int tileType)
 	//Get the tile type
 	mType = tileType;
 	Helper temp = Helper();
-	solid = true;
+	
 	switch (tileType)
 	{
+	case 14://single grass 2 
+		texture = singleGrass2;
+		
+		break;
+	case 13://ouside Bottom Left edge
+		texture = OutsideBottomLeft;
+
+		break;
 	case 12://ouside Bottom Right edge
 		texture = OutsideBottomRight;
 		break;
@@ -60,7 +68,7 @@ Tile::Tile(int x, int y, int tileType)
 		break;
 	case 0://grass
 		texture = grass;
-		solid = false;
+		
 		break;
 	}
 }
@@ -92,6 +100,10 @@ SDL_Rect Tile::getBox()
 
 void Tile::loadTiles()
 {
+	singleGrass2 = Helper::loadImage("Images/Tiles/singleGrass2.png", gRenderer);
+
+	OutsideBottomLeft = Helper::loadImage("Images/Tiles/OutsideBottomLeft.png", gRenderer);
+
 	OutsideBottomRight = Helper::loadImage("Images/Tiles/OutsideBottomRight.png", gRenderer);
 
 	pondTopLeft = Helper::loadImage("Images/Tiles/pondTopLeft.png", gRenderer);

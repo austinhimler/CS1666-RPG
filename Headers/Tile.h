@@ -4,8 +4,8 @@
 #include <string>
 #include <fstream>
 
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
 
 #include "Helper.h"
 #include "Globals.h"
@@ -32,6 +32,8 @@ static SDL_Texture* pondBottomLeft;
 static SDL_Texture* OutsideTopRight;
 static SDL_Texture* OutsideTopLeft;
 static SDL_Texture* OutsideBottomRight;
+static SDL_Texture* OutsideBottomLeft;
+static SDL_Texture* singleGrass2;
 //loads tile textures
 
 
