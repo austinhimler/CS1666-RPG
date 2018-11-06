@@ -7,7 +7,6 @@
 #include "Resistance.h"
 #include "Ability.h"
 #include "Globals.h"
-#include "Ailment.h"
 #include <map>
 
 /*

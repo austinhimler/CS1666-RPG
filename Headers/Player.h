@@ -10,7 +10,7 @@
 class Player : public Character
 {
 public:
-		//stores stats
+	//stores stats
 	Player();
 	Player(std::string n);
 	Player(std::string n, int s, int i, int d, int c, int f);
