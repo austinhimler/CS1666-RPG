@@ -3,7 +3,7 @@
 
 void Graphics::init(void)
 {
-	GLuint program = Shader::initShader("../vshader.glsl", "../fshader.glsl");
+	GLuint program = Shader::initShader("vshader.glsl", "fshader.glsl");
 	glUseProgram(program);
 
 	int shape_num_vertices;
@@ -37,6 +37,20 @@ void Graphics::init(void)
 	glClearColor(1.0, 1.0, 1.0, 1.0);
 	glDepthRange(1, 0);
 
+}
+
+void Graphics::display(void)
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glPolygonMode(GL_FRONT, GL_FILL);
+	glPolygonMode(GL_BACK, GL_LINE);
+
+	glUniformMatrix4fv(ctm_location, 1, GL_FALSE, (GLfloat *)&ctm);
+
+	glDrawArrays(GL_TRIANGLES, 0, num_vertices);
+
+	SDL_RenderPresent(gRenderer);
 }
 
 glm::vec4* Graphics::cone(int *num_vertices)

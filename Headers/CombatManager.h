@@ -15,6 +15,7 @@
 #include "Helper.h"
 #include "Globals.h"
 #include "Shader.h"
+#include "Graphics.h"
 
 class CombatManager
 {
@@ -44,9 +45,6 @@ private:
 	SDL_Rect scene_box = { 0,0,720,540 };
 	SDL_Rect ui_box = { 17,529,685,167 };
 	SDL_Rect info_box = { 240,529,480, 167 };
-
-	void graphicsInit();
-
 };
 class QueueManager
 {
