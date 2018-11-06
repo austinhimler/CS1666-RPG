@@ -1,12 +1,15 @@
 #include "../Headers/Graphics.h"
+#include "time.h"
 
 void Graphics::init(void)
 {
 	GLuint program = Shader::initShader("../vshader.glsl", "../fshader.glsl");
 	glUseProgram(program);
 
-	glm::vec4 *shape_vertices;
-	glm::vec4 *shape_colors;
+	int shape_num_vertices;
+	glm::vec4 *shape_vertices = cone(&shape_num_vertices);
+	glm::vec4 *shape_colors = genRandomTriangleColors(shape_num_vertices);
+	num_vertices = shape_num_vertices;
 
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
@@ -34,4 +37,53 @@ void Graphics::init(void)
 	glClearColor(1.0, 1.0, 1.0, 1.0);
 	glDepthRange(1, 0);
 
+}
+
+glm::vec4* Graphics::cone(int *num_vertices)
+{
+	float theta, theta_r, theta10_r;
+	int index = 0;
+
+	*num_vertices = 216;
+	glm::vec4 *vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * 216);
+
+	for (theta = 0; theta <= 350; theta = theta + 10)
+	{
+		theta_r = theta * M_PI / 180.0;
+		theta10_r = (theta + 10) * M_PI / 180.0;
+
+		vertices[index] = glm::vec4(0.0, 0.0, 0.0, 1.0);
+		vertices[index + 1] = glm::vec4(cos(theta_r), 0.0, sin(theta_r), 1.0);
+		vertices[index + 2] = glm::vec4(cos(theta10_r), 0.0, sin(theta10_r), 1.0);
+		vertices[index + 3] = glm::vec4(0.0, 1.0, 0.0, 1.0);
+		vertices[index + 4] = glm::vec4(cos(theta10_r), 0.0, sin(theta10_r), 1.0);
+		vertices[index + 5] = glm::vec4(cos(theta_r), 0.0, sin(theta_r), 1.0);
+		index += 6;
+	}
+
+	return vertices;
+}
+
+glm::vec4* Graphics::genRandomTriangleColors(int num_vertices)
+{
+	GLfloat r, g, b;
+	int index = 0, i;
+
+	srand(time(0));
+
+	glm::vec4 *colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+
+	for (i = 0; i < num_vertices / 3; i++)
+	{
+		r = rand() / (float)RAND_MAX;
+		g = rand() / (float)RAND_MAX;
+		b = rand() / (float)RAND_MAX;
+
+		colors[index] = glm::vec4(r, g, b, 1.0);
+		colors[index + 1] = glm::vec4(r, g, b, 1.0);
+		colors[index + 2] = glm::vec4(r, g, b, 1.0);
+		index += 3;
+	}
+
+	return colors;
 }
