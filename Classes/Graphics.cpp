@@ -34,7 +34,7 @@ void Graphics::init(void)
 	ctm_location = glGetUniformLocation(program, "ctm");
 
 	glEnable(GL_DEPTH_TEST);
-	glClearColor(1.0, 1.0, 1.0, 1.0);
+	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glDepthRange(1, 0);
 
 }
@@ -50,7 +50,7 @@ void Graphics::display(void)
 
 	glDrawArrays(GL_TRIANGLES, 0, num_vertices);
 
-	SDL_RenderPresent(gRenderer);
+	SDL_GL_SwapWindow(gWindow);
 }
 
 glm::vec4* Graphics::cone(int *num_vertices)

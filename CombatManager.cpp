@@ -442,17 +442,18 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 
 	bool printed = false; // for text combat ui
 
+	SDL_GLContext glcontext = SDL_GL_CreateContext(gWindow);
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
 	glewInit();
 	Graphics combatGraphics;
 	combatGraphics.init();
 
-	//int width, height;
+	int width, height;
 	
 	while (inCombat) {
 		combatGraphics.display();
-		while (SDL_PollEvent(&e)) {
+		/*while (SDL_PollEvent(&e)) {
+			
 		if (e.type == SDL_QUIT) {
 			//background.free();
 			return false; 
@@ -474,7 +475,7 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 
 		//SDL_GL_SwapWindow(gWindow);
 	
-		/*
+		
 		background.renderBackground(gRenderer);
 		delaysPerFrame++;
 		if (delaysPerFrame >= 6) {
@@ -499,9 +500,9 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 			}
 		}
 		//SDL_RenderPresent(gRenderer);
-		*/
+		
 		SDL_Delay(16);
-		}
+		}*/
 		
 		textMain(printed); // text combat ui initialization
 
@@ -514,7 +515,7 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 		printed = false; // for text combat ui
 		qm.changeRounds();
 	}
-	
+	SDL_GL_DeleteContext(glcontext);
 	return true;
 
 }
