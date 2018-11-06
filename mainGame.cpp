@@ -864,19 +864,43 @@ void combatScene(std::vector<Character*> combatants) {
 
 }
 void playGame() {
+	vector<Cluster*> allEnemies = vector<Cluster*>();
+	for (int num_enemy = 0; num_enemy < 5; num_enemy++)
+	{
+		Cluster* enemy = new Cluster((rand() % 5)+1);
+		cout <<"Enemy "<<num_enemy+1<<" Cluster Size: "<<  enemy->clusterSize << endl;
+		allEnemies.push_back(enemy);
+	}
 
-	Cluster enemy1 = Cluster(1);
 	//SDL_RendererFlip flip = SDL_FLIP_NONE;
 
+	int tile_test = -1;
+	
 	player1.setTextureActive(player1.getTextureIdle());
 	player1.currentMaxFrame = player1.getNumIdleAnimationFrames();
 
-	enemy1.setTextureActive(enemy1.getTextureIdle());
-	enemy1.currentMaxFrame = enemy1.getNumIdleAnimationFrames();
 
-	// Randomly spawn the enemy
-	enemy1.xPosition = player1.xPosition + 150;//rand() % (LEVEL_WIDTH - enemy1.getImageWidth());
-	enemy1.yPosition = player1.yPosition + 150; //rand() % (LEVEL_HEIGHT - enemy1.getImageHeight());
+	Tile*  tiles[TOTAL_TILES];
+
+	//tiles
+	//Need to delete this to stop memory leak if we load more than one map
+	SDL_Rect* BlockedTiles = loadMap(tiles);
+
+	for (auto i : allEnemies)
+	{
+		i->setTextureActive(i->getTextureIdle());
+		i->currentMaxFrame = i->getNumIdleAnimationFrames();
+		// Randomly spawn the enemy
+		for (;;)
+		{
+			i->xPosition = rand() % (LEVEL_WIDTH - i->getImageWidth());
+			i->yPosition = rand() % (LEVEL_HEIGHT - i->getImageHeight());
+			int t_tile = (int)(i->xPosition + (i->rectangle.w / 2)) / TILE_WIDTH;
+			t_tile += (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) * 30;
+			if (tiles[t_tile]->mType == 0)
+				break;
+		}
+	}
 
 	std::vector<Character*> charactersOnScreen;
 	std::vector<Character*> combatants;
@@ -886,8 +910,11 @@ void playGame() {
 	Uint32 timeSinceLastAnimation = SDL_GetTicks();
 	player1.timeSinceLastMovement = timeSinceLastMovement;
 	player1.timeSinceLastAnimation = timeSinceLastAnimation;
-	enemy1.timeSinceLastAnimation = timeSinceLastAnimation;
-
+	for (auto i : allEnemies)
+	{
+		cout << "Enemy Coordinates: (" << i->xPosition << "," << i->yPosition << ")" << endl;
+		i->timeSinceLastAnimation = timeSinceLastAnimation;
+	}
 	std::string hudHealthString = "Health: " + to_string(player1.getHPCurrent());
 	std::string hudLevelString = "Level: " + to_string(player1.getLevel());
 	SDL_Rect hudHealthTextRectangle = { 10, 10, 0, 0 };
@@ -898,13 +925,12 @@ void playGame() {
 	int response = 0;
 
 	charactersOnScreen.push_back(&player1);
-	charactersOnScreen.push_back(&enemy1);
+	for (auto i : allEnemies)
+	{
+		charactersOnScreen.push_back(i);
+	}
 
-	Tile*  tiles[TOTAL_TILES];
-
-	//tiles
-	//Need to delete this to stop memory leak if we load more than one map
-	SDL_Rect* BlockedTiles = loadMap(tiles);
+	
 	std::cout << player1.xPosition;
 	std::cout << "\n";
 	std::cout << player1.yPosition;
@@ -1065,6 +1091,13 @@ void playGame() {
 			int currentTile = (int)(player1.xPosition + (player1.rectangle.w / 2)) / TILE_WIDTH;
 			currentTile += (int)((player1.yPosition + player1.rectangle.h) / TILE_HEIGHT) * 30;
 
+			// Show which tile the character is standing on
+			/*
+			if (currentTile != tile_test) {
+				cout << currentTile << endl;
+				tile_test = currentTile;
+			}
+			*/
 
 			if (tiles[currentTile]->mType != 0) {
 				player1.xPosition = beforeMoveX;
@@ -1090,8 +1123,6 @@ void playGame() {
 				//player1.yPosition -= 1;
 				*/
 			}
-
-
 
 
 			camera.x = (player1.xPosition + player1.rectangle.w / 2) - SCREEN_WIDTH / 2;
@@ -1157,16 +1188,24 @@ void playGame() {
 				inPauseMenu = true;
 			}
 
-			if (check_collision(player1.rectangle, enemy1.rectangle)) {
-				combatants.clear();
-				combatants.push_back(&player1);
-				for (auto i : enemy1.characterGroup)
-				{
-					combatants.push_back(i);
+			int enemyToRemove = -1;
+			for (auto z : allEnemies)
+			{
+				enemyToRemove++;
+				if (check_collision(player1.rectangle, z->rectangle)) {
+					combatants.clear();
+					combatants.push_back(&player1);
+					for (auto i : z->characterGroup)
+					{
+						combatants.push_back(i);
+					}
+					allEnemies.erase(allEnemies.begin() + enemyToRemove);
+					inOverworld = false;
+					combatStarted = true;
+					break;
 				}
-				inOverworld = false;
-				combatStarted = true;
 			}
+			
 
 		}
 
@@ -1192,9 +1231,18 @@ void playGame() {
 			//for (auto i : combatants)
 				//c.push_back(&i);
 			bool inCombat = cm.combatMain(combatants);
+			if (player1.getHPCurrent() == 0){
+				cout << "\nYOU HAVE DIED\nGAME OVER MAN, GAME OVER" << endl;
+				exit(1);
+			}
+			else {
+
+			}
 			combatStarted = false;
+			/*
 			enemy1.xPosition = rand() % (LEVEL_WIDTH - enemy1.getImageWidth());
 			enemy1.yPosition = rand() % (LEVEL_HEIGHT - enemy1.getImageHeight());
+			*/
 			inOverworld = true;
 		}
 

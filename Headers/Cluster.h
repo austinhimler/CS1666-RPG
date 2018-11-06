@@ -18,5 +18,6 @@ public:
 	*/
 	vector<Character*> characterGroup;
 	int clusterSize;
+	bool alive;
 };
 #endif
