@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _____COMBAT_MANAGER_H_____
+#define _____COMBAT_MANAGER_H_____
 #include "Player.h"
 #include "Enemy.h"
 #include "Button.h"
@@ -60,3 +61,4 @@ public:
 private:
 	void insertionSort(std::vector<Character*>& turn, int n);
 };
+#endif
