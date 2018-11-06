@@ -1,6 +1,6 @@
 #include "Headers/CombatManager.h"
-#include "SOIL2/SOIL2.h"
-#include "GL/glfw3.h"
+//#include "SOIL2/SOIL2.h"
+//#include "GL/glfw3.h"
 
 
 
@@ -444,7 +444,7 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "Inventory", gRenderer));
 	*/
 
-	glClearColor(0.2, 0.4, 0.0, 1.0); //(float red,float green,float blue,float alpha)just like SDL_SetRenderDrawColor(&renderer, r, g, b, a)
+	glClearColor(1.0, 1.0, 1.0, 1.0); //(float red,float green,float blue,float alpha)just like SDL_SetRenderDrawColor(&renderer, r, g, b, a)
 	glClear(GL_COLOR_BUFFER_BIT);  //just like SDL_RenderClear(&renderer);
 	//SDL_GL_SwapWindow(gWindow); //just like SDL_RenderPresent(&renderer);
 	
@@ -509,10 +509,10 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	// Load, create texture and generate mipmaps
-	 unsigned char *image = SOIL_load_image( "Images/UI/CombatScene/image1.jpg", &width, &height, 0, SOIL_LOAD_RGBA );
-	 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+	 //unsigned char *image = SOIL_load_image( "Images/UI/CombatScene/image1.jpg", &width, &height, 0, SOIL_LOAD_RGBA );
+	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
-	 SOIL_free_image_data( image );
+	 //SOIL_free_image_data( image );
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 
@@ -581,5 +581,21 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	}
 	
 	return true;
+
+}
+
+void CombatManager::graphicsInit(void)
+{
+	GLuint program = Shader::initShader("../vshader.glsl", "../fshader.glsl");
+	glUseProgram(program);
+
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	GLuint buffer;
+	glGenBuffers(1, &buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(vec4) * 2 * num_vertices, NULL, GL_STATIC_DRAW);
 
 }

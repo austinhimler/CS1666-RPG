@@ -3,16 +3,17 @@
 #include "Enemy.h"
 #include "Button.h"
 #include "LoadTexture.h"
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
-#include <SDL_ttf.h>
-#include <GL/glew.h>
-#include <SDL_opengl.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_mixer.h>
+#include <SDL/SDL_ttf.h>
+#include <glew/glew.h>
+#include <SDL/SDL_opengl.h>
 #include <vector>
 #include <iostream>
 #include "Helper.h"
 #include "Globals.h"
+#include "Shader.h"
 
 class CombatManager
 {
@@ -42,6 +43,8 @@ private:
 	SDL_Rect scene_box = { 0,0,720,540 };
 	SDL_Rect ui_box = { 17,529,685,167 };
 	SDL_Rect info_box = { 240,529,480, 167 };
+
+	void graphicsInit();
 
 };
 class QueueManager
