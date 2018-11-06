@@ -1,8 +1,4 @@
 #include "Headers/CombatManager.h"
-//#include "SOIL2/SOIL2.h"
-//#include "GL/glfw3.h"
-
-
 
 QueueManager::QueueManager(vector<Character *> c)
 {
@@ -581,21 +577,5 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	}
 	
 	return true;
-
-}
-
-void CombatManager::graphicsInit(void)
-{
-	GLuint program = Shader::initShader("../vshader.glsl", "../fshader.glsl");
-	glUseProgram(program);
-
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-	GLuint buffer;
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(vec4) * 2 * num_vertices, NULL, GL_STATIC_DRAW);
 
 }
