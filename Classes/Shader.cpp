@@ -1,5 +1,6 @@
 #include "../Headers/Shader.h"
 
+
 Shader::Shader(const char* f, GLenum t, char* s)
 {
 	filename = f;
@@ -10,7 +11,7 @@ Shader::Shader(const char* f, GLenum t, char* s)
 // Create a NULL-terminated string by reading the provided file
 char* Shader::readShaderSource(const char* shaderFile)
 {
-	FILE* fp = fopen(shaderFile, "r");
+	FILE* fp = fopen(shaderFile, "rb");
 
 	if (fp == NULL)
 		return NULL;
@@ -75,7 +76,7 @@ GLuint Shader::initShader(const char* vShaderFile, const char* fShaderFile)
 		glAttachShader(program, shader);
 	}
 
-	/* link  and error check */
+	// link  and error check 
 	glLinkProgram(program);
 
 	GLint  linked;
@@ -93,7 +94,7 @@ GLuint Shader::initShader(const char* vShaderFile, const char* fShaderFile)
 		exit(EXIT_FAILURE);
 	}
 
-	/* use program object */
+	//use program object 
 	glUseProgram(program);
 
 	return program;

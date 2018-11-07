@@ -1,4 +1,6 @@
 #include "Headers/CombatManager.h"
+#include <stdio.h>
+#include <io.h>
 
 QueueManager::QueueManager(vector<Character *> c)
 {
@@ -457,40 +459,32 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 
 	bool printed = false; // for text combat ui
 
-	//SDL_GLContext glcontext = SDL_GL_CreateContext(gWindow);
-	//glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	//glewInit();
-	//Graphics combatGraphics;
-	//combatGraphics.init();
+	SDL_GLContext glcontext = SDL_GL_CreateContext(gWindow);
+	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	glewInit();
+	Graphics combatGraphics;
+	combatGraphics.init();
+	combatGraphics.display();
+	combatGraphics.rotateRandom();
+	//To rotate the cone. Must be outside inCombat loop as textCombat currently waits for user input so rotation only works after textInput completes
+		//while (true)
+			//combatGraphics.idle();
+	
 
 	int width, height;
 	
 	while (inCombat) {
-		//combatGraphics.display();
-		/*while (SDL_PollEvent(&e)) {
+		
+		//combatGraphics.idle();
+		//combatGraphics.rotateRandom();
+		while (SDL_PollEvent(&e)) {
 			
 		if (e.type == SDL_QUIT) {
-			//background.free();
+			SDL_GL_DeleteContext(glcontext);
 			return false; 
-
-			//glDeleteVertexArrays(1, &VAO);
-			//glDeleteBuffers(1, &VBO);
-			//glDeleteBuffers(1, &EBO);
 		}
 		
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, texture);
-	
-
-		// Draw container
-		//glBindVertexArray(VAO);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		//glBindVertexArray(0);
-
-
-		//SDL_GL_SwapWindow(gWindow);
-	
-		
+		/*
 		background.renderBackground(gRenderer);
 		delaysPerFrame++;
 		if (delaysPerFrame >= 6) {
@@ -516,9 +510,10 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		}
 		//SDL_RenderPresent(gRenderer);
 		
-		SDL_Delay(16);
-		}*/
+		SDL_Delay(16);*/
+		}
 		
+
 		textMain(printed); // text combat ui initialization
 
 		for (int i = 0; i < participants.size(); i++)
@@ -537,7 +532,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		printed = false; // for text combat ui
 		qm.changeRounds();
 	}
-	//SDL_GL_DeleteContext(glcontext);
-	return true;
+	SDL_GL_DeleteContext(glcontext);
+	return -100;
 
 }

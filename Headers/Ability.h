@@ -5,6 +5,7 @@
 #include <vector>
 #include "Attribute.h"
 #include "Globals.h"
+#include "Ailment.h"
 
 /*
 *	Curretnly not supporting abilities involving ailments and Resistance
@@ -12,7 +13,6 @@
 
 class Ability {
 public:
-	Ability(int n, std::vector<int> re, std::vector<Attribute> attr, std::vector<int> aa, std::vector<int> ca);
 	Ability(int n, std::vector<int> re, std::vector<Attribute> attr);
 	Ability(int n, std::string d, int eC, int cD, int v, int t);
 	Ability();
@@ -47,13 +47,6 @@ private:
 	// attributes affecting this ability, assuming maximum 3 attributes can affect it
 	// stores the enum of the attributes
 	std::vector<int> relatedAttr;
-	
-	// stores the enum of ailments affecting this ability
-	// leave this vector empty when no ailment can by caused by this ability
-	std::vector<int> affectAilm;
-	// stores the enum of ailments possibly caused by this ability
-	// leave this vector empty when no ailment can by caused by this ability
-	std::vector<int> causeAilm;
 
 	//std::vector<Resistance> resistancesEffected;
 	//Attribute abilityAttributeType;

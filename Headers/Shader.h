@@ -11,7 +11,7 @@ class Shader
 public:
 	const char*  filename;
 	GLenum       type;
-	char*      source;
+	char*        source;
 	
 	Shader(const char* f, GLenum t, char* s);
 	
