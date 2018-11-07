@@ -1189,10 +1189,12 @@ void playGame() {
 			}
 
 			int enemyToRemove = -1;
+			//Cluster collidingCluster;
 			for (auto z : allEnemies)
 			{
 				enemyToRemove++;
 				if (check_collision(player1.rectangle, z->rectangle)) {
+					//collidingCluster = z;
 					combatants.clear();
 					combatants.push_back(&player1);
 					for (auto i : z->characterGroup)
@@ -1200,6 +1202,7 @@ void playGame() {
 						combatants.push_back(i);
 					}
 					allEnemies.erase(allEnemies.begin() + enemyToRemove);
+					charactersOnScreen.erase(charactersOnScreen.begin() + enemyToRemove + 1);
 					inOverworld = false;
 					combatStarted = true;
 					break;
@@ -1231,13 +1234,19 @@ void playGame() {
 			//for (auto i : combatants)
 				//c.push_back(&i);
 			string combatResult = cm.combatMain(combatants);
-			std::cout << combatResult << std::endl;
-			if (player1.getHPCurrent() == 0){
+      std::cout << combatResult << std::endl;
+			if (combatResult == "Death" ){
 				cout << "\nYOU HAVE DIED\nGAME OVER MAN, GAME OVER" << endl;
 				exit(1);
 			}
-			else {
+			else if (combatResult == "Victory"){
 
+			}
+			else if (combatResult == "Escape") {
+				/*
+				allEnemies.push_back(collidingCluster);
+				charactersOnScreen.push_back(collidingCluster);
+				*/
 			}
 			combatStarted = false;
 			/*
