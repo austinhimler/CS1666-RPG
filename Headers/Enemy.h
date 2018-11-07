@@ -1,8 +1,12 @@
-#pragma once
-#include "Character.h"
-#include "Item.h"
+
+#ifndef _____ENEMY_H_____
+#define _____ENEMY_H_____
 #include <string>
 #include <vector>
+
+#include "Character.h"
+#include "Item.h"
+
 class Enemy : public Character {
 public:
 	Enemy();
@@ -12,3 +16,4 @@ protected:
 	std::vector<Item> lost;
 	int experienceGiven;
 };
+#endif

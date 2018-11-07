@@ -15,25 +15,35 @@
 	//stores stats
 	Player::Player() : Character("Player 1") {}
 	Player::Player(std::string n) : Character(n) {}
-	Player::Player(std::string n, int s, int i, int d, int c, int f) : Character(n, s,i,d,c,f){
+	Player::Player(std::string n, int s, int i, int d, int c, int f){
 		learnAbility(FIREBALL);
 		learnAbility(SUMMON);
 		isEnemy = false;
-
-		pixelShiftAmountForAnimationInSpriteSheet = 128;
-		numIdleAnimationFrames = 4;
-		numRunAnimatonFrames = 7;
+		level = 10;
+		pixelShiftAmountForAnimationInSpriteSheet = 144;
+		numIdleAnimationFrames = 6;
+		numRunAnimatonFrames = 6;
 		currentFrame = 0;
 		timeBetweenIdleAnimations = 120;
 		timeBetweenRunAnimations = 100;
-		imageIdleResource = "Images/Player/Player_Idle.png";
-		imageRunResource = "Images/Player/Player_Run.png";
+		imageIdleResource = "Images/Player/Idle_Down.png";
+		imageRightIdleResource = "Images/Player/Idle_Right.png";
+		imageRunResource = "Images/Player/Run_Right.png";
+		imageDownRunResource = "Images/Player/Run_Down.png";
+		imageDownRightRunResource = "Images/Player/Run_DownRight.png";
+		imageUpRightRunResource = "Images/Player/Run_UpRight.png";
+		imageUpRunResource = "Images/Player/Run_Up.png";
 		Helper helper = Helper();
 		textureIdle = helper.loadImage(imageIdleResource.c_str(), gRenderer);
+		textureRightIdle = helper.loadImage(imageRightIdleResource.c_str(), gRenderer);
 		textureRun = helper.loadImage(imageRunResource.c_str(), gRenderer);
+		textureDownRun = helper.loadImage(imageDownRunResource.c_str(), gRenderer);
+		textureDownRightRun = helper.loadImage(imageDownRightRunResource.c_str(), gRenderer);
+		textureUpRightRun = helper.loadImage(imageUpRightRunResource.c_str(), gRenderer);
+		textureUpRun = helper.loadImage(imageUpRunResource.c_str(), gRenderer);
 		textureActive = NULL;
-		imageWidth = 128;
-		imageHeight = 128;
+		imageWidth = 144;
+		imageHeight = 144;
 		xPosition = 0; //will need to edit for starting level
 		yPosition = 250.0; //will need to edit for starting level
 		rectangle = { (int)xPosition, (int)yPosition, imageWidth, imageHeight };
@@ -55,20 +65,20 @@
 		name = n;
 		isEnemy = false;
 
-	    pixelShiftAmountForAnimationInSpriteSheet = 128;
-		numIdleAnimationFrames = 4;
-		numRunAnimatonFrames = 7;
+	    pixelShiftAmountForAnimationInSpriteSheet = 144;
+		numIdleAnimationFrames = 6;
+		numRunAnimatonFrames = 6;
 		currentFrame = 0;
 		timeBetweenIdleAnimations = 120;
 		timeBetweenRunAnimations = 100;
-		imageIdleResource = "Images/Player/Player_Idle.png";
-		imageRunResource = "Images/Player/Player_Run.png";
+		imageIdleResource = "Images/Player/Idle_Down.png";
+		imageRunResource = "Images/Player/Run_Right";
 		Helper helper = Helper();
 		textureIdle = helper.loadImage(imageIdleResource.c_str(), gRenderer);
 		textureRun = helper.loadImage(imageRunResource.c_str(), gRenderer);
 		textureActive = NULL;
-		imageWidth = 128;
-		imageHeight = 128;
+		imageWidth = 144;
+		imageHeight = 144;
 		xPosition = 0; //will need to edit for starting level
 		yPosition = 250.0; //will need to edit for starting level
 		rectangle = {(int)xPosition, (int)yPosition, imageWidth, imageHeight};
@@ -76,7 +86,8 @@
 		speedMax = 150.0;
 		acceleration = 2000.0;
 	}
-
+	int Player::getLevel() { return level; }
+	int Player::getCurrentExperience() { return currentExperience; }
 
 	Player::operator std::string() {
 		

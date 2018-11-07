@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef _____ABILITYRESOURCE_H_____
+#define _____ABILITYRESOURCE_H_____
 #include <vector>
 #include "../Attributes/Attr_Globals.h"
 
@@ -93,3 +95,4 @@ namespace AbilityResource {
 	const int MAX_RELATED_ATTR = 3;
 
 }
+#endif

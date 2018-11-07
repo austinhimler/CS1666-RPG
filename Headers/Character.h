@@ -1,13 +1,15 @@
+
 #ifndef _____CHARACTER_H_____
 #define _____CHARACTER_H_____
-
 #include <string>
 #include <vector>
 #include "Attribute.h"
 #include "Resistance.h"
 #include "Ability.h"
 #include "Globals.h"
+#include "Ailment.h"
 #include <map>
+#include <algorithm>
 
 /*
 #include "Attributes/Strength.h"
@@ -51,7 +53,8 @@ public:
 	std::vector<Attribute> getAttributes();
 	Attribute getAttr(int i);
 	std::vector<Ability> getAbilities();
-
+	std::vector<Ailment> getAilm();
+	
 	double xVelocity;
 	double yVelocity;
 	double xDeltaVelocity;
@@ -62,19 +65,34 @@ public:
 	Uint32 timeSinceLastAnimation;
 	SDL_Rect rectangle;
 	SDL_Rect drawRectangle;
+	SDL_RendererFlip flip;
 	std::string getImageIdleResource();
+	std::string getImageRightIdleResource();
 	std::string getImageRunResource();
+	std::string getImageDownRunResource();
+	std::string getImageDownRightRunResource();
+	std::string getImageUpRightRunResource();
+	std::string getImageUpRunResource();
 	std::string getName();
+	SDL_Texture* getTextureRightIdle();
 	SDL_Texture* getTextureIdle();
 	SDL_Texture* getTextureRun();
+	SDL_Texture* getTextureDownRun();
+	SDL_Texture* getTextureDownRightRun();
+	SDL_Texture* getTextureUpRightRun();
+	SDL_Texture* getTextureUpRun();
 	SDL_Texture* getTextureActive();
 	SDL_Rect getRectangle();
 	
 	int beingTarget(Ability* a); // return -1 for succesful escape, -2 for failed escape, non-negative integers for HP healed or damaged
+	
 	//void takeDamage(Ability a);
 	void learnAbility(int a);
 
+	void takeAilm(Ailment ailm);
+	void ailmAffect();
 
+	void checkStatus();
 
 	int updateEnergy(Ability* a);
 
@@ -93,10 +111,20 @@ protected:
 	int level;
 	std::vector<int> buff;
 	std::string imageIdleResource;
+	std::string imageRightIdleResource;
 	std::string imageRunResource;
+	std::string imageDownRunResource;
+	std::string imageDownRightRunResource;
+	std::string imageUpRightRunResource;
+	std::string imageUpRunResource;
 	std::string name;
 	SDL_Texture* textureIdle;
+	SDL_Texture* textureRightIdle;
 	SDL_Texture* textureRun;
+	SDL_Texture* textureDownRun;
+	SDL_Texture* textureDownRightRun;
+	SDL_Texture* textureUpRightRun;
+	SDL_Texture* textureUpRun;
 	SDL_Texture* textureActive;
 	int pixelShiftAmountForAnimationInSpriteSheet;
 	int numIdleAnimationFrames;
@@ -118,10 +146,8 @@ protected:
 	std::vector<Attribute> attributes;
 	std::vector<Ability> abilities;
 	std::map<int, int> abil_helper;
-	
+	std::vector<Ailment> ailments;
 };
-
-
 
 /*Resistance evasion;
 Resistance physical;

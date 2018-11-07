@@ -51,6 +51,26 @@ namespace AilmentResource {
 		3,
 		0
 	};
+
+	enum AILMENT_TYPE {
+		tHP_ONLY,
+		tMP_ONLY,
+		tEN_ONLY,
+		tHM,
+		tHE,
+		tME,
+		tALL,
+		tNONE,
+		tCURSE,
+	};
+
+	int ailmentType[] = {
+		tNONE,
+		tHE,
+		tHP_ONLY,
+		tHP_ONLY,
+		tCURSE
+	};
 	/*
 	//ailment base CD
 	const int ailmentCD[] = {

@@ -1,11 +1,12 @@
-#pragma once
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
+
+#ifndef _____LOADTEXTURE_H_____
+#define _____LOADTEXTURE_H_____
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_ttf.h>
 #include <stdio.h>
 #include <string>
 #include "Globals.h"
-
 class LoadTexture
 {
 public:
@@ -16,11 +17,11 @@ public:
 	~LoadTexture();
 
 	//Loads image at specified path
-	bool loadFromFile(std::string path);
+	bool loadFromFile(std::string path,SDL_Renderer* gRenderer);
 
 
 	//Creates blank texture
-	bool createBlank(int width, int height, SDL_TextureAccess = SDL_TEXTUREACCESS_STREAMING);
+	bool createBlank(int width, int height, SDL_TextureAccess  SDL_TEXTUREACCESS_STREAMING, SDL_Renderer* gRenderer);
 
 	//Deallocates texture
 	void free();
@@ -35,10 +36,10 @@ public:
 	void setAlpha(Uint8 alpha);
 
 	//Renders texture at given point
-	void render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
-	void renderBackground();
+	void render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE,SDL_Renderer* gRenderer=NULL);
+	void renderBackground(SDL_Renderer* gRenderer);
 	//Set self as render target
-	void setAsRenderTarget();
+	void setAsRenderTarget(SDL_Renderer* gRenderer);
 
 	//Gets image dimensions
 	int getWidth();
@@ -63,3 +64,4 @@ private:
 	int mHeight;
 };
 
+#endif

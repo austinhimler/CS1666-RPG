@@ -2,21 +2,28 @@
 #include <vector>
 #include <string>
 #include <time.h>
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
-#include <SDL_ttf.h>
-#include <GL/glew.h>
-#include <SDL_opengl.h>
+#include <cmath>
+#include <fstream>
+
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_mixer.h>
+#include <SDL/SDL_ttf.h>
+#include <glew/glew.h>
+#include <SDL/SDL_opengl.h>
 #include <cmath>
 #include <fstream>
 #include "Headers/Globals.h"
+
+
+#include "Headers/mainGame.h"
 #include "Headers/Player.h"
 #include "Headers/Button.h"
 #include "Headers/Tile.h"
 #include "Headers/CombatManager.h"
 #include "Headers/Cluster.h"
 #include "Headers/LoadTexture.h"
+#include "Headers/Globals.h"
 
 // Function declarations
 
@@ -27,17 +34,18 @@ void close();//Frees media and shuts down SDL
 
 SDL_Texture* loadImage(std::string fname);
 
-
+SDL_Renderer* gRenderer = nullptr;
 // Globals
 
 SDL_Window* gWindow = nullptr;//The window rendering to
 
-SDL_Renderer* gRenderer = nullptr;
+//SDL_Renderer* gRenderer = nullptr;
 
 SDL_GLContext gContext;//OpenGL context
 
 
 std::vector<SDL_Texture*> gTex;
+void handleMain();
 
 
 
@@ -189,11 +197,11 @@ void combatTransition(){
 		}
 	}
 }
-
-void loadMap(Tile* tiles[]) {
+SDL_Rect * loadMap(Tile* tiles[]) {
 	Tile::loadTiles();
 	bool tilesLoaded = true;
 	int x = 0, y = 0;
+	std::vector<SDL_Rect> blockedTiles;
 	std::ifstream map("map1.txt");
 	if (!map.is_open())
 	{
@@ -222,6 +230,8 @@ void loadMap(Tile* tiles[]) {
 			if ((tileType >= 0) && (tileType != 0 || tileType != 1))
 			{
 				tiles[i] = new Tile(x, y, tileType);
+				if (tiles[i]->solid = true)
+					blockedTiles.push_back(tiles[i]->getBox());
 			}
 			//If we don't recognize the tile type
 			else
@@ -244,7 +254,9 @@ void loadMap(Tile* tiles[]) {
 			}
 		}
 	}
+	return &blockedTiles[0];
 }
+
 
 
 SDL_Texture* loadImage(std::string fname) {
@@ -381,22 +393,24 @@ bool characterCreateScreen() {
 	int faith = 1;
 	int charImageX = 0;
 	int charImageY = 0;
-	int charImageW = 128;
-	int charImageH = 128;
-	int charAnimationPixelShift = 128;
+	int charImageW = 144;
+	int charImageH = 144;
+	int charAnimationPixelShift = 144;
 	int delaysPerFrame = 0;
 	int frame = 0;
+	
+	int attributeX = 245;
 
-	SDL_Rect characterBox = { 472, 225, 128, 128 };
+	SDL_Rect characterBox = { 470, 225, 144, 144 };
 	SDL_Rect pointsAllocatedRectangle = { 227, 32, 0, 0 };
-	SDL_Rect strengthTextRectangle = { 250, 115, 0, 0 };
-	SDL_Rect intelligenceTextRectangle = { 250, 205, 0, 0 };
-	SDL_Rect dexterityTextRectangle = { 250, 302, 0, 0 };
-	SDL_Rect constitutionTextRectangle = { 250, 395, 0, 0 };
-	SDL_Rect faithTextRectangle = { 250, 490, 0, 0 };
+	SDL_Rect strengthTextRectangle = { attributeX, 115, 0, 0 };
+	SDL_Rect intelligenceTextRectangle = { attributeX, 205, 0, 0 };
+	SDL_Rect dexterityTextRectangle = { attributeX, 302, 0, 0 };
+	SDL_Rect constitutionTextRectangle = { attributeX, 395, 0, 0 };
+	SDL_Rect faithTextRectangle = { attributeX, 490, 0, 0 };
 	SDL_Rect nameTextRectangle = { 143, 640, 0,0 };
 	SDL_Rect errorTextRectangle = { 465, 580, 0, 0 };
-	SDL_Rect errorTextRectangleLong = { 445, 580, 0, 0 };
+	SDL_Rect errorTextRectangleLong = { 415, 580, 0, 0 };
 	SDL_Color textColor = { 112, 96, 80, 0 };
 	SDL_Color errorColor = { 255, 0, 0, 0 };
 	std::string nameInputText;
@@ -410,7 +424,7 @@ bool characterCreateScreen() {
 	SDL_Texture* upUnLocked = loadImage("Images/UI/CreateScreen/pointUpArrow.png");
 	SDL_Texture* downUnLocked = loadImage("Images/UI/CreateScreen/pointUpArrow.png");
 
-	SDL_Texture* character = loadImage("Images/Player/Player_Idle.png");
+	SDL_Texture* character = loadImage("Images/Player/Idle_Down.png");
 
 
 	//need attr objects
@@ -427,7 +441,7 @@ bool characterCreateScreen() {
 	buttons.push_back(new Button("start", 450, 625, 230, 56, "Images/UI/CreateScreen/StartButton.png", "", gRenderer));
 
 	LoadTexture background; 
-	background.loadFromFile("Images/UI/CreateScreen/characterCreateV2NoButtons.png");
+	background.loadFromFile("Images/UI/CreateScreen/characterCreateV2NoButtons.png",gRenderer);
 	SDL_Event e;
 	while (onCharacterCreate) {
 		while (SDL_PollEvent(&e)) {
@@ -455,7 +469,7 @@ bool characterCreateScreen() {
 						((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
 					{
 						i->pressed = 5;
-						i->locked = false;
+						//i->locked = false;
 						if (i->type == "start") {
 							if (nameInputText == "nlf4" || pointsToAllocate == 0) {
 								if (nameInputText == "nlf4" || nameInputText != "") {
@@ -504,14 +518,6 @@ bool characterCreateScreen() {
 
 						if (i->attribute == "strength") {
 							if ((deltaAttribute + strength) <= maxStat && (deltaAttribute + strength) >= minStat) {
-								if ((deltaAttribute + strength) == maxStat) {
-									i->locked = true;
-								}
-								else {
-									i->locked = false;
-									
-								}
-
 						
 
 								
@@ -520,7 +526,6 @@ bool characterCreateScreen() {
 								pointsToAllocate -= deltaAttribute;
 							}
 							else if ((deltaAttribute + strength) > maxStat) {
-								i->locked = true;
 		
 								errorInputText = "Max Strength!";
 								
@@ -595,8 +600,8 @@ bool characterCreateScreen() {
 
 			else if (e.type == SDL_TEXTINPUT) {
 				//add char
-				//set length limit to arbitrariy be 13 (fits textbox about right, depends on what user enters)
-				if (nameInputText.length() < 13) {
+				//set length limit to arbitrariy be 11 (fits textbox about right, depends on what user enters)
+				if (nameInputText.length() < 11) {
 					Mix_PlayChannel(-1, gBSound, 0);
 					nameInputText += e.text.text;
 				}
@@ -605,9 +610,79 @@ bool characterCreateScreen() {
 		    
 		}
 
-		background.renderBackground();
+		background.renderBackground(gRenderer);
 		//Renders buttons and shows pressed image if pressed
 		for (auto i : buttons) {
+			if (i->attribute == "strength") {
+				if (i->type == "up") {
+					if (strength == maxStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+				else {
+					if (strength == minStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+			}
+			else if (i->attribute == "intelligence") {
+				if (i->type == "up") {
+					if (intelligence == maxStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+				else {
+					if (intelligence == minStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+			}
+			else if (i->attribute == "dexterity") {
+				if (i->type == "up") {
+					if (dexterity == maxStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+				else {
+					if (dexterity == minStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+			}
+			else if (i->attribute == "constitution") {
+				if (i->type == "up") {
+					if (constitution == maxStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+				else {
+					if (constitution == minStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+			}
+			else if (i->attribute == "faith") {
+				if (i->type == "up") {
+					if (faith == maxStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+				else {
+					if (faith == minStat) {
+						i->locked = true;
+					}
+					else i->locked = false;
+				}
+			}
 			if (!i->locked) {
 				if (!i->pressed > 0 || i->attribute == "")
 					SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
@@ -677,22 +752,157 @@ bool characterCreateScreen() {
 	}
 }
 
+
+void combatScene() {
+
+}
+
+void saveGame() {
+
+}
+
+int handlePauseMenu(bool inPauseMenu, std::vector<Character*> charactersOnScreen, Tile *tiles[900], SDL_Rect camera) {
+	std::vector<Button*> buttons;
+	buttons.push_back(new Button("continue", 240, 100, 260, 64, "Images/UI/PauseMenu/ContinueButton.png", "", gRenderer));
+	buttons.push_back(new Button("save",     240, 300, 260, 64, "Images/UI/PauseMenu/SaveButton.png", "", gRenderer));
+	buttons.push_back(new Button("mainMenu", 240, 500, 260, 64, "Images/UI/PauseMenu/MainMenuButton.png", "", gRenderer));
+	SDL_Texture* background = loadImage("Images/UI/PauseMenu/PauseMenuNoButtons.png"); 
+
+	int backToOverworld = 0;
+	int backToMainMenu = 1;
+
+	SDL_Event e;
+	while (inPauseMenu) {
+		while (SDL_PollEvent(&e)) {
+			if (e.type == SDL_QUIT) {
+				inPauseMenu = false;
+				return backToOverworld;
+			}
+
+			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN) {
+				int mouseX, mouseY;
+				SDL_GetMouseState(&mouseX, &mouseY);
+				for (auto i : buttons) {
+					//if mouse is clicked inside a button
+					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
+						((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
+					{
+						if (i->type == "continue") {
+							for (auto i : buttons) {
+								delete(i);
+							}
+							SDL_DestroyTexture(background);
+							inPauseMenu = false;
+							return backToOverworld;
+						}
+						else if (i->type == "save") {
+							saveGame();
+						}
+						else if (i->type == "mainMenu") {
+							for (auto i : buttons) {
+								delete(i);
+							}
+							SDL_DestroyTexture(background);
+							inPauseMenu = false;
+							return backToMainMenu;
+						}
+
+					}
+
+				}
+
+			}
+			
+		}
+		//Set Black
+		SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+		SDL_RenderClear(gRenderer);
+
+		for (int i = 0; i < 900; i++) {
+			tiles[i]->render(&camera);
+		}
+
+		for (auto &i : charactersOnScreen) {
+			if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
+				i->flip = SDL_FLIP_NONE;
+			else if (i->xVelocity < 0 && i->flip == SDL_FLIP_NONE)
+				i->flip = SDL_FLIP_HORIZONTAL;
+
+			if (i->getTextureActive() == i->getTextureIdle()) {
+				if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
+					i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+					i->timeSinceLastAnimation = SDL_GetTicks();
+				}
+			}
+			else {
+				if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenRunAnimations()) {
+					i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+					i->timeSinceLastAnimation = SDL_GetTicks();
+				}
+			}
+
+			i->drawRectangle.x = i->currentFrame *i->getPixelShiftAmountForAnimationInSpriteSheet();
+			i->rectangle.x = (int)i->xPosition - camera.x;
+			i->rectangle.y = (int)i->yPosition - camera.y;
+			SDL_RenderCopyEx(gRenderer, i->getTextureActive(), &i->drawRectangle, &i->rectangle, 0.0, nullptr, i->flip);
+		}
+
+		//SDL_RenderCopy(gRenderer, background, NULL, NULL);
+		for (auto &i : buttons) {
+			SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
+		}
+
+		SDL_RenderPresent(gRenderer);
+		SDL_Delay(16);
+	}
+}
+
+void combatScene(std::vector<Character*> combatants) {
+	/*for (auto i : combatants) {
+		std::cout << i->getName();
+	}*/
+
+}
 void playGame() {
+	vector<Cluster*> allEnemies = vector<Cluster*>();
+	for (int num_enemy = 0; num_enemy < 5; num_enemy++)
+	{
+		Cluster* enemy = new Cluster((rand() % 5)+1);
+		cout <<"Enemy "<<num_enemy+1<<" Cluster Size: "<<  enemy->clusterSize << endl;
+		allEnemies.push_back(enemy);
+	}
 
-	Cluster enemy1 = Cluster(1);
-	SDL_RendererFlip flip = SDL_FLIP_NONE;
+	//SDL_RendererFlip flip = SDL_FLIP_NONE;
 
+	int tile_test = -1;
+	
 	player1.setTextureActive(player1.getTextureIdle());
 	player1.currentMaxFrame = player1.getNumIdleAnimationFrames();
-	
-	enemy1.setTextureActive(enemy1.getTextureIdle());
-	enemy1.currentMaxFrame = enemy1.getNumIdleAnimationFrames();
 
-	// Randomly spawn the enemy
-	enemy1.xPosition = player1.xPosition + 50;//rand() % (LEVEL_WIDTH - enemy1.getImageWidth());
-	enemy1.yPosition = player1.yPosition + 50; //rand() % (LEVEL_HEIGHT - enemy1.getImageHeight());
 
-	std::vector<Character> charactersOnScreen;
+	Tile*  tiles[TOTAL_TILES];
+
+	//tiles
+	//Need to delete this to stop memory leak if we load more than one map
+	SDL_Rect* BlockedTiles = loadMap(tiles);
+
+	for (auto i : allEnemies)
+	{
+		i->setTextureActive(i->getTextureIdle());
+		i->currentMaxFrame = i->getNumIdleAnimationFrames();
+		// Randomly spawn the enemy
+		for (;;)
+		{
+			i->xPosition = rand() % (LEVEL_WIDTH - i->getImageWidth());
+			i->yPosition = rand() % (LEVEL_HEIGHT - i->getImageHeight());
+			int t_tile = (int)(i->xPosition + (i->rectangle.w / 2)) / TILE_WIDTH;
+			t_tile += (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) * 30;
+			if (tiles[t_tile]->mType == 0)
+				break;
+		}
+	}
+
+	std::vector<Character*> charactersOnScreen;
 	std::vector<Character*> combatants;
 
 
@@ -700,20 +910,37 @@ void playGame() {
 	Uint32 timeSinceLastAnimation = SDL_GetTicks();
 	player1.timeSinceLastMovement = timeSinceLastMovement;
 	player1.timeSinceLastAnimation = timeSinceLastAnimation;
-	enemy1.timeSinceLastAnimation = timeSinceLastAnimation;
+	for (auto i : allEnemies)
+	{
+		cout << "Enemy Coordinates: (" << i->xPosition << "," << i->yPosition << ")" << endl;
+		i->timeSinceLastAnimation = timeSinceLastAnimation;
+	}
+	std::string hudHealthString = "Health: " + to_string(player1.getHPCurrent());
+	std::string hudLevelString = "Level: " + to_string(player1.getLevel());
+	SDL_Rect hudHealthTextRectangle = { 10, 10, 0, 0 };
+	SDL_Rect hudLevelTextRectangle = { 10, 35, 0, 0 };
+	SDL_Color hudTextColor = { 0, 0, 0, 0 };
 
 	double timePassed = 0;
+	int response = 0;
 
-	charactersOnScreen.push_back(player1);
-	charactersOnScreen.push_back(enemy1);
+	charactersOnScreen.push_back(&player1);
+	for (auto i : allEnemies)
+	{
+		charactersOnScreen.push_back(i);
+	}
 
-	Tile*  tiles[TOTAL_TILES];
-	//tiles
-	loadMap(tiles);
+	
+	std::cout << player1.xPosition;
+	std::cout << "\n";
+	std::cout << player1.yPosition;
+	
 
 	SDL_Event e;
 	SDL_Rect camera = { 0,0,SCREEN_WIDTH, SCREEN_HEIGHT };
 	bool inOverworld = true;
+	bool combatStarted = false;
+	bool inPauseMenu = false;
 	bool keepPlaying = true;
 	while (keepPlaying) {
 
@@ -729,7 +956,7 @@ void playGame() {
 			timePassed = (SDL_GetTicks() - timeSinceLastMovement) / 1000.0;
 			player1.xDeltaVelocity = 0;
 			player1.yDeltaVelocity = 0;
-			double runingAddSpeed = 0; 
+			double runningAddSpeed = 0;
 
 			const Uint8* keyState = SDL_GetKeyboardState(nullptr);
 			if (keyState[SDL_SCANCODE_W])
@@ -741,7 +968,7 @@ void playGame() {
 			if (keyState[SDL_SCANCODE_D])
 				player1.xDeltaVelocity += (player1.getAcceleration() * timePassed);
 			if (keyState[SDL_SCANCODE_LSHIFT])
-				runingAddSpeed = 200;
+				runningAddSpeed = 200;
 
 
 			if (player1.xDeltaVelocity == 0) {
@@ -777,24 +1004,66 @@ void playGame() {
 			}
 
 			//bound within Max Speed
-			if (player1.xVelocity < -(player1.getSpeedMax()+runingAddSpeed))
-				player1.xVelocity = -(player1.getSpeedMax() + runingAddSpeed);
-			else if (player1.xVelocity > (player1.getSpeedMax() + runingAddSpeed))
-				player1.xVelocity = (player1.getSpeedMax() + runingAddSpeed);
+			if (player1.xVelocity < -(player1.getSpeedMax() + runningAddSpeed))
+				player1.xVelocity = -(player1.getSpeedMax() + runningAddSpeed);
+			else if (player1.xVelocity > (player1.getSpeedMax() + runningAddSpeed))
+				player1.xVelocity = (player1.getSpeedMax() + runningAddSpeed);
 			//bound within Max Speed
-			if (player1.yVelocity < -(player1.getSpeedMax() + runingAddSpeed))
-				player1.yVelocity = -(player1.getSpeedMax() + runingAddSpeed);
-			else if (player1.yVelocity > (player1.getSpeedMax() + runingAddSpeed))
-				player1.yVelocity = (player1.getSpeedMax() + runingAddSpeed);
+			if (player1.yVelocity < -(player1.getSpeedMax() + runningAddSpeed))
+				player1.yVelocity = -(player1.getSpeedMax() + runningAddSpeed);
+			else if (player1.yVelocity > (player1.getSpeedMax() + runningAddSpeed))
+				player1.yVelocity = (player1.getSpeedMax() + runningAddSpeed);
 
 			//Change sprite if character is in motion
 			if (player1.xVelocity != 0 || player1.yVelocity != 0) {
-				if (player1.getTextureActive() != player1.getTextureRun()) {
-					player1.setTextureActive(player1.getTextureRun());
-					player1.currentFrame = 0;
-					player1.currentMaxFrame = player1.getNumRunAnimationFrames();
+
+				if (player1.yVelocity == 0) {
+					if (player1.getTextureActive() != player1.getTextureRun()) {
+						player1.setTextureActive(player1.getTextureRun());
+						player1.currentFrame = 0;
+						player1.currentMaxFrame = player1.getNumRunAnimationFrames();
+					}
+				}
+
+
+				if (player1.xVelocity == 0 && player1.yVelocity > 0) {
+					if (player1.getTextureActive() != player1.getTextureDownRun()) {
+						player1.setTextureActive(player1.getTextureDownRun());
+						player1.currentFrame = 0;
+						player1.currentMaxFrame = player1.getNumRunAnimationFrames();
+					}
+				}
+
+				
+
+				if (player1.xVelocity != 0 && player1.yVelocity > 0) {
+					if (player1.getTextureActive() != player1.getTextureDownRightRun()) {
+						player1.setTextureActive(player1.getTextureDownRightRun());
+						player1.currentFrame = 0;
+						player1.currentMaxFrame = player1.getNumRunAnimationFrames();
+					}
+				}
+
+				if (player1.xVelocity != 0 && player1.yVelocity < 0) {
+					if (player1.getTextureActive() != player1.getTextureUpRightRun()) {
+						player1.setTextureActive(player1.getTextureUpRightRun());
+						player1.currentFrame = 0;
+						player1.currentMaxFrame = player1.getNumRunAnimationFrames();
+					}
+				}
+
+
+
+				if (player1.xVelocity == 0 && player1.yVelocity < 0) {
+					if (player1.getTextureActive() != player1.getTextureUpRun()) {
+						player1.setTextureActive(player1.getTextureUpRun());
+						player1.currentFrame = 0;
+						player1.currentMaxFrame = player1.getNumRunAnimationFrames();
+
+					}
 				}
 			}
+
 			else {
 				if (player1.getTextureActive() != player1.getTextureIdle()) {
 					player1.setTextureActive(player1.getTextureIdle());
@@ -803,6 +1072,8 @@ void playGame() {
 				}
 			}
 
+			int beforeMoveX = player1.xPosition;
+			int beforeMoveY = player1.yPosition;
 			//Move vertically
 			player1.yPosition += (player1.yVelocity * timePassed);
 			if (player1.yPosition < 0 || (player1.yPosition + player1.getImageHeight() > LEVEL_HEIGHT)) {
@@ -816,10 +1087,47 @@ void playGame() {
 				//go back into window
 				player1.xPosition -= (player1.xVelocity * timePassed);
 			}
-				camera.x = (int)((player1.xPosition + player1.rectangle.w /2) - SCREEN_WIDTH / 2);
-			    camera.y = (int)((player1.yPosition + player1.rectangle.h / 2) - SCREEN_HEIGHT / 2);
-			if (camera.x < 0)
-			{
+			//calculate tile player is currently standing on
+			int currentTile = (int)(player1.xPosition + (player1.rectangle.w / 2)) / TILE_WIDTH;
+			currentTile += (int)((player1.yPosition + player1.rectangle.h) / TILE_HEIGHT) * 30;
+
+			// Show which tile the character is standing on
+			/*
+			if (currentTile != tile_test) {
+				cout << currentTile << endl;
+				tile_test = currentTile;
+			}
+			*/
+
+			if (tiles[currentTile]->mType != 0) {
+				player1.xPosition = beforeMoveX;
+				player1.yPosition = beforeMoveY;
+				/*
+				//toDo
+				bool xVelPos = player1.xVelocity > 0;
+				bool xVelNeg = player1.xVelocity < 0;
+				bool yVelPos = player1.yVelocity > 0;
+				bool yVelNeg = player1.yVelocity < 0;
+				player1.xVelocity = 0;
+				player1.yVelocity = 0;
+				if (xVelPos)
+					player1.xPosition -= 1;
+				if (xVelNeg)
+					player1.xPosition += 1;
+				if (yVelNeg)
+					player1.yPosition += 1;
+				if (yVelPos)
+					player1.yPosition -= 1;
+
+				//player1.xPosition -= 1;
+				//player1.yPosition -= 1;
+				*/
+			}
+
+
+			camera.x = (player1.xPosition + player1.rectangle.w / 2) - SCREEN_WIDTH / 2;
+			camera.y = (player1.yPosition + player1.rectangle.h / 2) - SCREEN_HEIGHT / 2;
+			if (camera.x < 0) {
 				camera.x = 0;
 			}
 			if (camera.y < 0) {
@@ -834,69 +1142,87 @@ void playGame() {
 
 			timeSinceLastMovement = SDL_GetTicks();
 
-			if (player1.xVelocity > 0 && flip == SDL_FLIP_HORIZONTAL)
-				flip = SDL_FLIP_NONE;
-			else if (player1.xVelocity < 0 && flip == SDL_FLIP_NONE)
-				flip = SDL_FLIP_HORIZONTAL;
-
+	
 			//Set Black
 			SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 			SDL_RenderClear(gRenderer);
-			
-			
 
 			for (int i = 0; i < 900; i++) {
 				tiles[i]->render(&camera);
-			}	
-
-			if (player1.getTextureActive() == player1.getTextureIdle()) {
-				if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenIdleAnimations()) {
-					player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
-					player1.timeSinceLastAnimation = SDL_GetTicks();
-				}
-			}
-			else {
-				if (SDL_GetTicks() - player1.timeSinceLastAnimation > player1.getTimeBetweenRunAnimations()) {
-					player1.currentFrame = (player1.currentFrame + 1) % player1.currentMaxFrame;
-					player1.timeSinceLastAnimation = SDL_GetTicks();
-				}
 			}
 
-			if (enemy1.getTextureActive() == enemy1.getTextureIdle()) {
-				if (SDL_GetTicks() - enemy1.timeSinceLastAnimation > enemy1.getTimeBetweenIdleAnimations()) {
-					enemy1.currentFrame = (enemy1.currentFrame + 1) % enemy1.currentMaxFrame;
-					enemy1.timeSinceLastAnimation = SDL_GetTicks();
+			for (auto &i : charactersOnScreen) {
+				if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
+					i->flip = SDL_FLIP_NONE;
+				else if (i->xVelocity < 0 && i->flip == SDL_FLIP_NONE)
+					i->flip = SDL_FLIP_HORIZONTAL;
+
+				if (i->getTextureActive() == i->getTextureIdle()) {
+					if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
+						i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+						i->timeSinceLastAnimation = SDL_GetTicks();
+					}
 				}
+				else {
+					if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenRunAnimations()) {
+						i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+						i->timeSinceLastAnimation = SDL_GetTicks();
+					}
+				}
+
+				i->drawRectangle.x = i->currentFrame *i->getPixelShiftAmountForAnimationInSpriteSheet();
+				i->rectangle.x = (int)i->xPosition - camera.x;
+				i->rectangle.y = (int)i->yPosition - camera.y;
+				SDL_RenderCopyEx(gRenderer, i->getTextureActive(), &i->drawRectangle, &i->rectangle, 0.0, nullptr, i->flip);
 			}
 
-			// Start drawing clusters
-			enemy1.drawRectangle.x = enemy1.currentFrame * enemy1.getPixelShiftAmountForAnimationInSpriteSheet();
-			enemy1.rectangle.x = (int)enemy1.xPosition-camera.x;
-			enemy1.rectangle.y = (int)enemy1.yPosition-camera.y;
-			SDL_RenderCopy(gRenderer, enemy1.getTextureActive(), &enemy1.drawRectangle, &enemy1.rectangle);
-			// Finish drawing clusters
+			hudHealthString = "Health: " + to_string(player1.getHPCurrent());
+			hudLevelString = "Level: " + to_string(player1.getLevel());
+			renderText(hudHealthString.c_str(), &hudHealthTextRectangle, &hudTextColor);
+			renderText(hudLevelString.c_str(), &hudLevelTextRectangle, &hudTextColor);
 
-			// Start drawing player
-			player1.drawRectangle.x = player1.currentFrame * player1.getPixelShiftAmountForAnimationInSpriteSheet();
-			player1.rectangle.x = (int)player1.xPosition - camera.x;
-			player1.rectangle.y = (int)player1.yPosition - camera.y;
-			SDL_RenderCopyEx(gRenderer, player1.getTextureActive(), &player1.drawRectangle, &player1.rectangle, 0.0, nullptr, flip);
-			// Finish drawing player
 			SDL_RenderPresent(gRenderer);
 
-			if (check_collision(player1.rectangle, enemy1.rectangle)){
-				combatants.clear();
-				combatants.push_back(&player1);
-				for (auto i : enemy1.characterGroup)
-				{
-					combatants.push_back(i);
-				}
+			if (keyState[SDL_SCANCODE_ESCAPE]) {
 				inOverworld = false;
+				inPauseMenu = true;
 			}
+
+			int enemyToRemove = -1;
+			for (auto z : allEnemies)
+			{
+				enemyToRemove++;
+				if (check_collision(player1.rectangle, z->rectangle)) {
+					combatants.clear();
+					combatants.push_back(&player1);
+					for (auto i : z->characterGroup)
+					{
+						combatants.push_back(i);
+					}
+					allEnemies.erase(allEnemies.begin() + enemyToRemove);
+					inOverworld = false;
+					combatStarted = true;
+					break;
+				}
+			}
+			
 
 		}
 
-		while (!inOverworld) {
+		if (inPauseMenu) {
+			response = handlePauseMenu(inPauseMenu, charactersOnScreen, tiles, camera);
+			int backToOverWorld = 0;
+			int backToMainMenu = 1;
+			if (response == backToOverWorld) {
+				inOverworld = true;
+			}
+			else if (response == backToMainMenu) {
+				keepPlaying = false;
+			}
+			inPauseMenu = false;
+		}
+
+		while (combatStarted) {
 			combatTransition();
 			CombatManager cm;
 			//std::cout << combatants.size();
@@ -905,18 +1231,28 @@ void playGame() {
 			//for (auto i : combatants)
 				//c.push_back(&i);
 			bool inCombat = cm.combatMain(combatants);
+			if (player1.getHPCurrent() == 0){
+				cout << "\nYOU HAVE DIED\nGAME OVER MAN, GAME OVER" << endl;
+				exit(1);
+			}
+			else {
+
+			}
+			combatStarted = false;
+			/*
 			enemy1.xPosition = rand() % (LEVEL_WIDTH - enemy1.getImageWidth());
 			enemy1.yPosition = rand() % (LEVEL_HEIGHT - enemy1.getImageHeight());
+			*/
 			inOverworld = true;
 		}
 
-		//while(gameOn) gameloop
-		   //render top viewport: render player, enemy, overworld
-		   //render bottom viewport: UI
-		   //movement
-		   //collision detection
-		   //when player collides into enemy
-		   // combatScene(vector of Type Characters);
+		if (response == 1) { //backToMainMenu
+			//for (auto i : charactersOnScreen) {
+			//	delete(&i);
+			//}
+			//destroy tiles etc?
+			handleMain();
+		}
 	}
 }
 
@@ -1011,9 +1347,7 @@ int mainMenu() {
 	SDL_Event e;
 	while (run) {
 		while (SDL_PollEvent(&e)) {
-
 			if (e.type == SDL_QUIT) {
-
 				close();
 			}
 			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN) {
@@ -1074,18 +1408,20 @@ int main(int argc, char *argv[]) {
 	combatants.push_back(new Enemy("W.G.", 10, 10, 10, 5, 10));
 	bool inCombat = cm.combatMain(combatants);
 	//*/
-	
+
 	if (!init()) {
 		std::cout << "Failed to initialize!" << std::endl;
 		close();
 		return 1;
 	}
-
+	handleMain();
+}
+void handleMain() {
 	int a = mainMenu();
 	bool b;
 
 	switch (a) {
-	case 0 :
+	case 0:
 		b = characterCreateScreen();
 		if (b) playGame();
 		break;
@@ -1094,5 +1430,5 @@ int main(int argc, char *argv[]) {
 	}
 	close();
 	//*/
-	return 0;
+	return;
 }

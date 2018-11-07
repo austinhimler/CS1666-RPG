@@ -1,10 +1,12 @@
 #ifndef _____TILE_H_____
 #define _____TILE_H_____
-#include <SDL.h>
-#include <SDL_image.h>
 #include <stdio.h>
 #include <string>
 #include <fstream>
+
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+
 #include "Helper.h"
 #include "Globals.h"
 
@@ -27,6 +29,11 @@ static SDL_Texture* pondBottom;
 static SDL_Texture* pondTopLeft;
 static SDL_Texture* pondTop;
 static SDL_Texture* pondBottomLeft;
+static SDL_Texture* OutsideTopRight;
+static SDL_Texture* OutsideTopLeft;
+static SDL_Texture* OutsideBottomRight;
+static SDL_Texture* OutsideBottomLeft;
+static SDL_Texture* singleGrass2;
 //loads tile textures
 
 
@@ -53,6 +60,7 @@ public:
 
 	//The tile type
 	int mType;
+	bool solid;
 };
-
 #endif
+

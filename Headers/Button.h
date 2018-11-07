@@ -2,7 +2,7 @@
 #define _____BUTTON_H_____
 #include <string>
 #include <vector>
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 class Button {
 public:
@@ -24,5 +24,4 @@ public:
 private:
 
 };
-
 #endif

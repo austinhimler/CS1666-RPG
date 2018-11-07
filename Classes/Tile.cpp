@@ -16,8 +16,26 @@ Tile::Tile(int x, int y, int tileType)
 	//Get the tile type
 	mType = tileType;
 	Helper temp = Helper();
+	
 	switch (tileType)
 	{
+	case 14://single grass 2 
+		texture = singleGrass2;
+		
+		break;
+	case 13://ouside Bottom Left edge
+		texture = OutsideBottomLeft;
+
+		break;
+	case 12://ouside Bottom Right edge
+		texture = OutsideBottomRight;
+		break;
+	case 11://ouside top left edge
+		texture = OutsideTopLeft;
+		break;
+	case 10://ouside top right edge
+		texture = OutsideTopRight;
+		break;
 	case 9://pond right edge
 		texture = pondLeft;
 		flip = SDL_FLIP_HORIZONTAL;
@@ -50,6 +68,7 @@ Tile::Tile(int x, int y, int tileType)
 		break;
 	case 0://grass
 		texture = grass;
+		
 		break;
 	}
 }
@@ -73,6 +92,7 @@ int Tile::getType()
 	return mType;
 }
 
+
 SDL_Rect Tile::getBox()
 {
 	return mBox;
@@ -80,8 +100,17 @@ SDL_Rect Tile::getBox()
 
 void Tile::loadTiles()
 {
+	singleGrass2 = Helper::loadImage("Images/Tiles/singleGrass2.png", gRenderer);
+
+	OutsideBottomLeft = Helper::loadImage("Images/Tiles/OutsideBottomLeft.png", gRenderer);
+
+	OutsideBottomRight = Helper::loadImage("Images/Tiles/OutsideBottomRight.png", gRenderer);
 
 	pondTopLeft = Helper::loadImage("Images/Tiles/pondTopLeft.png", gRenderer);
+
+	OutsideTopLeft = Helper::loadImage("Images/Tiles/OutsideTopLeft.png", gRenderer);
+
+	OutsideTopRight = Helper::loadImage("Images/Tiles/OutsideTopRight.png", gRenderer);
 
 	pondLeft = Helper::loadImage("Images/Tiles/pondLeft.png", gRenderer);
 

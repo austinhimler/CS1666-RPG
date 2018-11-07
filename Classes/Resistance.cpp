@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+
 #include "../Headers/Resistance.h"
 
 Resistance::Resistance(std::string n, std::string d, double b) {

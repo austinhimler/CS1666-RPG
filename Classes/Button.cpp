@@ -1,8 +1,11 @@
 #include <string>
 #include <vector>
-#include <SDL.h>
+
+#include <SDL/SDL.h>
+
 #include "../Headers/Button.h"
 #include "../Headers/Helper.h"
+
 	//std::string type; //up stat, down stat, or start
 	//int x;
 	//int y;

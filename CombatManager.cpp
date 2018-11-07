@@ -1,71 +1,69 @@
 #include "Headers/CombatManager.h"
 
-
-
-	QueueManager::QueueManager(vector<Character *> c)
-	{
-		for (auto C : c) {
-			currTurn.push_back(C);
-			nextTurn.push_back(C);
-		}
-		insertionSort(currTurn, currTurn.size());
-		insertionSort(nextTurn, nextTurn.size());
+QueueManager::QueueManager(vector<Character *> c)
+{
+	for (auto C : c) {
+		currTurn.push_back(C);
+		nextTurn.push_back(C);
 	}
+	insertionSort(currTurn, currTurn.size());
+	insertionSort(nextTurn, nextTurn.size());
+}
 
-	QueueManager::~QueueManager()
+QueueManager::~QueueManager()
+{
+
+}
+
+
+void QueueManager::createRounds(vector<Character*> c)
+{
+
+}
+
+void QueueManager::changeRounds()
+{
+	vectorCopy(currTurn, nextTurn);
+	insertionSort(nextTurn, nextTurn.size());
+}
+
+void QueueManager::insertionSort(std::vector<Character*>& turn, int n)
+{
+	int i, j;
+	Character* key;
+	for (i = 1; i < n; i++)
 	{
-
-	}
-
-
-	void QueueManager::createRounds(vector<Character*> c)
-	{
-		
-	}
-
-	void QueueManager::changeRounds()
-	{
-		vectorCopy(currTurn, nextTurn);
-		insertionSort(nextTurn, nextTurn.size());
-	}
-
-	void QueueManager::insertionSort(std::vector<Character*>& turn, int n)
-	{
-		int i, j;
-		Character* key;
-		for (i = 1; i < n; i++)
+		//key = turn[i];
+		j = i - 1;
+		/*
+		using namespace std;
+		Enemy* tempp = (Enemy*)turn[j];
+		cout << tempp->toString() << endl;
+		cout << turn.size() << " "<< j<<endl;
+		cout << turn[j]->getDex() << endl;
+		cout << turn[i]->toString() << endl;
+		//*/
+		while (j >= 0 && turn[j]->getDex() > turn[i]->getDex())
 		{
-			//key = turn[i];
-			j = i - 1;
-			/*
-			using namespace std;
-			Enemy* tempp = (Enemy*)turn[j];
-			cout << tempp->toString() << endl;
-			cout << turn.size() << " "<< j<<endl;
-			cout << turn[j]->getDex() << endl;
-			cout << turn[i]->toString() << endl;
-			//*/
-			while (j >= 0 && turn[j]->getDex() > turn[i]->getDex())
-			{
-				turn[j + 1] = turn[j];
-				j = j - 1;
-			}
-			turn[j + 1] = turn[i];
+			turn[j + 1] = turn[j];
+			j = j - 1;
 		}
+		turn[j + 1] = turn[i];
 	}
+}
 
-	void QueueManager::vectorCopy(vector<Character*>& cT, vector<Character*>& nT)
+void QueueManager::vectorCopy(vector<Character*>& cT, vector<Character*>& nT)
+{
+	cT.erase(cT.begin(), cT.end());
+	for (int i = 0; i < nT.size(); i++)
 	{
-		cT.erase(cT.begin(), cT.end());
-		for (int i = 0; i < nT.size(); i++)
-		{
-			cT.push_back(nT[i]);
-		}
+		cT.push_back(nT[i]);
 	}
+}
 
 CombatManager::CombatManager()
 {
-
+	
 }
 
 
@@ -73,29 +71,19 @@ CombatManager::~CombatManager()
 {
 }
 
-/*
-void updateStatus(Character& c) {
+
+void CombatManager::updateStatus() {
 	//First check if character is dead
-	if (c.getHPCur() <= 0) {
-		inCombat = false;
-	}
-	// Next check the ailments of given character
-	else {
-		if (ailments.size() != 0) {
-			for (int i = 0; i < ailments.size(); i++) {
-				if (ailments[i] == 0) {
-					silenced(c);
-				}
-				else if (ailments[i] == 1) {
-					poisoned(c);
-				}
-			}
-		}
+	int lc[2] = {0,0};
+	for(auto& c : participants)
+	{
+		if (c->getHPCurrent() <= 0) continue;
+		c->ailmAffect();
 	}
 }
-*/
+//*/
 
-bool CombatManager::textAction(Character* c) {
+int CombatManager::textAction(Character* c) {
 	vector<int> ailments;
 	if (c->is_Enemy() == true)
 	{
@@ -114,7 +102,7 @@ bool CombatManager::textAction(Character* c) {
 		if (participants[player_index[target]]->getHPCurrent() == 0) {
 			std::cout << "Why are your so weak? You are dead, dude!" << std::endl;
 			inCombat = false;
-			return false;
+			return ENEMY_WINS;
 		}
 	}
 	else
@@ -130,7 +118,7 @@ bool CombatManager::textAction(Character* c) {
 			int char_selection;
 			switch (action) {
 			case 6:
-				std::cout << "Just kidding. You don't have SHEET here\n" << std::endl;
+				std::cout << "Just kidding. You don't have SHEETz coffee here\n" << std::endl;
 				break;
 			case 7:
 			case 8:
@@ -242,7 +230,7 @@ bool CombatManager::textAction(Character* c) {
 		}
 	}
 
-	return true;
+	return IN_COMBAT;
 }
 
 void CombatManager::outputEnemy() {
@@ -253,7 +241,7 @@ void CombatManager::outputEnemy() {
 	}
 }
 
-bool CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e) {
+int CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e) {
 	/*
 		If c is an emeny, do enemy attack
 		Else, wait for user input
@@ -345,7 +333,7 @@ bool CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 		}
 	}
 
-	return true;
+	return IN_COMBAT;
 
 }
 
@@ -378,7 +366,7 @@ void CombatManager::textMain(bool& printed) {
 	printed = true;
 }
 
-bool CombatManager::combatMain(std::vector<Character*>& p) 
+int CombatManager::combatMain(std::vector<Character*>& p) 
 {
 	participants = p;
 
@@ -389,8 +377,14 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 
 	//initialize enemy_index and player_index
 	for (int i = 0; i < participants.size(); i++) {
-		if (participants[i]->is_Enemy()) enemy_index.push_back(i);
-		else player_index.push_back(i);
+		if (participants[i]->is_Enemy()) {
+			enemy_index.push_back(i);
+			livingCount[ENEMY]++;
+		}
+		else {
+			player_index.push_back(i);
+			livingCount[PLAYER]++;
+		}
 	}
 
 	int charImageX = 0;
@@ -422,13 +416,13 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	vector<int> ailments;
 	// Create QueueManager obj which contains sorting of participant array. 
 	QueueManager qm = QueueManager(participants);
-	LoadTexture background;
+	//LoadTexture background;
 	SDL_Event e;
-	background.loadFromFile("Images/UI/CombatScene/combatScene.png");
+	//background.loadFromFile("Images/UI/CombatScene/combatScene.png");
 	
-	TTF_Font* font = Helper::setFont("Fonts/Stacked pixel.ttf", 25);
-	SDL_Color txt_color = {0,0,0,0};
-	
+	//TTF_Font* font = Helper::setFont("Fonts/Stacked pixel.ttf", 25);
+	//SDL_Color txt_color = {0,0,0,0};
+	/*
 	int bw = 100;
 	int bh = 50;
 	std::vector<Button*> buttons;
@@ -440,22 +434,45 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[CON], gRenderer));
 	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[FAI], gRenderer));
 	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "Inventory", gRenderer));
+	*/
 
-
-	glClearColor(0.2, 0.4, 0.0, 1.0); //(float red,float green,float blue,float alpha)just like SDL_SetRenderDrawColor(&renderer, r, g, b, a)
-	glClear(GL_COLOR_BUFFER_BIT);  //just like SDL_RenderClear(&renderer);
-	SDL_GL_SwapWindow(gWindow); //just like SDL_RenderPresent(&renderer);
-	
 	bool printed = false; // for text combat ui
 
+	//SDL_GLContext glcontext = SDL_GL_CreateContext(gWindow);
+	//glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	//glewInit();
+	//Graphics combatGraphics;
+	//combatGraphics.init();
+
+	int width, height;
+	
 	while (inCombat) {
-		while (SDL_PollEvent(&e)) {
+		//combatGraphics.display();
+		/*while (SDL_PollEvent(&e)) {
+			
 		if (e.type == SDL_QUIT) {
-			background.free();
+			//background.free();
 			return false; 
+
+			//glDeleteVertexArrays(1, &VAO);
+			//glDeleteBuffers(1, &VBO);
+			//glDeleteBuffers(1, &EBO);
 		}
 		
-		background.renderBackground();
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, texture);
+	
+
+		// Draw container
+		//glBindVertexArray(VAO);
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//glBindVertexArray(0);
+
+
+		//SDL_GL_SwapWindow(gWindow);
+	
+		
+		background.renderBackground(gRenderer);
 		delaysPerFrame++;
 		if (delaysPerFrame >= 6) {
 			frame++;
@@ -479,8 +496,9 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 			}
 		}
 		//SDL_RenderPresent(gRenderer);
+		
 		SDL_Delay(16);
-		}
+		}*/
 		
 		textMain(printed); // text combat ui initialization
 
@@ -488,16 +506,19 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 		{
 			//updateStatus(participants[i]);
 			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0)
-				if(!textAction(participants[i])) return false;////	takeAction(participants[i], buttons, e)
+				switch (int result_temp = textAction(participants[i])) {
+				case IN_COMBAT:
+					break;
+				default:
+					return result_temp;
+					////	takeAction(participants[i], buttons, e)
+				}
+			updateStatus();
 		}
 		printed = false; // for text combat ui
 		qm.changeRounds();
 	}
-	
+	//SDL_GL_DeleteContext(glcontext);
 	return true;
 
 }
-
-
-
-

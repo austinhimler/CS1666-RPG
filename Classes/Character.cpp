@@ -1,5 +1,6 @@
-#include "../Headers/Character.h"
 #include <iostream>
+
+#include "../Headers/Character.h"
 
 	Character::Character(std::string n, std::vector<Attribute> attr) {
 		attributes = attr;
@@ -8,6 +9,7 @@
 		setEnergyMax();
 		hpCurrent = hpMax;
 		mpCurrent = mpMax;
+		flip = SDL_FLIP_NONE;
 		energyCurrent = energyMax;
 		energyRegen = (energyMax < 10)?1:0.1 * energyMax;
 		name = n;
@@ -16,6 +18,8 @@
 		learnAbility(ATTACK);
 		learnAbility(DEFEND);
 		learnAbility(ESCAPE);
+		xVelocity = 0;
+		yVelocity = 0;
 	}
 	Character::Character(std::string n, int s, int i, int d, int c, int f) : Character(n, std::vector<Attribute>({ Attribute("Strength", s), Attribute("Intelligence", i) ,Attribute("Dexerity", d) , Attribute("Constitution", c) ,Attribute("Faith", f) })) {}
 	Character::Character(std::string n) : Character(n, 1, 1, 1, 1, 1) {}
@@ -56,6 +60,50 @@
 		return result;
 	}
 
+
+	void Character::checkStatus() {
+		if (hpCurrent < 0) hpCurrent = 0;
+		else if (hpCurrent > hpMax) hpCurrent = hpMax;
+		if (mpCurrent < 0) mpCurrent = 0;
+		else if (mpCurrent > mpMax) mpCurrent = mpMax;
+		if (energyCurrent < 0) energyCurrent = 0;
+		else if (energyCurrent > energyMax) energyCurrent = energyMax;
+	}
+
+	void Character::ailmAffect() {
+		if (ailments.size() == 0) return;
+		Ailment ailm;
+		for (int i = 0; i < ailments.size(); i++) {
+			ailm = ailments[i];
+			switch (ailm.getType())
+			{
+			case AilmentResource::tNONE:
+				break;
+			case AilmentResource::tHP_ONLY:
+				hpCurrent -= ailm.getVal();
+				break;
+			case AilmentResource::tMP_ONLY:
+				mpCurrent -= ailm.getVal();
+				break;
+			case AilmentResource::tEN_ONLY:
+				energyCurrent -= ailm.getVal();
+				break;
+			case AilmentResource::tCURSE:
+				if (ailm.getTN() == 1)
+					hpCurrent = 0;
+				break;
+			case AilmentResource::tALL:
+				break;
+			default:
+				break;
+			}
+			checkStatus();
+			ailm.update();
+			if (ailm.getTN() == 0 && ailm.getSA() == 0)
+				ailments.erase(ailments.begin() + i);
+		}
+	}	
+
 	
 	void Character::learnAbility(int a) {
 		Ability* abil = new Ability(a, AbilityResource::abilityAttr[a], attributes);
@@ -82,6 +130,28 @@
 			energyCurrent -= a->getEnergyCost();
 		}
 		return energyCurrent;
+	}
+
+	void Character::takeAilm(Ailment ailm) {
+		if (ailments.size() != 0)
+		{
+			Ailment ailm_temp;
+			std::vector<Ailment>::iterator temp = find(ailments.begin(), ailments.end(), ailm);
+			if (temp != ailments.end())
+			{
+				ailm_temp = *temp;
+				ailm_temp.combineAilment(ailm);
+				*temp = ailm_temp;
+				return;
+			}
+			if (ailm == *ailments.end()) {
+				ailm_temp = *ailments.end();
+				ailm_temp.combineAilment(ailm);
+				*ailments.end() = ailm_temp;
+				return;
+			}
+		}
+		ailments.push_back(ailm);
 	}
 	//*/
 	std::string Character::toString() {
@@ -120,10 +190,20 @@
 	int Character::getImageWidth() { return imageWidth; }
 	int Character::getImageHeight() { return imageHeight; }
 	std::string Character::getImageIdleResource() { return imageIdleResource; }
+	std::string Character::getImageRightIdleResource() { return imageRightIdleResource; }
 	std::string Character::getImageRunResource() { return imageRunResource; }
+	std::string Character::getImageUpRunResource() { return imageUpRunResource; }
+	std::string Character::getImageDownRunResource() { return imageDownRunResource; }
+	std::string Character::getImageDownRightRunResource() { return imageDownRightRunResource; }
+	std::string Character::getImageUpRightRunResource() { return imageUpRightRunResource; }
 	std::string Character::getName() { return name; }
 	SDL_Texture* Character::getTextureIdle() { return textureIdle; }
+	SDL_Texture* Character::getTextureRightIdle() { return textureIdle; }
 	SDL_Texture* Character::getTextureRun() { return textureRun; }
+	SDL_Texture* Character::getTextureDownRun() { return textureDownRun; }
+	SDL_Texture* Character::getTextureDownRightRun() { return textureDownRightRun; }
+	SDL_Texture* Character::getTextureUpRightRun() { return textureUpRightRun; }
+	SDL_Texture* Character::getTextureUpRun() { return textureUpRun; }
 	SDL_Texture* Character::getTextureActive() { return textureActive; }
 	SDL_Rect Character::getRectangle() { return rectangle; }
 	std::vector<Attribute> Character::getAttributes() { return attributes; }
@@ -133,3 +213,4 @@
 	bool Character::is_Enemy() { return isEnemy; }
 	int Character::getLevel() { return level; }
 	Attribute Character::getAttr(int i) { return attributes[i]; }
+	std::vector<Ailment> Character::getAilm() { return ailments; }
