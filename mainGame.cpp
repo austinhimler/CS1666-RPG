@@ -1233,16 +1233,16 @@ void playGame() {
 			//vector<Character *> c;
 			//for (auto i : combatants)
 				//c.push_back(&i);
-			string combatResult = cm.combatMain(combatants);
-      std::cout << combatResult << std::endl;
-			if (combatResult == "Death" ){
+			int combatResult = cm.combatMain(combatants);
+		 std::cout << combatResult << std::endl;
+			if (combatResult == ENEMY_WINS){
 				cout << "\nYOU HAVE DIED\nGAME OVER MAN, GAME OVER" << endl;
 				exit(1);
 			}
-			else if (combatResult == "Victory"){
+			else if (combatResult == PLAYER_WINS){
 
 			}
-			else if (combatResult == "Escape") {
+			else if (combatResult == PLAYER_ESCAPES) {
 				/*
 				allEnemies.push_back(collidingCluster);
 				charactersOnScreen.push_back(collidingCluster);
