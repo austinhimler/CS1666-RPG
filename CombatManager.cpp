@@ -447,35 +447,21 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	glewInit();
 	Graphics combatGraphics;
 	combatGraphics.init();
+	combatGraphics.display();
+	combatGraphics.rotateRandom();
 
 	int width, height;
 	
 	while (inCombat) {
-		combatGraphics.display();
-		/*while (SDL_PollEvent(&e)) {
+		combatGraphics.idle();
+		while (SDL_PollEvent(&e)) {
 			
 		if (e.type == SDL_QUIT) {
-			//background.free();
+			SDL_GL_DeleteContext(glcontext);
 			return false; 
-
-			//glDeleteVertexArrays(1, &VAO);
-			//glDeleteBuffers(1, &VBO);
-			//glDeleteBuffers(1, &EBO);
 		}
 		
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, texture);
-	
-
-		// Draw container
-		//glBindVertexArray(VAO);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		//glBindVertexArray(0);
-
-
-		//SDL_GL_SwapWindow(gWindow);
-	
-		
+		/*
 		background.renderBackground(gRenderer);
 		delaysPerFrame++;
 		if (delaysPerFrame >= 6) {
@@ -501,8 +487,8 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 		}
 		//SDL_RenderPresent(gRenderer);
 		
-		SDL_Delay(16);
-		}*/
+		SDL_Delay(16);*/
+		}
 		
 		textMain(printed); // text combat ui initialization
 
@@ -510,7 +496,7 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 		{
 			//updateStatus(participants[i]);
 			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0)
-				if(!textAction(participants[i])) return false;////	takeAction(participants[i], buttons, e)
+				if(!textAction(participants[i])) return false; // takeAction(participants[i], buttons, e)
 		}
 		printed = false; // for text combat ui
 		qm.changeRounds();

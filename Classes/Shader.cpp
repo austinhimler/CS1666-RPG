@@ -1,5 +1,6 @@
 #include "../Headers/Shader.h"
 
+
 Shader::Shader(const char* f, GLenum t, char* s)
 {
 	filename = f;
@@ -16,7 +17,7 @@ char* Shader::readShaderSource(const char* shaderFile)
 		return NULL;
 
 	fseek(fp, 0L, SEEK_END);
-	long size = ftell(fp);
+	int size = ftell(fp);
 
 	fseek(fp, 0L, SEEK_SET);
 	char *buf = (char *)malloc(size + 1);

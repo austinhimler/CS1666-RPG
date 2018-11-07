@@ -6,7 +6,7 @@ varying vec4 color;
 
 uniform mat4 ctm;
 
-void main(void)
+void main()
 {
 	color = vColor;
 	gl_Position = ctm * vPosition;
