@@ -95,7 +95,7 @@ void updateStatus(Character& c) {
 }
 */
 
-bool CombatManager::textAction(Character* c) {
+string CombatManager::textAction(Character* c) {
 	vector<int> ailments;
 	if (c->is_Enemy() == true)
 	{
@@ -114,7 +114,7 @@ bool CombatManager::textAction(Character* c) {
 		if (participants[player_index[target]]->getHPCurrent() == 0) {
 			std::cout << "Why are your so weak? You are dead, dude!" << std::endl;
 			inCombat = false;
-			return false;
+			return "Death";
 		}
 	}
 	else
@@ -185,6 +185,7 @@ bool CombatManager::textAction(Character* c) {
 						takingAction = false;
 						inCombat = false;
 						std::cout << "You escape succesfully COWARD!" << std::endl;
+						return "Escape";
 					}
 					else {
 						std::cout << "You are not going anywhere." << std::endl;
@@ -225,6 +226,7 @@ bool CombatManager::textAction(Character* c) {
 				std::cout << "You win" << std::endl;
 				takingAction = false;
 				inCombat = false;
+				return "Victory";
 				break;
 			}
 			if (takingAction) {
@@ -242,7 +244,7 @@ bool CombatManager::textAction(Character* c) {
 		}
 	}
 
-	return true;
+	return "Continue";
 }
 
 void CombatManager::outputEnemy() {
@@ -378,7 +380,7 @@ void CombatManager::textMain(bool& printed) {
 	printed = true;
 }
 
-bool CombatManager::combatMain(std::vector<Character*>& p) 
+string CombatManager::combatMain(std::vector<Character*>& p) 
 {
 	participants = p;
 
@@ -452,8 +454,8 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	combatGraphics.display();
 	combatGraphics.rotateRandom();
 	//To rotate the cone. Must be outside inCombat loop as textCombat currently waits for user input so rotation only works after textInput completes
-		while (true)
-			combatGraphics.idle();
+		//while (true)
+			//combatGraphics.idle();
 	
 
 	int width, height;
@@ -505,13 +507,16 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 		{
 			//updateStatus(participants[i]);
 			//This 
-			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0)
-				if(!textAction(participants[i])) return false; // takeAction(participants[i], buttons, e)
+			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0) {
+				string result = textAction(participants[i]);  // takeAction(participants[i], buttons, e)
+				if (result == "Victory" || result == "Death" || result == "Escape")
+					return result;
+			}
 		}
 		printed = false; // for text combat ui
 		qm.changeRounds();
 	}
 	SDL_GL_DeleteContext(glcontext);
-	return true;
+	return "Should not reach this";
 
 }

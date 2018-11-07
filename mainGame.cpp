@@ -1230,7 +1230,8 @@ void playGame() {
 			//vector<Character *> c;
 			//for (auto i : combatants)
 				//c.push_back(&i);
-			bool inCombat = cm.combatMain(combatants);
+			string combatResult = cm.combatMain(combatants);
+			std::cout << combatResult << std::endl;
 			if (player1.getHPCurrent() == 0){
 				cout << "\nYOU HAVE DIED\nGAME OVER MAN, GAME OVER" << endl;
 				exit(1);
