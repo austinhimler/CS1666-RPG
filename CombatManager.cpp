@@ -449,11 +449,14 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	combatGraphics.init();
 	combatGraphics.display();
 	combatGraphics.rotateRandom();
+	while(true)
+		combatGraphics.idle();
 
 	int width, height;
 	
 	while (inCombat) {
-		combatGraphics.idle();
+		//combatGraphics.idle();
+		//combatGraphics.rotateRandom();
 		while (SDL_PollEvent(&e)) {
 			
 		if (e.type == SDL_QUIT) {
@@ -490,6 +493,7 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 		SDL_Delay(16);*/
 		}
 		
+
 		textMain(printed); // text combat ui initialization
 
 		for (int i = 0; i < participants.size(); i++)
