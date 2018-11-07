@@ -1200,6 +1200,7 @@ void playGame() {
 						combatants.push_back(i);
 					}
 					allEnemies.erase(allEnemies.begin() + enemyToRemove);
+					charactersOnScreen.erase(charactersOnScreen.begin() + enemyToRemove + 1);
 					inOverworld = false;
 					combatStarted = true;
 					break;
@@ -1230,12 +1231,15 @@ void playGame() {
 			//vector<Character *> c;
 			//for (auto i : combatants)
 				//c.push_back(&i);
-			bool inCombat = cm.combatMain(combatants);
-			if (player1.getHPCurrent() == 0){
+			string combatResult = cm.combatMain(combatants);
+			if (combatResult == "Death" ){
 				cout << "\nYOU HAVE DIED\nGAME OVER MAN, GAME OVER" << endl;
 				exit(1);
 			}
-			else {
+			else if (combatResult == "Victory"){
+
+			}
+			else if (combatResult == "Escape") {
 
 			}
 			combatStarted = false;
