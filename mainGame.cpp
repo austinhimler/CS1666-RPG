@@ -1189,10 +1189,12 @@ void playGame() {
 			}
 
 			int enemyToRemove = -1;
+			//Cluster collidingCluster;
 			for (auto z : allEnemies)
 			{
 				enemyToRemove++;
 				if (check_collision(player1.rectangle, z->rectangle)) {
+					//collidingCluster = z;
 					combatants.clear();
 					combatants.push_back(&player1);
 					for (auto i : z->characterGroup)
@@ -1241,7 +1243,10 @@ void playGame() {
 
 			}
 			else if (combatResult == "Escape") {
-
+				/*
+				allEnemies.push_back(collidingCluster);
+				charactersOnScreen.push_back(collidingCluster);
+				*/
 			}
 			combatStarted = false;
 			/*
