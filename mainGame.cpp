@@ -1232,6 +1232,7 @@ void playGame() {
 			//for (auto i : combatants)
 				//c.push_back(&i);
 			string combatResult = cm.combatMain(combatants);
+      std::cout << combatResult << std::endl;
 			if (combatResult == "Death" ){
 				cout << "\nYOU HAVE DIED\nGAME OVER MAN, GAME OVER" << endl;
 				exit(1);

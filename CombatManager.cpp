@@ -1,4 +1,6 @@
 #include "Headers/CombatManager.h"
+#include <stdio.h>
+#include <io.h>
 
 QueueManager::QueueManager(vector<Character *> c)
 {
@@ -93,7 +95,7 @@ void updateStatus(Character& c) {
 }
 */
 
-bool CombatManager::textAction(Character* c) {
+string CombatManager::textAction(Character* c) {
 	vector<int> ailments;
 	if (c->is_Enemy() == true)
 	{
@@ -112,7 +114,7 @@ bool CombatManager::textAction(Character* c) {
 		if (participants[player_index[target]]->getHPCurrent() == 0) {
 			std::cout << "Why are your so weak? You are dead, dude!" << std::endl;
 			inCombat = false;
-			return false;
+			return "Death";
 		}
 	}
 	else
@@ -183,6 +185,7 @@ bool CombatManager::textAction(Character* c) {
 						takingAction = false;
 						inCombat = false;
 						std::cout << "You escape succesfully COWARD!" << std::endl;
+						return "Escape";
 					}
 					else {
 						std::cout << "You are not going anywhere." << std::endl;
@@ -223,6 +226,7 @@ bool CombatManager::textAction(Character* c) {
 				std::cout << "You win" << std::endl;
 				takingAction = false;
 				inCombat = false;
+				return "Victory";
 				break;
 			}
 			if (takingAction) {
@@ -240,7 +244,7 @@ bool CombatManager::textAction(Character* c) {
 		}
 	}
 
-	return true;
+	return "Continue";
 }
 
 void CombatManager::outputEnemy() {
@@ -376,7 +380,7 @@ void CombatManager::textMain(bool& printed) {
 	printed = true;
 }
 
-bool CombatManager::combatMain(std::vector<Character*>& p) 
+string CombatManager::combatMain(std::vector<Character*>& p) 
 {
 	participants = p;
 
@@ -447,35 +451,27 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	glewInit();
 	Graphics combatGraphics;
 	combatGraphics.init();
+	combatGraphics.display();
+	combatGraphics.rotateRandom();
+	//To rotate the cone. Must be outside inCombat loop as textCombat currently waits for user input so rotation only works after textInput completes
+		//while (true)
+			//combatGraphics.idle();
+	
 
 	int width, height;
 	
 	while (inCombat) {
-		combatGraphics.display();
-		/*while (SDL_PollEvent(&e)) {
+		
+		//combatGraphics.idle();
+		//combatGraphics.rotateRandom();
+		while (SDL_PollEvent(&e)) {
 			
 		if (e.type == SDL_QUIT) {
-			//background.free();
+			SDL_GL_DeleteContext(glcontext);
 			return false; 
-
-			//glDeleteVertexArrays(1, &VAO);
-			//glDeleteBuffers(1, &VBO);
-			//glDeleteBuffers(1, &EBO);
 		}
 		
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, texture);
-	
-
-		// Draw container
-		//glBindVertexArray(VAO);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		//glBindVertexArray(0);
-
-
-		//SDL_GL_SwapWindow(gWindow);
-	
-		
+		/*
 		background.renderBackground(gRenderer);
 		delaysPerFrame++;
 		if (delaysPerFrame >= 6) {
@@ -501,21 +497,26 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 		}
 		//SDL_RenderPresent(gRenderer);
 		
-		SDL_Delay(16);
-		}*/
+		SDL_Delay(16);*/
+		}
 		
+
 		textMain(printed); // text combat ui initialization
 
 		for (int i = 0; i < participants.size(); i++)
 		{
 			//updateStatus(participants[i]);
-			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0)
-				if(!textAction(participants[i])) return false;////	takeAction(participants[i], buttons, e)
+			//This 
+			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0) {
+				string result = textAction(participants[i]);  // takeAction(participants[i], buttons, e)
+				if (result == "Victory" || result == "Death" || result == "Escape")
+					return result;
+			}
 		}
 		printed = false; // for text combat ui
 		qm.changeRounds();
 	}
 	SDL_GL_DeleteContext(glcontext);
-	return true;
+	return "Should not reach this";
 
 }
