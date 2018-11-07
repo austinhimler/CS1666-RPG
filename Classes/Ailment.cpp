@@ -1,5 +1,4 @@
 #include "../Headers/Ailment.h"
-#include <Random>
 
 Ailment::Ailment(int n, double c, int v, int tn, int sa, int d) {
 	name = n;
@@ -11,7 +10,7 @@ Ailment::Ailment(int n, double c, int v, int tn, int sa, int d) {
 	type = AilmentResource::ailmentType[name];
 }
 
-Ailment::Ailment(int n, int f1, int f2, Ability a) {
+Ailment::Ailment(int n, int f1, int f2, int val) {
 	name = n;
 	degree = std::rand() % 100;
 	if (degree < 30) degree = 1;
@@ -21,7 +20,7 @@ Ailment::Ailment(int n, int f1, int f2, Ability a) {
 	else if (degree < 100) degree = 5;
 	chance = (f1 - f2) * AilmentResource::ailmentCompen[name];
 	if (chance <= 10) chance = BASE_CHANCE;
-	value = a.getVal() / ABIL_FACTOR + degree * DEGREE_FACTOR;
+	value = val / ABIL_FACTOR + degree * DEGREE_FACTOR;
 	turnN = (int)(chance / 3);
 	stopAction = AilmentResource::ailmentSA[n];
 	type = AilmentResource::ailmentType[name];

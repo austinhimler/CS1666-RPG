@@ -3,7 +3,8 @@
 #define _____AILMENT_H_____
 #include <string>
 #include <Vector>
-#include "Ability.h"
+#include <Random>
+#include "Globals.h"
 #include "Resistance.h"
 
 /**
@@ -15,7 +16,7 @@ public:
 	Ailment();
 	Ailment(int n, double c, int v, int tn, int sa, int d);
 	Ailment(int n, double c);
-	Ailment(int n, int f1, int f2, Ability a);
+	Ailment(int n, int f1, int f2, int val);	// val is the return value of abil.getVal(), where abil is the ability that creates this ailment
 	operator std::string();
 	bool operator==(const Ailment& ailm);
 	bool operator!=(const Ailment& ailm);

@@ -72,14 +72,24 @@ CombatManager::~CombatManager()
 }
 
 
-void CombatManager::updateStatus() {
+int CombatManager::updateStatus() {
 	//First check if character is dead
 	int lc[2] = {0,0};
 	for(auto& c : participants)
 	{
 		if (c->getHPCurrent() <= 0) continue;
 		c->ailmAffect();
+		if (c->getHPCurrent() == 0) {
+			if (c->is_Enemy()) lc[ENEMY]++;
+			else lc[PLAYER]++;
+		}
+		else
+		{
+			c->updateEnergy(nullptr);
+		}
 	}
+	if (lc[PLAYER] == livingCount[PLAYER]) return ENEMY_WINS;
+	else if (lc[ENEMY] == livingCount[ENEMY]) return PLAYER_WINS;
 }
 //*/
 
@@ -173,6 +183,8 @@ int CombatManager::textAction(Character* c) {
 						takingAction = false;
 						inCombat = false;
 						std::cout << "You escape succesfully COWARD!" << std::endl;
+						livingCount[PLAYER]--;
+						return PLAYER_ESCAPES;
 					}
 					else {
 						std::cout << "You are not going anywhere." << std::endl;
@@ -191,9 +203,16 @@ int CombatManager::textAction(Character* c) {
 					int target = -1;
 					while (target <= 0 || target > enemy_index.size()) {
 						std::cin >> target;
+						if (participants[enemy_index[target]]->getHPCurrent() == 0) {
+							std::cout << "That eneny is dead." << std::endl;
+							target = -1;
+						}
 					}
 					target--;
 					int result = participants[enemy_index[target]]->beingTarget(&abil_temp[helper[abil_selection]]);
+					if (participants[enemy_index[target]]->getHPCurrent() == 0) {
+						livingCount[ENEMY]--;
+					}
 					std::cout << "You damage " << participants[enemy_index[target]]->getName() << " amazingly by " << result << " HP!" << " " << participants[enemy_index[target]]->getName() << " now has only " << participants[enemy_index[target]]->getHPCurrent() << " HP left." << std::endl;
 					break;
 				}
@@ -203,7 +222,7 @@ int CombatManager::textAction(Character* c) {
 			}
 			if (c->getEnergyCurrent() == 0) {
 				takingAction = false;
-				break;
+				return IN_COMBAT;
 			}
 			bool temp = false;
 			for (auto& i : enemy_index) { // check whether at least 1 enemy survives

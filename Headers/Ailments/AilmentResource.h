@@ -1,7 +1,5 @@
 #pragma once
-#pragma once
 #include <vector>
-#include "../Attributes/Attr_Globals.h"
 
 namespace AilmentResource {
 
@@ -64,7 +62,7 @@ namespace AilmentResource {
 		tCURSE,
 	};
 
-	int ailmentType[] = {
+	const int ailmentType[] = {
 		tNONE,
 		tHE,
 		tHP_ONLY,

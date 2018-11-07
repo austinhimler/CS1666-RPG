@@ -23,7 +23,7 @@ public:
 	CombatManager();
 	~CombatManager();
 
-	void updateStatus();
+	int updateStatus();
 
 	/*
 	*	the folloiwng 3 fucntions return true if player wins the combat, return false if player dies and thus lose the combat

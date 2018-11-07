@@ -118,7 +118,7 @@
 	}
 
 	int Character::updateEnergy(Ability* a) {
-		if (a == nullptr) {
+		if (a == nullptr) { // for updating energy between turns
 			int temp = energyRegen + buff[ENERGYREGEN];
 			energyCurrent += (temp >= 0) ? temp : 0;
 			if (energyCurrent > energyMax) energyCurrent = energyMax;
