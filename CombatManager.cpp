@@ -1,4 +1,6 @@
 #include "Headers/CombatManager.h"
+#include <stdio.h>
+#include <io.h>
 
 QueueManager::QueueManager(vector<Character *> c)
 {
@@ -449,12 +451,15 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	combatGraphics.init();
 	combatGraphics.display();
 	combatGraphics.rotateRandom();
-	while(true)
-		combatGraphics.idle();
+	//To rotate the cone. Must be outside inCombat loop as textCombat currently waits for user input so rotation only works after textInput completes
+		while (true)
+			combatGraphics.idle();
+	
 
 	int width, height;
 	
 	while (inCombat) {
+		
 		//combatGraphics.idle();
 		//combatGraphics.rotateRandom();
 		while (SDL_PollEvent(&e)) {
@@ -499,6 +504,7 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 		for (int i = 0; i < participants.size(); i++)
 		{
 			//updateStatus(participants[i]);
+			//This 
 			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0)
 				if(!textAction(participants[i])) return false; // takeAction(participants[i], buttons, e)
 		}
