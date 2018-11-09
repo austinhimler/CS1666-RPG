@@ -5,6 +5,7 @@
 #include <vector>
 #include "Attribute.h"
 #include "Globals.h"
+#include "Ailment.h"
 
 /*
 *	Curretnly not supporting abilities involving ailments and Resistance
@@ -46,7 +47,6 @@ private:
 	// attributes affecting this ability, assuming maximum 3 attributes can affect it
 	// stores the enum of the attributes
 	std::vector<int> relatedAttr;
-
 
 	//std::vector<Resistance> resistancesEffected;
 	//Attribute abilityAttributeType;

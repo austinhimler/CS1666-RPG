@@ -53,6 +53,23 @@ void Graphics::display(void)
 	SDL_GL_SwapWindow(gWindow);
 }
 
+void Graphics::idle(void)
+{
+	ctm = ctm * glm::rotate(0.01f, randomRotationAxis);
+	display();
+}
+
+void Graphics::rotateRandom(void)
+{
+	GLfloat x, y, z;
+
+	x = rand() / (float)RAND_MAX;
+	y = rand() / (float)RAND_MAX;
+	z = rand() / (float)RAND_MAX;
+
+	randomRotationAxis = glm::vec3(x, y, z);
+}
+
 glm::vec4* Graphics::cone(int *num_vertices)
 {
 	float theta, theta_r, theta10_r;
@@ -66,12 +83,12 @@ glm::vec4* Graphics::cone(int *num_vertices)
 		theta_r = theta * M_PI / 180.0;
 		theta10_r = (theta + 10) * M_PI / 180.0;
 
-		vertices[index] = glm::vec4(0.0, 0.0, 0.0, 1.0);
-		vertices[index + 1] = glm::vec4(cos(theta_r), 0.0, sin(theta_r), 1.0);
-		vertices[index + 2] = glm::vec4(cos(theta10_r), 0.0, sin(theta10_r), 1.0);
-		vertices[index + 3] = glm::vec4(0.0, 1.0, 0.0, 1.0);
-		vertices[index + 4] = glm::vec4(cos(theta10_r), 0.0, sin(theta10_r), 1.0);
-		vertices[index + 5] = glm::vec4(cos(theta_r), 0.0, sin(theta_r), 1.0);
+		vertices[index] = glm::vec4(0.0, -0.5, 0.0, 1.0);
+		vertices[index + 1] = glm::vec4(0.5*cos(theta_r), -0.5, 0.5*sin(theta_r), 1.0);
+		vertices[index + 2] = glm::vec4(0.5*cos(theta10_r), -0.5, 0.5*sin(theta10_r), 1.0);
+		vertices[index + 3] = glm::vec4(0.0, 0.5, 0.0, 1.0);
+		vertices[index + 4] = glm::vec4(0.5*cos(theta10_r), -0.5, 0.5*sin(theta10_r), 1.0);
+		vertices[index + 5] = glm::vec4(0.5*cos(theta_r), -0.5, 0.5*sin(theta_r), 1.0);
 		index += 6;
 	}
 

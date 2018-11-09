@@ -10,6 +10,7 @@
 #include <SDL/SDL_ttf.h>
 #include "Attributes/Attr_Globals.h"
 #include "Abilities/AbilityResource.h"
+#include "Ailments/AilmentResource.h"
 /*
 //namespace Char_Help {
 	
@@ -51,9 +52,18 @@ enum BUFF {
 enum AILMENTS {
 	SILENCE,
 	POISON,
+	FIRE,
+	STUN,
+	CURSE
 };
 	
-
+enum COMBATFLAGS {
+	IN_COMBAT,
+	PLAYER_WINS,
+	ENEMY_WINS,
+	PLAYER_ESCAPES,
+	ENEMY_ESCAPES,
+};
 
 extern SDL_Window* gWindow;
 extern SDL_Renderer* gRenderer;

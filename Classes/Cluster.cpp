@@ -5,7 +5,9 @@
 Cluster::Cluster(int q) {
 	for (int temp = 0;temp < q;temp++)
 	{
-		characterGroup.push_back(new Enemy("Owl", 8, 10, 10, 8, 10));
+		string t_name = "Owl ";
+		t_name.push_back(char(temp + 65));
+		characterGroup.push_back(new Enemy(t_name, 1, 1, 1, 1, 1));
 	}
 	clusterSize = q;
 	pixelShiftAmountForAnimationInSpriteSheet = 144;
@@ -27,6 +29,7 @@ Cluster::Cluster(int q) {
 	drawRectangle = { 0, 0, imageWidth, imageHeight };
 	speedMax = 250.0;
 	acceleration = 2000.0;
+	alive = true;
 }
 Cluster::Cluster(std::string n) {
 	name = n;

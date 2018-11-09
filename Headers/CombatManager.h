@@ -22,14 +22,15 @@ class CombatManager
 public:
 	CombatManager();
 	~CombatManager();
-	void updateStatus(Character* c);
+
+	int updateStatus();
 
 	/*
 	*	the folloiwng 3 fucntions return true if player wins the combat, return false if player dies and thus lose the combat
 	*/
-	bool takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e);
-	bool textAction(Character* c);
-	bool combatMain(std::vector<Character*>& c);
+	int takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e);
+	int textAction(Character* c);
+	int combatMain(std::vector<Character*>& c);
 
 	void textMain(bool& printed);
 	void setNewButtons(std::vector<Button*>& buttons, int t);
@@ -38,6 +39,7 @@ public:
 
 private:
 	bool inCombat;
+	int livingCount[2];
 	std::vector<Character*> participants;
 	std::vector<int> enemy_index;
 	std::vector<int> player_index;

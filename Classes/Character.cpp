@@ -14,6 +14,7 @@
 		energyRegen = (energyMax < 10)?1:0.1 * energyMax;
 		name = n;
 		buff = std::vector<int>(BUFFCOUNT, 0);
+		level = 1;
 		learnAbility(ATTACK);
 		learnAbility(DEFEND);
 		learnAbility(ESCAPE);
@@ -59,6 +60,50 @@
 		return result;
 	}
 
+
+	void Character::checkStatus() {
+		if (hpCurrent < 0) hpCurrent = 0;
+		else if (hpCurrent > hpMax) hpCurrent = hpMax;
+		if (mpCurrent < 0) mpCurrent = 0;
+		else if (mpCurrent > mpMax) mpCurrent = mpMax;
+		if (energyCurrent < 0) energyCurrent = 0;
+		else if (energyCurrent > energyMax) energyCurrent = energyMax;
+	}
+
+	void Character::ailmAffect() {
+		if (ailments.size() == 0) return;
+		Ailment ailm;
+		for (int i = 0; i < ailments.size(); i++) {
+			ailm = ailments[i];
+			switch (ailm.getType())
+			{
+			case AilmentResource::tNONE:
+				break;
+			case AilmentResource::tHP_ONLY:
+				hpCurrent -= ailm.getVal();
+				break;
+			case AilmentResource::tMP_ONLY:
+				mpCurrent -= ailm.getVal();
+				break;
+			case AilmentResource::tEN_ONLY:
+				energyCurrent -= ailm.getVal();
+				break;
+			case AilmentResource::tCURSE:
+				if (ailm.getTN() == 1)
+					hpCurrent = 0;
+				break;
+			case AilmentResource::tALL:
+				break;
+			default:
+				break;
+			}
+			checkStatus();
+			ailm.update();
+			if (ailm.getTN() == 0 && ailm.getSA() == 0)
+				ailments.erase(ailments.begin() + i);
+		}
+	}	
+
 	
 	void Character::learnAbility(int a) {
 		Ability* abil = new Ability(a, AbilityResource::abilityAttr[a], attributes);
@@ -73,7 +118,7 @@
 	}
 
 	int Character::updateEnergy(Ability* a) {
-		if (a == nullptr) {
+		if (a == nullptr) { // for updating energy between turns
 			int temp = energyRegen + buff[ENERGYREGEN];
 			energyCurrent += (temp >= 0) ? temp : 0;
 			if (energyCurrent > energyMax) energyCurrent = energyMax;
@@ -85,6 +130,28 @@
 			energyCurrent -= a->getEnergyCost();
 		}
 		return energyCurrent;
+	}
+
+	void Character::takeAilm(Ailment ailm) {
+		if (ailments.size() != 0)
+		{
+			Ailment ailm_temp;
+			std::vector<Ailment>::iterator temp = find(ailments.begin(), ailments.end(), ailm);
+			if (temp != ailments.end())
+			{
+				ailm_temp = *temp;
+				ailm_temp.combineAilment(ailm);
+				*temp = ailm_temp;
+				return;
+			}
+			if (ailm == *ailments.end()) {
+				ailm_temp = *ailments.end();
+				ailm_temp.combineAilment(ailm);
+				*ailments.end() = ailm_temp;
+				return;
+			}
+		}
+		ailments.push_back(ailm);
 	}
 	//*/
 	std::string Character::toString() {
@@ -144,3 +211,6 @@
 	double Character::getSpeedMax() { return speedMax; }
 	double Character::getAcceleration() { return acceleration; }
 	bool Character::is_Enemy() { return isEnemy; }
+	int Character::getLevel() { return level; }
+	Attribute Character::getAttr(int i) { return attributes[i]; }
+	std::vector<Ailment> Character::getAilm() { return ailments; }

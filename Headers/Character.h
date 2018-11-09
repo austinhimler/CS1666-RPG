@@ -9,6 +9,7 @@
 #include "Globals.h"
 #include "Ailment.h"
 #include <map>
+#include <algorithm>
 
 /*
 #include "Attributes/Strength.h"
@@ -27,6 +28,7 @@ public:
 	Character(std::string n, int s, int i, int d, int c, int f);
 	Character(std::string n, std::vector<Attribute> attr);
 	
+	int getLevel();
 	int getHPMax();
 	int getHPCurrent();
 	int getMPCurrent();
@@ -48,7 +50,11 @@ public:
 	int getDex();
 	int getHelp(int n);
 	bool is_Enemy();
-
+	std::vector<Attribute> getAttributes();
+	Attribute getAttr(int i);
+	std::vector<Ability> getAbilities();
+	std::vector<Ailment> getAilm();
+	
 	double xVelocity;
 	double yVelocity;
 	double xDeltaVelocity;
@@ -77,14 +83,16 @@ public:
 	SDL_Texture* getTextureUpRun();
 	SDL_Texture* getTextureActive();
 	SDL_Rect getRectangle();
-	std::vector<Attribute> getAttributes();
-	std::vector<Ability> getAbilities();
 	
 	int beingTarget(Ability* a); // return -1 for succesful escape, -2 for failed escape, non-negative integers for HP healed or damaged
+	
 	//void takeDamage(Ability a);
 	void learnAbility(int a);
 
+	void takeAilm(Ailment ailm);
+	void ailmAffect();
 
+	void checkStatus();
 
 	int updateEnergy(Ability* a);
 
@@ -100,6 +108,7 @@ protected:
 	int energyRegen;
 	int mpMax;
 	int mpCurrent;
+	int level;
 	std::vector<int> buff;
 	std::string imageIdleResource;
 	std::string imageRightIdleResource;
@@ -137,7 +146,7 @@ protected:
 	std::vector<Attribute> attributes;
 	std::vector<Ability> abilities;
 	std::map<int, int> abil_helper;
-	
+	std::vector<Ailment> ailments;
 };
 
 /*Resistance evasion;

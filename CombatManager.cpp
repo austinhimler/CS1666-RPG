@@ -1,4 +1,6 @@
 #include "Headers/CombatManager.h"
+#include <stdio.h>
+#include <io.h>
 
 QueueManager::QueueManager(vector<Character *> c)
 {
@@ -71,29 +73,29 @@ CombatManager::~CombatManager()
 {
 }
 
-/*
-void updateStatus(Character& c) {
+
+int CombatManager::updateStatus() {
 	//First check if character is dead
-	if (c.getHPCur() <= 0) {
-		inCombat = false;
-	}
-	// Next check the ailments of given character
-	else {
-		if (ailments.size() != 0) {
-			for (int i = 0; i < ailments.size(); i++) {
-				if (ailments[i] == 0) {
-					silenced(c);
-				}
-				else if (ailments[i] == 1) {
-					poisoned(c);
-				}
-			}
+	int lc[2] = {0,0};
+	for(auto& c : participants)
+	{
+		if (c->getHPCurrent() <= 0) continue;
+		c->ailmAffect();
+		if (c->getHPCurrent() == 0) {
+			if (c->is_Enemy()) lc[ENEMY]++;
+			else lc[PLAYER]++;
+		}
+		else
+		{
+			c->updateEnergy(nullptr);
 		}
 	}
+	if (lc[PLAYER] == livingCount[PLAYER]) return ENEMY_WINS;
+	else if (lc[ENEMY] == livingCount[ENEMY]) return PLAYER_WINS;
 }
-*/
+//*/
 
-bool CombatManager::textAction(Character* c) {
+int CombatManager::textAction(Character* c) {
 	vector<int> ailments;
 	if (c->is_Enemy() == true)
 	{
@@ -112,7 +114,7 @@ bool CombatManager::textAction(Character* c) {
 		if (participants[player_index[target]]->getHPCurrent() == 0) {
 			std::cout << "Why are your so weak? You are dead, dude!" << std::endl;
 			inCombat = false;
-			return false;
+			return ENEMY_WINS;
 		}
 	}
 	else
@@ -183,6 +185,8 @@ bool CombatManager::textAction(Character* c) {
 						takingAction = false;
 						inCombat = false;
 						std::cout << "You escape succesfully COWARD!" << std::endl;
+						livingCount[PLAYER]--;
+						return PLAYER_ESCAPES;
 					}
 					else {
 						std::cout << "You are not going anywhere." << std::endl;
@@ -201,9 +205,16 @@ bool CombatManager::textAction(Character* c) {
 					int target = -1;
 					while (target <= 0 || target > enemy_index.size()) {
 						std::cin >> target;
+						if (participants[enemy_index[target]]->getHPCurrent() == 0) {
+							std::cout << "That eneny is dead." << std::endl;
+							target = -1;
+						}
 					}
 					target--;
 					int result = participants[enemy_index[target]]->beingTarget(&abil_temp[helper[abil_selection]]);
+					if (participants[enemy_index[target]]->getHPCurrent() == 0) {
+						livingCount[ENEMY]--;
+					}
 					std::cout << "You damage " << participants[enemy_index[target]]->getName() << " amazingly by " << result << " HP!" << " " << participants[enemy_index[target]]->getName() << " now has only " << participants[enemy_index[target]]->getHPCurrent() << " HP left." << std::endl;
 					break;
 				}
@@ -213,7 +224,7 @@ bool CombatManager::textAction(Character* c) {
 			}
 			if (c->getEnergyCurrent() == 0) {
 				takingAction = false;
-				break;
+				return IN_COMBAT;
 			}
 			bool temp = false;
 			for (auto& i : enemy_index) { // check whether at least 1 enemy survives
@@ -240,7 +251,7 @@ bool CombatManager::textAction(Character* c) {
 		}
 	}
 
-	return true;
+	return IN_COMBAT;
 }
 
 void CombatManager::outputEnemy() {
@@ -251,7 +262,7 @@ void CombatManager::outputEnemy() {
 	}
 }
 
-bool CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e) {
+int CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e) {
 	/*
 		If c is an emeny, do enemy attack
 		Else, wait for user input
@@ -343,7 +354,7 @@ bool CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_
 		}
 	}
 
-	return true;
+	return IN_COMBAT;
 
 }
 
@@ -376,7 +387,7 @@ void CombatManager::textMain(bool& printed) {
 	printed = true;
 }
 
-bool CombatManager::combatMain(std::vector<Character*>& p) 
+int CombatManager::combatMain(std::vector<Character*>& p) 
 {
 	participants = p;
 
@@ -387,8 +398,14 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 
 	//initialize enemy_index and player_index
 	for (int i = 0; i < participants.size(); i++) {
-		if (participants[i]->is_Enemy()) enemy_index.push_back(i);
-		else player_index.push_back(i);
+		if (participants[i]->is_Enemy()) {
+			enemy_index.push_back(i);
+			livingCount[ENEMY]++;
+		}
+		else {
+			player_index.push_back(i);
+			livingCount[PLAYER]++;
+		}
 	}
 
 	int charImageX = 0;
@@ -447,35 +464,27 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 	glewInit();
 	Graphics combatGraphics;
 	combatGraphics.init();
+	combatGraphics.display();
+	combatGraphics.rotateRandom();
+	//To rotate the cone. Must be outside inCombat loop as textCombat currently waits for user input so rotation only works after textInput completes
+		//while (true)
+			//combatGraphics.idle();
+	
 
 	int width, height;
 	
 	while (inCombat) {
-		combatGraphics.display();
-		/*while (SDL_PollEvent(&e)) {
+		
+		//combatGraphics.idle();
+		//combatGraphics.rotateRandom();
+		while (SDL_PollEvent(&e)) {
 			
 		if (e.type == SDL_QUIT) {
-			//background.free();
+			SDL_GL_DeleteContext(glcontext);
 			return false; 
-
-			//glDeleteVertexArrays(1, &VAO);
-			//glDeleteBuffers(1, &VBO);
-			//glDeleteBuffers(1, &EBO);
 		}
 		
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, texture);
-	
-
-		// Draw container
-		//glBindVertexArray(VAO);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		//glBindVertexArray(0);
-
-
-		//SDL_GL_SwapWindow(gWindow);
-	
-		
+		/*
 		background.renderBackground(gRenderer);
 		delaysPerFrame++;
 		if (delaysPerFrame >= 6) {
@@ -501,21 +510,29 @@ bool CombatManager::combatMain(std::vector<Character*>& p)
 		}
 		//SDL_RenderPresent(gRenderer);
 		
-		SDL_Delay(16);
-		}*/
+		SDL_Delay(16);*/
+		}
 		
+
 		textMain(printed); // text combat ui initialization
 
 		for (int i = 0; i < participants.size(); i++)
 		{
 			//updateStatus(participants[i]);
 			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0)
-				if(!textAction(participants[i])) return false;////	takeAction(participants[i], buttons, e)
+				switch (int result_temp = textAction(participants[i])) {
+				case IN_COMBAT:
+					break;
+				default:
+					return result_temp;
+					////	takeAction(participants[i], buttons, e)
+				}
+			updateStatus();
 		}
 		printed = false; // for text combat ui
 		qm.changeRounds();
 	}
 	SDL_GL_DeleteContext(glcontext);
-	return true;
+	return -100;
 
 }
