@@ -1091,9 +1091,6 @@ void playGame() {
 				*/
 			}
 
-
-
-
 			camera.x = (player1.xPosition + player1.rectangle.w / 2) - SCREEN_WIDTH / 2;
 			camera.y = (player1.yPosition + player1.rectangle.h / 2) - SCREEN_HEIGHT / 2;
 			if (camera.x < 0) {
