@@ -1,8 +1,8 @@
 #ifndef _____SHADER_H_____
 #define _____SHADER_H_____
 
-#include <glew/glew.h>
-#include <SDL/SDL_opengl.h>
+#include <glew.h>
+#include <SDL_opengl.h>
 #include <stdio.h>
 #include <stdlib.h>
 
