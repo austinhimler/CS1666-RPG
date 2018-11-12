@@ -2,12 +2,12 @@
 #ifndef _____GRAPHICS_H_____
 #define _____GRAPHICS_H_____
 
-#include <glew.h>
-#include <SDL_opengl.h>
-#include <SDL.h>
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
-#include <gtx/transform.hpp>
+#include <glew/glew.h>
+#include <SDL/SDL_opengl.h>
+#include <SDL/SDL.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
 #include "Shader.h"
 #include "Globals.h"
 

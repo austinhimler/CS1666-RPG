@@ -172,18 +172,18 @@
     <ClCompile Include="Classes\Button.cpp" />
     <ClCompile Include="Classes\Character.cpp" />
     <ClCompile Include="Classes\Cluster.cpp" />
+    <ClCompile Include="Classes\CombatManager.cpp" />
     <ClCompile Include="Classes\Enemy.cpp" />
     <ClCompile Include="Classes\Graphics.cpp" />
+    <ClCompile Include="Classes\Helper.cpp" />
     <ClCompile Include="Classes\Inventory.cpp" />
     <ClCompile Include="Classes\Item.cpp" />
     <ClCompile Include="Classes\LoadTexture.cpp" />
+    <ClCompile Include="Classes\mainGame.cpp" />
     <ClCompile Include="Classes\Player.cpp" />
     <ClCompile Include="Classes\Resistance.cpp" />
     <ClCompile Include="Classes\Shader.cpp" />
     <ClCompile Include="Classes\Tile.cpp" />
-    <ClCompile Include="CombatManager.cpp" />
-    <ClCompile Include="Helper.cpp" />
-    <ClCompile Include="mainGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="CREDIT_IMG\BGM.wav" />

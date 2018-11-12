@@ -91,9 +91,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mainGame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Classes\Inventory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -124,9 +121,6 @@
     <ClCompile Include="Classes\Attribute.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Helper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Classes\Character.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -134,9 +128,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Classes\Tile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CombatManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Classes\Resistance.cpp">
@@ -158,6 +149,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Classes\Graphics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\mainGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\CombatManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -292,6 +292,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\Graphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Ailments\AilmentResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

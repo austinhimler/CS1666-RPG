@@ -4,10 +4,10 @@
 #include <map>
 #include <vector>
 #include <string>
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
-#include <SDL_ttf.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_mixer.h>
+#include <SDL/SDL_ttf.h>
 #include "Attributes/Attr_Globals.h"
 #include "Abilities/AbilityResource.h"
 #include "Ailments/AilmentResource.h"
