@@ -2,8 +2,8 @@
 #ifndef _____AILMENT_H_____
 #define _____AILMENT_H_____
 #include <string>
-#include <Vector>
-#include <Random>
+#include <vector>
+#include <random>
 #include "Globals.h"
 #include "Resistance.h"
 
