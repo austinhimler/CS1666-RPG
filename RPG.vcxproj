@@ -72,22 +72,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>dev_lib\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>dev_lib\libs\x86\glew;dev_lib\libs\x86\SDL;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;$(LibraryPath);dev_lib\libs\x64\SDLNet;dev_lib\libs\x86\SDLNet</LibraryPath>
+    <LibraryPath>dev_lib\libs\x86\GL;dev_lib\libs\x86\SDL2;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;dev_lib\libs\x86\SDL_net;$(LibraryPath)</LibraryPath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>dev_lib\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>dev_lib\libs\x86\glew;dev_lib\libs\x86\SDL;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;$(LibraryPath);dev_lib\libs\x64\SDLNet;dev_lib\libs\x86\SDLNet</LibraryPath>
+    <LibraryPath>dev_lib\libs\x86\GL;dev_lib\libs\x86\SDL2;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;dev_lib\libs\x86\SDL_net;$(LibraryPath)</LibraryPath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>dev_lib\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>dev_lib\libs\x64\glew;dev_lib\libs\x64\SDL;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;$(LibraryPath);dev_lib\libs\x64\SDLNet;dev_lib\libs\x86\SDLNet</LibraryPath>
+    <LibraryPath>dev_lib\libs\x64\GL;dev_lib\libs\x64\SDL2;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;dev_lib\libs\x64\SDL_net;$(LibraryPath);</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>dev_lib\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>dev_lib\libs\x64\glew;dev_lib\libs\x64\SDL;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;$(LibraryPath);dev_lib\libs\x64\SDLNet;dev_lib\libs\x86\SDLNet</LibraryPath>
+    <LibraryPath>dev_lib\libs\x64\GL;dev_lib\libs\x64\SDL2;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;dev_lib\libs\x64\SDL_net;$(LibraryPath);</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -97,14 +97,12 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>dev_lib\includes;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;glew32d.lib;SDL2_net.lib;glew32sd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>dev_lib\libs\x86\GL;dev_lib\libs\x86\SDL2;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;dev_lib\libs\x86\SDL_net</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -113,13 +111,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/dev_lib/GLEW/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>dev_lib\includes;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;glew32d.lib;SDL2_net.lib;opengl32.lib</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)/dev_lib/SOIL2/lib;$(SolutionDir)/dev_lib/GLEW/lib/Release/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>dev_lib\libs\x64\GL;dev_lib\libs\x64\SDL2;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;dev_lib\libs\x64\SDL_net</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -131,16 +129,14 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>dev_lib\includes;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;glew32d.lib;SDL2_net.lib;glew32sd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>dev_lib\libs\x86\GL;dev_lib\libs\x86\SDL2;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;dev_lib\libs\x86\SDL_net</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -152,12 +148,14 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>dev_lib\includes;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;glew32d.lib;SDL2_net.lib;opengl32.lib</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>dev_lib\libs\x64\GL;dev_lib\libs\x64\SDL2;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;dev_lib\libs\x64\SDL_net</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

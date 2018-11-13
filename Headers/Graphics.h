@@ -2,7 +2,7 @@
 #ifndef _____GRAPHICS_H_____
 #define _____GRAPHICS_H_____
 
-#include <glew/glew.h>
+#include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL.h>
 #include <glm/glm.hpp>
