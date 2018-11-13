@@ -50,7 +50,12 @@ SDL_GLContext gContext;//OpenGL context
 std::vector<SDL_Texture*> gTex;
 void handleMain();
 
-
+bool isHost;
+bool isClient;
+int port;
+IPaddress ipAddress;
+UDPsocket serverSocket;
+UDPsocket clientSocket;
 
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
@@ -291,6 +296,9 @@ void close() {
 		SDL_DestroyTexture(i);
 		i = nullptr;
 	}
+
+	SDLNet_UDP_Close(serverSocket);
+	SDLNet_UDP_Close(clientSocket);
 	
 	SDL_GL_DeleteContext(gContext);
 	SDL_DestroyRenderer(gRenderer);
@@ -307,6 +315,7 @@ void close() {
 	TTF_Quit();
 	Mix_Quit();
 	IMG_Quit();
+	SDLNet_Quit();
 	SDL_Quit();
 }
 
@@ -893,7 +902,57 @@ void combatScene(std::vector<Character*> combatants) {
 	}*/
 
 }
+
+void handleNetworkingSetup() {
+	bool waitForInput = true;
+	while (waitForInput) {
+		std::cout << "Are you host or client? Type 'h' for host 'c' for client?" << std::endl;
+		std::string hostOrClientInput;
+		std::getline(std::cin, hostOrClientInput);
+		if (hostOrClientInput == "h") {
+			isHost = true;
+			isClient = false;
+		}
+		else if(hostOrClientInput == "c"){
+			isHost = false;
+			isClient = true;
+		}
+		else {
+			break;
+		}
+
+		std::cout << "Enter IP address:\n" << std::endl;
+		std::string ipInput;
+		std::getline(std::cin, ipInput);
+
+		std::cout << "Enter Port:\n" << std::endl;
+		int port;
+		std::cin >> port;
+
+		if (isClient) {
+			SDLNet_ResolveHost(&ipAddress, ipInput.c_str(), port);
+		}
+
+		if (isHost) {
+			//Since the IP is set to null it knows that it will be a server
+			SDLNet_ResolveHost(&ipAddress, NULL, port);
+			serverSocket = SDLNet_UDP_Open(port);
+		}
+
+		if (isClient) {
+			clientSocket = NULL;
+			while (clientSocket == NULL) {
+				clientSocket = SDLNet_UDP_Open(port); // for UDP, client can put in in 0 and be assigned?
+			}
+		}
+
+	}
+}
+
 void playGame() {
+
+	handleNetworkingSetup();
+
 	vector<Cluster*> allEnemies = vector<Cluster*>();
 	Cluster* CollidingCluster;
 	for (int num_enemy = 0; num_enemy < 5; num_enemy++)
