@@ -892,9 +892,10 @@ void combatScene(std::vector<Character*> combatants) {
 }
 void playGame() {
 	vector<Cluster*> allEnemies = vector<Cluster*>();
+	Cluster* CollidingCluster;
 	for (int num_enemy = 0; num_enemy < 5; num_enemy++)
 	{
-		Cluster* enemy = new Cluster((rand() % 5)+1);
+		Cluster* enemy = new Cluster((rand() % 3)+1);
 		cout <<"Enemy "<<num_enemy+1<<" Cluster Size: "<<  enemy->clusterSize << endl;
 		allEnemies.push_back(enemy);
 	}
@@ -1190,6 +1191,12 @@ void playGame() {
 						i->timeSinceLastAnimation = SDL_GetTicks();
 					}
 				}
+				else if (i->getTextureActive() == i->getTextureIdleNotReady()) {
+					if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
+						i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+						i->timeSinceLastAnimation = SDL_GetTicks();
+					}
+				}
 				else {
 					if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenRunAnimations()) {
 						i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
@@ -1216,12 +1223,20 @@ void playGame() {
 			}
 
 			int enemyToRemove = -1;
-			//Cluster collidingCluster;
 			for (auto z : allEnemies)
 			{
+				if (z->readyTimeLeft > -1)
+					z->readyTimeLeft -= 1;
+				if (z->readyTimeLeft == 0) {
+					z->combatReady = true;
+					z->setTextureActive(z->getTextureIdle());
+				}
 				enemyToRemove++;
-				if (check_collision(player1.rectangle, z->rectangle)) {
-					//collidingCluster = z;
+				if (check_collision(player1.rectangle, z->rectangle) && z->combatReady) {
+					z->combatReady = false;
+					z->readyTimeLeft = 3000;
+					z->setTextureActive(z->getTextureIdleNotReady());
+					CollidingCluster = z;
 					combatants.clear();
 					combatants.push_back(&player1);
 					for (auto i : z->characterGroup)
@@ -1270,10 +1285,8 @@ void playGame() {
 
 			}
 			else if (combatResult == PLAYER_ESCAPES) {
-				/*
-				allEnemies.push_back(collidingCluster);
-				charactersOnScreen.push_back(collidingCluster);
-				*/
+				allEnemies.push_back(CollidingCluster);
+				charactersOnScreen.push_back(CollidingCluster);
 			}
 			combatStarted = false;
 			/*

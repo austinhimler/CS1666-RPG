@@ -466,17 +466,13 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 	combatGraphics.init();
 	combatGraphics.display();
 	combatGraphics.rotateRandom();
-	//To rotate the cone. Must be outside inCombat loop as textCombat currently waits for user input so rotation only works after textInput completes
-		//while (true)
-			//combatGraphics.idle();
 	
 
 	int width, height;
 	
 	while (inCombat) {
 		
-		//combatGraphics.idle();
-		//combatGraphics.rotateRandom();
+		combatGraphics.idle();
 		while (SDL_PollEvent(&e)) {
 			
 		if (e.type == SDL_QUIT) {
@@ -513,7 +509,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		SDL_Delay(16);*/
 		}
 		
-
+		
 		textMain(printed); // text combat ui initialization
 
 		for (int i = 0; i < participants.size(); i++)

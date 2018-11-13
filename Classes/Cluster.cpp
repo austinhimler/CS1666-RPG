@@ -17,10 +17,12 @@ Cluster::Cluster(int q) {
 	numIdleAnimationFrames = 6 ;
 	currentFrame = 0;
 	timeBetweenIdleAnimations = 120;
-	imageIdleResource = "Images/Enemies/shadow_cluster/OWL_BROWN.png";
+	imageIdleResource = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	imageIdleNotReadyResource = "Images/Enemies/shadow_cluster/OWL_BROWN_NOT_READY.png";
 
 	Helper helper = Helper();
 	textureIdle = helper.loadImage(imageIdleResource.c_str(), gRenderer);
+	textureIdleNotReady = helper.loadImage(imageIdleNotReadyResource.c_str(), gRenderer);
 	textureActive = NULL;
 
 	xPosition = 400.0;
@@ -29,7 +31,8 @@ Cluster::Cluster(int q) {
 	drawRectangle = { 0, 0, imageWidth, imageHeight };
 	speedMax = 250.0;
 	acceleration = 2000.0;
-	alive = true;
+	combatReady = true;
+	readyTimeLeft = -1;
 }
 Cluster::Cluster(std::string n) {
 	name = n;
