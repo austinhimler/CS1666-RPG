@@ -16,6 +16,9 @@
 #include "../Headers/Globals.h"
 
 
+#include <SDL2/SDL_net.h>
+
+
 #include "../Headers/mainGame.h"
 #include "../Headers/Player.h"
 #include "../Headers/Button.h"
@@ -1276,7 +1279,7 @@ void playGame() {
 			//for (auto i : combatants)
 				//c.push_back(&i);
 			int combatResult = cm.combatMain(combatants);
-		 std::cout << combatResult << std::endl;
+			std::cout << combatResult << std::endl;
 			if (combatResult == ENEMY_WINS){
 				cout << "\nYOU HAVE DIED\nGAME OVER MAN, GAME OVER" << endl;
 				exit(1);
