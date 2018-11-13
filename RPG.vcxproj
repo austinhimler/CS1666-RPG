@@ -72,22 +72,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>dev_lib\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>dev_lib\libs\x86\glew;dev_lib\libs\x86\SDL;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;$(LibraryPath)</LibraryPath>
+    <LibraryPath>dev_lib\libs\x86\glew;dev_lib\libs\x86\SDL;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;$(LibraryPath);dev_lib\libs\x64\SDLNet;dev_lib\libs\x86\SDLNet</LibraryPath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>dev_lib\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>dev_lib\libs\x86\glew;dev_lib\libs\x86\SDL;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;$(LibraryPath)</LibraryPath>
+    <LibraryPath>dev_lib\libs\x86\glew;dev_lib\libs\x86\SDL;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;$(LibraryPath);dev_lib\libs\x64\SDLNet;dev_lib\libs\x86\SDLNet</LibraryPath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>dev_lib\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>dev_lib\libs\x64\glew;dev_lib\libs\x64\SDL;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;$(LibraryPath)</LibraryPath>
+    <LibraryPath>dev_lib\libs\x64\glew;dev_lib\libs\x64\SDL;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;$(LibraryPath);dev_lib\libs\x64\SDLNet;dev_lib\libs\x86\SDLNet</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>dev_lib\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>dev_lib\libs\x64\glew;dev_lib\libs\x64\SDL;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;$(LibraryPath)</LibraryPath>
+    <LibraryPath>dev_lib\libs\x64\glew;dev_lib\libs\x64\SDL;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;$(LibraryPath);dev_lib\libs\x64\SDLNet;dev_lib\libs\x86\SDLNet</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
