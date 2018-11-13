@@ -1282,8 +1282,8 @@ void playGame() {
 			*/
 			inOverworld = true;
 		}
-
-		if (response == 1) { //backToMainMenu
+		int backToMainMenu = 1;
+		if (response == backToMainMenu) { //backToMainMenu
 			//for (auto i : charactersOnScreen) {
 			//	delete(&i);
 			//}
