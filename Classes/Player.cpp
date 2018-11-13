@@ -26,7 +26,9 @@
 		currentFrame = 0;
 		timeBetweenIdleAnimations = 120;
 		timeBetweenRunAnimations = 100;
-		imageIdleResource = "Images/Player/Idle_Down.png";
+		if (n.compare("nfl4") == 0)
+			imageIdleResource = "Images/Player/Idle_Down_Special.png";
+		else imageIdleResource = "Images/Player/Idle_Down.png";
 		imageRightIdleResource = "Images/Player/Idle_Right.png";
 		imageRunResource = "Images/Player/Run_Right.png";
 		imageDownRunResource = "Images/Player/Run_Down.png";
