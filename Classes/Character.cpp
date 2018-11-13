@@ -198,6 +198,7 @@
 	std::string Character::getImageUpRightRunResource() { return imageUpRightRunResource; }
 	std::string Character::getName() { return name; }
 	SDL_Texture* Character::getTextureIdle() { return textureIdle; }
+	SDL_Texture* Character::getTextureIdleNotReady() { return textureIdleNotReady; }
 	SDL_Texture* Character::getTextureRightIdle() { return textureIdle; }
 	SDL_Texture* Character::getTextureRun() { return textureRun; }
 	SDL_Texture* Character::getTextureDownRun() { return textureDownRun; }

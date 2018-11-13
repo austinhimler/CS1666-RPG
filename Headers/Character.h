@@ -76,6 +76,7 @@ public:
 	std::string getName();
 	SDL_Texture* getTextureRightIdle();
 	SDL_Texture* getTextureIdle();
+	SDL_Texture* getTextureIdleNotReady();
 	SDL_Texture* getTextureRun();
 	SDL_Texture* getTextureDownRun();
 	SDL_Texture* getTextureDownRightRun();
@@ -111,6 +112,7 @@ protected:
 	int level;
 	std::vector<int> buff;
 	std::string imageIdleResource;
+	std::string imageIdleNotReadyResource;
 	std::string imageRightIdleResource;
 	std::string imageRunResource;
 	std::string imageDownRunResource;
@@ -119,6 +121,7 @@ protected:
 	std::string imageUpRunResource;
 	std::string name;
 	SDL_Texture* textureIdle;
+	SDL_Texture* textureIdleNotReady;
 	SDL_Texture* textureRightIdle;
 	SDL_Texture* textureRun;
 	SDL_Texture* textureDownRun;

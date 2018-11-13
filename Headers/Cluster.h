@@ -18,6 +18,7 @@ public:
 	*/
 	vector<Character*> characterGroup;
 	int clusterSize;
-	bool alive;
+	bool combatReady;
+	int readyTimeLeft;
 };
 #endif
