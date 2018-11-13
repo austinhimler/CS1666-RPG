@@ -474,11 +474,11 @@ bool characterCreateScreen() {
 						i->pressed = 5;
 						//i->locked = false;
 						if (i->type == "start") {
-							if (nameInputText == "nlf4" || pointsToAllocate == 0) {
-								if (nameInputText == "nlf4" || nameInputText != "") {
+							if (nameInputText == "nlf4" || nameInputText == "nfl4" || pointsToAllocate == 0) {
+								if (nameInputText == "nlf4" || nameInputText == "nfl4" || nameInputText != "") {
 									Mix_PlayChannel(-1, gBSound, 0);
 									onCharacterCreate = false;
-									if (nameInputText == "nlf4")
+									if (nameInputText == "nfl4" || nameInputText == "nlf4")
 										player1 = Player::Player(nameInputText, 10, 10, 10, 10, 10);//player1.setAll(nameInputText, 10, 10, 10, 10, 10);
 									else
 										player1 = Player(nameInputText, strength, intelligence, dexterity, constitution, faith);//player1.setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
@@ -601,11 +601,11 @@ bool characterCreateScreen() {
 				}
 				//Move on by pressing enter
 				else if (e.key.keysym.sym == SDLK_RETURN) {
-						if (nameInputText == "nlf4" || pointsToAllocate == 0) {
+						if (nameInputText == "nfl4" || nameInputText == "nlf4" || pointsToAllocate == 0) {
 							if (nameInputText != "") {
 								Mix_PlayChannel(-1, gBSound, 0);
 								onCharacterCreate = false;
-								if (nameInputText == "nlf4")
+								if (nameInputText == "nfl4" || nameInputText == "nlf4")
 									player1 = Player::Player(nameInputText, 10, 10, 10, 10, 10);//player1.setAll(nameInputText, 10, 10, 10, 10, 10);
 								else
 									player1 = Player(nameInputText, strength, intelligence, dexterity, constitution, faith);//player1.setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
