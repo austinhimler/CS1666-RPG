@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 #include "../Headers/Button.h"
 #include "../Headers/Helper.h"
