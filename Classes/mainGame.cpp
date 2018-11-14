@@ -943,13 +943,15 @@ bool handleNetworkingSetup() {
 			std::cin >> port;
 
 			SDLNet_ResolveHost(&ipAddress, ipInput.c_str(), port);
-			clientSocket = SDLNet_UDP_Open(port); 
+			clientSocket = SDLNet_UDP_Open(ipAddress.port); 
 	
 			channel = SDLNet_UDP_Bind(clientSocket, -1, &ipAddress);
 
 			std::cout << clientSocket << std::endl;
 			std::cout << channel << std::endl;
 			std::cout << ipInput.c_str() << std::endl;
+			std::cout << ipAddress.host << std::endl;
+			std::cout << ipAddress.port << std::endl;
 
 			if (channel == -1) {
 				printf("Failed Bind: %s\n", SDLNet_GetError());
@@ -962,7 +964,10 @@ bool handleNetworkingSetup() {
 			std::cin >> port;
 
 			SDLNet_ResolveHost(&ipAddress, NULL, port);
-			serverSocket = SDLNet_UDP_Open(port);
+			serverSocket = SDLNet_UDP_Open(ipAddress.port);
+			std::cout << serverSocket << std::endl;
+			std::cout << ipAddress.host << std::endl;
+			std::cout << ipAddress.port << std::endl;
 		}
 
 		return true;
