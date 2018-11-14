@@ -903,9 +903,20 @@ void combatScene(std::vector<Character*> combatants) {
 
 }
 
-void handleNetworkingSetup() {
+bool handleNetworkingSetup() {
 	bool waitForInput = true;
 	while (waitForInput) {
+		std::cout << "Do you want to do Networking? 'y' or 'n'" << std::endl;
+		std::string networkingAnswer;
+		std::getline(std::cin, networkingAnswer);
+
+		if (networkingAnswer == "y") {
+
+		}
+		else {
+			return false;
+		}
+
 		std::cout << "Are you host or client? Type 'h' for host 'c' for client?" << std::endl;
 		std::string hostOrClientInput;
 		std::getline(std::cin, hostOrClientInput);
@@ -913,7 +924,7 @@ void handleNetworkingSetup() {
 			isHost = true;
 			isClient = false;
 		}
-		else if(hostOrClientInput == "c"){
+		else if (hostOrClientInput == "c") {
 			isHost = false;
 			isClient = true;
 		}
@@ -946,12 +957,14 @@ void handleNetworkingSetup() {
 			}
 		}
 
+		return true;
 	}
+
 }
 
 void playGame() {
 
-	handleNetworkingSetup();
+	//bool doNetworking = handleNetworkingSetup();
 
 	vector<Cluster*> allEnemies = vector<Cluster*>();
 	Cluster* CollidingCluster;
