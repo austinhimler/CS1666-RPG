@@ -12,7 +12,7 @@ void Graphics::init(void)
 	program = Shader::initShader("vshader.glsl", "fshader.glsl");
 	glUseProgram(program);
 
-	num_vertices = 0;
+	num_vertices = 54;
 
 	glm::vec4 *vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
 	glm::vec4 *colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
@@ -73,8 +73,8 @@ void Graphics::display(void)
 
 void Graphics::idle(void)
 {
-	ctm = ctm * glm::rotate(0.01f, randomRotationAxis);
-	display();
+	//ctm = ctm * glm::rotate(0.01f, randomRotationAxis);
+	//display();
 }
 
 /*void Graphics::loadTexture(string file, int width, int height)
@@ -90,20 +90,49 @@ void Graphics::idle(void)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-
-
 }*/
 
 void Graphics::generateCombat(glm::vec4 *vert, glm::vec4 *color, glm::vec2 *text)
 {
+	int i, j;
+	int it = 0;
 	//Background
+	for (i = 0; i < 6; i++) {
+		vert[it] = glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, -0.9f)) * rectangle[i];
+		color[it] = { 0.0f, 0.0f, 1.0f, 1.0f };
+		//Filler
+		text[it] = { 0.0f, 0.0f };
+		it++;
+	}
 
 	//Player
+	for (i = 0; i < 6; i++) {
+		vert[it] = glm::translate(glm::mat4(), glm::vec3(-0.5f, 0.25f, 0.0f)) * (glm::vec4(0.25f, 0.25f, 0.25f, 1.0f) * rectangle[i]);
+		color[it] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		//Filler
+		text[it] = { 0.0f, 0.0f };
+		it++;
+	}
 
 	//Enemy
+	for (i = 0; i < 6; i++) {
+		vert[it] = glm::translate(glm::mat4(), glm::vec3(0.5f, 0.25f, 0.0f)) * (glm::vec4(0.25f, 0.25f, 0.25f, 1.0f) * rectangle[i]);
+		color[it] = { 1.0f, 0.0f, 0.0f, 1.0f };
+		//Filler
+		text[it] = { 0.0f, 0.0f };
+		it++;
+	}
 
 	//Buttons
-
+	for (j = 0; j < 6; j++) {
+		for (i = 0; i < 6; i++) {
+			vert[it] = glm::translate(glm::mat4(), glm::vec3(-0.75f + (0.25f * (j % 3)), (-0.5f - (0.25f * ((j > 2) ? 1 : 0))), 1.0f)) * (glm::vec4(0.0625f, 0.0625f, 0.0625f, 1.0f) * rectangle[i]);
+			color[it] = { 0.0f, 1.0f, 0.0f, 1.0f };
+			//Filler
+			text[it] = { 0.0f, 0.0f };
+			it++;
+		}
+	}
 }
 
 void Graphics::rotateRandom(void)

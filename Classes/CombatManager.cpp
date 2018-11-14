@@ -195,7 +195,7 @@ int CombatManager::textAction(Character* c) {
 					break;
 				case AbilityResource::tDEFENSE:
 					c->beingTarget(&abil_temp[helper[abil_selection]]);
-					std::cout << "Your Energy Regeneration for next round will be increased                                           you tactical fool" << std::endl;
+					std::cout << "Your Energy Regeneration for next round will be increased you tactical fool" << std::endl;
 					takingAction = false;
 					break;
 				default:
@@ -203,14 +203,21 @@ int CombatManager::textAction(Character* c) {
 					outputEnemy(); // output all surviving enemies
 					// get target selection
 					int target = -1;
-					while (target <= 0 || target > enemy_index.size()) {
-						std::cin >> target;
-						if (participants[enemy_index[target]]->getHPCurrent() == 0) {
+					while (target < 0) {
+
+						while (target < 0 || target >= enemy_index.size())
+						{
+							std::cin >> target;
+							target--;
+							if (target >= enemy_index.size() - 1)
+								cout << "Enter a valid enemy number\n";
+						}
+						if (participants[enemy_index[target]]->getHPCurrent() <= 0) {
 							std::cout << "That eneny is dead." << std::endl;
 							target = -1;
 						}
 					}
-					target--;
+					//target--;
 					int result = participants[enemy_index[target]]->beingTarget(&abil_temp[helper[abil_selection]]);
 					if (participants[enemy_index[target]]->getHPCurrent() == 0) {
 						livingCount[ENEMY]--;
