@@ -53,6 +53,7 @@ void handleMain();
 bool isHost;
 bool isClient;
 int port;
+int channel;
 IPaddress ipAddress;
 UDPsocket serverSocket;
 UDPsocket clientSocket;
@@ -932,29 +933,36 @@ bool handleNetworkingSetup() {
 			break;
 		}
 
-		std::cout << "Enter IP address:\n" << std::endl;
-		std::string ipInput;
-		std::getline(std::cin, ipInput);
-
-		std::cout << "Enter Port:\n" << std::endl;
-		int port;
-		std::cin >> port;
-
+		
 		if (isClient) {
+			std::cout << "Enter IP address:\n" << std::endl;
+			std::string ipInput;
+			std::getline(std::cin, ipInput);
+
+			std::cout << "Enter Port:\n" << std::endl;
+			std::cin >> port;
+
 			SDLNet_ResolveHost(&ipAddress, ipInput.c_str(), port);
+			clientSocket = SDLNet_UDP_Open(port); 
+	
+			channel = SDLNet_UDP_Bind(clientSocket, -1, &ipAddress);
+
+			std::cout << clientSocket << std::endl;
+			std::cout << channel << std::endl;
+			std::cout << ipInput.c_str() << std::endl;
+
+			if (channel == -1) {
+				printf("Failed Bind: %s\n", SDLNet_GetError());
+			}
 		}
 
 		if (isHost) {
 			//Since the IP is set to null it knows that it will be a server
+			std::cout << "Enter Port:\n" << std::endl;
+			std::cin >> port;
+
 			SDLNet_ResolveHost(&ipAddress, NULL, port);
 			serverSocket = SDLNet_UDP_Open(port);
-		}
-
-		if (isClient) {
-			clientSocket = NULL;
-			while (clientSocket == NULL) {
-				clientSocket = SDLNet_UDP_Open(port); // for UDP, client can put in in 0 and be assigned?
-			}
 		}
 
 		return true;
@@ -964,7 +972,7 @@ bool handleNetworkingSetup() {
 
 void playGame() {
 
-	//bool doNetworking = handleNetworkingSetup();
+	bool doNetworking = handleNetworkingSetup();
 
 	vector<Cluster*> allEnemies = vector<Cluster*>();
 	Cluster* CollidingCluster;
@@ -1252,6 +1260,31 @@ void playGame() {
 
 			for (int i = 0; i < 900; i++) {
 				tiles[i]->render(&camera);
+			}
+
+			if (isClient) {
+				
+				UDPpacket* packet = SDLNet_AllocPacket(100); //(sizeof(Player));
+				std::string datay = "aaa";
+
+				static const char* data = "hello";
+				packet->len = strlen(data) + 1;
+				memcpy(packet->data, data, packet->len);
+
+			/*	static const char* data = "left";
+				p->len = strlen(data) + 1;
+				memcpy(packet->data, player1, packet->len);*/
+				//memmove(packet->data, datay, packet->len);
+				SDLNet_UDP_Send(clientSocket,-1, packet);
+
+				//printf("yum");
+	
+			} if (isHost) {
+				UDPpacket* packet = SDLNet_AllocPacket(100);//(sizeof(Player));
+				int received = SDLNet_UDP_Recv(serverSocket, packet);
+				if (received) {
+					printf("%s", packet->data);
+				}
 			}
 
 			for (auto &i : charactersOnScreen) {
