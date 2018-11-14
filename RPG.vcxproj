@@ -72,22 +72,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>dev_lib\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>dev_lib\libs\x86\GL;dev_lib\libs\x86\SDL2;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;dev_lib\libs\x86\SDL_net;$(LibraryPath)</LibraryPath>
+    <LibraryPath>dev_lib\bin\x64\SDL_net;dev_lib\bin\x86\SDL_net;dev_lib\libs\x86\GL;dev_lib\libs\x86\SDL2;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;dev_lib\libs\x86\SDL_net;$(LibraryPath)</LibraryPath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>dev_lib\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>dev_lib\libs\x86\GL;dev_lib\libs\x86\SDL2;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;dev_lib\libs\x86\SDL_net;$(LibraryPath)</LibraryPath>
+    <LibraryPath>dev_lib\bin\x64\SDL_net;dev_lib\bin\x86\SDL_net;dev_lib\libs\x86\GL;dev_lib\libs\x86\SDL2;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;dev_lib\libs\x86\SDL_net;$(LibraryPath)</LibraryPath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>dev_lib\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>dev_lib\libs\x64\GL;dev_lib\libs\x64\SDL2;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;dev_lib\libs\x64\SDL_net;$(LibraryPath);</LibraryPath>
+    <LibraryPath>dev_lib\bin\x64\SDL_net;dev_lib\bin\x86\SDL_net;dev_lib\libs\x64\GL;dev_lib\libs\x64\SDL2;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;dev_lib\libs\x64\SDL_net;$(LibraryPath);</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>dev_lib\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>dev_lib\libs\x64\GL;dev_lib\libs\x64\SDL2;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;dev_lib\libs\x64\SDL_net;$(LibraryPath);</LibraryPath>
+    <LibraryPath>dev_lib\bin\x64\SDL_net;dev_lib\bin\x86\SDL_net;dev_lib\libs\x64\GL;dev_lib\libs\x64\SDL2;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;dev_lib\libs\x64\SDL_net;$(LibraryPath);</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -259,6 +259,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="map1.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fshader.glsl" />
+    <None Include="vshader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

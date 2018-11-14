@@ -31,6 +31,10 @@ void Graphics::init(void)
 	glEnableVertexAttribArray(vColor);
 	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid *)(sizeof(glm::vec4) * num_vertices));
 
+	GLuint vTexCoord = glGetAttribLocation(program, "vTexCoord");
+	glEnableVertexAttribArray(vTexCoord);
+	glVertexAttribPointer(vTexCoord, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid *)(sizeof(glm::vec2) * 2 * num_vertices));
+
 	ctm_location = glGetUniformLocation(program, "ctm");
 
 	glEnable(GL_DEPTH_TEST);
@@ -58,6 +62,11 @@ void Graphics::idle(void)
 	ctm = ctm * glm::rotate(0.01f, randomRotationAxis);
 	display();
 }
+
+
+
+
+
 
 void Graphics::rotateRandom(void)
 {

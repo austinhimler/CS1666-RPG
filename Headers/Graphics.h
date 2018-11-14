@@ -28,6 +28,11 @@ public:
 	void init(void);
 	void display(void);
 	void idle(void);
+
+	void loadTexture(void);
+
+
+
 	void rotateRandom(void);
 	glm::vec4* cone(int *num_vertices);
 	glm::vec4* genRandomTriangleColors(int num_vertices);
