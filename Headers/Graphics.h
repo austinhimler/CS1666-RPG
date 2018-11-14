@@ -20,22 +20,24 @@
 class Graphics
 {
 public:
-	GLuint ctm_location;
-	int num_vertices;
-	glm::mat4 ctm = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
-	glm::vec3 randomRotationAxis = { 0.0, 0.0, 0.0 };
+	GLuint getProgram(void);
 
 	void init(void);
 	void display(void);
 	void idle(void);
 
 	void loadTexture(void);
-
-
+	void generateCombat(glm::vec4 *vert, glm::vec4 *color, glm::vec2 *text);
 
 	void rotateRandom(void);
 	glm::vec4* cone(int *num_vertices);
 	glm::vec4* genRandomTriangleColors(int num_vertices);
+private:
+	GLuint program;
+	GLuint ctm_location;
+	int num_vertices;
+	glm::mat4 ctm = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
+	glm::vec3 randomRotationAxis = { 0.0, 0.0, 0.0 };
 };
 
 #endif

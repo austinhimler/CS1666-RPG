@@ -1,27 +1,41 @@
 #include "../Headers/Graphics.h"
 #include "time.h"
 
+GLuint Graphics::getProgram(void)
+{
+	return program;
+}
+
 void Graphics::init(void)
 {
-	GLuint program = Shader::initShader("vshader.glsl", "fshader.glsl");
+	program = Shader::initShader("vshader.glsl", "fshader.glsl");
 	glUseProgram(program);
 
-	int shape_num_vertices;
-	glm::vec4 *shape_vertices = cone(&shape_num_vertices);
-	glm::vec4 *shape_colors = genRandomTriangleColors(shape_num_vertices);
-	num_vertices = shape_num_vertices;
+	num_vertices = 0;
+
+	glm::vec4 *vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	glm::vec4 *colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	glm::vec2 *textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
+
+	generateCombat(vertices, colors, textures);
+
+	//int shape_num_vertices;
+	//glm::vec4 *shape_vertices = cone(&shape_num_vertices);
+	//glm::vec4 *shape_colors = genRandomTriangleColors(shape_num_vertices);
+	//num_vertices = shape_num_vertices;
 
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
-	GLuint buffer;
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * 2 * num_vertices, NULL, GL_STATIC_DRAW);
+	GLuint vbo;
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, (2 * sizeof(glm::vec4) + sizeof(glm::vec2)) * num_vertices, NULL, GL_STATIC_DRAW);
 
-	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec4) * num_vertices, shape_vertices);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * num_vertices, sizeof(glm::vec4) * num_vertices, shape_colors);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec4) * num_vertices, vertices);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * num_vertices, sizeof(glm::vec4) * num_vertices, colors);
+	glBufferSubData(GL_ARRAY_BUFFER, 2 * sizeof(glm::vec4) * num_vertices, sizeof(glm::vec2) * num_vertices, textures);
 
 	GLuint vPosition = glGetAttribLocation(program, "vPosition");
 	glEnableVertexAttribArray(vPosition);
@@ -40,7 +54,6 @@ void Graphics::init(void)
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glDepthRange(1, 0);
-
 }
 
 void Graphics::display(void)
@@ -63,10 +76,17 @@ void Graphics::idle(void)
 	display();
 }
 
+void Graphics::generateCombat(glm::vec4 *vert, glm::vec4 *color, glm::vec2 *text)
+{
+	//Background
 
+	//Player
 
+	//Enemy
 
+	//Buttons
 
+}
 
 void Graphics::rotateRandom(void)
 {
