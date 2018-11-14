@@ -2,27 +2,41 @@
 #include "time.h"
 #include <string>
 
+GLuint Graphics::getProgram(void)
+{
+	return program;
+}
+
 void Graphics::init(void)
 {
-	GLuint program = Shader::initShader("vshader.glsl", "fshader.glsl");
+	program = Shader::initShader("vshader.glsl", "fshader.glsl");
 	glUseProgram(program);
 
-	int shape_num_vertices;
-	glm::vec4 *shape_vertices = cone(&shape_num_vertices);
-	glm::vec4 *shape_colors = genRandomTriangleColors(shape_num_vertices);
-	num_vertices = shape_num_vertices;
+	num_vertices = 54;
+
+	glm::vec4 *vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	glm::vec4 *colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	glm::vec2 *textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
+
+	generateCombat(vertices, colors, textures);
+
+	//int shape_num_vertices;
+	//glm::vec4 *shape_vertices = cone(&shape_num_vertices);
+	//glm::vec4 *shape_colors = genRandomTriangleColors(shape_num_vertices);
+	//num_vertices = shape_num_vertices;
 
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
-	GLuint buffer;
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * 2 * num_vertices, NULL, GL_STATIC_DRAW);
+	GLuint vbo;
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, (2 * sizeof(glm::vec4) + sizeof(glm::vec2)) * num_vertices, NULL, GL_STATIC_DRAW);
 
-	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec4) * num_vertices, shape_vertices);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * num_vertices, sizeof(glm::vec4) * num_vertices, shape_colors);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec4) * num_vertices, vertices);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * num_vertices, sizeof(glm::vec4) * num_vertices, colors);
+	glBufferSubData(GL_ARRAY_BUFFER, 2 * sizeof(glm::vec4) * num_vertices, sizeof(glm::vec2) * num_vertices, textures);
 
 	GLuint vPosition = glGetAttribLocation(program, "vPosition");
 	glEnableVertexAttribArray(vPosition);
@@ -41,7 +55,6 @@ void Graphics::init(void)
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glDepthRange(1, 0);
-
 }
 
 void Graphics::display(void)
@@ -60,8 +73,8 @@ void Graphics::display(void)
 
 void Graphics::idle(void)
 {
-	ctm = ctm * glm::rotate(0.01f, randomRotationAxis);
-	display();
+	//ctm = ctm * glm::rotate(0.01f, randomRotationAxis);
+	//display();
 }
 
 /*void Graphics::loadTexture(string file, int width, int height)
@@ -77,10 +90,51 @@ void Graphics::idle(void)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-
 }*/
 
+void Graphics::generateCombat(glm::vec4 *vert, glm::vec4 *color, glm::vec2 *text)
+{
+	int i, j;
+	int it = 0;
+	//Background
+	for (i = 0; i < 6; i++) {
+		vert[it] = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, -1.0f)) * rectangle[i];
+		color[it] = { 0.0f, 0.0f, 1.0f, 1.0f };
+		//Filler
+		text[it] = { 0.0f, 0.0f };
+		it++;
+	}
 
+	//Player
+	for (i = 0; i < 6; i++) {
+		vert[it] = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f)) * (glm::vec4(0.25f, 0.25f, 0.25f, 1.0f) * rectangle[i]);
+		color[it] = { 0.0f, 0.0f, 1.0f, 1.0f };
+		//Filler
+		text[it] = { 0.0f, 0.0f };
+		it++;
+	}
+
+	//Enemy
+	for (i = 0; i < 6; i++) {
+		vert[it] = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f)) * (glm::vec4(0.25f, 0.25f, 0.25f, 1.0f) * rectangle[i]);
+		color[it] = { 0.0f, 0.0f, 1.0f, 1.0f };
+		//Filler
+		text[it] = { 0.0f, 0.0f };
+		it++;
+	}
+
+
+	//Buttons
+	for (j = 0; j < 6; j++) {
+		for (i = 0; i < 6; i++) {
+			vert[it] = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, -0.5f, 1.0f)) * (glm::vec4(0.125f, 0.125f, 0.125f, 1.0f) * rectangle[i]);
+			color[it] = { 0.0f, 0.0f, 1.0f, 1.0f };
+			//Filler
+			text[it] = { 0.0f, 0.0f };
+			it++;
+		}
+	}
+}
 
 void Graphics::rotateRandom(void)
 {
