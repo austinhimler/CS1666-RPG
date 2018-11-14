@@ -22,5 +22,6 @@ public:
 	int readyTimeLeft;
 
 	int lastDirection = -1;
+
 };
 #endif

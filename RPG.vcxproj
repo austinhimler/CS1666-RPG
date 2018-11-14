@@ -239,6 +239,7 @@
     <ClInclude Include="Headers\Resistance.h" />
     <ClInclude Include="Headers\Shader.h" />
     <ClInclude Include="Headers\Tile.h" />
+    <ClInclude Include="OverworldPathing.h" />
     <ClInclude Include="SOIL2\etc1_utils.h" />
     <ClInclude Include="SOIL2\image_DXT.h" />
     <ClInclude Include="SOIL2\image_helper.h" />

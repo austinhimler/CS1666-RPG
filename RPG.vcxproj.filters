@@ -297,6 +297,9 @@
     <ClInclude Include="Headers\Ailments\AilmentResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OverworldPathing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="map1.txt">
