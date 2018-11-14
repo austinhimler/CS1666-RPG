@@ -10,6 +10,7 @@
 #include <glm/gtx/transform.hpp>
 #include "Shader.h"
 #include "Globals.h"
+#include <string>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -26,7 +27,7 @@ public:
 	void display(void);
 	void idle(void);
 
-	void loadTexture(void);
+	//void Graphics::loadTexture(string file, int width, int height)
 	void generateCombat(glm::vec4 *vert, glm::vec4 *color, glm::vec2 *text);
 
 	void rotateRandom(void);

@@ -891,6 +891,179 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Character*> charactersOnScreen
 		SDL_Delay(16);
 	}
 }
+/*
+move location of Cluster cl
+
+a indicates movement type
+up/down/left/right/random
+*/
+void moveCluster(Cluster* cl, std::string move, double time, Tile* map[900], int cycle) {
+	int a = -1;
+	if (move == "up") a = 0;
+	else if (move == "left") a = 1;
+	else if (move == "down") a = 2;
+	else if (move == "right") a = 3;
+	else if (move == "random" && cycle == 0) {
+		a = rand() % 4;
+	}
+	else if (move == "random" && cycle % 100 == 0) {
+		a = rand() % 4;
+	} 
+	else if (move == "random" && cycle % 100 != 0) {
+		a = cl->lastDirection;
+	}
+	cl->lastDirection = a;
+	cl->xDeltaVelocity = 0;
+	cl->yDeltaVelocity = 0;
+	//std::cout << move << std::endl;
+	/*
+	std::cout << "CLuster" << std::endl;
+	std::cout << cl->xPosition << std::endl;
+	std::cout << cl->yPosition << std::endl;
+	//std::cout << a << std::endl;
+	*/
+
+	if (a == 0) {
+		cl->yDeltaVelocity -= (cl->getAcceleration() * time);
+	}
+	else if (a == 1) {
+		cl->xDeltaVelocity -= (cl->getAcceleration() * time);
+	}
+	else if (a == 2) {
+		cl->yDeltaVelocity += (cl->getAcceleration() * time);
+	}
+	else if (a == 3) {
+		cl->xDeltaVelocity += (cl->getAcceleration() * time);
+	}
+
+	if (cl->xDeltaVelocity == 0) {
+		if (cl->xVelocity > 0) {
+			if (cl->xVelocity < (cl->getAcceleration() * time))
+				cl->xVelocity = 0;
+			else
+				cl->xVelocity -= cl->getAcceleration() * time;
+		}
+		else if (cl->xVelocity < 0) {
+			if (-cl->xVelocity < (cl->getAcceleration() * time))
+				cl->xVelocity = 0;
+			else
+				cl->xVelocity += cl->getAcceleration() * time;
+		}
+	}
+	else {
+		cl->xVelocity += cl->xDeltaVelocity;
+	}
+	if (cl->yDeltaVelocity == 0) {
+		if (cl->yVelocity > 0) {
+			if (cl->yVelocity < (cl->getAcceleration() * time))
+				cl->yVelocity = 0;
+			else
+				cl->yVelocity -= cl->getAcceleration() * time;
+		} 
+		else if (cl->yVelocity < 0) {
+			if (-cl->yVelocity < (cl->getAcceleration() * time))
+				cl->yVelocity = 0;
+			else
+				cl->yVelocity += cl->getAcceleration() * time;
+		}
+	}
+	else {
+		cl->yVelocity += cl->yDeltaVelocity;
+	}
+	
+	if (cl->xVelocity < -cl->getSpeedMax()) 
+		cl->xVelocity = -cl->getSpeedMax();
+	else if (cl->xVelocity > cl->getSpeedMax()) 
+		cl->xVelocity = cl->getSpeedMax();
+	if (cl->yVelocity < -cl->getSpeedMax())
+		cl->yVelocity = -cl->getSpeedMax();
+	else if (cl->yVelocity > cl->getSpeedMax()) cl->yVelocity = cl->getSpeedMax();
+
+	if (cl->xVelocity != 0 || cl->yVelocity != 0) {
+
+		if (cl->yVelocity == 0) {
+			if (cl->getTextureActive() != cl->getTextureRun()) {
+				cl->setTextureActive(cl->getTextureRun());
+				cl->currentFrame = 0;
+				cl->currentMaxFrame = cl->getNumRunAnimationFrames();
+			}
+		}
+
+
+		if (cl->xVelocity == 0 && cl->yVelocity > 0) {
+			if (cl->getTextureActive() != cl->getTextureDownRun()) {
+				cl->setTextureActive(cl->getTextureDownRun());
+				cl->currentFrame = 0;
+				cl->currentMaxFrame = cl->getNumRunAnimationFrames();
+			}
+		}
+
+
+
+		if (cl->xVelocity != 0 && cl->yVelocity > 0) {
+			if (cl->getTextureActive() != cl->getTextureDownRightRun()) {
+				cl->setTextureActive(cl->getTextureDownRightRun());
+				cl->currentFrame = 0;
+				cl->currentMaxFrame = cl->getNumRunAnimationFrames();
+			}
+		}
+
+		if (cl->xVelocity != 0 && cl->yVelocity < 0) {
+			if (cl->getTextureActive() != cl->getTextureUpRightRun()) {
+				cl->setTextureActive(cl->getTextureUpRightRun());
+				cl->currentFrame = 0;
+				cl->currentMaxFrame = cl->getNumRunAnimationFrames();
+			}
+		}
+
+
+
+		if (cl->xVelocity == 0 && cl->yVelocity < 0) {
+			if (cl->getTextureActive() != cl->getTextureUpRun()) {
+				cl->setTextureActive(cl->getTextureUpRun());
+				cl->currentFrame = 0;
+				cl->currentMaxFrame = cl->getNumRunAnimationFrames();
+
+			}
+		}
+	}
+
+	else {
+		if (cl->getTextureActive() != cl->getTextureIdle()) {
+			cl->setTextureActive(cl->getTextureIdle());
+			cl->currentFrame = 0;
+			cl->currentMaxFrame = cl->getNumIdleAnimationFrames();
+		}
+	}
+
+	int beforeMoveX = (int)cl->xPosition;
+	int beforeMoveY = (int)cl->yPosition;
+	cl->yPosition += (cl->yVelocity * time);
+	if (cl->yPosition < 0 || (cl->yPosition + cl->getImageHeight() > LEVEL_HEIGHT)) {
+		cl->yPosition -= (cl->yVelocity * time);
+	}
+	cl->xPosition += (cl->xVelocity * time);
+	if (cl->xPosition < 0 || (cl->xPosition + cl->getImageWidth() > LEVEL_WIDTH)) {
+		cl->xPosition -= (cl->xVelocity * time);
+	}
+	int current = (int)(cl->xPosition + cl->rectangle.w / 2) / TILE_WIDTH;
+	current += (int)((cl->yPosition + cl->rectangle.h) / TILE_HEIGHT) * 30;
+	
+	
+	//std::cout << cl->xPosition << std::endl;
+	//std::cout << cl->yPosition << std::endl;
+	
+
+	if (map[current]->mType != 0) {
+		cl->xPosition = beforeMoveX;
+		cl->yPosition = beforeMoveY;
+	}
+	
+	
+	//std::cout << cl->xPosition << std::endl;
+	//std::cout << cl->yPosition << std::endl;
+	
+}
 
 void combatScene(std::vector<Character*> combatants) {
 	/*for (auto i : combatants) {
@@ -1034,6 +1207,7 @@ void playGame() {
 	std::cout << "\n";
 	std::cout << player1.yPosition;
 	
+	int cycle = 0;
 
 	SDL_Event e;
 	SDL_Rect camera = { 0,0,SCREEN_WIDTH, SCREEN_HEIGHT };
@@ -1223,7 +1397,6 @@ void playGame() {
 				*/
 			}
 
-
 			camera.x = (player1.xPosition + player1.rectangle.w / 2) - SCREEN_WIDTH / 2;
 			camera.y = (player1.yPosition + player1.rectangle.h / 2) - SCREEN_HEIGHT / 2;
 			if (camera.x < 0) {
@@ -1249,6 +1422,12 @@ void playGame() {
 			for (int i = 0; i < 900; i++) {
 				tiles[i]->render(&camera);
 			}
+		
+		
+			for (auto i : allEnemies) {
+				moveCluster(i, "random", timePassed, tiles, cycle);
+			}
+			cycle++;
 
 			for (auto &i : charactersOnScreen) {
 				if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
@@ -1321,8 +1500,6 @@ void playGame() {
 					break;
 				}
 			}
-			
-
 		}
 
 		if (inPauseMenu) {

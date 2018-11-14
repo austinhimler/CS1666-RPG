@@ -1,5 +1,6 @@
 #include "../Headers/Graphics.h"
 #include "time.h"
+#include <string>
 
 GLuint Graphics::getProgram(void)
 {
@@ -75,6 +76,23 @@ void Graphics::idle(void)
 	ctm = ctm * glm::rotate(0.01f, randomRotationAxis);
 	display();
 }
+
+/*void Graphics::loadTexture(string file, int width, int height)
+{
+	GLubyte* my_texels = (GLubyte*)malloc(sizeof(GLubyte) * width * height * 3);
+	FILE *fp = fopen(file, "r");
+	if (fp == NULL)
+	{
+		printf("Unable to open the texture file\n");
+	}
+	fread(my_texels, width * height * 3, 1, fp);
+	glUseProgram(program);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+
+
+}*/
 
 void Graphics::generateCombat(glm::vec4 *vert, glm::vec4 *color, glm::vec2 *text)
 {
