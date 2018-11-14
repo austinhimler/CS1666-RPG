@@ -98,7 +98,7 @@ void Graphics::generateCombat(glm::vec4 *vert, glm::vec4 *color, glm::vec2 *text
 	int it = 0;
 	//Background
 	for (i = 0; i < 6; i++) {
-		vert[it] = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, -1.0f)) * rectangle[i];
+		vert[it] = glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, -0.9f)) * rectangle[i];
 		color[it] = { 0.0f, 0.0f, 1.0f, 1.0f };
 		//Filler
 		text[it] = { 0.0f, 0.0f };
@@ -107,8 +107,8 @@ void Graphics::generateCombat(glm::vec4 *vert, glm::vec4 *color, glm::vec2 *text
 
 	//Player
 	for (i = 0; i < 6; i++) {
-		vert[it] = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f)) * (glm::vec4(0.25f, 0.25f, 0.25f, 1.0f) * rectangle[i]);
-		color[it] = { 0.0f, 0.0f, 1.0f, 1.0f };
+		vert[it] = glm::translate(glm::mat4(), glm::vec3(-0.5f, 0.25f, 0.0f)) * (glm::vec4(0.25f, 0.25f, 0.25f, 1.0f) * rectangle[i]);
+		color[it] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		//Filler
 		text[it] = { 0.0f, 0.0f };
 		it++;
@@ -116,19 +116,18 @@ void Graphics::generateCombat(glm::vec4 *vert, glm::vec4 *color, glm::vec2 *text
 
 	//Enemy
 	for (i = 0; i < 6; i++) {
-		vert[it] = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f)) * (glm::vec4(0.25f, 0.25f, 0.25f, 1.0f) * rectangle[i]);
-		color[it] = { 0.0f, 0.0f, 1.0f, 1.0f };
+		vert[it] = glm::translate(glm::mat4(), glm::vec3(0.5f, 0.25f, 0.0f)) * (glm::vec4(0.25f, 0.25f, 0.25f, 1.0f) * rectangle[i]);
+		color[it] = { 1.0f, 0.0f, 0.0f, 1.0f };
 		//Filler
 		text[it] = { 0.0f, 0.0f };
 		it++;
 	}
 
-
 	//Buttons
 	for (j = 0; j < 6; j++) {
 		for (i = 0; i < 6; i++) {
-			vert[it] = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, -0.5f, 1.0f)) * (glm::vec4(0.125f, 0.125f, 0.125f, 1.0f) * rectangle[i]);
-			color[it] = { 0.0f, 0.0f, 1.0f, 1.0f };
+			vert[it] = glm::translate(glm::mat4(), glm::vec3(-0.75f + (0.25f * (j % 3)), (-0.5f - (0.25f * ((j > 2) ? 1 : 0))), 1.0f)) * (glm::vec4(0.0625f, 0.0625f, 0.0625f, 1.0f) * rectangle[i]);
+			color[it] = { 0.0f, 1.0f, 0.0f, 1.0f };
 			//Filler
 			text[it] = { 0.0f, 0.0f };
 			it++;
