@@ -303,4 +303,12 @@
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="fshader.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="vshader.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
