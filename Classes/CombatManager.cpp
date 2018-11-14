@@ -1,6 +1,6 @@
 #include "../Headers/CombatManager.h"
 #include <stdio.h>
-#include <io.h>
+
 
 QueueManager::QueueManager(vector<Character *> c)
 {
