@@ -122,7 +122,19 @@ void Graphics::generateCombat(glm::vec4 *vert, glm::vec4 *color, glm::vec2 *text
 		text[it] = { 0.0f, 0.0f };
 		it++;
 	}
-
+	/*load texture for buttons
+	Tried getting SOIL to link correctly for hours but I had no luck, I'll try again tonight but incase someone else figures it out before I do here's some code that should work
+	GLuint tex;
+	glGenTextures(1, &tex);
+	glBindTexture(GL_TEXTURE_2D, tex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	int width, height;
+	unsigned char* image = SOIL_load_image("Images/UI/CombatScene/Button.png", &width, &height, 0, SOIL_LOAD_RGBA);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+	*/
 	//Buttons
 	for (j = 0; j < 6; j++) {
 		for (i = 0; i < 6; i++) {
