@@ -1,4 +1,5 @@
 #include "../Headers/Ability.h"
+#include "../Headers/Abilities/AbilityResource.h"
 	
 	Ability::Ability(int n, std::string d, int ec, int cd, int v, int t) {
 		name = n;
@@ -20,7 +21,7 @@
 		MPCost = AbilityResource::abilityMPCost[n];
 		cooldown = AbilityResource::abilityCD[n];
 		if (cooldown < 0) cooldown = 0;
-		value = 6 * attr[re[0]].getCur() + 3 * attr[re[1]].getCur() + 2 * attr[re[2]].getCur();
+		//value = 6 * attr[re[0]].getCur() + 3 * attr[re[1]].getCur() + 2 * attr[re[2]].getCur();
 		if (value < 0) value = 1;
 		type = AbilityResource::abilityType[n];
 	}
