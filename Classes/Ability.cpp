@@ -22,7 +22,7 @@
 		if (cooldown < 0) cooldown = 0;
 		value = 6 * attr[re[0]].getCur() + 3 * attr[re[1]].getCur() + 2 * attr[re[2]].getCur();
 		if (value < 0) value = 1;
-		type = AbilityResource::abilityType[n]);
+		type = AbilityResource::abilityType[n];
 	}
 
 
