@@ -115,7 +115,11 @@ Ability CombatManager::enemyDecision(int& target, Character* enemy) {
 				// i = Ability being looked at
 				// p = Participant being affected
 				// t = Target being aimed at
-
+				// playerHPchange, enemyHPchange, selfHPchange
+				// playerDEBUFF, enemyBUFF, selfBUFF
+				// removeEnemyDEBUFF, removeSelfDEBUFF, removePlayerBUFF
+				// 
+				// finalScore = (playerHPchange * 0.2)+(enemyHPchange * 0.16)+(selfHPchange * 0.18)+(playerDEBUFF * 0.14)+(enemyBUFF * 0.1)+(selfBUFF * 0.12)+(removeEnemyDEBUFF * 0.04)+(removeSelfDEBUFF * 0.06)+(removePlayerBuff * 0.08);
 			}
 		}
 	}
