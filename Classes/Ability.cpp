@@ -21,7 +21,7 @@
 		MPCost = AbilityResource::abilityMPCost[n];
 		cooldown = AbilityResource::abilityCD[n];
 		if (cooldown < 0) cooldown = 0;
-		if (re.size() > 3)
+		if (re.size() >= 3)
 			value = 6 * attr[re[0]].getCur() + 3 * attr[re[1]].getCur() + 2 * attr[re[2]].getCur();
 		else
 			value = 0;
