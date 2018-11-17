@@ -31,6 +31,7 @@ public:
 	int takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e);
 	int textAction(Character* c);
 	int combatMain(std::vector<Character*>& c);
+	Ability enemyDecision(int& target, Character* enemy);
 
 	void textMain(bool& printed);
 	void setNewButtons(std::vector<Button*>& buttons, int t);

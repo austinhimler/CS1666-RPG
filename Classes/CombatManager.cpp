@@ -94,15 +94,45 @@ int CombatManager::updateStatus() {
 	else if (lc[ENEMY] == livingCount[ENEMY]) return PLAYER_WINS;
 }
 //*/
+Ability CombatManager::enemyDecision(int& target, Character* enemy) {
+	std::vector<Ability> all_abilities = enemy->getAbilities();
+	int totalValue = 9999;
+	// Get Current Summary
+	// HP BUFFS ETC
+	// Use this to compare each option
+	vector<vector<int>> all_summaries;
+	for (auto ptp : participants)
+	{
+		all_summaries.push_back(ptp->summary());
+	}
+	for (auto i : all_abilities)
+	{
+		// Check how each ability affects each 
+		for (auto p : participants)
+		{
+			for (auto t : player_index)
+			{
+				// i = Ability being looked at
+				// p = Participant being affected
+				// t = Target being aimed at
 
+			}
+		}
+	}
+	
+	
+
+}
 int CombatManager::textAction(Character* c) {
 	vector<int> ailments;
 	if (c->is_Enemy() == true)
 	{
 		//Enemy attack player
-		std::vector<Ability> temp = c->getAbilities();
-		int target = rand() % player_index.size();
-		int result = participants[player_index[target]]->beingTarget(&temp[0]);
+		
+		//int target = rand() % player_index.size();
+		int target;
+		Ability selectedAbility = enemyDecision(target, c);
+//		int result = participants[player_index[&target]]->beingTarget(&temp[0]);
 		std::cout << c->getName() << " damages you slightly by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left." << std::endl;
 		if (ailments.size() == 0) 
 		{

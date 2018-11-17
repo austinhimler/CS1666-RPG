@@ -153,6 +153,13 @@
 		}
 		ailments.push_back(ailm);
 	}
+	std::vector<int> Character::summary() {
+		vector<int> s;
+		s.push_back(hpCurrent);
+		s.push_back(mpCurrent);
+		s.push_back(energyCurrent);
+		return s;
+	}
 	//*/
 	std::string Character::toString() {
 		std::string s = "Name: " + name + "\n";

@@ -33,7 +33,7 @@ namespace AbilityResource {
 	//abiilty base stats
 	inline int const &baseEnergyCost(int n) {
 		static int base_energy_cost[] = {
-			0,
+			1,
 			10,
 			1,
 			0,

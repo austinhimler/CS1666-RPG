@@ -92,6 +92,7 @@ public:
 
 	void takeAilm(Ailment ailm);
 	void ailmAffect();
+	std::vector<int> summary();
 
 	void checkStatus();
 
