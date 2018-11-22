@@ -11,6 +11,8 @@
 		value = v; 
 		type = t;
 		if (value < 0) value = 1;
+		IsAOE = AbilityResource::abilityIsAOE[n];
+
 	}
 	Ability::Ability(int n, std::vector<int> re, std::vector<Attribute> attr) : Ability(n, AbilityResource::abilityDescrip(n), AbilityResource::baseEnergyCost(n) - DEX / 10, AbilityResource::abilityCD[n], 6 * attr[re[0]].getCur() + 3 * attr[re[1]].getCur() + 2 * attr[re[2]].getCur(), AbilityResource::abilityType[n]) {}
 
@@ -46,6 +48,10 @@
 	}
 	int Ability::getType() {
 		return type;
+	}
+
+	bool Ability::isAOE() {
+		return IsAOE;
 	}
 
 	Ability::operator std::string() {

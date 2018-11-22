@@ -82,6 +82,15 @@ namespace AbilityResource {
 				//etc.
 	};
 
+	// isAOE of the respective abilites
+	const bool abilityIsAOE[] = {
+		false,
+		false,
+		false,
+		false,
+		false
+	};
+
 	// related attributes of each abiility in the order of influence
 	const std::vector<int> abilityAttr[5] = {
 		{STR, DEX, CON},

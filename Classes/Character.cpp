@@ -114,7 +114,7 @@
 			}
 		}
 		abilities.push_back(*abil);
-		abil_helper[a] = abilities.size() - 1;
+		abil_helper[a] = (int)abilities.size() - 1;
 	}
 
 	int Character::updateEnergy(Ability* a) {

@@ -1358,8 +1358,8 @@ void playGame() {
 				}
 			}
 
-			int beforeMoveX = player1.xPosition;
-			int beforeMoveY = player1.yPosition;
+			int beforeMoveX = (int)player1.xPosition;
+			int beforeMoveY = (int)player1.yPosition;
 			//Move vertically
 			player1.yPosition += (player1.yVelocity * timePassed);
 			if (player1.yPosition < 0 || (player1.yPosition + player1.getImageHeight() > LEVEL_HEIGHT)) {

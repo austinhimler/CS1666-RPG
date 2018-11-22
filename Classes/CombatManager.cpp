@@ -8,8 +8,8 @@ QueueManager::QueueManager(vector<Character *> c)
 		currTurn.push_back(C);
 		nextTurn.push_back(C);
 	}
-	insertionSort(currTurn, currTurn.size());
-	insertionSort(nextTurn, nextTurn.size());
+	insertionSort(currTurn, (int)currTurn.size());
+	insertionSort(nextTurn, (int)nextTurn.size());
 }
 
 QueueManager::~QueueManager()
@@ -32,7 +32,6 @@ void QueueManager::changeRounds()
 void QueueManager::insertionSort(std::vector<Character*>& turn, int n)
 {
 	int i, j;
-	Character* key;
 	for (i = 1; i < n; i++)
 	{
 		//key = turn[i];
@@ -92,6 +91,7 @@ int CombatManager::updateStatus() {
 	}
 	if (lc[PLAYER] == livingCount[PLAYER]) return ENEMY_WINS;
 	else if (lc[ENEMY] == livingCount[ENEMY]) return PLAYER_WINS;
+	else return -1; // shouldn't reach here
 }
 //*/
 
@@ -474,8 +474,6 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 	combatGraphics.display();
 	combatGraphics.rotateRandom();
 	
-
-	int width, height;
 	
 	while (inCombat) {
 		
