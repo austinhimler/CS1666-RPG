@@ -21,6 +21,5 @@ public:
 	CombatAI(Enemy* self, std::vector<Player*> players, std::vector<Enemy*> friends);
 
 	/** getters **/
-	Action getBestAction()
-
+	Action getBestAction();
 };
