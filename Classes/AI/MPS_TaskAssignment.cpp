@@ -28,6 +28,8 @@ MPS_TaskAssignment::MPS_TaskAssignment(const MPS_TaskAssignment& ta) {
 }
 
 MPS_TaskAssignment::MPS_TaskAssignment() {
+	Act = Action();
+	Score = -1;
 }
 
 Action MPS_TaskAssignment::getAction() {

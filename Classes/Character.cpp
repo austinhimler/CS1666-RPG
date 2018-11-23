@@ -209,6 +209,13 @@
 	SDL_Rect Character::getRectangle() { return rectangle; }
 	std::vector<Attribute> Character::getAttributes() { return attributes; }
 	std::vector<Ability> Character::getAbilities() { return abilities; }
+	std::vector<Ability*> Character::getAbilityPointers() {
+		std::vector<Ability*> AbilityPointers;
+		for (auto& a : abilities) {
+			AbilityPointers.push_back(&a);
+		}
+		return AbilityPointers;
+	}
 	double Character::getSpeedMax() { return speedMax; }
 	double Character::getAcceleration() { return acceleration; }
 	bool Character::is_Enemy() { return isEnemy; }

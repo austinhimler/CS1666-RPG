@@ -29,6 +29,7 @@ public:
 	int getCD();
 	int getVal();
 	int getType();
+	int getMPSTaskType();
 
 	bool isAOE();
 
@@ -41,6 +42,7 @@ private:
 	int cooldown; //might not add
 	int value;	// the possiblity of succes for escape and summon
 	int type;
+	int MPSTaskType;
 
 	bool IsAOE;
 

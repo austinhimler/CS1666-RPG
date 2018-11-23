@@ -162,7 +162,10 @@
     <ClCompile Include="Classes\Ability.cpp" />
     <ClCompile Include="Classes\Ailment.cpp" />
     <ClCompile Include="Classes\AI\Action.cpp" />
+    <ClCompile Include="Classes\AI\CombatAI.cpp" />
+    <ClCompile Include="Classes\AI\MPS_ASModifier.cpp" />
     <ClCompile Include="Classes\AI\MPS_Data.cpp" />
+    <ClCompile Include="Classes\AI\MPS_Main.cpp" />
     <ClCompile Include="Classes\AI\MPS_Task.cpp" />
     <ClCompile Include="Classes\AI\MPS_TaskAssignment.cpp" />
     <ClCompile Include="Classes\Attribute.cpp" />
@@ -223,7 +226,9 @@
     <ClInclude Include="Headers\AI\Action.h" />
     <ClInclude Include="Headers\AI\CombatAI.h" />
     <ClInclude Include="Headers\AI\CombatAIResource.h" />
+    <ClInclude Include="Headers\AI\MPS_ASModifier.h" />
     <ClInclude Include="Headers\AI\MPS_Data.h" />
+    <ClInclude Include="Headers\AI\MPS_Main.h" />
     <ClInclude Include="Headers\AI\MPS_Modifier.h" />
     <ClInclude Include="Headers\AI\MPS_Task.h" />
     <ClInclude Include="Headers\AI\MPS_TaskAssignment.h" />
@@ -273,6 +278,7 @@
     <Text Include="map1.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\AI\MPS_TaskBasePriority.csv" />
     <None Include="fshader.glsl" />
     <None Include="vshader.glsl" />
   </ItemGroup>

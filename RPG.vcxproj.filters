@@ -172,6 +172,15 @@
     <ClCompile Include="Classes\AI\MPS_Data.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\AI\MPS_Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\AI\MPS_ASModifier.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\AI\CombatAI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Attribute.h">
@@ -333,6 +342,12 @@
     <ClInclude Include="Headers\AI\MPS_Data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\AI\MPS_Main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\AI\MPS_ASModifier.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="map1.txt">
@@ -346,5 +361,6 @@
     <None Include="vshader.glsl">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Data\AI\MPS_TaskBasePriority.csv" />
   </ItemGroup>
 </Project>

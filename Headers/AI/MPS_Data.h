@@ -7,12 +7,16 @@
 
 class MPS_Data {
 protected:
-	std::vector<int> Data;
+	std::vector<float> Data;
+
+	//void readAISelfModifierBaseValue(std::string path);
+	void readTaskBasePriority(std::string path);
 
 public:
-
+	/** constructors **/
 	MPS_Data(std::string path);
 
 	/** getters **/
-	std::vector<int> getData();
+	std::vector<int> getTBP();
+	std::vector<float> getData();
 };

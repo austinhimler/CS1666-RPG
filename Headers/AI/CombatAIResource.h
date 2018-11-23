@@ -1,8 +1,13 @@
 #pragma once
+#include <string>
 
 namespace MPS_Resource {
 	enum MPS_MODIFIER_TYPE {
-
+		tASM,
+		tPSM,
+		tFSM,
+		tEAM,
+		tRTM
 	};
 
 	enum MPS_TASK_TYPE {
@@ -21,6 +26,8 @@ namespace MPS_Resource {
 		tSTOP_PLAYER_ACT,
 		tADD_SELF_RE,
 		tADD_FRIEND_NUM,
+		tESCAPE,
+
 		tMPS_TASK_TYPE_NUM
 	};
 

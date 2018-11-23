@@ -3,6 +3,7 @@
 #define _____ABILITYRESOURCE_H_____
 #include <vector>
 #include "../Attributes/Attr_Globals.h"
+#include "../AI/CombatAIResource.h"
 
 namespace AbilityResource {
 
@@ -103,5 +104,15 @@ namespace AbilityResource {
 	//ability related attributes
 	const int MAX_RELATED_ATTR = 3;
 
+
+	using namespace MPS_Resource;
+	const int MPS_TASKTYPE[] = {
+		tDAMAGE,
+		tDAMAGE,
+		tESCAPE,
+		tADD_SELF_RE,
+		tADD_FRIEND_NUM
+	};
+	using namespace std;
 }
 #endif

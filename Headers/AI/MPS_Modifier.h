@@ -5,7 +5,6 @@ protected:
 	int Type;
 	float Val;
 public:
-	MPS_Modifier();
-	virtual int getType();
-	virtual float getVal();
+	virtual int getType() = 0;
+	virtual float getVal() = 0;
 };
