@@ -23,10 +23,10 @@ namespace AbilityResource {
 	inline std::string const &abilityDescrip(int n) {
 		static std::string ability_description[] = {
 			"Basic attack",
-			"",
+			"Cast a Fireball, potentially causing some burnt on target",
 			"Try to escape from battle",
 			"Take the defending stance and increase energy regeneration for next turn",
-			""
+			"Try to summon an unknonw...emmmmmm...thing, to \"help\" your fight"
 		};
 		return ability_description[n];
 	}
@@ -34,11 +34,11 @@ namespace AbilityResource {
 	//abiilty base stats
 	inline int const &baseEnergyCost(int n) {
 		static int base_energy_cost[] = {
-			0,
+			20,
+			25,
 			10,
-			1,
 			0,
-			10
+			50
 		};
 		return base_energy_cost[n];
 	}
@@ -107,9 +107,9 @@ namespace AbilityResource {
 
 	using namespace MPS_Resource;
 	const int MPS_TASKTYPE[] = {
-		tDAMAGE,
-		tDAMAGE,
-		tESCAPE,
+		tMPS_TASK_DAMAGE,
+		tMPS_TASK_DAMAGE,
+		tMPS_TASK_ESCAPE,
 		tADD_SELF_RE,
 		tADD_FRIEND_NUM
 	};

@@ -72,49 +72,145 @@ CombatManager::~CombatManager()
 {
 }
 
+int CombatManager::checkCombatStatus() {
+	if (livingCount[PLAYER] == 0) return ENEMY_WINS;
+	else if (livingCount[ENEMY] == 0) return PLAYER_WINS;
+	else return IN_COMBAT;
+}
 
 int CombatManager::updateStatus() {
 	//First check if character is dead
 	int lc[2] = {0,0};
-	for(auto& c : participants)
+	for(int i = 0; i < participants.size(); i++)
 	{
-		if (c->getHPCurrent() <= 0) continue;
+		Character* c = participants[i];
+		if (c->getHPCurrent() <= 0 || ParticipantsStatus[i] != IN_COMBAT) continue;
 		c->ailmAffect();
-		if (c->getHPCurrent() == 0) {
-			if (c->is_Enemy()) lc[ENEMY]++;
-			else lc[PLAYER]++;
+		if (c->getHPCurrent() <= 0) {
+			if (c->is_Enemy()) livingCount[ENEMY]--;
+			else livingCount[PLAYER]--;
 		}
 		else
 		{
 			c->updateEnergy(nullptr);
 		}
 	}
-	if (lc[PLAYER] == livingCount[PLAYER]) return ENEMY_WINS;
-	else if (lc[ENEMY] == livingCount[ENEMY]) return PLAYER_WINS;
-	else return -1; // shouldn't reach here
+	return checkCombatStatus();
 }
 //*/
 
-int CombatManager::textAction(Character* c) {
-	vector<int> ailments;
+Action CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
+	std::vector<Player*> Players;
+	std::vector<Enemy*> Friends;
+	for (int i = 0; i < participants.size(); i++) {
+		if (i != enemy_index[EnemyActionOrderCount] && participants[i]->getHPCurrent() > 0) {
+			if (participants[i]->is_Enemy()) Friends.push_back((Enemy*)participants[i]);
+			else Players.push_back((Player*)participants[i]);
+		}
+	}
+	AI = CombatAI((Enemy*)c, Players, Friends);
+	return AI.getBestAction();
+}
+int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
+	//vector<int> ailments;
 	if (c->is_Enemy() == true)
 	{
-		//Enemy attack player
-		std::vector<Ability> temp = c->getAbilities();
-		int target = rand() % player_index.size();
-		int result = participants[player_index[target]]->beingTarget(&temp[0]);
-		std::cout << c->getName() << " damages you slightly by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left." << std::endl;
-		if (ailments.size() == 0) 
-		{
-			std::cout << "Their attack did not have any status effect on you." << std::endl;
-		}
-		else {
+		while (c->getEnergyCurrent() != 0) {
+			//Enemy takes action
+			//std::vector<Ability> temp = c->getAbilities();
 
-		}
-		if (participants[player_index[target]]->getHPCurrent() == 0) {
-			std::cout << "Why are your so weak? You are dead, dude!" << std::endl;
-			inCombat = false;
-			return ENEMY_WINS;
+			// AI decides which action to take 
+			Action ActionToTake = takeActionByAI(c, EnemyActionOrderCount);
+			/** Carry out action and out put result for every target **/
+			std::vector<Character*> tars = ActionToTake.getTar();
+			int TarNum = tars.size();
+			Ability* abil = ActionToTake.getAbil();
+			for (int i = 0; i < TarNum; i++) { // act on every target and output result
+				int result = tars[i]->beingTarget(abil);
+				c->updateEnergy(abil);
+				/** output to console **/
+				std::cout << c->getName() << " uses " << abil->getName();
+				switch (abil->getType()) {
+					using namespace AbilityResource;
+				case tSUMMON:
+				case tDEFENSE:
+				case tESCAPE:
+					break;
+				default:
+					std::cout << " to " << tars[i]->getName() << std::endl;
+					break;
+				}
+				switch (abil->getType()) {
+				case AbilityResource::tDAMAGE:
+					std::cout << tars[i]->getName() << "'s HP is decreased by " << result << "!" << std::endl;
+					std::cout << tars[i]->getName() << " now has " << participants[0]->getHPCurrent() << " HP left." << std::endl;
+					break;
+				case AbilityResource::tSUMMON:
+					std::cout << "NLF4 is lecturing, can't make it." << std::endl;
+					break;
+				case AbilityResource::tESCAPE:
+					if (result == -2) {
+						std::cout << c->getName() << " has escaped from combat!" << std::endl;
+						ParticipantsStatus[enemy_index[EnemyActionOrderCount]] = ESCAPED;
+						livingCount[ENEMY]--;
+						if (livingCount[ENEMY] <= 0) return PLAYER_WINS;
+					}
+					else {
+						std::cout << c->getName() << " tried to escape but failed." << std::endl;
+					}
+					break;
+				case AbilityResource::tDEFENSE:
+					std::cout << c->getName() << "'s Energy Regeneration for next round will be increased." << std::endl;
+					return IN_COMBAT;
+					break;
+				default:
+					break;
+				}
+				// check if the target is dead
+				if (tars[i]->getHPCurrent() == 0) {
+					std::cout << tars[i]->getName() << " is dead!" << std::endl;
+					if (!tars[i]->is_Enemy()) {
+						livingCount[PLAYER]--;
+						for (auto& pi : player_index) {
+							if (participants[pi] == tars[i]) {
+								ParticipantsStatus[pi] = DEAD;
+								break;
+							}
+						}
+					}
+					else {
+						livingCount[ENEMY]--;
+						for (auto& pi : enemy_index) {
+							if (participants[pi] == tars[i]) {
+								ParticipantsStatus[pi] = DEAD;
+								break;
+							}
+						}
+					}
+					int temp_status = checkCombatStatus();
+					if (temp_status != IN_COMBAT) return temp_status;
+				}
+			}
+			/* for attack random player
+			//int target = rand() % player_index.size();
+			//int result = participants[player_index[target]]->beingTarget(&temp[0]);
+			//std::cout << c->getName() << " damages you slightly by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left." << std::endl;
+			//*/
+			/* for attack randome player - with ailments
+			if (ailments.size() == 0)
+			{
+				std::cout << "Their attack did not have any status effect on you." << std::endl;
+			}
+			else {
+
+			}//*/
+
+			/* for attack random player
+			if (participants[player_index[target]]->getHPCurrent() == 0) {
+				std::cout << "Why are your so weak? You are dead, dude!" << std::endl;
+				inCombat = false;
+				return ENEMY_WINS;
+			}//*/
 		}
 	}
 	else
@@ -186,6 +282,9 @@ int CombatManager::textAction(Character* c) {
 						inCombat = false;
 						std::cout << "You escape succesfully COWARD!" << std::endl;
 						livingCount[PLAYER]--;
+						for (auto& pi : player_index) {
+							if (participants[pi] == c) ParticipantsStatus[pi] = ESCAPED;
+						}
 						return PLAYER_ESCAPES;
 					}
 					else {
@@ -221,6 +320,7 @@ int CombatManager::textAction(Character* c) {
 					int result = participants[enemy_index[target]]->beingTarget(&abil_temp[helper[abil_selection]]);
 					if (participants[enemy_index[target]]->getHPCurrent() == 0) {
 						livingCount[ENEMY]--;
+						ParticipantsStatus[enemy_index[target]] = DEAD;
 					}
 					std::cout << "You damage " << participants[enemy_index[target]]->getName() << " amazingly by " << result << " HP!" << " " << participants[enemy_index[target]]->getName() << " now has only " << participants[enemy_index[target]]->getHPCurrent() << " HP left." << std::endl;
 					break;
@@ -405,12 +505,15 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 
 	//initialize enemy_index and player_index
 	for (int i = 0; i < participants.size(); i++) {
+		ParticipantsStatus[i] = IN_COMBAT;
 		if (participants[i]->is_Enemy()) {
 			enemy_index.push_back(i);
+			//Enemies.push_back((Enemy*)participants[i]);
 			livingCount[ENEMY]++;
 		}
 		else {
 			player_index.push_back(i);
+			//Players.push_back((Player*)participants[i]);
 			livingCount[PLAYER]++;
 		}
 	}
@@ -513,24 +616,34 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		
 		SDL_Delay(16);*/
 		}
-		
-		
-		textMain(printed); // text combat ui initialization
 
+		/** doesn't handle multiplayer **/
+		// text combat ui initialization
+		textMain(printed);
+		/** doesn't handle multiplayer **/
+
+		int EnemyActionOrderCount = 0; // record which enemy is taking action
 		for (int i = 0; i < participants.size(); i++)
 		{
-			//updateStatus(participants[i]);
-			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0)
-				switch (int result_temp = textAction(participants[i])) {
+			if (ParticipantsStatus[i] == IN_COMBAT && participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0) {
+				switch (int result_temp = textAction(participants[i], EnemyActionOrderCount)) {
 				case IN_COMBAT:
 					break;
 				default:
 					return result_temp;
 					////	takeAction(participants[i], buttons, e)
 				}
-			updateStatus();
+			}
+			if (participants[i]->is_Enemy())EnemyActionOrderCount++;
+			if (EnemyActionOrderCount >= enemy_index.size()) EnemyActionOrderCount = 0;
 		}
 		printed = false; // for text combat ui
+
+		//update status between rounds
+		int temp_status = updateStatus();
+		if (temp_status != IN_COMBAT) return temp_status;
+
+		//change rounds
 		qm.changeRounds();
 	}
 	SDL_GL_DeleteContext(glcontext);

@@ -11,7 +11,7 @@
 		mpCurrent = mpMax;
 		flip = SDL_FLIP_NONE;
 		energyCurrent = energyMax;
-		energyRegen = (energyMax < 10)?1:0.1 * energyMax;
+		energyRegen = 20 + (energyMax < 10)?1:0.1 * energyMax*attr[DEX].current;
 		name = n;
 		buff = std::vector<int>(BUFFCOUNT, 0);
 		level = 1;
@@ -177,7 +177,7 @@
 	int Character::getStatus() { return 0; }
 	void Character::setHPMax() { hpMax = 100 * attributes[CON].current; }
 	void Character::setMPMax() { mpMax = 100 * attributes[INT].current; }
-	void Character::setEnergyMax() { energyMax = 100 * attributes[DEX].current; }
+	void Character::setEnergyMax() { energyMax = 50 + attributes[DEX].current; }
 	void Character::setTextureActive(SDL_Texture* text) { textureActive = text; }
 	int Character::getHPCurrent() { return hpCurrent; }
 	int Character::getMPCurrent() { return mpCurrent; }

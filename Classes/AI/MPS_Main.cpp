@@ -27,7 +27,7 @@ void MPS_Main::createTasks(Enemy* Self, std::vector<Player*> Players, std::vecto
 		std::vector<Character*> tar;
 		switch (i) {
 			using namespace MPS_Resource;
-		case tDEAL_DAMAGE:
+		case tMPS_TASK_DAMAGE:
 		case tDEBUFF_PLAYER_DEF:
 		case tDEBUFF_PLAYER_OFF:
 		case tDISPEL_PLAYER_HPBUFF:
@@ -41,7 +41,7 @@ void MPS_Main::createTasks(Enemy* Self, std::vector<Player*> Players, std::vecto
 		case tBUFF_SELF_OFF:
 		case tRECOVER_SELF_HP:
 		case tADD_SELF_RE:
-		case tESCAPE:
+		case tMPS_TASK_ESCAPE:
 			tar.push_back((Character*)Self);
 			break;
 		default:

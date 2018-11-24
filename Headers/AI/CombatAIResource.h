@@ -11,7 +11,7 @@ namespace MPS_Resource {
 	};
 
 	enum MPS_TASK_TYPE {
-		tDEAL_DAMAGE,
+		tMPS_TASK_DAMAGE,
 		tBUFF_SELF_OFF,
 		tBUFF_FRIEND_OFF,
 		tDEBUFF_PLAYER_DEF,
@@ -26,7 +26,7 @@ namespace MPS_Resource {
 		tSTOP_PLAYER_ACT,
 		tADD_SELF_RE,
 		tADD_FRIEND_NUM,
-		tESCAPE,
+		tMPS_TASK_ESCAPE,
 
 		tMPS_TASK_TYPE_NUM
 	};

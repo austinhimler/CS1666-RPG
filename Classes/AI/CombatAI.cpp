@@ -8,13 +8,15 @@ CombatAI::CombatAI(Enemy* self, std::vector<Player*> players, std::vector<Enemy*
 	Friends = friends;
 }
 
-Action CombatAI::BestActionByModifiedPriorityScore() {
+void CombatAI::BestActionByModifiedPriorityScore() {
 	BestAction = Action();
 	MPS_Main MPS = MPS_Main(Self, Players, Friends);
 	BestAction = MPS.getBestAction();
-	return BestAction;
 }
 
 Action CombatAI::getBestAction() {
+	if (BestAction.isNULL()) {
+		BestActionByModifiedPriorityScore();
+	}
 	return BestAction;
 }

@@ -63,6 +63,8 @@ enum COMBATFLAGS {
 	ENEMY_WINS,
 	PLAYER_ESCAPES,
 	ENEMY_ESCAPES,
+	DEAD,
+	ESCAPED
 };
 
 extern SDL_Window* gWindow;

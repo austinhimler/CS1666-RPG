@@ -13,8 +13,9 @@ protected:
 	Enemy* Self;
 	std::vector<Player*> Players;
 	std::vector<Enemy*> Friends;
+
+	void BestActionByModifiedPriorityScore();
 public:
-	Action BestActionByModifiedPriorityScore();
 
 	/** constructors **/
 	CombatAI();
