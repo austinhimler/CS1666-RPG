@@ -1525,6 +1525,7 @@ void playGame() {
 				keepPlaying = false;
 			}
 			inPauseMenu = false;
+			timeSinceLastMovement = SDL_GetTicks();
 		}
 
 		while (combatStarted) {
