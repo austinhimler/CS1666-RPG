@@ -7,15 +7,14 @@ void MPS_Main::createAbilities(Enemy* Self) {
 }
 
 void MPS_Main::readTBP() {
-	if (TaskBasePriority.size() == 0) return;
-	std::string Path = "../../Data/AI/MPS_TaskBasePriority.csv";
+	if (TaskBasePriority.size() != 0) return;
+	std::string Path = "Data/AI/MPS_TBP.csv";
 	MPS_Data TBP = MPS_Data(Path);
 	TaskBasePriority = TBP.getTBP();
 }
 
 void MPS_Main::createTLMs(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*> Friends) {
-	MPS_ASModifier ASM = MPS_ASModifier();
-	TaskLevelModifiers.push_back((MPS_Modifier*)&ASM);
+	TaskLevelModifiers.push_back(new MPS_ASModifier(Self));
 }
 
 void MPS_Main::createTasks(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*> Friends) {
@@ -68,6 +67,12 @@ MPS_Main::MPS_Main(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*
 	createTLMs(Self, Players, Friends);
 	createTasks(Self, Players, Friends);
 	findBestAction();
+}
+
+MPS_Main::~MPS_Main() {
+	for (auto& tlm : TaskLevelModifiers) {
+		delete tlm;
+	}
 }
 
 Action MPS_Main::getBestAction() {

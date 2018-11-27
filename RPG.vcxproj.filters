@@ -362,5 +362,6 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="Data\AI\MPS_TaskBasePriority.csv" />
+    <None Include="Classes\AI\MPS_TaskBasePriority.csv" />
   </ItemGroup>
 </Project>

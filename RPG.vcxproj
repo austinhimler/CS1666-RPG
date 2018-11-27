@@ -278,6 +278,7 @@
     <Text Include="map1.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Classes\AI\MPS_TaskBasePriority.csv" />
     <None Include="Data\AI\MPS_TaskBasePriority.csv" />
     <None Include="fshader.glsl" />
     <None Include="vshader.glsl" />

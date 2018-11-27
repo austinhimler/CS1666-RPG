@@ -12,7 +12,7 @@ void readAISelfModifierBaseValue(std::string path) {
 
 void MPS_Data::readTaskBasePriority(std::string path) {
 	int Length = MPS_Resource::tMPS_TASK_TYPE_NUM;
-	std::ifstream data(path);
+	std::ifstream data(path, std::ifstream::in);
 	if (!data.is_open()) {
 		std::cerr << "Failed to open data!" << std::endl;
 	}

@@ -1710,7 +1710,28 @@ int mainMenu() {
 }
 
 int main(int argc, char *argv[]) {
+	/*
+	CombatManager cm;
+	std::vector<Character*> combatants;
+	combatants.push_back(new Player("nlf4", 10, 10, 10, 10, 10));
+	combatants.push_back(new Enemy("W.G.", 10, 10, 10, 5, 10));
+	bool inCombat = cm.combatMain(combatants);
+
+	//*/
+
+	
 	srand(time(NULL));
+	if (!init()) {
+		std::cout << "Failed to initialize!" << std::endl;
+		close();
+		return 1;
+	}
+	handleMain();
+	//*/
+
+	return 0;
+}
+void handleMain() {
 	/*
 	CombatManager cm;
 	std::vector<Character*> combatants;
@@ -1718,15 +1739,7 @@ int main(int argc, char *argv[]) {
 	combatants.push_back(new Enemy("W.G.", 10, 10, 10, 5, 10));
 	bool inCombat = cm.combatMain(combatants);
 	//*/
-
-	if (!init()) {
-		std::cout << "Failed to initialize!" << std::endl;
-		close();
-		return 1;
-	}
-	handleMain();
-}
-void handleMain() {
+	
 	int a = mainMenu();
 	bool b;
 
