@@ -95,10 +95,10 @@ bool init() {
 	}
 	
 	//set all the required Options for GLFW, Use OpenGL 3.2 core
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);//Double-buffering
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+	//SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);//Double-buffering
+	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 
 	//Create rendering context for OpenGL
@@ -484,7 +484,7 @@ bool characterCreateScreen() {
 									Mix_PlayChannel(-1, gBSound, 0);
 									onCharacterCreate = false;
 									if (nameInputText == "nfl4" || nameInputText == "nlf4")
-										player1 = Player::Player(nameInputText, 10, 10, 10, 10, 10);//player1.setAll(nameInputText, 10, 10, 10, 10, 10);
+										player1 = Player(nameInputText, 10, 10, 10, 10, 10);//player1.setAll(nameInputText, 10, 10, 10, 10, 10);
 									else
 										player1 = Player(nameInputText, strength, intelligence, dexterity, constitution, faith);//player1.setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
 									std::cout << std::string(player1); //displays player 1
@@ -611,7 +611,7 @@ bool characterCreateScreen() {
 								Mix_PlayChannel(-1, gBSound, 0);
 								onCharacterCreate = false;
 								if (nameInputText == "nfl4" || nameInputText == "nlf4")
-									player1 = Player::Player(nameInputText, 10, 10, 10, 10, 10);//player1.setAll(nameInputText, 10, 10, 10, 10, 10);
+									player1 = Player(nameInputText, 10, 10, 10, 10, 10);//player1.setAll(nameInputText, 10, 10, 10, 10, 10);
 								else
 									player1 = Player(nameInputText, strength, intelligence, dexterity, constitution, faith);//player1.setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
 								std::cout << std::string(player1); //displays player 1
