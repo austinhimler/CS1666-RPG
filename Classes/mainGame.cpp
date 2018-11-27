@@ -1549,10 +1549,6 @@ void playGame() {
 				charactersOnScreen.push_back(CollidingCluster);
 			}
 			combatStarted = false;
-			/*
-			enemy1.xPosition = rand() % (LEVEL_WIDTH - enemy1.getImageWidth());
-			enemy1.yPosition = rand() % (LEVEL_HEIGHT - enemy1.getImageHeight());
-			*/
 			inOverworld = true;
 		}
 		int backToMainMenu = 1;

@@ -15,7 +15,7 @@ protected:
 		std::vector<MPS_TaskAssignment> Assignments;
 		MPS_TaskAssignment BestAssignment;
 public:
-	void createAssignments(std::vector<Ability*> UsableAbilities);	//if don't have any assignment, crerate assignments
+	void createAssignments(std::vector<Ability*> UsableAbilities);	//if don't have any assignment, create assignments
 	void computePriority(int TaskBasePriority, std::vector<MPS_Modifier*> TLM);
 	void findBestAssignment();
 

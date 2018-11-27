@@ -312,7 +312,7 @@ int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
 								cout << "Enter a valid enemy number\n";
 						}
 						if (participants[enemy_index[target]]->getHPCurrent() <= 0) {
-							std::cout << "That eneny is dead." << std::endl;
+							std::cout << "That enemy is dead." << std::endl;
 							target = -1;
 						}
 					}

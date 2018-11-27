@@ -16,7 +16,9 @@ namespace AbilityResource {
 		"Fireball",
 		"Escape",
 		"Defend",
-		"Summon"
+		"Summon",
+		"Heal",
+		"Mass Heal"
 	};
 
 	//ability descriptions
@@ -26,7 +28,9 @@ namespace AbilityResource {
 			"Cast a Fireball, potentially causing some burnt on target",
 			"Try to escape from battle",
 			"Take the defending stance and increase energy regeneration for next turn",
-			"Try to summon an unknonw...emmmmmm...thing, to \"help\" your fight"
+			"Try to summon an unknonw...emmmmmm...thing, to \"help\" your fight",
+			"Restore HP of one target",
+			"Restore HP across whole team"
 		};
 		return ability_description[n];
 	}
@@ -38,6 +42,8 @@ namespace AbilityResource {
 			25,
 			10,
 			0,
+			50,
+			50,
 			50
 		};
 		return base_energy_cost[n];
@@ -49,11 +55,15 @@ namespace AbilityResource {
 		10,
 		0,
 		0,
+		10000,
+		10000,
 		10000
 	};
 
 	//ability base CD
 	const int abilityCD[] = {
+		0,
+		0,
 		0,
 		0,
 		0,
@@ -79,7 +89,9 @@ namespace AbilityResource {
 		tDAMAGE, // fireball
 		tESCAPE, // escape
 		tDEFENSE, // defend
-		tSUMMON // summon
+		tSUMMON, // summon
+		tHEALING, // heal
+		tHEALING // mass heal
 				//etc.
 	};
 
@@ -89,16 +101,20 @@ namespace AbilityResource {
 		false,
 		false,
 		false,
-		false
+		false,
+		false,
+		true
 	};
 
 	// related attributes of each abiility in the order of influence
-	const std::vector<int> abilityAttr[5] = {
+	const std::vector<int> abilityAttr[7] = {
 		{STR, DEX, CON},
 		{INT, DEX, FAI},
 		{DEX, CON, STR},
 		{CON, STR, DEX},
-		{FAI, INT, DEX}
+		{FAI, INT, DEX},
+		{FAI, INT, CON},
+		{FAI, INT, CON}
 	};
 
 	//ability related attributes
@@ -111,7 +127,9 @@ namespace AbilityResource {
 		tMPS_TASK_DAMAGE,
 		tMPS_TASK_ESCAPE,
 		tADD_SELF_RE,
-		tADD_FRIEND_NUM
+		tADD_FRIEND_NUM,
+		tRECOVER_SELF_HP,
+		tRECOVER_SELF_HP
 	};
 	using namespace std;
 }
