@@ -106,14 +106,14 @@
 
 	
 	void Character::learnAbility(int a) {
-		Ability* abil = new Ability(a, AbilityResource::abilityAttr[a], attributes);
+		Ability abil = Ability(a, AbilityResource::abilityAttr[a], attributes);
 		for (auto& i : abilities) {
 			if (i.cmp(a)) {
-				i = *abil;//used for updating learned abilities
+				i = abil;//used for updating learned abilities
 				return;
 			}
 		}
-		abilities.push_back(*abil);
+		abilities.push_back(abil);
 		abil_helper[a] = (int)abilities.size() - 1;
 	}
 

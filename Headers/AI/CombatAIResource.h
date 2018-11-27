@@ -7,7 +7,9 @@ namespace MPS_Resource {
 		tPSM,
 		tFSM,
 		tEAM,
-		tRTM
+		tRTM,
+		
+		tMPS_MODIFIER_TYPE_NUM
 	};
 
 	enum MPS_TASK_TYPE {

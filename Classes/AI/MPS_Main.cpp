@@ -7,15 +7,14 @@ void MPS_Main::createAbilities(Enemy* Self) {
 }
 
 void MPS_Main::readTBP() {
-	if (TaskBasePriority.size() == 0) return;
-	std::string Path = "../../Data/AI/MPS_TaskBasePriority.csv";
+	if (TaskBasePriority.size() != 0) return;
+	std::string Path = "Data/AI/MPS_TBP.csv";
 	MPS_Data TBP = MPS_Data(Path);
 	TaskBasePriority = TBP.getTBP();
 }
 
 void MPS_Main::createTLMs(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*> Friends) {
-	MPS_ASModifier ASM = MPS_ASModifier();
-	TaskLevelModifiers.push_back((MPS_Modifier*)&ASM);
+	TaskLevelModifiers.push_back(new MPS_ASModifier(Self));
 }
 
 void MPS_Main::createTasks(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*> Friends) {
@@ -57,8 +56,14 @@ void MPS_Main::createTasks(Enemy* Self, std::vector<Player*> Players, std::vecto
 void MPS_Main::findBestAction() {
 	float MaxScore = 0;
 	for (auto& t : Tasks) {
+		//std::cerr << t.getBestAssignment().getAction().getAbil()->getName() << std::endl;
+		//std::cerr << t.getBestAssignment().getScore() << std::endl;
+		//std::cerr << "Current MaxScore is: " << MaxScore << std::endl;
 		if (t.getBestScore() > MaxScore) 
 			BestAction = t.getBestAssignment().getAction();
+		else if (t.getBestScore() == MaxScore) {
+			if (rand() % 100 > 49) BestAction = t.getBestAssignment().getAction();
+		}
 	}
 }
 
@@ -68,6 +73,12 @@ MPS_Main::MPS_Main(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*
 	createTLMs(Self, Players, Friends);
 	createTasks(Self, Players, Friends);
 	findBestAction();
+}
+
+MPS_Main::~MPS_Main() {
+	for (auto& tlm : TaskLevelModifiers) {
+		delete tlm;
+	}
 }
 
 Action MPS_Main::getBestAction() {

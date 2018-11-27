@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <io.h>
 
+
 QueueManager::QueueManager(vector<Character *> c)
 {
 	for (auto C : c) {
@@ -505,7 +506,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 
 	//initialize enemy_index and player_index
 	for (int i = 0; i < participants.size(); i++) {
-		ParticipantsStatus[i] = IN_COMBAT;
+		ParticipantsStatus.push_back(IN_COMBAT);
 		if (participants[i]->is_Enemy()) {
 			enemy_index.push_back(i);
 			//Enemies.push_back((Enemy*)participants[i]);

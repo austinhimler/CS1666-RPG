@@ -53,15 +53,6 @@
     <Image Include="CREDIT_IMG\SankethKolliCredit.jpg">
       <Filter>Resource Files\CREDIT_IMAGES</Filter>
     </Image>
-    <Image Include="..\..\..\..\..\Programming\cs1666\StartButton.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\..\..\..\Programming\cs1666\pointDownArrow.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\..\..\..\Programming\cs1666\pointUpArrow.png">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="Images\Tiles\64^64 Grasstiles.png">
       <Filter>Resource Files</Filter>
     </Image>
@@ -361,6 +352,5 @@
     <None Include="vshader.glsl">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Data\AI\MPS_TaskBasePriority.csv" />
   </ItemGroup>
 </Project>

@@ -15,8 +15,21 @@
 		MPSTaskType = AbilityResource::MPS_TASKTYPE[n];
 
 	}
-	Ability::Ability(int n, std::vector<int> re, std::vector<Attribute> attr) : Ability(n, AbilityResource::abilityDescrip(n), AbilityResource::baseEnergyCost(n) - DEX / 10, AbilityResource::abilityCD[n], 6 * attr[re[0]].getCur() + 3 * attr[re[1]].getCur() + 2 * attr[re[2]].getCur(), AbilityResource::abilityType[n]) {}
-
+	Ability::Ability(int n, std::vector<int> re, std::vector<Attribute> attr) {
+		name = n;
+		description = AbilityResource::abilityDescrip(n);
+		energyCost = AbilityResource::baseEnergyCost(n) - DEX / 10;
+		if (energyCost < 1) energyCost = 1;
+		MPCost = AbilityResource::abilityMPCost[n];
+		cooldown = AbilityResource::abilityCD[n];
+		if (cooldown < 0) cooldown = 0;
+		if (re.size() >= 3)
+			value = 6 * attr[re[0]].getCur() + 3 * attr[re[1]].getCur() + 2 * attr[re[2]].getCur();
+		else
+			value = 0;
+		if (value < 0) value = 1;
+		type = AbilityResource::abilityType[n];
+	}
 
 	Ability::Ability() {}
 
