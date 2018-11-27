@@ -56,8 +56,14 @@ void MPS_Main::createTasks(Enemy* Self, std::vector<Player*> Players, std::vecto
 void MPS_Main::findBestAction() {
 	float MaxScore = 0;
 	for (auto& t : Tasks) {
+		//std::cerr << t.getBestAssignment().getAction().getAbil()->getName() << std::endl;
+		//std::cerr << t.getBestAssignment().getScore() << std::endl;
+		//std::cerr << "Current MaxScore is: " << MaxScore << std::endl;
 		if (t.getBestScore() > MaxScore) 
 			BestAction = t.getBestAssignment().getAction();
+		else if (t.getBestScore() == MaxScore) {
+			if (rand() % 100 > 49) BestAction = t.getBestAssignment().getAction();
+		}
 	}
 }
 

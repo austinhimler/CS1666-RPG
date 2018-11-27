@@ -1,7 +1,6 @@
 #include "../../Headers/AI/MPS_Task.h"
 
 void MPS_Task::createAssignments(std::vector<Ability*> ua) {
-	if (Assignments.size() != 0) return;
 	for (auto& a : ua)
 	{
 		if (a->isAOE()) {
@@ -33,6 +32,10 @@ void MPS_Task::findBestAssignment() {
 	for (auto& a : Assignments) {
 		if (a.getScore() > BestAssignment.getScore()) {
 			BestAssignment = a;
+		}
+		else if (a.getScore() == BestAssignment.getScore()) {
+			int tmp = rand() % 100;
+			if (tmp > 49) BestAssignment = a;
 		}
 	}
 	BestScore = BestAssignment.getScore();
