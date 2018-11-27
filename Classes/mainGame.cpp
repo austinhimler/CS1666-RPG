@@ -1487,12 +1487,6 @@ void playGame() {
 			int enemyToRemove = -1;
 			for (auto z : allEnemies)
 			{
-				if (z->readyTimeLeft > -1)
-					z->readyTimeLeft -= 1;
-				if (z->readyTimeLeft == 0) {
-					z->combatReady = true;
-					z->setTextureActive(z->getTextureIdle());
-				}
 				enemyToRemove++;
 				if (check_collision(player1.rectangle, z->rectangle) && z->combatReady) {
 					z->combatReady = false;
@@ -1510,6 +1504,12 @@ void playGame() {
 					inOverworld = false;
 					combatStarted = true;
 					break;
+				}
+				if (z->readyTimeLeft > -1)
+					z->readyTimeLeft -= 1;
+				if (z->readyTimeLeft == 0) {
+					z->combatReady = true;
+					z->setTextureActive(z->getTextureIdle());
 				}
 			}
 		}
