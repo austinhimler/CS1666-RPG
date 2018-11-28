@@ -305,6 +305,12 @@
     <Text Include="map1.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="map2.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="map3.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <None Include="fshader.glsl">
