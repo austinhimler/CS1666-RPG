@@ -344,7 +344,7 @@ void playCredits() {
 				SDL_RenderPresent(gRenderer);
 
 			}
-			SDL_Delay(30);
+			SDL_Delay(60);
 			j++;
 		}
 		j = 0;
@@ -367,6 +367,13 @@ void renderText(const char* text, SDL_Rect* rect, SDL_Color* color) {
 	SDL_DestroyTexture(texture);
 }
 void combatTransition() {
+	//Load the music
+	gMusic = Mix_LoadMUS("Audio/Into_Combat_Test.wav");
+	if (gMusic == NULL)
+		std::cout << "Failed to load music" << std::endl;
+	//Play the music
+	Mix_PlayMusic(gMusic, -1);
+	Mix_VolumeMusic(MIX_MAX_VOLUME / 8);
 	SDL_Rect wipe = { 0,0,72,72 };
 	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 	for (; wipe.x < 720; wipe.x += 72)
@@ -378,6 +385,7 @@ void combatTransition() {
 			SDL_Delay(10);
 		}
 	}
+	Mix_PauseMusic();
 }
 void levelTransition() {
 	SDL_Rect wholeS = { 0,0,720,720 };
@@ -397,6 +405,31 @@ void levelTransition() {
 		SDL_RenderPresent(gRenderer);
 		SDL_Delay(100);
 	}
+}
+void EndTransition() {
+	gMusic = Mix_LoadMUS("Audio/Victory_2_Test.wav");
+	if (gMusic == NULL)
+		std::cout << "Failed to load music" << std::endl;
+	//Play the music
+	Mix_PlayMusic(gMusic, -1);
+	SDL_Rect wholeS = { 0,0,720,720 };
+	SDL_Rect word1 = { 220,200,120,60 };
+	SDL_Rect word2 = { 30, 240,120,60};
+	SDL_Rect word3 = { 260, 280,120,60 };
+	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+	SDL_RenderFillRect(gRenderer, &wholeS);
+	SDL_RenderPresent(gRenderer);
+	string line1 = "Congratulations!";
+	string line2 = "You have successfully completed The Game!";
+	string line3 = "Cya Nerd.";
+	SDL_Color TextColor = { 255, 255, 255, 0 };
+	renderText(line1.c_str(), &word1, &TextColor);
+	renderText(line2.c_str(), &word2, &TextColor);
+	renderText(line3.c_str(), &word3, &TextColor);
+	SDL_RenderPresent(gRenderer);
+	SDL_Rect wipe = { 180,240,20,20 };
+	SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);
+	SDL_Delay(200);
 }
 
 bool characterCreateScreen() {
@@ -1169,6 +1202,13 @@ bool handleNetworkingSetup() {
 }
 
 void playGame() {
+	//Load the music
+	gMusic = Mix_LoadMUS("Audio/Walking_Test.wav");
+	if (gMusic == NULL)
+		std::cout << "Failed to load music" << std::endl;
+	//Play the music
+	Mix_PlayMusic(gMusic, -1);
+	Mix_VolumeMusic(MIX_MAX_VOLUME / 8);
 	for (MAP_INDEX = 0; MAP_INDEX < ALL_MAPS.size(); MAP_INDEX++)
 	{
 		//bool doNetworking = handleNetworkingSetup();
@@ -1176,7 +1216,7 @@ void playGame() {
 		Cluster* CollidingCluster;
 		for (int num_enemy = 0; num_enemy < STARTING_ENEMIES * (MAP_INDEX + 1); num_enemy++)
 		{
-			Cluster* enemy = new Cluster((rand() % ENEMIES_PER_CLUSTER) + 1 + MAP_INDEX);
+			Cluster* enemy = new Cluster((rand() % (ENEMIES_PER_CLUSTER + MAP_INDEX)) + 1);
 			cout << "Enemy " << num_enemy + 1 << " Cluster Size: " << enemy->clusterSize << endl;
 			allEnemies.push_back(enemy);
 		}
@@ -1519,12 +1559,6 @@ void playGame() {
 				int enemyToRemove = -1;
 				for (auto z : allEnemies)
 				{
-					if (z->readyTimeLeft > -1)
-						z->readyTimeLeft -= 1;
-					if (z->readyTimeLeft == 0) {
-						z->combatReady = true;
-						z->setTextureActive(z->getTextureIdle());
-					}
 					enemyToRemove++;
 					if (check_collision(player1->rectangle, z->rectangle) && z->combatReady) {
 						z->combatReady = false;
@@ -1542,6 +1576,12 @@ void playGame() {
 						inOverworld = false;
 						combatStarted = true;
 						break;
+					}
+					if (z->readyTimeLeft > -1)
+						z->readyTimeLeft -= 1;
+					if (z->readyTimeLeft == 0) {
+						z->combatReady = true;
+						z->setTextureActive(z->getTextureIdle());
 					}
 				}
 			}
@@ -1569,6 +1609,12 @@ void playGame() {
 				//for (auto i : combatants)
 					//c.push_back(&i);
 				int combatResult = cm.combatMain(combatants);
+				gMusic = Mix_LoadMUS("Audio/Walking_Test.wav");
+				if (gMusic == NULL)
+					std::cout << "Failed to load music" << std::endl;
+				//Play the music
+				Mix_PlayMusic(gMusic, -1);
+				Mix_ResumeMusic();
 				timeSinceLastMovement = SDL_GetTicks();
 				std::cout << combatResult << std::endl;
 				if (combatResult == ENEMY_WINS) {
@@ -1579,9 +1625,18 @@ void playGame() {
 					if (allEnemies.size() == 0)
 					{
 						keepPlaying = false;
-						player1->xPosition = 0;
-						player1->yPosition = 0;
-						levelTransition();
+						if (MAP_INDEX + 1 == ALL_MAPS.size())
+						{
+							EndTransition();
+							SDL_Delay(4000);
+							playCredits();
+						}
+						else
+						{
+							player1->xPosition = 0;
+							player1->yPosition = 0;
+							levelTransition();
+						}
 					}
 				}
 				else if (combatResult == PLAYER_ESCAPES) {
@@ -1675,7 +1730,13 @@ if return...
 */
 
 int mainMenu() {
-
+	//Load the music
+	gMusic = Mix_LoadMUS("Audio/Main_Test.wav");
+	if (gMusic == NULL)
+		std::cout << "Failed to load music" << std::endl;
+	//Play the music
+	Mix_PlayMusic(gMusic, -1);
+	Mix_VolumeMusic(MIX_MAX_VOLUME / 5);
 	bool run = true;
 	std::vector<Button*> buttons;
 
