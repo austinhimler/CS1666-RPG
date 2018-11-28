@@ -465,25 +465,31 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 
 	SDL_GLContext glcontext = SDL_GL_CreateContext(gWindow);
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	//glMatrixMode(GL_PROJECTION);
+	//glLoadIdentity();
+	//glOrtho(0.0f, 720, 720, 0.0f, 0.0f, 1.0f);
 	glewInit();
 	Graphics combatGraphics;
 	combatGraphics.init();
 	combatGraphics.display();
 	combatGraphics.rotateRandom();
-	
+	//glMatrixMode(GL_PROJECTION);
+	//glLoadIdentity();
+	//glOrtho(0.0f, 720, 720, 0.0f, 0.0f, 1.0f);
 
 	int width, height;
 	
 	while (inCombat) {
 		
-		combatGraphics.idle();
+		//combatGraphics.idle();
 		while (SDL_PollEvent(&e)) {
 			
 		if (e.type == SDL_QUIT) {
 			SDL_GL_DeleteContext(glcontext);
 			return false; 
 		}
-		
+
+
 		/*
 		background.renderBackground(gRenderer);
 		delaysPerFrame++;
@@ -514,7 +520,8 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		}
 		
 		
-		textMain(printed); // text combat ui initialization
+
+		//textMain(printed); // text combat ui initialization
 
 		for (int i = 0; i < participants.size(); i++)
 		{
@@ -531,6 +538,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		}
 		printed = false; // for text combat ui
 		qm.changeRounds();
+		
 	}
 	SDL_GL_DeleteContext(glcontext);
 	return -100;
