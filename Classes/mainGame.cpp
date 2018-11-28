@@ -195,29 +195,7 @@ bool check_collision(SDL_Rect a, SDL_Rect b) {
 	return true;
 }
 
-void combatTransition(){
-	SDL_Rect wipe = { 0,0,72,72 };
-	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-	for (; wipe.x < 720; wipe.x += 72)
-	{
-		for (wipe.y = 0; wipe.y < 720; wipe.y += 72)
-		{
-			SDL_RenderFillRect(gRenderer, &wipe);
-			SDL_RenderPresent(gRenderer);
-			SDL_Delay(10);
-		}
-	}
-}
-void levelTransition() {
-	SDL_Rect wipe = { 0,0,720,72 };
-	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
-		for (wipe.y = 0; wipe.y < 720; wipe.y += 72)
-		{
-			SDL_RenderFillRect(gRenderer, &wipe);
-			SDL_RenderPresent(gRenderer);
-			SDL_Delay(100);
-		}
-}
+
 SDL_Rect * loadMap(Tile* tiles[],string mapToLoad) {
 	Tile::loadTiles();
 	bool tilesLoaded = true;
@@ -387,6 +365,38 @@ void renderText(const char* text, SDL_Rect* rect, SDL_Color* color) {
 	SDL_FreeSurface(surface);
 	SDL_RenderCopy(gRenderer, texture, NULL, rect);
 	SDL_DestroyTexture(texture);
+}
+void combatTransition() {
+	SDL_Rect wipe = { 0,0,72,72 };
+	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+	for (; wipe.x < 720; wipe.x += 72)
+	{
+		for (wipe.y = 0; wipe.y < 720; wipe.y += 72)
+		{
+			SDL_RenderFillRect(gRenderer, &wipe);
+			SDL_RenderPresent(gRenderer);
+			SDL_Delay(10);
+		}
+	}
+}
+void levelTransition() {
+	SDL_Rect wholeS = { 0,0,720,720 };
+	SDL_Rect words = { 220,200,120,60 };
+	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+	SDL_RenderFillRect(gRenderer, &wholeS);
+	SDL_RenderPresent(gRenderer);
+	string level = "Loading Next Level";
+	SDL_Color TextColor = { 255, 255, 255, 0 };
+	renderText(level.c_str(), &words, &TextColor);
+	SDL_RenderPresent(gRenderer);
+	SDL_Rect wipe = { 180,240,20,20 };
+	SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);
+	for (; wipe.x < 540; wipe.x += 20)
+	{
+		SDL_RenderFillRect(gRenderer, &wipe);
+		SDL_RenderPresent(gRenderer);
+		SDL_Delay(100);
+	}
 }
 
 bool characterCreateScreen() {
@@ -1184,22 +1194,14 @@ void playGame() {
 		//tiles
 		//Need to delete this to stop memory leak if we load more than one map
 		SDL_Rect* BlockedTiles = loadMap(tiles, ALL_MAPS.at(MAP_INDEX));
-		for (int trial = 0;;trial++)
+		for (;;)
 		{
 			int t_tile = (int)(player1->xPosition + (player1->rectangle.w / 2)) / TILE_WIDTH;
 			t_tile += (int)((player1->yPosition + player1->rectangle.h) / TILE_HEIGHT) * 30;
 			if (tiles[t_tile]->mType == 0)
 				break;
-			if (trial == 0)
-			{
-				player1->xPosition = 30;
-				player1->yPosition = 30;
-			}
-			else
-			{
-				player1->xPosition = rand() % (LEVEL_WIDTH - player1->getImageWidth());
-				player1->yPosition = rand() % (LEVEL_HEIGHT - player1->getImageHeight());
-			}
+			player1->xPosition = rand() % (LEVEL_WIDTH - player1->getImageWidth());
+			player1->yPosition = rand() % (LEVEL_HEIGHT - player1->getImageHeight());
 		}
 
 		for (auto i : allEnemies)
@@ -1209,8 +1211,8 @@ void playGame() {
 			// Randomly spawn the enemy
 			for (;;)
 			{
-				i->xPosition = rand() % (LEVEL_WIDTH - i->getImageWidth());
-				i->yPosition = rand() % (LEVEL_HEIGHT - i->getImageHeight());
+				i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
+				i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
 				int t_tile = (int)(i->xPosition + (i->rectangle.w / 2)) / TILE_WIDTH;
 				t_tile += (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) * 30;
 				if (tiles[t_tile]->mType == 0)
@@ -1268,7 +1270,6 @@ void playGame() {
 						return;
 					}
 				}
-
 				// figure out how much of a second has passed
 				timePassed = (SDL_GetTicks() - timeSinceLastMovement) / 1000.0;
 				player1->xDeltaVelocity = 0;
@@ -1568,6 +1569,7 @@ void playGame() {
 				//for (auto i : combatants)
 					//c.push_back(&i);
 				int combatResult = cm.combatMain(combatants);
+				timeSinceLastMovement = SDL_GetTicks();
 				std::cout << combatResult << std::endl;
 				if (combatResult == ENEMY_WINS) {
 					cout << "\nYOU HAVE DIED\nGAME OVER MAN, GAME OVER" << endl;
@@ -1577,6 +1579,8 @@ void playGame() {
 					if (allEnemies.size() == 0)
 					{
 						keepPlaying = false;
+						player1->xPosition = 0;
+						player1->yPosition = 0;
 						levelTransition();
 					}
 				}
@@ -1585,10 +1589,6 @@ void playGame() {
 					charactersOnScreen.push_back(CollidingCluster);
 				}
 				combatStarted = false;
-				/*
-				enemy1.xPosition = rand() % (LEVEL_WIDTH - enemy1.getImageWidth());
-				enemy1.yPosition = rand() % (LEVEL_HEIGHT - enemy1.getImageHeight());
-				*/
 				inOverworld = true;
 			}
 			int backToMainMenu = 1;

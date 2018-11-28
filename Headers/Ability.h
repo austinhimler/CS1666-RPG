@@ -36,6 +36,7 @@ private:
 	int energyCost;
 	int MPCost;
 	int cooldown; //might not add
+	int baseValue;
 	int value;	// the possiblity of succes for escape and summon
 	int type;
 	//maybe determine these with another subclass of each type? e.g. class for DamageAbility, HealingAbility, DefenseAbility

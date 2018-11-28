@@ -43,8 +43,8 @@
 			break;
 		case AbilityResource::tESCAPE:
 			i = rand() % 100;
-			if (i <= 49 + FAI) result = -2; // successful escape
-			else result = -1; // failing escape
+			if (i > a->getVal()) result = -1; // failed escape
+			else result = -2; // successful escape
 			break;
 		case AbilityResource::tDEFENSE:
 			buff[ENERGYREGEN]++;
