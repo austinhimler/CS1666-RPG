@@ -466,14 +466,20 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 
 	bool printed = false; // for text combat ui
 
+	//OpenGL Setup
 	SDL_GLContext glcontext = SDL_GL_CreateContext(gWindow);
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	glewInit();
 	Graphics combatGraphics;
-	combatGraphics.init();
-	combatGraphics.display();
-	combatGraphics.rotateRandom();
 	
+	//Generating Graphics
+
+
+	//Initialize
+	combatGraphics.init();
+
+	//Initial Display
+	combatGraphics.display();	
 
 	int width, height;
 	

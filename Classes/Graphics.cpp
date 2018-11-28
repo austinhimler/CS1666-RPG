@@ -9,16 +9,21 @@ GLuint Graphics::getProgram(void)
 
 void Graphics::init(void)
 {
+	int outp;
+
 	program = Shader::initShader("vshader.glsl", "fshader.glsl");
 	glUseProgram(program);
 
-	num_vertices = 54;
+	generate2dRectangleColor(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 0.0f, SCREEN_HEIGHT, SCREEN_WIDTH, { 0.0f, 0.0f, 1.0f, 1.0f });
+	//printf("outp: %d\n", outp);
 
-	glm::vec4 *vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
-	glm::vec4 *colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
-	glm::vec2 *textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
+	//num_vertices = 54;
 
-	generateCombat(vertices, colors, textures);
+	//vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	//colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	//textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
+
+	//generateCombat(vertices, colors, textures);
 
 	//int shape_num_vertices;
 	//glm::vec4 *shape_vertices = cone(&shape_num_vertices);
@@ -94,16 +99,18 @@ void Graphics::idle(void)
 
 void Graphics::generateCombat(glm::vec4 *vert, glm::vec4 *color, glm::vec2 *text)
 {
-	int i, j;
+	int i, j, outp;
 	int it = 0;
 	//Background
-	for (i = 0; i < 6; i++) {
+	/*for (i = 0; i < 6; i++) {
 		vert[it] = glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, -0.9f)) * rectangle[i];
 		color[it] = { 0.0f, 0.0f, 1.0f, 1.0f };
 		//Filler
 		text[it] = { 0.0f, 0.0f };
 		it++;
-	}
+	}*/
+	printf("test\n");
+	
 
 	//Player
 	for (i = 0; i < 6; i++) {
@@ -145,6 +152,233 @@ void Graphics::generateCombat(glm::vec4 *vert, glm::vec4 *color, glm::vec2 *text
 			it++;
 		}
 	}
+}
+
+//Returns the index in graphics arrays
+int Graphics::generate2dRectangleColor(int x, int y, GLfloat z, int height, int width, glm::vec4 color) {
+	int it;
+	GLfloat i, j, h, w;
+	int index = num_vertices;
+
+	if ((x + width / 2) < 0 || (x - width / 2) > SCREEN_WIDTH || (y + height / 2) < 0 || (y + height / 2) > SCREEN_HEIGHT || z < -1 || z > 1 || height != 0 || width != 0) {
+		return NULL;
+	}
+
+	i = (x - SCREEN_WIDTH / 2) / (SCREEN_WIDTH / 2);
+	j = (SCREEN_HEIGHT / 2 - y) / (SCREEN_HEIGHT / 2);
+	h = height / SCREEN_HEIGHT;
+	w = width / SCREEN_WIDTH;
+
+	num_vertices += 6;
+
+	glm::vec4 *temp_vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	glm::vec4 *temp_colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	glm::vec2 *temp_textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
+
+	for (it = 0; it < index; it++) {
+		temp_vertices[it] = vertices[it];
+		temp_colors[it] = colors[it];
+		temp_textures[it] = textures[it];
+	}
+
+	for (it = 0; it < 6; it++) {
+		temp_vertices[index + it] = glm::translate(glm::mat4(), glm::vec3(i, j, z)) * (glm::vec4(w, h, 1.0f, 1.0f) * rectangle[it]);
+		temp_colors[index + it] = color;
+		temp_textures[index + it] = { 0.0f, 0.0f };
+	}
+
+	free(vertices);
+	free(colors);
+	free(textures);
+
+	vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
+
+	for (it = 0; it < num_vertices; it++) {
+		temp_vertices[it] = vertices[it];
+		temp_colors[it] = colors[it];
+		temp_textures[it] = textures[it];
+	}
+
+	free(temp_vertices);
+	free(temp_colors);
+	free(temp_textures);
+
+	return index;
+}
+
+//Returns the index in graphics arrays
+int Graphics::generate2dRectangleColorCorners(int x, int y, GLfloat z, int height, int width, glm::vec4 color_tl, glm::vec4 color_bl, glm::vec4 color_tr, glm::vec4 color_br) {
+	int it;
+	GLfloat i, j, h, w;
+	int index = num_vertices;
+
+	if ((x + width / 2) < 0 || (x - width / 2) > SCREEN_WIDTH || (y + height / 2) < 0 || (y + height / 2) > SCREEN_HEIGHT || z < -1 || z > 1 || height != 0 || width != 0) {
+		return NULL;
+	}
+
+	i = (x - SCREEN_WIDTH / 2) / (SCREEN_WIDTH / 2);
+	j = (SCREEN_HEIGHT / 2 - y) / (SCREEN_HEIGHT / 2);
+	h = height / SCREEN_HEIGHT;
+	w = width / SCREEN_WIDTH;
+
+	num_vertices += 6;
+
+	glm::vec4 *temp_vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	glm::vec4 *temp_colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	glm::vec2 *temp_textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
+
+	for (it = 0; it < index; it++) {
+		temp_vertices[it] = vertices[it];
+		temp_colors[it] = colors[it];
+		temp_textures[it] = textures[it];
+	}
+	
+	for (it = 0; it < 6; it++) {
+		temp_vertices[index + it] = glm::translate(glm::mat4(), glm::vec3(i, j, z)) * (glm::vec4(w, h, 1.0f, 1.0f) * rectangle[it]);
+		temp_textures[index + it] = { 0.0f, 0.0f };
+	}
+	temp_colors[index + 0] = color_bl;
+	temp_colors[index + 1] = color_tr;
+	temp_colors[index + 2] = color_tl;
+	temp_colors[index + 3] = color_bl;
+	temp_colors[index + 4] = color_br;
+	temp_colors[index + 5] = color_tr;
+	
+	free(vertices);
+	free(colors);
+	free(textures);
+
+	vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
+
+	for (it = 0; it < num_vertices; it++) {
+		temp_vertices[it] = vertices[it];
+		temp_colors[it] = colors[it];
+		temp_textures[it] = textures[it];
+	}
+
+	free(temp_vertices);
+	free(temp_colors);
+	free(temp_textures);
+
+	return index;
+}
+
+//Returns the index in graphics arrays
+int Graphics::generate2dRectangleTexture(int x, int y, GLfloat z, int height, int width, std::string texture_path) {
+	int it;
+	GLfloat i, j, h, w;
+	int index = num_vertices;
+
+	if ((x + width / 2) < 0 || (x - width / 2) > SCREEN_WIDTH || (y + height / 2) < 0 || (y + height / 2) > SCREEN_HEIGHT || z < -1 || z > 1 || height != 0 || width != 0) {
+		return NULL;
+	}
+
+	i = (x - SCREEN_WIDTH / 2) / (SCREEN_WIDTH / 2);
+	j = (SCREEN_HEIGHT / 2 - y) / (SCREEN_HEIGHT / 2);
+	h = height / SCREEN_HEIGHT;
+	w = width / SCREEN_WIDTH;
+
+	num_vertices += 6;
+
+	glm::vec4 *temp_vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	glm::vec4 *temp_colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	glm::vec2 *temp_textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
+	
+	for (it = 0; it < index; it++) {
+		temp_vertices[it] = vertices[it];
+		temp_colors[it] = colors[it];
+		temp_textures[it] = textures[it];
+	}
+
+	for (it = 0; it < 6; it++) {
+		temp_vertices[index + it] = glm::translate(glm::mat4(), glm::vec3(i, j, z)) * (glm::vec4(w, h, 1.0f, 1.0f) * rectangle[it]);
+		temp_colors[index + it] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		temp_textures[index + it] = rectangle_texture[it];
+	}
+
+	free(vertices);
+	free(colors);
+	free(textures);
+
+	vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
+
+	for (it = 0; it < num_vertices; it++) {
+		temp_vertices[it] = vertices[it];
+		temp_colors[it] = colors[it];
+		temp_textures[it] = textures[it];
+	}
+
+	free(temp_vertices);
+	free(temp_colors);
+	free(temp_textures);
+
+	return index;
+}
+
+//Recolors the rectangle based on index
+void Graphics::recolor2dRectangle(int index, glm::vec4 color) {
+	int it;
+	for (it = 0; it < 6; it++) {
+		colors[index + it] = color;
+	}
+}
+
+//Recolors the rectangle's corners based on index
+void Graphics::recolorCorners2dRectangle(int index, glm::vec4 color_tl, glm::vec4 color_bl, glm::vec4 color_tr, glm::vec4 color_br) {
+	colors[index + 0] = color_bl;
+	colors[index + 1] = color_tr;
+	colors[index + 2] = color_tl;
+	colors[index + 3] = color_bl;
+	colors[index + 4] = color_br;
+	colors[index + 5] = color_tr;
+}
+
+//Removes rectangle based on index
+void Graphics::remove2dRectangle(int index) {
+	int it;
+
+	glm::vec4 *temp_vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	glm::vec4 *temp_colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	glm::vec2 *temp_textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
+
+	for (it = 0; it < num_vertices; it++) {
+		temp_vertices[it] = vertices[it];
+		temp_colors[it] = colors[it];
+		temp_textures[it] = textures[it];
+	}
+
+	num_vertices -= 6;
+
+	free(vertices);
+	free(colors);
+	free(textures);
+
+	vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
+
+	for (it = 0; it < num_vertices; it++) {
+		if (it < index) {
+			vertices[it] = temp_vertices[it];
+			colors[it] = temp_colors[it];
+			textures[it] = temp_textures[it];
+		}
+		else {
+			vertices[it] = temp_vertices[it + 6];
+			colors[it] = temp_colors[it + 6];
+			textures[it] = temp_textures[it + 6];
+		}
+	}
+
+	free(temp_vertices);
+	free(temp_colors);
+	free(temp_textures);
 }
 
 void Graphics::rotateRandom(void)

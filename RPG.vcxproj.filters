@@ -300,6 +300,9 @@
     <ClInclude Include="OverworldPathing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\mainGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="map1.txt">
