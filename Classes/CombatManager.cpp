@@ -238,10 +238,7 @@ int CombatManager::textAction(Character* c) {
 				if (participants[i]->getHPCurrent() != 0) temp = true;
 			}
 			if (!temp) {
-				std::cout << "You win" << std::endl;
-				takingAction = false;
-				inCombat = false;
-				break;
+				return PLAYER_WINS;
 			}
 			if (takingAction) {
 				std::cout << "What else do you want to do? Select by option number." << std::endl;
