@@ -1194,22 +1194,14 @@ void playGame() {
 		//tiles
 		//Need to delete this to stop memory leak if we load more than one map
 		SDL_Rect* BlockedTiles = loadMap(tiles, ALL_MAPS.at(MAP_INDEX));
-		for (int trial = 0;;trial++)
+		for (;;)
 		{
 			int t_tile = (int)(player1->xPosition + (player1->rectangle.w / 2)) / TILE_WIDTH;
 			t_tile += (int)((player1->yPosition + player1->rectangle.h) / TILE_HEIGHT) * 30;
 			if (tiles[t_tile]->mType == 0)
 				break;
-			if (trial == 0)
-			{
-				player1->xPosition = 40;
-				player1->yPosition = 40;
-			}
-			else
-			{
-				player1->xPosition = rand() % (LEVEL_WIDTH - player1->getImageWidth());
-				player1->yPosition = rand() % (LEVEL_HEIGHT - player1->getImageHeight());
-			}
+			player1->xPosition = rand() % (LEVEL_WIDTH - player1->getImageWidth());
+			player1->yPosition = rand() % (LEVEL_HEIGHT - player1->getImageHeight());
 		}
 
 		for (auto i : allEnemies)
