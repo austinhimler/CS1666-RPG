@@ -244,7 +244,7 @@ int CombatManager::textAction(Character* c) {
 				std::cout << "What else do you want to do? Select by option number." << std::endl;
 				std::cout << "What do you want to do? Select by option number" << std::endl;
 				std::cout << "1. Strength Abilities" << std::endl;
-				std::cout << "2. Intelligent Abilities" << std::endl;
+				std::cout << "2. Intelligence Abilities" << std::endl;
 				std::cout << "3. Dexerity Abilities" << std::endl;
 				std::cout << "4. Constitution Abilities" << std::endl;
 				std::cout << "5. Faith Abilities" << std::endl;
@@ -381,7 +381,7 @@ void CombatManager::textMain(bool& printed) {
 	if (printed) return;
 	std::cout << "What do you want to do? Select by option number" << std::endl;
 	std::cout << "1. Strength Abilities" << std::endl;
-	std::cout << "2. Intelligent Abilities" << std::endl;
+	std::cout << "2. Intelligence Abilities" << std::endl;
 	std::cout << "3. Dexerity Abilities" << std::endl;
 	std::cout << "4. Constitution Abilities" << std::endl;
 	std::cout << "5. Faith Abilities" << std::endl;
@@ -483,6 +483,45 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		
 		//combatGraphics.idle();
 		while (SDL_PollEvent(&e)) {
+			int mouseX, mouseY;
+			SDL_GetMouseState(&mouseX, &mouseY);
+			//buttons 45 width, 45 height starts at 66x 518 y
+			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN)
+			{
+				for (int i = 0; i < 6; i++) {
+					if (mouseX > (66 + i%3 * 90) && mouseX < 111 + i%3 * 90) {
+						if (mouseY > (518 + i / 3 * 90) && mouseY < (573 + i / 3 * 90)) {
+							switch (i) {
+							case 0:
+								std::cout << "Strength";
+								//Strength Ability
+							case 1:
+								//Intelligence Ability
+								std::cout << "Intelligence";
+							case 2:
+								//Dexterity Ability
+								std::cout << "Dexterity";
+							case 3:
+								//Constitution Ability
+								std::cout << "Constitution";
+							case 4:
+								//Faith Ability
+								std::cout << "Faith";
+							case 5:
+								std::cout << "Miscellaneous";
+							}
+
+							//Handle events based on 
+						}
+					}
+				}
+				std::cout << "X: ";
+				std::cout << mouseX;
+				std::cout << "     Y: ";
+				std::cout << mouseY;
+				std::cout << std::endl;
+			}
+			//for(int i = 6;)
 			
 		if (e.type == SDL_QUIT) {
 			SDL_GL_DeleteContext(glcontext);
@@ -523,7 +562,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 
 		//textMain(printed); // text combat ui initialization
 
-		for (int i = 0; i < participants.size(); i++)
+		/*for (int i = 0; i < participants.size(); i++)
 		{
 			//updateStatus(participants[i]);
 			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0)
@@ -538,6 +577,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		}
 		printed = false; // for text combat ui
 		qm.changeRounds();
+		*/
 		
 	}
 	SDL_GL_DeleteContext(glcontext);
