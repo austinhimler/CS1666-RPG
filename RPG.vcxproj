@@ -264,6 +264,7 @@
     <Text Include="map3.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\AI\MPS_Effectiveness.csv" />
     <None Include="fshader.glsl" />
     <None Include="vshader.glsl" />
   </ItemGroup>
