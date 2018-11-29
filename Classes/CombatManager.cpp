@@ -722,8 +722,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 
 		//change rounds
 		qm.changeRounds();
-		*/
-		
+		//*/
 	}
 	SDL_GL_DeleteContext(glcontext);
 	return -100;
