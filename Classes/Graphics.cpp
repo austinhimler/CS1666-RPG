@@ -7,6 +7,11 @@ GLuint Graphics::getProgram(void)
 	return program;
 }
 
+glm::vec4* Graphics::getVertices(void)
+{
+	return vertices;
+}
+
 void Graphics::init(void)
 {
 	program = Shader::initShader("vshader.glsl", "fshader.glsl");
@@ -14,7 +19,7 @@ void Graphics::init(void)
 
 	num_vertices = 54;
 
-	glm::vec4 *vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+	glm::vec4* vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
 	glm::vec4 *colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
 	glm::vec2 *textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
 
@@ -24,6 +29,8 @@ void Graphics::init(void)
 	//glm::vec4 *shape_vertices = cone(&shape_num_vertices);
 	//glm::vec4 *shape_colors = genRandomTriangleColors(shape_num_vertices);
 	//num_vertices = shape_num_vertices;
+
+	
 
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
@@ -55,11 +62,25 @@ void Graphics::init(void)
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glDepthRange(1, 0);
+
+	
 }
 
 void Graphics::display(void)
 {
+	//glMatrixMode(GL_PROJECTION);
+	//glLoadIdentity();
+	//glOrtho(0.0f, 720, 720, 0.0f, 0.0f, 1.0f);
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	/*glBegin(GL_QUADS);
+		glVertex2f(100, 150);
+		glVertex2f(150, 150);
+		glVertex2f(100, 250);
+		glVertex2f(150, 250);
+	glEnd();
+	*/
 
 	glPolygonMode(GL_FRONT, GL_FILL);
 	glPolygonMode(GL_BACK, GL_LINE);
@@ -67,6 +88,8 @@ void Graphics::display(void)
 	glUniformMatrix4fv(ctm_location, 1, GL_FALSE, (GLfloat *)&ctm);
 
 	glDrawArrays(GL_TRIANGLES, 0, num_vertices);
+	
+	
 
 	SDL_GL_SwapWindow(gWindow);
 }

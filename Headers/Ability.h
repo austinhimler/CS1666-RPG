@@ -40,6 +40,7 @@ private:
 	int energyCost;
 	int MPCost;
 	int cooldown; //might not add
+	int baseValue;
 	int value;	// the possiblity of succes for escape and summon
 	int type;
 	int MPSTaskType;

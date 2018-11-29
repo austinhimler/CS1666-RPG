@@ -15,7 +15,7 @@
 	//stores stats
 	Player::Player() : Character("Player 1") {}
 	Player::Player(std::string n) : Character(n) {}
-	Player::Player(std::string n, int s, int i, int d, int c, int f){
+	Player::Player(std::string n, int s, int i, int d, int c, int f) : Character(n, s, i, d, c, f) {
 		learnAbility(FIREBALL);
 		learnAbility(SUMMON);
 		isEnemy = false;

@@ -273,8 +273,11 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="map1.txt" />
+    <Text Include="map2.txt" />
+    <Text Include="map3.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\AI\MPS_Effectiveness.csv" />
     <None Include="fshader.glsl" />
     <None Include="vshader.glsl" />
   </ItemGroup>

@@ -49,6 +49,18 @@ namespace AbilityResource {
 		return base_energy_cost[n];
 	}
 
+	//abiilty base value
+	inline int const &baseValue(int n) {
+		static int base_value[] = {
+			10,
+			3,
+			60,
+			8,
+			0
+		};
+		return base_value[n];
+	}
+
 	// ability base MP cost
 	const int abilityMPCost[] = {
 		0,

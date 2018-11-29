@@ -23,6 +23,7 @@ class Graphics
 {
 public:
 	GLuint getProgram(void);
+	glm::vec4* getVertices(void);
 
 	void init(void);
 	void display(void);
@@ -37,15 +38,16 @@ public:
 private:
 	GLuint program;
 	GLuint ctm_location;
+	glm::vec4* vertices;
 	int num_vertices;
 	glm::mat4 ctm = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
 	glm::vec3 randomRotationAxis = { 0.0, 0.0, 0.0 };
 	glm::vec4 rectangle[6] = { { -1.0, -1.0, 0.0, 1.0 },
-								{ -1.0, 1.0, 0.0, 1.0 },
-								{ 1.0, -1.0, 0.0, 1.0 },
-								{ -1.0, 1.0, 0.0, 1.0 },
 								{ 1.0, 1.0, 0.0, 1.0 },
+								{ -1.0, 1.0, 0.0, 1.0 },
+								{ -1.0, -1.0, 0.0, 1.0 },
 								{ 1.0, -1.0, 0.0, 1.0 },
+								{ 1.0, 1.0, 0.0, 1.0 },
 							};
 };
 
