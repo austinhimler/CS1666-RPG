@@ -29,6 +29,8 @@
 			value = 0;
 		if (value < 0) value = 1;
 		type = AbilityResource::abilityType[n];
+		IsAOE = AbilityResource::abilityIsAOE[n];
+		MPSTaskType = AbilityResource::MPS_TASKTYPE[n];
 	}
 
 	Ability::Ability() {}

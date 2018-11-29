@@ -22,8 +22,8 @@
 class CombatManager
 {
 public:
-	CombatManager();
-	~CombatManager();
+	//CombatManager();
+	//~CombatManager();
 	int checkCombatStatus();
 	int updateStatus();
 	

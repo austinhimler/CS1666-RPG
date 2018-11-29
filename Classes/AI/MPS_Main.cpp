@@ -7,6 +7,8 @@ void MPS_Main::createAbilities(Enemy* Self) {
 }
 
 void MPS_Main::readTBP() {
+	// for testing
+	std::cout << "Reading TBP" << std::endl;
 	if (TaskBasePriority.size() != 0) return;
 	std::string Path = "Data/AI/MPS_TBP.csv";
 	MPS_Data TBP = MPS_Data(Path);
@@ -19,6 +21,10 @@ void MPS_Main::createTLMs(Enemy* Self, std::vector<Player*> Players, std::vector
 
 void MPS_Main::createTasks(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*> Friends) {
 	for (int i = 0; i < MPS_Resource::tMPS_TASK_TYPE_NUM; i++) {
+		// for testing 
+		//std::cout << "Creating Tasks: " << i << " / " << MPS_Resource::tMPS_TASK_TYPE_NUM << std::endl;
+		////////////////////////////////////
+
 		std::vector<Ability*> UsableAbilities;
 		for (auto& a : Abilities) {
 			if (a->getMPSTaskType() == i) UsableAbilities.push_back(a);
@@ -67,6 +73,8 @@ void MPS_Main::findBestAction() {
 	}
 }
 
+MPS_Main::MPS_Main() {}
+
 MPS_Main::MPS_Main(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*> Friends) {
 	createAbilities(Self);
 	readTBP();
@@ -76,11 +84,21 @@ MPS_Main::MPS_Main(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*
 }
 
 MPS_Main::~MPS_Main() {
-	for (auto& tlm : TaskLevelModifiers) {
+	for (int i = 0; i < TaskLevelModifiers.size(); i++) {
+		std::cout << "TLMs Size: "<< TaskLevelModifiers.size() << std::endl;
+		MPS_Modifier* tlm = TaskLevelModifiers[i];
 		delete tlm;
+		tlm = nullptr;
 	}
+	//*/
+	TaskLevelModifiers.clear();
+	std::cout << "TLMs Size: " << TaskLevelModifiers.size() << std::endl;
 }
 
 Action MPS_Main::getBestAction() {
 	return BestAction;
+}
+
+std::vector<MPS_Modifier*> MPS_Main::getTLMs() {
+	return TaskLevelModifiers;
 }

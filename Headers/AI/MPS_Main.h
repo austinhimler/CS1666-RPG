@@ -30,9 +30,10 @@ public:
 
 	/** constructors & desstructor **/
 	MPS_Main(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*> Friends);
+	MPS_Main();
 	~MPS_Main();
 
 	/** getters **/
 	Action getBestAction();
-
+	std::vector<MPS_Modifier*> getTLMs();
 };

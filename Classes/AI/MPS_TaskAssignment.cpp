@@ -19,7 +19,6 @@ MPS_TaskAssignment::MPS_TaskAssignment(Ability* abil, std::vector<Character*> ta
 	Act = Action(abil, tar);
 	AssignmentLevelModifiers = std::vector<MPS_Modifier*>();
 	Score = TaskPriority;
-	
 }
 
 MPS_TaskAssignment::MPS_TaskAssignment(const MPS_TaskAssignment& ta) {

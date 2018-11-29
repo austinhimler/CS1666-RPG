@@ -63,15 +63,10 @@ void QueueManager::vectorCopy(vector<Character*>& cT, vector<Character*>& nT)
 	}
 }
 
-CombatManager::CombatManager()
-{
-	
-}
+//CombatManager::CombatManager(){}
 
 
-CombatManager::~CombatManager()
-{
-}
+//CombatManager::~CombatManager(){}
 
 int CombatManager::checkCombatStatus() {
 	if (livingCount[PLAYER] == 0) return ENEMY_WINS;
@@ -116,9 +111,8 @@ int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
 	//vector<int> ailments;
 	if (c->is_Enemy() == true)
 	{
-		while (c->getEnergyCurrent() != 0) {
+		while (c->getEnergyCurrent() != 0 && ParticipantsStatus[enemy_index[EnemyActionOrderCount]] == IN_COMBAT) {
 			//Enemy takes action
-			//std::vector<Ability> temp = c->getAbilities();
 
 			// AI decides which action to take 
 			Action ActionToTake = takeActionByAI(c, EnemyActionOrderCount);
@@ -130,7 +124,9 @@ int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
 				int result = tars[i]->beingTarget(abil);
 				c->updateEnergy(abil);
 				/** output to console **/
-				std::cout << c->getName() << " uses " << abil->getName();
+				// output ability name
+				std::cout << c->getName() << " uses " << AbilityResource::abilityNames[abil->getName()] << std::endl;
+				//output target
 				switch (abil->getType()) {
 					using namespace AbilityResource;
 				case tSUMMON:
@@ -141,6 +137,7 @@ int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
 					std::cout << " to " << tars[i]->getName() << std::endl;
 					break;
 				}
+				// output impact
 				switch (abil->getType()) {
 				case AbilityResource::tDAMAGE:
 					std::cout << tars[i]->getName() << "'s HP is decreased by " << result << "!" << std::endl;
@@ -154,7 +151,10 @@ int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
 						std::cout << c->getName() << " has escaped from combat!" << std::endl;
 						ParticipantsStatus[enemy_index[EnemyActionOrderCount]] = ESCAPED;
 						livingCount[ENEMY]--;
-						if (livingCount[ENEMY] <= 0) return PLAYER_WINS;
+						if (livingCount[ENEMY] <= 0) {
+							std::cout << "living count: " << livingCount[ENEMY] << std::endl;
+							return PLAYER_WINS;
+						}
 					}
 					else {
 						std::cout << c->getName() << " tried to escape but failed." << std::endl;
@@ -193,6 +193,7 @@ int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
 				}
 			}
 			/* for attack random player
+			//std::vector<Ability> temp = c->getAbilities();
 			//int target = rand() % player_index.size();
 			//int result = participants[player_index[target]]->beingTarget(&temp[0]);
 			//std::cout << c->getName() << " damages you slightly by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left." << std::endl;
@@ -583,12 +584,12 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		
 		combatGraphics.idle();
 		while (SDL_PollEvent(&e)) {
-			
+		
 		if (e.type == SDL_QUIT) {
 			SDL_GL_DeleteContext(glcontext);
 			return false; 
 		}
-		
+		//*/
 		/*
 		background.renderBackground(gRenderer);
 		delaysPerFrame++;
@@ -627,11 +628,18 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		for (int i = 0; i < participants.size(); i++)
 		{
 			if (ParticipantsStatus[i] == IN_COMBAT && participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0) {
-				switch (int result_temp = textAction(participants[i], EnemyActionOrderCount)) {
+				int result_temp = textAction(participants[i], EnemyActionOrderCount);
+				// for testing
+				std::cout << "Result: " << result_temp << std::endl;
+				std::cout << "TLMs Size CM: " << AI.getTLMs().size() << std::endl;
+
+				switch (result_temp) {
 				case IN_COMBAT:
 					break;
 				default:
+					std::cout << "default: " << result_temp << std::endl;
 					return result_temp;
+					break;
 					////	takeAction(participants[i], buttons, e)
 				}
 			}

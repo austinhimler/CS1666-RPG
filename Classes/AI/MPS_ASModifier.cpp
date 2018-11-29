@@ -7,9 +7,9 @@ MPS_ASModifier::MPS_ASModifier() {
 MPS_ASModifier::MPS_ASModifier(Character* c) : MPS_ASModifier() {
 	
 }
-MPS_ASModifier::MPS_ASModifier(std::string Path) {
+MPS_ASModifier::MPS_ASModifier(std::string Path) {}
 
-}
+MPS_ASModifier::~MPS_ASModifier() {}
 
 int MPS_ASModifier::getType() { return Type; }
 float MPS_ASModifier::getVal() { return Val; }

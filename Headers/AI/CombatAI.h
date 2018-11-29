@@ -13,6 +13,7 @@ protected:
 	Enemy* Self;
 	std::vector<Player*> Players;
 	std::vector<Enemy*> Friends;
+	MPS_Main MPS;
 
 	void BestActionByModifiedPriorityScore();
 public:
@@ -23,4 +24,6 @@ public:
 
 	/** getters **/
 	Action getBestAction();
+	
+	std::vector<MPS_Modifier*> getTLMs();
 };

@@ -15,6 +15,10 @@ void MPS_Task::createAssignments(std::vector<Ability*> ua) {
 				Assignments.push_back(MPS_TaskAssignment(a, temp, Priority));
 			}
 		}
+
+		// for testing
+		std::cout << "New Assignment: " << AbilityResource::abilityNames[Assignments[Assignments.size() - 1].getAction().getAbil()->getName()] << std::endl;
+		//std::cout << "Priority: " << Priority << std::endl;
 	}
 }
 
@@ -26,8 +30,16 @@ void MPS_Task::computePriority(int TaskBasePriority, std::vector<MPS_Modifier*> 
 }
 
 void MPS_Task::findBestAssignment() {
-	BestAssignment = MPS_TaskAssignment();
-	if (Assignments.size() == 0) return;
+	// for testing
+	if(Assignments.size() == 0) std::cout << "Assignments is empty!" << std::endl;
+	else std::cout << "New Assignment: " << AbilityResource::abilityNames[Assignments[Assignments.size() - 1].getAction().getAbil()->getName()] << std::endl;
+	/////////////////////////
+
+	if (Assignments.size() == 0) {
+		BestAssignment = MPS_TaskAssignment();
+		BestScore = -1;
+		return;
+	}
 	BestAssignment = Assignments[0];
 	for (auto& a : Assignments) {
 		if (a.getScore() > BestAssignment.getScore()) {
@@ -44,8 +56,8 @@ void MPS_Task::findBestAssignment() {
 MPS_Task::MPS_Task(int T, std::vector<Ability*> ua, std::vector<Character*> tar, int TaskBasePriority, std::vector<MPS_Modifier*> TLM) {
 	Type = T;
 	Target = std::vector<Character*>(tar);
-	createAssignments(ua);
 	computePriority(TaskBasePriority, TLM);
+	createAssignments(ua);
 	findBestAssignment();
 }
 

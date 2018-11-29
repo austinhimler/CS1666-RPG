@@ -1723,19 +1723,22 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 	handleMain();
+	std::cout << "exiting" << std::endl;
 	//*/
 
 	return 0;
 }
 void handleMain() {
-	/*
+	
 	CombatManager cm;
 	std::vector<Character*> combatants;
 	combatants.push_back(new Player("nlf4", 10, 10, 10, 10, 10));
 	combatants.push_back(new Enemy("W.G.", 10, 10, 10, 5, 10));
-	bool inCombat = cm.combatMain(combatants);
+	int inCombat = cm.combatMain(combatants);
+	std::cout << "exiting"<< std::endl;
 	//*/
 	
+	/*
 	int a = mainMenu();
 	bool b;
 
