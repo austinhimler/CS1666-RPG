@@ -1,4 +1,5 @@
 #include "../Headers/Ability.h"
+#include "../Headers/Abilities/AbilityResource.h"
 	
 	Ability::Ability(int n, std::string d, int ec, int cd, int v, int t) {
 		name = n;
@@ -32,6 +33,7 @@
 		IsAOE = AbilityResource::abilityIsAOE[n];
 		MPSTaskType = AbilityResource::MPS_TASKTYPE[n];
 	}
+
 
 	Ability::Ability() {}
 
