@@ -17,7 +17,7 @@ void MPS_Task::createAssignments(std::vector<Ability*> ua) {
 		}
 
 		// for testing
-		std::cout << "New Assignment: " << AbilityResource::abilityNames[Assignments[Assignments.size() - 1].getAction().getAbil()->getName()] << std::endl;
+		//std::cout << "New Assignment: " << AbilityResource::abilityNames[Assignments[Assignments.size() - 1].getAction().getAbil()->getName()] << std::endl;
 		//std::cout << "Priority: " << Priority << std::endl;
 	}
 }
@@ -31,8 +31,8 @@ void MPS_Task::computePriority(int TaskBasePriority, std::vector<MPS_Modifier*> 
 
 void MPS_Task::findBestAssignment() {
 	// for testing
-	if(Assignments.size() == 0) std::cout << "Assignments is empty!" << std::endl;
-	else std::cout << "New Assignment: " << AbilityResource::abilityNames[Assignments[Assignments.size() - 1].getAction().getAbil()->getName()] << std::endl;
+	//if(Assignments.size() == 0) std::cout << "Assignments is empty!" << std::endl;
+	//else std::cout << "New Assignment: " << AbilityResource::abilityNames[Assignments[Assignments.size() - 1].getAction().getAbil()->getName()] << std::endl;
 	/////////////////////////
 
 	if (Assignments.size() == 0) {
@@ -51,6 +51,7 @@ void MPS_Task::findBestAssignment() {
 		}
 	}
 	BestScore = BestAssignment.getScore();
+	//std::cout << "Best Score: " << BestScore << std::endl;
 }
 
 MPS_Task::MPS_Task(int T, std::vector<Ability*> ua, std::vector<Character*> tar, int TaskBasePriority, std::vector<MPS_Modifier*> TLM) {

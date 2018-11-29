@@ -80,7 +80,8 @@ namespace AbilityResource {
 		tRESISTANCE,
 		tBUFF,
 		tESCAPE,
-		tSUMMON
+		tSUMMON,
+		tABILITY_TYPE_NUM
 	};
 
 	// types of the respective abilities

@@ -152,7 +152,6 @@ int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
 						ParticipantsStatus[enemy_index[EnemyActionOrderCount]] = ESCAPED;
 						livingCount[ENEMY]--;
 						if (livingCount[ENEMY] <= 0) {
-							std::cout << "living count: " << livingCount[ENEMY] << std::endl;
 							return PLAYER_WINS;
 						}
 					}
@@ -218,7 +217,9 @@ int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
 	else
 	{
 		bool takingAction = true;
+		bool ReturningToMainMenu;
 		while (takingAction) {
+			ReturningToMainMenu = false;
 			int action = -1;
 			std::vector<int> index_helper = enemy_index;
 			while (action <= 0 || action > 8) {
@@ -251,8 +252,11 @@ int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
 					if (action == AbilityResource::abilityAttr[abil_temp[i].getName()][0] + 1) { //if the ability is of current attribute
 						std::cout << k << ". " << AbilityResource::abilityNames[abil_temp[i].getName()] << std::endl; // print as an option
 						helper.push_back(i); // stores index to helper vector
+						k++;
 					}
 				}
+				std::cout << k << ". Return to main menu" << std::endl;
+				helper.push_back(abil_temp.size());
 				// get ability selection
 				int abil_selection = -1;
 				Ability& a_cur = abil_temp[0];
@@ -260,17 +264,32 @@ int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
 					std::cin >> abil_selection;
 					abil_selection--;
 
-					std::cout << AbilityResource::abilityNames[action].size() << std::endl;
-
+					
 					if (abil_selection >= 0 && abil_selection < helper.size()) { // if a valid selection
+						if (abil_selection == helper.size() - 1) {
+							ReturningToMainMenu = true;
+							break;
+						}
 						a_cur = abil_temp[helper[abil_selection]];
 						if (c->getEnergyCurrent() < a_cur.getEnergyCost()) { // if not enough energy
 							std::cout << AbilityResource::abilityNames[a_cur.getName()] << " needs " << a_cur.getEnergyCost() << ", you only have " << c->getEnergyCurrent() << " YOU FOOL" << std::endl;
 						}
 						else break;
 					}
+					else {
+						std::cout << "Not An Option!" << std::endl;
+					}
+					k = 1;
+					for (int i = 0; i < abil_temp.size(); i++) {
+						if (action == AbilityResource::abilityAttr[abil_temp[i].getName()][0] + 1) { //if the ability is of current attribute
+							std::cout << k << ". " << AbilityResource::abilityNames[abil_temp[i].getName()] << std::endl; // print as an option
+							k++;
+						}
+					}
+					std::cout << k << ". Return to main menu" << std::endl;
 				}
 
+				if (ReturningToMainMenu) break;
 				c->updateEnergy(&a_cur);
 
 
@@ -328,22 +347,25 @@ int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
 					break;
 				}
 				break;
-
-
 			}
-			if (c->getEnergyCurrent() == 0) {
-				takingAction = false;
-				return IN_COMBAT;
-			}
-			bool temp = false;
-			for (auto& i : enemy_index) { // check whether at least 1 enemy survives
-				if (participants[i]->getHPCurrent() != 0) temp = true;
-			}
-			if (!temp) {
-				std::cout << "You win" << std::endl;
-				takingAction = false;
-				inCombat = false;
-				break;
+			if (!ReturningToMainMenu) {
+				if (c->getEnergyCurrent() == 0) {
+					takingAction = false;
+					return IN_COMBAT;
+				}
+				bool temp = false;
+				for (auto& i : enemy_index) { // check whether at least 1 enemy survives
+					if (participants[i]->getHPCurrent() != 0) {
+						temp = true;
+						break;
+					}
+				}
+				if (!temp) {
+					std::cout << "You win" << std::endl;
+					takingAction = false;
+					inCombat = false;
+					break;
+				}
 			}
 			if (takingAction) {
 				std::cout << "What else do you want to do? Select by option number." << std::endl;
@@ -630,14 +652,14 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			if (ParticipantsStatus[i] == IN_COMBAT && participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0) {
 				int result_temp = textAction(participants[i], EnemyActionOrderCount);
 				// for testing
-				std::cout << "Result: " << result_temp << std::endl;
-				std::cout << "TLMs Size CM: " << AI.getTLMs().size() << std::endl;
+				//std::cout << "Result: " << result_temp << std::endl;
+				//std::cout << "TLMs Size CM: " << AI.getTLMs().size() << std::endl;
 
 				switch (result_temp) {
 				case IN_COMBAT:
 					break;
 				default:
-					std::cout << "default: " << result_temp << std::endl;
+					//std::cout << "default: " << result_temp << std::endl;
 					return result_temp;
 					break;
 					////	takeAction(participants[i], buttons, e)

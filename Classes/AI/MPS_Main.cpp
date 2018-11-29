@@ -7,8 +7,6 @@ void MPS_Main::createAbilities(Enemy* Self) {
 }
 
 void MPS_Main::readTBP() {
-	// for testing
-	std::cout << "Reading TBP" << std::endl;
 	if (TaskBasePriority.size() != 0) return;
 	std::string Path = "Data/AI/MPS_TBP.csv";
 	MPS_Data TBP = MPS_Data(Path);
@@ -65,10 +63,16 @@ void MPS_Main::findBestAction() {
 		//std::cerr << t.getBestAssignment().getAction().getAbil()->getName() << std::endl;
 		//std::cerr << t.getBestAssignment().getScore() << std::endl;
 		//std::cerr << "Current MaxScore is: " << MaxScore << std::endl;
-		if (t.getBestScore() > MaxScore) 
+		if (t.getBestScore() > MaxScore)
+		{
 			BestAction = t.getBestAssignment().getAction();
+			MaxScore = t.getBestScore();
+		}
 		else if (t.getBestScore() == MaxScore) {
-			if (rand() % 100 > 49) BestAction = t.getBestAssignment().getAction();
+			if (rand() % 100 > 49) {
+				BestAction = t.getBestAssignment().getAction();
+				MaxScore = t.getBestScore();
+			}
 		}
 	}
 }
@@ -83,6 +87,7 @@ MPS_Main::MPS_Main(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*
 	findBestAction();
 }
 
+/*
 MPS_Main::~MPS_Main() {
 	for (int i = 0; i < TaskLevelModifiers.size(); i++) {
 		std::cout << "TLMs Size: "<< TaskLevelModifiers.size() << std::endl;
@@ -90,10 +95,11 @@ MPS_Main::~MPS_Main() {
 		delete tlm;
 		tlm = nullptr;
 	}
-	//*/
+	
 	TaskLevelModifiers.clear();
 	std::cout << "TLMs Size: " << TaskLevelModifiers.size() << std::endl;
 }
+//*/
 
 Action MPS_Main::getBestAction() {
 	return BestAction;

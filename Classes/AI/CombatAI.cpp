@@ -15,9 +15,9 @@ void CombatAI::BestActionByModifiedPriorityScore() {
 }
 
 Action CombatAI::getBestAction() {
-	std::cout << "Get Best Action" << std::endl;
+	//std::cout << "Get Best Action" << std::endl;
 	if (BestAction.isNULL()) {
-		std::cout << "Best Action is Null" << std::endl;
+		//std::cout << "Best Action is Null" << std::endl;
 		BestActionByModifiedPriorityScore();
 	}
 	return BestAction;

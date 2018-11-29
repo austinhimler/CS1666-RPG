@@ -1729,7 +1729,7 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 void handleMain() {
-	
+	/*
 	CombatManager cm;
 	std::vector<Character*> combatants;
 	combatants.push_back(new Player("nlf4", 10, 10, 10, 10, 10));
@@ -1738,7 +1738,7 @@ void handleMain() {
 	std::cout << "exiting"<< std::endl;
 	//*/
 	
-	/*
+	
 	int a = mainMenu();
 	bool b;
 
