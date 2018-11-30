@@ -27,6 +27,7 @@ Cluster::Cluster(int q) {
 	imageDownRightRunResource = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
 	imageUpRightRunResource = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
 	imageUpRunResource = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	lastDirection = NULL;
 
 	Helper helper = Helper();
 	textureIdle = helper.loadImage(imageIdleResource.c_str(), gRenderer);

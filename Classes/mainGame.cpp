@@ -1230,6 +1230,28 @@ bool handleNetworkingSetup() {
 void playGame() {
 
 	bool doNetworking = handleNetworkingSetup();
+	if (doNetworking) {
+		int length;
+		int result;
+
+		length = sizeof(Player) + 1; 
+		result = SDLNet_TCP_Send(clientSocket, player1, length);
+		if (result < length) {
+			printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+		}
+
+		while (notYou == NULL) {
+			int result;
+			int length;
+			length = sizeof(Player) + 1;
+			result = SDLNet_TCP_Recv(clientSocket, notYou, length);
+			if (result < length) {
+				printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+			}
+			cout << notYou << endl;
+		}
+		
+	}
 
 	//Load the music
 	gMusic = Mix_LoadMUS("Audio/Walking_Test.wav");
