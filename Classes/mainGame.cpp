@@ -1186,7 +1186,7 @@ bool handleNetworkingSetup() {
 			
 
 			clientSocket = NULL;
-			while (clientSocket = NULL)
+			while (clientSocket == NULL)
 			{
 				clientSocket = SDLNet_TCP_Open(&ipAddress);
 			}
