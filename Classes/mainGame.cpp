@@ -904,6 +904,27 @@ void combatScene(std::vector<Character*> combatants) {
 
 }
 
+
+
+//uint16   65535
+int X_NET = 1000;
+int Y_NET = 2000;
+int DIRECTION_NET = 3000;
+int DIRECTION_UP = 3000;
+int DIRECTION_UP_LEFT = 3001;
+int DIRECTION_UP_RIGHT = 3002;
+int DIRECTION_LEFT = 3003;
+int DIRECTION_RIGHT = 3004;
+int DIRECTION_DOWN = 3005;
+int DIRECTION_DOWN_LEFT = 3006;
+int DIRECTION_DOWN_RIGHT = 3007;
+int IDs = 4000;
+
+
+//1000 + actual x
+//2000 + actual y
+//
+
 bool handleNetworkingSetup() {
 	bool waitForInput = true;
 	while (waitForInput) {
@@ -959,7 +980,6 @@ bool handleNetworkingSetup() {
 		}
 
 		if (isHost) {
-			//Since the IP is set to null it knows that it will be a server
 			std::cout << "Enter Port:\n" << std::endl;
 			std::cin >> port;
 
@@ -1269,7 +1289,7 @@ void playGame() {
 
 			if (isClient) {
 				
-				UDPpacket* packet = SDLNet_AllocPacket(100); //(sizeof(Player));
+				UDPpacket* packet = SDLNet_AllocPacket(32);
 				std::string datay = "aaa";
 
 				static const char* data = "hello";
@@ -1280,12 +1300,13 @@ void playGame() {
 				p->len = strlen(data) + 1;
 				memcpy(packet->data, player1, packet->len);*/
 				//memmove(packet->data, datay, packet->len);
-				SDLNet_UDP_Send(clientSocket,-1, packet);
 
-				//printf("yum");
+				if (SDLNet_UDP_Send(clientSocket, -1, packet) == 0){
+					std::cout << "\tSDLNet_UDP_Send failed : " << SDLNet_GetError() << "\n";
+				}
 	
 			} if (isHost) {
-				UDPpacket* packet = SDLNet_AllocPacket(100);//(sizeof(Player));
+				UDPpacket* packet = SDLNet_AllocPacket(32);
 				int received = SDLNet_UDP_Recv(serverSocket, packet);
 				if (received) {
 					printf("%s", packet->data);
