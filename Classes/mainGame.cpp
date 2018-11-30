@@ -76,7 +76,7 @@ bool init() {
 	// Flag what subsystems to initialize
 	// For now, just video
 	//added audio init
-	SDLNet_Init();
+
     
 	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
@@ -173,6 +173,8 @@ bool init() {
 	if (font == NULL) {
 		std::cout << "font was null";
 	}
+
+	SDLNet_Init();
 
 	return true;
 }
