@@ -54,8 +54,8 @@ bool isHost;
 bool isClient;
 int port;
 IPaddress ipAddress;
-UDPsocket serverSocket;
-UDPsocket clientSocket;
+TCPsocket serverSocket;
+TCPsocket clientSocket;
 
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
@@ -1181,19 +1181,19 @@ bool handleNetworkingSetup() {
 			std::cin >> port;
 
 			SDLNet_ResolveHost(&ipAddress, ipInput.c_str(), port);
-			clientSocket = SDLNet_UDP_Open(ipAddress.port);
+			
 
-			channel = SDLNet_UDP_Bind(clientSocket, -1, &ipAddress);
+			clientSocket = NULL;
+			while (clientSocket = NULL)
+			{
+				clientSocket = SDLNet_TCP_Open(&ipAddress);
+			}
 
 			std::cout << clientSocket << std::endl;
-			std::cout << channel << std::endl;
 			std::cout << ipInput.c_str() << std::endl;
 			std::cout << ipAddress.host << std::endl;
 			std::cout << ipAddress.port << std::endl;
-
-			if (channel == -1) {
-				printf("Failed Bind: %s\n", SDLNet_GetError());
-			}
+		
 		}
 
 		if (isHost) {
@@ -1201,7 +1201,17 @@ bool handleNetworkingSetup() {
 			std::cin >> port;
 
 			SDLNet_ResolveHost(&ipAddress, NULL, port);
-			serverSocket = SDLNet_UDP_Open(ipAddress.port);
+			serverSocket = SDLNet_TCP_Open(&ipAddress);
+			bool noClient = true;
+			while (noClient)
+			{
+				//waits for a client to connect
+				clientSocket = SDLNet_TCP_Accept(serverSocket);
+				if (clientSocket)
+				{
+					noClient = false;
+				}
+			}
 			std::cout << serverSocket << std::endl;
 			std::cout << ipAddress.host << std::endl;
 			std::cout << ipAddress.port << std::endl;
