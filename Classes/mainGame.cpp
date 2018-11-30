@@ -18,7 +18,7 @@
 
 #include <SDL2/SDL_net.h>
 
-
+//CHCHCHCHCHANGES
 #include "../Headers/mainGame.h"
 #include "../Headers/Player.h"
 #include "../Headers/Button.h"
@@ -53,14 +53,16 @@ void handleMain();
 bool isHost;
 bool isClient;
 int port;
-int channel;
 IPaddress ipAddress;
 UDPsocket serverSocket;
 UDPsocket clientSocket;
 
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
-
+const int ENEMIES_PER_CLUSTER = 1;
+const int STARTING_ENEMIES = 1;
+const vector<string> ALL_MAPS = { "map1.txt", "map2.txt", "map3.txt" };
+int MAP_INDEX = 0;
 //std::vector<SDL_Texture*> gTex;
 // Music var
 Mix_Music *gMusic = NULL;
@@ -68,7 +70,7 @@ Mix_Chunk *gBSound = NULL;
 TTF_Font* font;
 
 //Player ONE
-Player player1 = Player("nlf4",1,1,1,1,1);
+Player* player1 = new Player("nlf4",1,1,1,1,1);
 
 bool init() {
 	// Flag what subsystems to initialize
@@ -96,10 +98,10 @@ bool init() {
 	}
 	
 	//set all the required Options for GLFW, Use OpenGL 3.2 core
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);//Double-buffering
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+	//SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);//Double-buffering
+	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 
 	//Create rendering context for OpenGL
@@ -193,25 +195,13 @@ bool check_collision(SDL_Rect a, SDL_Rect b) {
 	return true;
 }
 
-void combatTransition(){
-	SDL_Rect wipe = { 0,0,72,72 };
-	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-	for (; wipe.x < 720; wipe.x += 72)
-	{
-		for (wipe.y = 0; wipe.y < 720; wipe.y += 72)
-		{
-			SDL_RenderFillRect(gRenderer, &wipe);
-			SDL_RenderPresent(gRenderer);
-			SDL_Delay(10);
-		}
-	}
-}
-SDL_Rect * loadMap(Tile* tiles[]) {
+
+SDL_Rect * loadMap(Tile* tiles[],string mapToLoad) {
 	Tile::loadTiles();
 	bool tilesLoaded = true;
 	int x = 0, y = 0;
 	std::vector<SDL_Rect> blockedTiles;
-	std::ifstream map("map1.txt");
+	std::ifstream map(mapToLoad);
 	if (!map.is_open())
 	{
 		printf("Unable to load map file!\n");
@@ -297,9 +287,6 @@ void close() {
 		SDL_DestroyTexture(i);
 		i = nullptr;
 	}
-
-	SDLNet_UDP_Close(serverSocket);
-	SDLNet_UDP_Close(clientSocket);
 	
 	SDL_GL_DeleteContext(gContext);
 	SDL_DestroyRenderer(gRenderer);
@@ -316,7 +303,6 @@ void close() {
 	TTF_Quit();
 	Mix_Quit();
 	IMG_Quit();
-	SDLNet_Quit();
 	SDL_Quit();
 }
 
@@ -358,7 +344,7 @@ void playCredits() {
 				SDL_RenderPresent(gRenderer);
 
 			}
-			SDL_Delay(30);
+			SDL_Delay(60);
 			j++;
 		}
 		j = 0;
@@ -379,6 +365,71 @@ void renderText(const char* text, SDL_Rect* rect, SDL_Color* color) {
 	SDL_FreeSurface(surface);
 	SDL_RenderCopy(gRenderer, texture, NULL, rect);
 	SDL_DestroyTexture(texture);
+}
+void combatTransition() {
+	//Load the music
+	gMusic = Mix_LoadMUS("Audio/Into_Combat_Test.wav");
+	if (gMusic == NULL)
+		std::cout << "Failed to load music" << std::endl;
+	//Play the music
+	Mix_PlayMusic(gMusic, -1);
+	Mix_VolumeMusic(MIX_MAX_VOLUME / 8);
+	SDL_Rect wipe = { 0,0,72,72 };
+	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+	for (; wipe.x < 720; wipe.x += 72)
+	{
+		for (wipe.y = 0; wipe.y < 720; wipe.y += 72)
+		{
+			SDL_RenderFillRect(gRenderer, &wipe);
+			SDL_RenderPresent(gRenderer);
+			SDL_Delay(10);
+		}
+	}
+	Mix_PauseMusic();
+}
+void levelTransition() {
+	SDL_Rect wholeS = { 0,0,720,720 };
+	SDL_Rect words = { 220,200,120,60 };
+	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+	SDL_RenderFillRect(gRenderer, &wholeS);
+	SDL_RenderPresent(gRenderer);
+	string level = "Loading Next Level";
+	SDL_Color TextColor = { 255, 255, 255, 0 };
+	renderText(level.c_str(), &words, &TextColor);
+	SDL_RenderPresent(gRenderer);
+	SDL_Rect wipe = { 180,240,20,20 };
+	SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);
+	for (; wipe.x < 540; wipe.x += 20)
+	{
+		SDL_RenderFillRect(gRenderer, &wipe);
+		SDL_RenderPresent(gRenderer);
+		SDL_Delay(100);
+	}
+}
+void EndTransition() {
+	gMusic = Mix_LoadMUS("Audio/Victory_2_Test.wav");
+	if (gMusic == NULL)
+		std::cout << "Failed to load music" << std::endl;
+	//Play the music
+	Mix_PlayMusic(gMusic, -1);
+	SDL_Rect wholeS = { 0,0,720,720 };
+	SDL_Rect word1 = { 220,200,120,60 };
+	SDL_Rect word2 = { 30, 240,120,60};
+	SDL_Rect word3 = { 260, 280,120,60 };
+	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+	SDL_RenderFillRect(gRenderer, &wholeS);
+	SDL_RenderPresent(gRenderer);
+	string line1 = "Congratulations!";
+	string line2 = "You have successfully completed The Game!";
+	string line3 = "Cya Nerd.";
+	SDL_Color TextColor = { 255, 255, 255, 0 };
+	renderText(line1.c_str(), &word1, &TextColor);
+	renderText(line2.c_str(), &word2, &TextColor);
+	renderText(line3.c_str(), &word3, &TextColor);
+	SDL_RenderPresent(gRenderer);
+	SDL_Rect wipe = { 180,240,20,20 };
+	SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);
+	SDL_Delay(200);
 }
 
 bool characterCreateScreen() {
@@ -489,10 +540,10 @@ bool characterCreateScreen() {
 									Mix_PlayChannel(-1, gBSound, 0);
 									onCharacterCreate = false;
 									if (nameInputText == "nfl4" || nameInputText == "nlf4")
-										player1 = Player::Player(nameInputText, 10, 10, 10, 10, 10);//player1.setAll(nameInputText, 10, 10, 10, 10, 10);
+										player1 = new Player(nameInputText, 10, 10, 10, 10, 10);//player1->setAll(nameInputText, 10, 10, 10, 10, 10);
 									else
-										player1 = Player(nameInputText, strength, intelligence, dexterity, constitution, faith);//player1.setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
-									std::cout << std::string(player1); //displays player 1
+										player1 = new Player(nameInputText, strength, intelligence, dexterity, constitution, faith);//player1->setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
+									std::cout << std::string(*player1); //displays player 1
 									//make Character Object, validate, return to main
 									for (auto i : buttons) {
 										delete(i);
@@ -616,10 +667,10 @@ bool characterCreateScreen() {
 								Mix_PlayChannel(-1, gBSound, 0);
 								onCharacterCreate = false;
 								if (nameInputText == "nfl4" || nameInputText == "nlf4")
-									player1 = Player::Player(nameInputText, 10, 10, 10, 10, 10);//player1.setAll(nameInputText, 10, 10, 10, 10, 10);
+									player1 = new Player(nameInputText, 10, 10, 10, 10, 10);//player1->setAll(nameInputText, 10, 10, 10, 10, 10);
 								else
-									player1 = Player(nameInputText, strength, intelligence, dexterity, constitution, faith);//player1.setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
-								std::cout << std::string(player1); //displays player 1
+									player1 = new Player(nameInputText, strength, intelligence, dexterity, constitution, faith);//player1->setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
+								std::cout << std::string(*player1); //displays player 1
 								//make Character Object, validate, return to main
 								for (auto i : buttons) {
 									delete(i);
@@ -896,6 +947,192 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Character*> charactersOnScreen
 		SDL_Delay(16);
 	}
 }
+/*
+move location of Cluster cl
+
+a indicates movement type
+up/down/left/right/random
+*/
+void moveCluster(std::vector<Cluster*> c, std::string move, double time, Tile* map[900], int cycle) {
+
+	for (auto cl : c) {
+		if (cl->getTextureActive() != cl->getTextureIdleNotReady()) {
+			int a = -1;
+			if (move == "up") a = 0;
+			else if (move == "left") a = 1;
+			else if (move == "down") a = 2;
+			else if (move == "right") a = 3;
+			else if (move == "random" && cycle == 0) {
+				a = rand() % 4;
+			}
+			else if (move == "random" && cycle % 100 == 0) {
+				a = rand() % 4;
+			}
+			else if (move == "random" && cycle % 100 != 0) {
+				a = cl->lastDirection;
+			}
+			cl->lastDirection = a;
+			cl->xDeltaVelocity = 0;
+			cl->yDeltaVelocity = 0;
+			//std::cout << move << std::endl;
+			/*
+			std::cout << "CLuster" << std::endl;
+			std::cout << cl->xPosition << std::endl;
+			std::cout << cl->yPosition << std::endl;
+			//std::cout << a << std::endl;
+			*/
+
+			if (a == 0) {
+				cl->yDeltaVelocity -= (cl->getAcceleration() * time);
+			}
+			else if (a == 1) {
+				cl->xDeltaVelocity -= (cl->getAcceleration() * time);
+			}
+			else if (a == 2) {
+				cl->yDeltaVelocity += (cl->getAcceleration() * time);
+			}
+			else if (a == 3) {
+				cl->xDeltaVelocity += (cl->getAcceleration() * time);
+			}
+
+			if (cl->xDeltaVelocity == 0) {
+				if (cl->xVelocity > 0) {
+					if (cl->xVelocity < (cl->getAcceleration() * time))
+						cl->xVelocity = 0;
+					else
+						cl->xVelocity -= cl->getAcceleration() * time;
+				}
+				else if (cl->xVelocity < 0) {
+					if (-cl->xVelocity < (cl->getAcceleration() * time))
+						cl->xVelocity = 0;
+					else
+						cl->xVelocity += cl->getAcceleration() * time;
+				}
+			}
+			else {
+				cl->xVelocity += cl->xDeltaVelocity;
+			}
+			if (cl->yDeltaVelocity == 0) {
+				if (cl->yVelocity > 0) {
+					if (cl->yVelocity < (cl->getAcceleration() * time))
+						cl->yVelocity = 0;
+					else
+						cl->yVelocity -= cl->getAcceleration() * time;
+				}
+				else if (cl->yVelocity < 0) {
+					if (-cl->yVelocity < (cl->getAcceleration() * time))
+						cl->yVelocity = 0;
+					else
+						cl->yVelocity += cl->getAcceleration() * time;
+				}
+			}
+			else {
+				cl->yVelocity += cl->yDeltaVelocity;
+			}
+
+			if (cl->xVelocity < -cl->getSpeedMax())
+				cl->xVelocity = -cl->getSpeedMax();
+			else if (cl->xVelocity > cl->getSpeedMax())
+				cl->xVelocity = cl->getSpeedMax();
+			if (cl->yVelocity < -cl->getSpeedMax())
+				cl->yVelocity = -cl->getSpeedMax();
+			else if (cl->yVelocity > cl->getSpeedMax()) cl->yVelocity = cl->getSpeedMax();
+
+			if (cl->xVelocity != 0 || cl->yVelocity != 0) {
+
+				if (cl->yVelocity == 0) {
+					if (cl->getTextureActive() != cl->getTextureRun()) {
+						cl->setTextureActive(cl->getTextureRun());
+						cl->currentFrame = 0;
+						cl->currentMaxFrame = cl->getNumRunAnimationFrames();
+					}
+				}
+
+
+				if (cl->xVelocity == 0 && cl->yVelocity > 0) {
+					if (cl->getTextureActive() != cl->getTextureDownRun()) {
+						cl->setTextureActive(cl->getTextureDownRun());
+						cl->currentFrame = 0;
+						cl->currentMaxFrame = cl->getNumRunAnimationFrames();
+					}
+				}
+
+
+
+				if (cl->xVelocity != 0 && cl->yVelocity > 0) {
+					if (cl->getTextureActive() != cl->getTextureDownRightRun()) {
+						cl->setTextureActive(cl->getTextureDownRightRun());
+						cl->currentFrame = 0;
+						cl->currentMaxFrame = cl->getNumRunAnimationFrames();
+					}
+				}
+
+				if (cl->xVelocity != 0 && cl->yVelocity < 0) {
+					if (cl->getTextureActive() != cl->getTextureUpRightRun()) {
+						cl->setTextureActive(cl->getTextureUpRightRun());
+						cl->currentFrame = 0;
+						cl->currentMaxFrame = cl->getNumRunAnimationFrames();
+					}
+				}
+
+
+
+				if (cl->xVelocity == 0 && cl->yVelocity < 0) {
+					if (cl->getTextureActive() != cl->getTextureUpRun()) {
+						cl->setTextureActive(cl->getTextureUpRun());
+						cl->currentFrame = 0;
+						cl->currentMaxFrame = cl->getNumRunAnimationFrames();
+
+					}
+				}
+			}
+
+			else {
+				if (cl->getTextureActive() != cl->getTextureIdle()) {
+					cl->setTextureActive(cl->getTextureIdle());
+					cl->currentFrame = 0;
+					cl->currentMaxFrame = cl->getNumIdleAnimationFrames();
+				}
+			}
+
+			int beforeMoveX = (int)cl->xPosition;
+			int beforeMoveY = (int)cl->yPosition;
+			cl->yPosition += (cl->yVelocity * time);
+			if (cl->yPosition < 0 || (cl->yPosition + cl->getImageHeight() > LEVEL_HEIGHT)) {
+				cl->yPosition -= (cl->yVelocity * time);
+			}
+			cl->xPosition += (cl->xVelocity * time);
+			if (cl->xPosition < 0 || (cl->xPosition + cl->getImageWidth() > LEVEL_WIDTH)) {
+				cl->xPosition -= (cl->xVelocity * time);
+			}
+			int current = (int)(cl->xPosition + cl->rectangle.w / 2) / TILE_WIDTH;
+			current += (int)((cl->yPosition + cl->rectangle.h) / TILE_HEIGHT) * 30;
+
+
+			//std::cout << cl->xPosition << std::endl;
+			//std::cout << cl->yPosition << std::endl;
+
+
+			if (map[current]->mType != 0) {
+				cl->xPosition = beforeMoveX;
+				cl->yPosition = beforeMoveY;
+			}
+
+			for (auto i : c) {
+				if (i != cl) {
+					int other = (int)(i->xPosition + i->rectangle.w / 2) / TILE_WIDTH;
+					other += (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) * 30;
+					if (other == current) {
+						cl->xPosition = beforeMoveX;
+						cl->yPosition = beforeMoveY;
+					}
+				}
+			}
+			//std::cout << cl->xPosition << std::endl;
+			//std::cout << cl->yPosition << std::endl;
+		}
+	}
+}
 
 void combatScene(std::vector<Character*> combatants) {
 	/*for (auto i : combatants) {
@@ -904,26 +1141,6 @@ void combatScene(std::vector<Character*> combatants) {
 
 }
 
-
-
-//uint16   65535
-int X_NET = 1000;
-int Y_NET = 2000;
-int DIRECTION_NET = 3000;
-int DIRECTION_UP = 3000;
-int DIRECTION_UP_LEFT = 3001;
-int DIRECTION_UP_RIGHT = 3002;
-int DIRECTION_LEFT = 3003;
-int DIRECTION_RIGHT = 3004;
-int DIRECTION_DOWN = 3005;
-int DIRECTION_DOWN_LEFT = 3006;
-int DIRECTION_DOWN_RIGHT = 3007;
-int IDs = 4000;
-
-
-//1000 + actual x
-//2000 + actual y
-//
 
 bool handleNetworkingSetup() {
 	bool waitForInput = true;
@@ -954,7 +1171,7 @@ bool handleNetworkingSetup() {
 			break;
 		}
 
-		
+
 		if (isClient) {
 			std::cout << "Enter IP address:\n" << std::endl;
 			std::string ipInput;
@@ -964,8 +1181,8 @@ bool handleNetworkingSetup() {
 			std::cin >> port;
 
 			SDLNet_ResolveHost(&ipAddress, ipInput.c_str(), port);
-			clientSocket = SDLNet_UDP_Open(ipAddress.port); 
-	
+			clientSocket = SDLNet_UDP_Open(ipAddress.port);
+
 			channel = SDLNet_UDP_Bind(clientSocket, -1, &ipAddress);
 
 			std::cout << clientSocket << std::endl;
@@ -996,446 +1213,484 @@ bool handleNetworkingSetup() {
 }
 
 void playGame() {
-
-	bool doNetworking = handleNetworkingSetup();
-
-	vector<Cluster*> allEnemies = vector<Cluster*>();
-	Cluster* CollidingCluster;
-	for (int num_enemy = 0; num_enemy < 5; num_enemy++)
+	//Load the music
+	gMusic = Mix_LoadMUS("Audio/Walking_Test.wav");
+	if (gMusic == NULL)
+		std::cout << "Failed to load music" << std::endl;
+	//Play the music
+	Mix_PlayMusic(gMusic, -1);
+	Mix_VolumeMusic(MIX_MAX_VOLUME / 8);
+	for (MAP_INDEX = 0; MAP_INDEX < ALL_MAPS.size(); MAP_INDEX++)
 	{
-		Cluster* enemy = new Cluster((rand() % 3)+1);
-		cout <<"Enemy "<<num_enemy+1<<" Cluster Size: "<<  enemy->clusterSize << endl;
-		allEnemies.push_back(enemy);
-	}
+		//bool doNetworking = handleNetworkingSetup();
+		vector<Cluster*> allEnemies = vector<Cluster*>();
+		Cluster* CollidingCluster;
+		for (int num_enemy = 0; num_enemy < STARTING_ENEMIES * (MAP_INDEX + 1); num_enemy++)
+		{
+			Cluster* enemy = new Cluster((rand() % (ENEMIES_PER_CLUSTER + MAP_INDEX)) + 1);
+			cout << "Enemy " << num_enemy + 1 << " Cluster Size: " << enemy->clusterSize << endl;
+			allEnemies.push_back(enemy);
+		}
 
-	//SDL_RendererFlip flip = SDL_FLIP_NONE;
+		//SDL_RendererFlip flip = SDL_FLIP_NONE;
 
-	int tile_test = -1;
-	
-	player1.setTextureActive(player1.getTextureIdle());
-	player1.currentMaxFrame = player1.getNumIdleAnimationFrames();
+		int tile_test = -1;
+
+		player1->setTextureActive(player1->getTextureIdle());
+		player1->currentMaxFrame = player1->getNumIdleAnimationFrames();
 
 
-	Tile*  tiles[TOTAL_TILES];
+		Tile*  tiles[TOTAL_TILES];
 
-	//tiles
-	//Need to delete this to stop memory leak if we load more than one map
-	SDL_Rect* BlockedTiles = loadMap(tiles);
-
-	for (auto i : allEnemies)
-	{
-		i->setTextureActive(i->getTextureIdle());
-		i->currentMaxFrame = i->getNumIdleAnimationFrames();
-		// Randomly spawn the enemy
+		//tiles
+		//Need to delete this to stop memory leak if we load more than one map
+		SDL_Rect* BlockedTiles = loadMap(tiles, ALL_MAPS.at(MAP_INDEX));
 		for (;;)
 		{
-			i->xPosition = rand() % (LEVEL_WIDTH - i->getImageWidth());
-			i->yPosition = rand() % (LEVEL_HEIGHT - i->getImageHeight());
-			int t_tile = (int)(i->xPosition + (i->rectangle.w / 2)) / TILE_WIDTH;
-			t_tile += (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) * 30;
+			int t_tile = (int)(player1->xPosition + (player1->rectangle.w / 2)) / TILE_WIDTH;
+			t_tile += (int)((player1->yPosition + player1->rectangle.h) / TILE_HEIGHT) * 30;
 			if (tiles[t_tile]->mType == 0)
 				break;
+			player1->xPosition = rand() % (LEVEL_WIDTH - player1->getImageWidth());
+			player1->yPosition = rand() % (LEVEL_HEIGHT - player1->getImageHeight());
 		}
-	}
 
-	std::vector<Character*> charactersOnScreen;
-	std::vector<Character*> combatants;
-
-
-	Uint32 timeSinceLastMovement = SDL_GetTicks();
-	Uint32 timeSinceLastAnimation = SDL_GetTicks();
-	player1.timeSinceLastMovement = timeSinceLastMovement;
-	player1.timeSinceLastAnimation = timeSinceLastAnimation;
-	for (auto i : allEnemies)
-	{
-		cout << "Enemy Coordinates: (" << i->xPosition << "," << i->yPosition << ")" << endl;
-		i->timeSinceLastAnimation = timeSinceLastAnimation;
-	}
-	std::string hudHealthString = "Health: " + to_string(player1.getHPCurrent());
-	std::string hudLevelString = "Level: " + to_string(player1.getLevel());
-	SDL_Rect hudHealthTextRectangle = { 10, 10, 0, 0 };
-	SDL_Rect hudLevelTextRectangle = { 10, 35, 0, 0 };
-	SDL_Color hudTextColor = { 0, 0, 0, 0 };
-
-	double timePassed = 0;
-	int response = 0;
-
-	charactersOnScreen.push_back(&player1);
-	for (auto i : allEnemies)
-	{
-		charactersOnScreen.push_back(i);
-	}
-
-	
-	std::cout << player1.xPosition;
-	std::cout << "\n";
-	std::cout << player1.yPosition;
-	
-
-	SDL_Event e;
-	SDL_Rect camera = { 0,0,SCREEN_WIDTH, SCREEN_HEIGHT };
-	bool inOverworld = true;
-	bool combatStarted = false;
-	bool inPauseMenu = false;
-	bool keepPlaying = true;
-	while (keepPlaying) {
-
-		while (inOverworld) {
-			while (SDL_PollEvent(&e)) {
-				if (e.type == SDL_QUIT) {
-					inOverworld = false;
-					return;
-				}
+		for (auto i : allEnemies)
+		{
+			i->setTextureActive(i->getTextureIdle());
+			i->currentMaxFrame = i->getNumIdleAnimationFrames();
+			// Randomly spawn the enemy
+			for (;;)
+			{
+				i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
+				i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
+				int t_tile = (int)(i->xPosition + (i->rectangle.w / 2)) / TILE_WIDTH;
+				t_tile += (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) * 30;
+				if (tiles[t_tile]->mType == 0)
+					break;
 			}
+		}
 
-			// figure out how much of a second has passed
-			timePassed = (SDL_GetTicks() - timeSinceLastMovement) / 1000.0;
-			player1.xDeltaVelocity = 0;
-			player1.yDeltaVelocity = 0;
-			double runningAddSpeed = 0;
-
-			const Uint8* keyState = SDL_GetKeyboardState(nullptr);
-			if (keyState[SDL_SCANCODE_W])
-				player1.yDeltaVelocity -= (player1.getAcceleration() * timePassed);
-			if (keyState[SDL_SCANCODE_A])
-				player1.xDeltaVelocity -= (player1.getAcceleration() * timePassed);
-			if (keyState[SDL_SCANCODE_S])
-				player1.yDeltaVelocity += (player1.getAcceleration() * timePassed);
-			if (keyState[SDL_SCANCODE_D])
-				player1.xDeltaVelocity += (player1.getAcceleration() * timePassed);
-			if (keyState[SDL_SCANCODE_LSHIFT])
-				runningAddSpeed = 200;
+		std::vector<Character*> charactersOnScreen;
+		std::vector<Character*> combatants;
 
 
-			if (player1.xDeltaVelocity == 0) {
-				if (player1.xVelocity > 0)
-					if (player1.xVelocity < (player1.getAcceleration() * timePassed))
-						player1.xVelocity = 0;
-					else
-						player1.xVelocity -= (player1.getAcceleration() * timePassed);
-				else if (player1.xVelocity < 0)
-					if (-player1.xVelocity < (player1.getAcceleration() * timePassed))
-						player1.xVelocity = 0;
-					else
-						player1.xVelocity += (player1.getAcceleration() * timePassed);
-			}
-			else {
-				player1.xVelocity += player1.xDeltaVelocity;
-			}
+		Uint32 timeSinceLastMovement = SDL_GetTicks();
+		Uint32 timeSinceLastAnimation = SDL_GetTicks();
+		player1->timeSinceLastMovement = timeSinceLastMovement;
+		player1->timeSinceLastAnimation = timeSinceLastAnimation;
+		for (auto i : allEnemies)
+		{
+			cout << "Enemy Coordinates: (" << i->xPosition << "," << i->yPosition << ")" << endl;
+			i->timeSinceLastAnimation = timeSinceLastAnimation;
+		}
+		std::string hudHealthString = "Health: " + to_string(player1->getHPCurrent());
+		std::string hudLevelString = "Level: " + to_string(player1->getLevel());
+		SDL_Rect hudHealthTextRectangle = { 10, 10, 0, 0 };
+		SDL_Rect hudLevelTextRectangle = { 10, 35, 0, 0 };
+		SDL_Color hudTextColor = { 0, 0, 0, 0 };
 
-			if (player1.yDeltaVelocity == 0) {
-				if (player1.yVelocity > 0)
-					if (player1.yVelocity < (player1.getAcceleration() * timePassed))
-						player1.yVelocity = 0;
-					else
-						player1.yVelocity -= (player1.getAcceleration() * timePassed);
-				else if (player1.yVelocity < 0)
-					if (-player1.yVelocity < (player1.getAcceleration() * timePassed))
-						player1.yVelocity = 0;
-					else
-						player1.yVelocity += (player1.getAcceleration() * timePassed);
-			}
-			else {
-				player1.yVelocity += player1.yDeltaVelocity;
-			}
+		double timePassed = 0;
+		int response = 0;
 
-			//bound within Max Speed
-			if (player1.xVelocity < -(player1.getSpeedMax() + runningAddSpeed))
-				player1.xVelocity = -(player1.getSpeedMax() + runningAddSpeed);
-			else if (player1.xVelocity > (player1.getSpeedMax() + runningAddSpeed))
-				player1.xVelocity = (player1.getSpeedMax() + runningAddSpeed);
-			//bound within Max Speed
-			if (player1.yVelocity < -(player1.getSpeedMax() + runningAddSpeed))
-				player1.yVelocity = -(player1.getSpeedMax() + runningAddSpeed);
-			else if (player1.yVelocity > (player1.getSpeedMax() + runningAddSpeed))
-				player1.yVelocity = (player1.getSpeedMax() + runningAddSpeed);
+		charactersOnScreen.push_back(player1);
+		for (auto i : allEnemies)
+		{
+			charactersOnScreen.push_back(i);
+		}
 
-			//Change sprite if character is in motion
-			if (player1.xVelocity != 0 || player1.yVelocity != 0) {
 
-				if (player1.yVelocity == 0) {
-					if (player1.getTextureActive() != player1.getTextureRun()) {
-						player1.setTextureActive(player1.getTextureRun());
-						player1.currentFrame = 0;
-						player1.currentMaxFrame = player1.getNumRunAnimationFrames();
+		std::cout << player1->xPosition;
+		std::cout << "\n";
+		std::cout << player1->yPosition;
+
+		int cycle = 0;
+
+		SDL_Event e;
+		SDL_Rect camera = { 0,0,SCREEN_WIDTH, SCREEN_HEIGHT };
+		bool inOverworld = true;
+		bool combatStarted = false;
+		bool inPauseMenu = false;
+		bool keepPlaying = true;
+		while (keepPlaying) {
+
+			while (inOverworld) {
+				while (SDL_PollEvent(&e)) {
+					if (e.type == SDL_QUIT) {
+						inOverworld = false;
+						return;
 					}
 				}
+				// figure out how much of a second has passed
+				timePassed = (SDL_GetTicks() - timeSinceLastMovement) / 1000.0;
+				player1->xDeltaVelocity = 0;
+				player1->yDeltaVelocity = 0;
+				double runningAddSpeed = 0;
+
+				const Uint8* keyState = SDL_GetKeyboardState(nullptr);
+				if (keyState[SDL_SCANCODE_W])
+					player1->yDeltaVelocity -= (player1->getAcceleration() * timePassed);
+				if (keyState[SDL_SCANCODE_A])
+					player1->xDeltaVelocity -= (player1->getAcceleration() * timePassed);
+				if (keyState[SDL_SCANCODE_S])
+					player1->yDeltaVelocity += (player1->getAcceleration() * timePassed);
+				if (keyState[SDL_SCANCODE_D])
+					player1->xDeltaVelocity += (player1->getAcceleration() * timePassed);
+				if (keyState[SDL_SCANCODE_LSHIFT])
+					runningAddSpeed = 200;
 
 
-				if (player1.xVelocity == 0 && player1.yVelocity > 0) {
-					if (player1.getTextureActive() != player1.getTextureDownRun()) {
-						player1.setTextureActive(player1.getTextureDownRun());
-						player1.currentFrame = 0;
-						player1.currentMaxFrame = player1.getNumRunAnimationFrames();
-					}
-				}
-
-				
-
-				if (player1.xVelocity != 0 && player1.yVelocity > 0) {
-					if (player1.getTextureActive() != player1.getTextureDownRightRun()) {
-						player1.setTextureActive(player1.getTextureDownRightRun());
-						player1.currentFrame = 0;
-						player1.currentMaxFrame = player1.getNumRunAnimationFrames();
-					}
-				}
-
-				if (player1.xVelocity != 0 && player1.yVelocity < 0) {
-					if (player1.getTextureActive() != player1.getTextureUpRightRun()) {
-						player1.setTextureActive(player1.getTextureUpRightRun());
-						player1.currentFrame = 0;
-						player1.currentMaxFrame = player1.getNumRunAnimationFrames();
-					}
-				}
-
-
-
-				if (player1.xVelocity == 0 && player1.yVelocity < 0) {
-					if (player1.getTextureActive() != player1.getTextureUpRun()) {
-						player1.setTextureActive(player1.getTextureUpRun());
-						player1.currentFrame = 0;
-						player1.currentMaxFrame = player1.getNumRunAnimationFrames();
-
-					}
-				}
-			}
-
-			else {
-				if (player1.getTextureActive() != player1.getTextureIdle()) {
-					player1.setTextureActive(player1.getTextureIdle());
-					player1.currentFrame = 0;
-					player1.currentMaxFrame = player1.getNumIdleAnimationFrames();
-				}
-			}
-
-			int beforeMoveX = player1.xPosition;
-			int beforeMoveY = player1.yPosition;
-			//Move vertically
-			player1.yPosition += (player1.yVelocity * timePassed);
-			if (player1.yPosition < 0 || (player1.yPosition + player1.getImageHeight() > LEVEL_HEIGHT)) {
-				//go back into window
-				player1.yPosition -= (player1.yVelocity * timePassed);
-			}
-
-			//Move horizontally
-			player1.xPosition += (player1.xVelocity * timePassed);
-			if (player1.xPosition < 0 || (player1.xPosition + player1.getImageWidth() > LEVEL_WIDTH)) {
-				//go back into window
-				player1.xPosition -= (player1.xVelocity * timePassed);
-			}
-			//calculate tile player is currently standing on
-			int currentTile = (int)(player1.xPosition + (player1.rectangle.w / 2)) / TILE_WIDTH;
-			currentTile += (int)((player1.yPosition + player1.rectangle.h) / TILE_HEIGHT) * 30;
-
-			// Show which tile the character is standing on
-			/*
-			if (currentTile != tile_test) {
-				cout << currentTile << endl;
-				tile_test = currentTile;
-			}
-			*/
-
-			if (tiles[currentTile]->mType != 0) {
-				player1.xPosition = beforeMoveX;
-				player1.yPosition = beforeMoveY;
-				/*
-				//toDo
-				bool xVelPos = player1.xVelocity > 0;
-				bool xVelNeg = player1.xVelocity < 0;
-				bool yVelPos = player1.yVelocity > 0;
-				bool yVelNeg = player1.yVelocity < 0;
-				player1.xVelocity = 0;
-				player1.yVelocity = 0;
-				if (xVelPos)
-					player1.xPosition -= 1;
-				if (xVelNeg)
-					player1.xPosition += 1;
-				if (yVelNeg)
-					player1.yPosition += 1;
-				if (yVelPos)
-					player1.yPosition -= 1;
-
-				//player1.xPosition -= 1;
-				//player1.yPosition -= 1;
-				*/
-			}
-
-
-			camera.x = (player1.xPosition + player1.rectangle.w / 2) - SCREEN_WIDTH / 2;
-			camera.y = (player1.yPosition + player1.rectangle.h / 2) - SCREEN_HEIGHT / 2;
-			if (camera.x < 0) {
-				camera.x = 0;
-			}
-			if (camera.y < 0) {
-				camera.y = 0;
-			}
-			if (camera.x > LEVEL_WIDTH - camera.w) {
-				camera.x = LEVEL_WIDTH - camera.w;
-			}
-			if (camera.y > LEVEL_HEIGHT - camera.h) {
-				camera.y = LEVEL_HEIGHT - camera.h;
-			}
-
-			timeSinceLastMovement = SDL_GetTicks();
-
-	
-			//Set Black
-			SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-			SDL_RenderClear(gRenderer);
-
-			for (int i = 0; i < 900; i++) {
-				tiles[i]->render(&camera);
-			}
-
-			if (isClient) {
-				
-				UDPpacket* packet = SDLNet_AllocPacket(32);
-				std::string datay = "aaa";
-
-				static const char* data = "hello";
-				packet->len = strlen(data) + 1;
-				memcpy(packet->data, data, packet->len);
-
-			/*	static const char* data = "left";
-				p->len = strlen(data) + 1;
-				memcpy(packet->data, player1, packet->len);*/
-				//memmove(packet->data, datay, packet->len);
-
-				if (SDLNet_UDP_Send(clientSocket, -1, packet) == 0){
-					std::cout << "\tSDLNet_UDP_Send failed : " << SDLNet_GetError() << "\n";
-				}
-	
-			} if (isHost) {
-				UDPpacket* packet = SDLNet_AllocPacket(32);
-				int received = SDLNet_UDP_Recv(serverSocket, packet);
-				if (received) {
-					printf("%s", packet->data);
-				}
-			}
-
-			for (auto &i : charactersOnScreen) {
-				if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
-					i->flip = SDL_FLIP_NONE;
-				else if (i->xVelocity < 0 && i->flip == SDL_FLIP_NONE)
-					i->flip = SDL_FLIP_HORIZONTAL;
-
-				if (i->getTextureActive() == i->getTextureIdle()) {
-					if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
-						i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
-						i->timeSinceLastAnimation = SDL_GetTicks();
-					}
-				}
-				else if (i->getTextureActive() == i->getTextureIdleNotReady()) {
-					if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
-						i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
-						i->timeSinceLastAnimation = SDL_GetTicks();
-					}
+				if (player1->xDeltaVelocity == 0) {
+					if (player1->xVelocity > 0)
+						if (player1->xVelocity < (player1->getAcceleration() * timePassed))
+							player1->xVelocity = 0;
+						else
+							player1->xVelocity -= (player1->getAcceleration() * timePassed);
+					else if (player1->xVelocity < 0)
+						if (-player1->xVelocity < (player1->getAcceleration() * timePassed))
+							player1->xVelocity = 0;
+						else
+							player1->xVelocity += (player1->getAcceleration() * timePassed);
 				}
 				else {
-					if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenRunAnimations()) {
-						i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
-						i->timeSinceLastAnimation = SDL_GetTicks();
+					player1->xVelocity += player1->xDeltaVelocity;
+				}
+
+				if (player1->yDeltaVelocity == 0) {
+					if (player1->yVelocity > 0)
+						if (player1->yVelocity < (player1->getAcceleration() * timePassed))
+							player1->yVelocity = 0;
+						else
+							player1->yVelocity -= (player1->getAcceleration() * timePassed);
+					else if (player1->yVelocity < 0)
+						if (-player1->yVelocity < (player1->getAcceleration() * timePassed))
+							player1->yVelocity = 0;
+						else
+							player1->yVelocity += (player1->getAcceleration() * timePassed);
+				}
+				else {
+					player1->yVelocity += player1->yDeltaVelocity;
+				}
+
+				//bound within Max Speed
+				if (player1->xVelocity < -(player1->getSpeedMax() + runningAddSpeed))
+					player1->xVelocity = -(player1->getSpeedMax() + runningAddSpeed);
+				else if (player1->xVelocity > (player1->getSpeedMax() + runningAddSpeed))
+					player1->xVelocity = (player1->getSpeedMax() + runningAddSpeed);
+				//bound within Max Speed
+				if (player1->yVelocity < -(player1->getSpeedMax() + runningAddSpeed))
+					player1->yVelocity = -(player1->getSpeedMax() + runningAddSpeed);
+				else if (player1->yVelocity > (player1->getSpeedMax() + runningAddSpeed))
+					player1->yVelocity = (player1->getSpeedMax() + runningAddSpeed);
+
+				//Change sprite if character is in motion
+				if (player1->xVelocity != 0 || player1->yVelocity != 0) {
+
+					if (player1->yVelocity == 0) {
+						if (player1->getTextureActive() != player1->getTextureRun()) {
+							player1->setTextureActive(player1->getTextureRun());
+							player1->currentFrame = 0;
+							player1->currentMaxFrame = player1->getNumRunAnimationFrames();
+						}
+					}
+
+
+					if (player1->xVelocity == 0 && player1->yVelocity > 0) {
+						if (player1->getTextureActive() != player1->getTextureDownRun()) {
+							player1->setTextureActive(player1->getTextureDownRun());
+							player1->currentFrame = 0;
+							player1->currentMaxFrame = player1->getNumRunAnimationFrames();
+						}
+					}
+
+
+
+					if (player1->xVelocity != 0 && player1->yVelocity > 0) {
+						if (player1->getTextureActive() != player1->getTextureDownRightRun()) {
+							player1->setTextureActive(player1->getTextureDownRightRun());
+							player1->currentFrame = 0;
+							player1->currentMaxFrame = player1->getNumRunAnimationFrames();
+						}
+					}
+
+					if (player1->xVelocity != 0 && player1->yVelocity < 0) {
+						if (player1->getTextureActive() != player1->getTextureUpRightRun()) {
+							player1->setTextureActive(player1->getTextureUpRightRun());
+							player1->currentFrame = 0;
+							player1->currentMaxFrame = player1->getNumRunAnimationFrames();
+						}
+					}
+
+
+
+					if (player1->xVelocity == 0 && player1->yVelocity < 0) {
+						if (player1->getTextureActive() != player1->getTextureUpRun()) {
+							player1->setTextureActive(player1->getTextureUpRun());
+							player1->currentFrame = 0;
+							player1->currentMaxFrame = player1->getNumRunAnimationFrames();
+
+						}
 					}
 				}
 
-				i->drawRectangle.x = i->currentFrame *i->getPixelShiftAmountForAnimationInSpriteSheet();
-				i->rectangle.x = (int)i->xPosition - camera.x;
-				i->rectangle.y = (int)i->yPosition - camera.y;
-				SDL_RenderCopyEx(gRenderer, i->getTextureActive(), &i->drawRectangle, &i->rectangle, 0.0, nullptr, i->flip);
-			}
-
-			hudHealthString = "Health: " + to_string(player1.getHPCurrent());
-			hudLevelString = "Level: " + to_string(player1.getLevel());
-			renderText(hudHealthString.c_str(), &hudHealthTextRectangle, &hudTextColor);
-			renderText(hudLevelString.c_str(), &hudLevelTextRectangle, &hudTextColor);
-
-			SDL_RenderPresent(gRenderer);
-
-			if (keyState[SDL_SCANCODE_ESCAPE]) {
-				inOverworld = false;
-				inPauseMenu = true;
-			}
-
-			int enemyToRemove = -1;
-			for (auto z : allEnemies)
-			{
-				if (z->readyTimeLeft > -1)
-					z->readyTimeLeft -= 1;
-				if (z->readyTimeLeft == 0) {
-					z->combatReady = true;
-					z->setTextureActive(z->getTextureIdle());
-				}
-				enemyToRemove++;
-				if (check_collision(player1.rectangle, z->rectangle) && z->combatReady) {
-					z->combatReady = false;
-					z->readyTimeLeft = 3000;
-					z->setTextureActive(z->getTextureIdleNotReady());
-					CollidingCluster = z;
-					combatants.clear();
-					combatants.push_back(&player1);
-					for (auto i : z->characterGroup)
-					{
-						combatants.push_back(i);
+				else {
+					if (player1->getTextureActive() != player1->getTextureIdle()) {
+						player1->setTextureActive(player1->getTextureIdle());
+						player1->currentFrame = 0;
+						player1->currentMaxFrame = player1->getNumIdleAnimationFrames();
 					}
-					allEnemies.erase(allEnemies.begin() + enemyToRemove);
-					charactersOnScreen.erase(charactersOnScreen.begin() + enemyToRemove + 1);
+				}
+
+				int beforeMoveX = player1->xPosition;
+				int beforeMoveY = player1->yPosition;
+				//Move vertically
+				player1->yPosition += (player1->yVelocity * timePassed);
+				if (player1->yPosition < 0 || (player1->yPosition + player1->getImageHeight() > LEVEL_HEIGHT)) {
+					//go back into window
+					player1->yPosition -= (player1->yVelocity * timePassed);
+				}
+
+				//Move horizontally
+				player1->xPosition += (player1->xVelocity * timePassed);
+				if (player1->xPosition < 0 || (player1->xPosition + player1->getImageWidth() > LEVEL_WIDTH)) {
+					//go back into window
+					player1->xPosition -= (player1->xVelocity * timePassed);
+				}
+				//calculate tile player is currently standing on
+				int currentTile = (int)(player1->xPosition + (player1->rectangle.w / 2)) / TILE_WIDTH;
+				currentTile += (int)((player1->yPosition + player1->rectangle.h) / TILE_HEIGHT) * 30;
+
+				// Show which tile the character is standing on
+				/*
+				if (currentTile != tile_test) {
+					cout << currentTile << endl;
+					tile_test = currentTile;
+				}
+				*/
+
+				if (tiles[currentTile]->mType != 0) {
+					player1->xPosition = beforeMoveX;
+					player1->yPosition = beforeMoveY;
+					/*
+					//toDo
+					bool xVelPos = player1->xVelocity > 0;
+					bool xVelNeg = player1->xVelocity < 0;
+					bool yVelPos = player1->yVelocity > 0;
+					bool yVelNeg = player1->yVelocity < 0;
+					player1->xVelocity = 0;
+					player1->yVelocity = 0;
+					if (xVelPos)
+						player1->xPosition -= 1;
+					if (xVelNeg)
+						player1->xPosition += 1;
+					if (yVelNeg)
+						player1->yPosition += 1;
+					if (yVelPos)
+						player1->yPosition -= 1;
+
+					//player1->xPosition -= 1;
+					//player1->yPosition -= 1;
+					*/
+				}
+
+				camera.x = (player1->xPosition + player1->rectangle.w / 2) - SCREEN_WIDTH / 2;
+				camera.y = (player1->yPosition + player1->rectangle.h / 2) - SCREEN_HEIGHT / 2;
+				if (camera.x < 0) {
+					camera.x = 0;
+				}
+				if (camera.y < 0) {
+					camera.y = 0;
+				}
+				if (camera.x > LEVEL_WIDTH - camera.w) {
+					camera.x = LEVEL_WIDTH - camera.w;
+				}
+				if (camera.y > LEVEL_HEIGHT - camera.h) {
+					camera.y = LEVEL_HEIGHT - camera.h;
+				}
+
+				timeSinceLastMovement = SDL_GetTicks();
+
+
+				//Set Black
+				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+				SDL_RenderClear(gRenderer);
+
+				for (int i = 0; i < 900; i++) {
+					tiles[i]->render(&camera);
+				}
+
+				if (isClient) {
+
+					UDPpacket* packet = SDLNet_AllocPacket(32);
+					std::string datay = "aaa";
+
+					static const char* data = "hello";
+					packet->len = strlen(data) + 1;
+					memcpy(packet->data, data, packet->len);
+
+					/*	static const char* data = "left";
+						p->len = strlen(data) + 1;
+						memcpy(packet->data, player1, packet->len);*/
+						//memmove(packet->data, datay, packet->len);
+
+					if (SDLNet_UDP_Send(clientSocket, -1, packet) == 0) {
+						std::cout << "\tSDLNet_UDP_Send failed : " << SDLNet_GetError() << "\n";
+					}
+
+				} if (isHost) {
+					UDPpacket* packet = SDLNet_AllocPacket(32);
+					int received = SDLNet_UDP_Recv(serverSocket, packet);
+					if (received) {
+						printf("%s", packet->data);
+					}
+				}
+
+
+
+				moveCluster(allEnemies, "random", timePassed, tiles, cycle);
+				cycle++;
+
+				for (auto &i : charactersOnScreen) {
+					if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
+						i->flip = SDL_FLIP_NONE;
+					else if (i->xVelocity < 0 && i->flip == SDL_FLIP_NONE)
+						i->flip = SDL_FLIP_HORIZONTAL;
+
+					if (i->getTextureActive() == i->getTextureIdle()) {
+						if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
+							i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+							i->timeSinceLastAnimation = SDL_GetTicks();
+						}
+					}
+					else if (i->getTextureActive() == i->getTextureIdleNotReady()) {
+						if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
+							i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+							i->timeSinceLastAnimation = SDL_GetTicks();
+						}
+					}
+					else {
+						if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenRunAnimations()) {
+							i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+							i->timeSinceLastAnimation = SDL_GetTicks();
+						}
+					}
+
+					i->drawRectangle.x = i->currentFrame *i->getPixelShiftAmountForAnimationInSpriteSheet();
+					i->rectangle.x = (int)i->xPosition - camera.x;
+					i->rectangle.y = (int)i->yPosition - camera.y;
+					SDL_RenderCopyEx(gRenderer, i->getTextureActive(), &i->drawRectangle, &i->rectangle, 0.0, nullptr, i->flip);
+				}
+
+				hudHealthString = "Health: " + to_string(player1->getHPCurrent());
+				hudLevelString = "Level: " + to_string(player1->getLevel());
+				renderText(hudHealthString.c_str(), &hudHealthTextRectangle, &hudTextColor);
+				renderText(hudLevelString.c_str(), &hudLevelTextRectangle, &hudTextColor);
+
+				SDL_RenderPresent(gRenderer);
+
+				if (keyState[SDL_SCANCODE_ESCAPE]) {
 					inOverworld = false;
-					combatStarted = true;
-					break;
+					inPauseMenu = true;
+				}
+
+				int enemyToRemove = -1;
+				for (auto z : allEnemies)
+				{
+					enemyToRemove++;
+					if (check_collision(player1->rectangle, z->rectangle) && z->combatReady) {
+						z->combatReady = false;
+						z->readyTimeLeft = 3000;
+						z->setTextureActive(z->getTextureIdleNotReady());
+						CollidingCluster = z;
+						combatants.clear();
+						combatants.push_back(player1);
+						for (auto i : z->characterGroup)
+						{
+							combatants.push_back(i);
+						}
+						allEnemies.erase(allEnemies.begin() + enemyToRemove);
+						charactersOnScreen.erase(charactersOnScreen.begin() + enemyToRemove + 1);
+						inOverworld = false;
+						combatStarted = true;
+						break;
+					}
+					if (z->readyTimeLeft > -1)
+						z->readyTimeLeft -= 1;
+					if (z->readyTimeLeft == 0) {
+						z->combatReady = true;
+						z->setTextureActive(z->getTextureIdle());
+					}
 				}
 			}
-			
 
-		}
+			if (inPauseMenu) {
+				response = handlePauseMenu(inPauseMenu, charactersOnScreen, tiles, camera);
+				int backToOverWorld = 0;
+				int backToMainMenu = 1;
+				if (response == backToOverWorld) {
+					inOverworld = true;
+				}
+				else if (response == backToMainMenu) {
+					keepPlaying = false;
+				}
+				inPauseMenu = false;
+				timeSinceLastMovement = SDL_GetTicks();
+			}
 
-		if (inPauseMenu) {
-			response = handlePauseMenu(inPauseMenu, charactersOnScreen, tiles, camera);
-			int backToOverWorld = 0;
-			int backToMainMenu = 1;
-			if (response == backToOverWorld) {
+			while (combatStarted) {
+				combatTransition();
+				CombatManager cm;
+				//std::cout << combatants.size();
+				//convert combatants vector of characters to pointer of characters
+				//vector<Character *> c;
+				//for (auto i : combatants)
+					//c.push_back(&i);
+				int combatResult = cm.combatMain(combatants);
+				gMusic = Mix_LoadMUS("Audio/Walking_Test.wav");
+				if (gMusic == NULL)
+					std::cout << "Failed to load music" << std::endl;
+				//Play the music
+				Mix_PlayMusic(gMusic, -1);
+				Mix_ResumeMusic();
+				timeSinceLastMovement = SDL_GetTicks();
+				std::cout << combatResult << std::endl;
+				if (combatResult == ENEMY_WINS) {
+					cout << "\nYOU HAVE DIED\nGAME OVER MAN, GAME OVER" << endl;
+					exit(1);
+				}
+				else if (combatResult == PLAYER_WINS) {
+					if (allEnemies.size() == 0)
+					{
+						keepPlaying = false;
+						if (MAP_INDEX + 1 == ALL_MAPS.size())
+						{
+							EndTransition();
+							SDL_Delay(4000);
+							playCredits();
+						}
+						else
+						{
+							player1->xPosition = 0;
+							player1->yPosition = 0;
+							levelTransition();
+						}
+					}
+				}
+				else if (combatResult == PLAYER_ESCAPES) {
+					allEnemies.push_back(CollidingCluster);
+					charactersOnScreen.push_back(CollidingCluster);
+				}
+				combatStarted = false;
 				inOverworld = true;
 			}
-			else if (response == backToMainMenu) {
-				keepPlaying = false;
+			int backToMainMenu = 1;
+			if (response == backToMainMenu) { //backToMainMenu
+				//for (auto i : charactersOnScreen) {
+				//	delete(&i);
+				//}
+				//destroy tiles etc?
+				handleMain();
 			}
-			inPauseMenu = false;
-		}
-
-		while (combatStarted) {
-			combatTransition();
-			CombatManager cm;
-			//std::cout << combatants.size();
-			//convert combatants vector of characters to pointer of characters
-			//vector<Character *> c;
-			//for (auto i : combatants)
-				//c.push_back(&i);
-			int combatResult = cm.combatMain(combatants);
-			std::cout << combatResult << std::endl;
-			if (combatResult == ENEMY_WINS){
-				cout << "\nYOU HAVE DIED\nGAME OVER MAN, GAME OVER" << endl;
-				exit(1);
-			}
-			else if (combatResult == PLAYER_WINS){
-
-			}
-			else if (combatResult == PLAYER_ESCAPES) {
-				allEnemies.push_back(CollidingCluster);
-				charactersOnScreen.push_back(CollidingCluster);
-			}
-			combatStarted = false;
-			/*
-			enemy1.xPosition = rand() % (LEVEL_WIDTH - enemy1.getImageWidth());
-			enemy1.yPosition = rand() % (LEVEL_HEIGHT - enemy1.getImageHeight());
-			*/
-			inOverworld = true;
-		}
-		int backToMainMenu = 1;
-		if (response == backToMainMenu) { //backToMainMenu
-			//for (auto i : charactersOnScreen) {
-			//	delete(&i);
-			//}
-			//destroy tiles etc?
-			handleMain();
 		}
 	}
 }
@@ -1512,7 +1767,13 @@ if return...
 */
 
 int mainMenu() {
-
+	//Load the music
+	gMusic = Mix_LoadMUS("Audio/Main_Test.wav");
+	if (gMusic == NULL)
+		std::cout << "Failed to load music" << std::endl;
+	//Play the music
+	Mix_PlayMusic(gMusic, -1);
+	Mix_VolumeMusic(MIX_MAX_VOLUME / 5);
 	bool run = true;
 	std::vector<Button*> buttons;
 
