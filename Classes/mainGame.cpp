@@ -1551,7 +1551,7 @@ void playGame() {
 					int result;
 					char msg[MAXLEN];
 
-					result = SDLNet_TCP_Recv(serverSocket, msg, MAXLEN);
+					result = SDLNet_TCP_Recv(clientSocket, msg, MAXLEN);
 					if (result <= 0) {
 						// An error may have occured, but sometimes you can just ignore it
 						// It may be good to disconnect sock because it is likely invalid now.
