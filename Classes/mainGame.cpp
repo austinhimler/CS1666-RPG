@@ -76,7 +76,7 @@ bool init() {
 	// Flag what subsystems to initialize
 	// For now, just video
 	//added audio init
-
+	SDLNet_Init();
     
 	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
@@ -300,6 +300,8 @@ void close() {
 	Mix_FreeChunk(gBSound);
 	gMusic = NULL;
 	// Quit SDL subsystems
+		SDLNet_TCP_Close(clientSocket);
+		SDLNet_TCP_Close(serverSocket);
 	TTF_Quit();
 	Mix_Quit();
 	IMG_Quit();
