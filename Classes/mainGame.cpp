@@ -1223,6 +1223,9 @@ bool handleNetworkingSetup() {
 }
 
 void playGame() {
+
+	bool doNetworking = handleNetworkingSetup();
+
 	//Load the music
 	gMusic = Mix_LoadMUS("Audio/Walking_Test.wav");
 	if (gMusic == NULL)
@@ -1232,7 +1235,6 @@ void playGame() {
 	Mix_VolumeMusic(MIX_MAX_VOLUME / 8);
 	for (MAP_INDEX = 0; MAP_INDEX < ALL_MAPS.size(); MAP_INDEX++)
 	{
-		//bool doNetworking = handleNetworkingSetup();
 		vector<Cluster*> allEnemies = vector<Cluster*>();
 		Cluster* CollidingCluster;
 		for (int num_enemy = 0; num_enemy < STARTING_ENEMIES * (MAP_INDEX + 1); num_enemy++)
