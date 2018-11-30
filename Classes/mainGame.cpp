@@ -1508,10 +1508,37 @@ void playGame() {
 					tiles[i]->render(&camera);
 				}
 
+				if (isClient) {
+
+					UDPpacket* packet = SDLNet_AllocPacket(32);
+					std::string datay = "aaa";
+
+					static const char* data = "hello";
+					packet->len = strlen(data) + 1;
+					memcpy(packet->data, data, packet->len);
+
+					/*	static const char* data = "left";
+						p->len = strlen(data) + 1;
+						memcpy(packet->data, player1, packet->len);*/
+						//memmove(packet->data, datay, packet->len);
+
+					if (SDLNet_UDP_Send(clientSocket, -1, packet) == 0) {
+						std::cout << "\tSDLNet_UDP_Send failed : " << SDLNet_GetError() << "\n";
+					}
+
+				} if (isHost) {
+					UDPpacket* packet = SDLNet_AllocPacket(32);
+					int received = SDLNet_UDP_Recv(serverSocket, packet);
+					if (received) {
+						printf("%s", packet->data);
+					}
+				}
 
 
 				moveCluster(allEnemies, "random", timePassed, tiles, cycle);
 				cycle++;
+
+
 
 				for (auto &i : charactersOnScreen) {
 					if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
