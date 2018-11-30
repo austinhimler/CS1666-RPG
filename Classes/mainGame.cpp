@@ -1171,31 +1171,42 @@ bool handleNetworkingSetup() {
 			break;
 		}
 
-		std::cout << "Enter IP address:\n" << std::endl;
-		std::string ipInput;
-		std::getline(std::cin, ipInput);
-
-		std::cout << "Enter Port:\n" << std::endl;
-		int port;
-		std::cin >> port;
 
 		if (isClient) {
+			std::cout << "Enter IP address:\n" << std::endl;
+			std::string ipInput;
+			std::getline(std::cin, ipInput);
+
+			std::cout << "Enter Port:\n" << std::endl;
+			std::cin >> port;
+
 			SDLNet_ResolveHost(&ipAddress, ipInput.c_str(), port);
+			clientSocket = SDLNet_UDP_Open(ipAddress.port);
+
+			channel = SDLNet_UDP_Bind(clientSocket, -1, &ipAddress);
+
+			std::cout << clientSocket << std::endl;
+			std::cout << channel << std::endl;
+			std::cout << ipInput.c_str() << std::endl;
+			std::cout << ipAddress.host << std::endl;
+			std::cout << ipAddress.port << std::endl;
+
+			if (channel == -1) {
+				printf("Failed Bind: %s\n", SDLNet_GetError());
+			}
 		}
 
 		if (isHost) {
-			//Since the IP is set to null it knows that it will be a server
+			std::cout << "Enter Port:\n" << std::endl;
+			std::cin >> port;
+
 			SDLNet_ResolveHost(&ipAddress, NULL, port);
-			serverSocket = SDLNet_UDP_Open(port);
+			serverSocket = SDLNet_UDP_Open(ipAddress.port);
+			std::cout << serverSocket << std::endl;
+			std::cout << ipAddress.host << std::endl;
+			std::cout << ipAddress.port << std::endl;
 		}
 
-		if (isClient) {
-			clientSocket = NULL;
-			while (clientSocket == NULL) {
-				clientSocket = SDLNet_UDP_Open(port); // for UDP, client can put in in 0 and be assigned?
-			}
-		}
-		
 		return true;
 	}
 
