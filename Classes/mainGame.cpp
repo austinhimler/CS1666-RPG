@@ -54,8 +54,8 @@ bool isHost;
 bool isClient;
 int port;
 IPaddress ipAddress;
-UDPsocket serverSocket;
-UDPsocket clientSocket;
+TCPsocket serverSocket;
+TCPsocket clientSocket;
 
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
@@ -1520,36 +1520,37 @@ void playGame() {
 				}
 
 				if (isClient) {
+					int length;
+					int result;
+					const char* msg = "test!";
 
-					UDPpacket* packet = SDLNet_AllocPacket(32);
-					std::string datay = "aaa";
-
-					static const char* data = "hello";
-					packet->len = strlen(data) + 1;
-					memcpy(packet->data, data, packet->len);
-
-					/*	static const char* data = "left";
-						p->len = strlen(data) + 1;
-						memcpy(packet->data, player1, packet->len);*/
-						//memmove(packet->data, datay, packet->len);
-
-					if (SDLNet_UDP_Send(clientSocket, -1, packet) == 0) {
-						std::cout << "\tSDLNet_UDP_Send failed : " << SDLNet_GetError() << "\n";
+					length = strlen(msg) + 1; // add one for the terminating NULL
+					result = SDLNet_TCP_Send(clientSocket, msg, length);
+					if (result < length) {
+						printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+						// It may be good to disconnect sock because it is likely invalid now.
 					}
 
 				} if (isHost) {
-					UDPpacket* packet = SDLNet_AllocPacket(32);
-					int received = SDLNet_UDP_Recv(serverSocket, packet);
-					if (received) {
-						printf("%s", packet->data);
+
+					// receive some text from sock
+					//TCPsocket sock;
+					#define MAXLEN 1024
+					int result;
+					char msg[MAXLEN];
+
+					result = SDLNet_TCP_Recv(serverSocket, msg, MAXLEN);
+					if (result <= 0) {
+						// An error may have occured, but sometimes you can just ignore it
+						// It may be good to disconnect sock because it is likely invalid now.
 					}
+					printf("Received: \"%s\"\n", msg);
 				}
+
 
 
 				moveCluster(allEnemies, "random", timePassed, tiles, cycle);
 				cycle++;
-
-
 
 				for (auto &i : charactersOnScreen) {
 					if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
