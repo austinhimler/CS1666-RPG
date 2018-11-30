@@ -71,6 +71,7 @@ TTF_Font* font;
 
 //Player ONE
 Player* player1 = new Player("nlf4",1,1,1,1,1);
+Player* notYou;
 
 bool init() {
 	// Flag what subsystems to initialize
