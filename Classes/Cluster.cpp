@@ -15,13 +15,27 @@ Cluster::Cluster(int q) {
 	imageHeight = 144;
 
 	numIdleAnimationFrames = 6 ;
+	numRunAnimatonFrames = 6;
 	currentFrame = 0;
 	timeBetweenIdleAnimations = 120;
+	timeBetweenRunAnimations = 120;
 	imageIdleResource = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
 	imageIdleNotReadyResource = "Images/Enemies/shadow_cluster/OWL_BROWN_NOT_READY.png";
+	imageRightIdleResource = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";;
+	imageRunResource  = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	imageDownRunResource = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	imageDownRightRunResource = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	imageUpRightRunResource = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	imageUpRunResource = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
 
 	Helper helper = Helper();
 	textureIdle = helper.loadImage(imageIdleResource.c_str(), gRenderer);
+	textureRightIdle = helper.loadImage(imageRightIdleResource.c_str(), gRenderer);
+	textureRun = helper.loadImage(imageRunResource.c_str(), gRenderer);
+	textureDownRun = helper.loadImage(imageDownRunResource.c_str(), gRenderer);
+	textureDownRightRun = helper.loadImage(imageDownRightRunResource.c_str(), gRenderer);
+	textureUpRightRun = helper.loadImage(imageUpRightRunResource.c_str(), gRenderer);
+	textureUpRun = helper.loadImage(imageUpRunResource.c_str(), gRenderer);
 	textureIdleNotReady = helper.loadImage(imageIdleNotReadyResource.c_str(), gRenderer);
 	textureActive = NULL;
 

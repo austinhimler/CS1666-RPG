@@ -20,5 +20,8 @@ public:
 	int clusterSize;
 	bool combatReady;
 	int readyTimeLeft;
+
+	int lastDirection = -1;
+
 };
 #endif

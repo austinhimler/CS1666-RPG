@@ -1,6 +1,6 @@
 #include "../Headers/CombatManager.h"
 #include <stdio.h>
-#include <io.h>
+
 
 QueueManager::QueueManager(vector<Character *> c)
 {
@@ -521,6 +521,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 
 	bool printed = false; // for text combat ui
 
+	//OpenGL Setup
 	SDL_GLContext glcontext = SDL_GL_CreateContext(gWindow);
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	glewInit();
