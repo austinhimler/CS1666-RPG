@@ -319,22 +319,22 @@ void close() {
 
 void playCredits() {
 	//Load the music
-	gMusic = Mix_LoadMUS("CREDIT_IMG/BGM.wav");
+	gMusic = Mix_LoadMUS("Audio/BGM.wav");
 	if (gMusic == NULL)
 		std::cout << "Failed to load music" << std::endl;
 	//Play the music
 	Mix_PlayMusic(gMusic, -1);
 
-	gTex.push_back(loadImage("CREDIT_IMG/dsgCredits.png"));
-	gTex.push_back(loadImage("CREDIT_IMG/RyanKillenCreditImage.jpg")); //Ryan Killen - rek77
-	gTex.push_back(loadImage("CREDIT_IMG/bmbCredits.jpg"));
-	gTex.push_back(loadImage("CREDIT_IMG/dank_farnan_meme.jpg")); //Austin Himler - arh121
-	gTex.push_back(loadImage("CREDIT_IMG/Kexin Wang.jpg"));
-	gTex.push_back(loadImage("CREDIT_IMG/justin.jpg"));
-	gTex.push_back(loadImage("CREDIT_IMG/my_greatest_creation.png")); // jake
-	gTex.push_back(loadImage("CREDIT_IMG/ilum.jpg")); // James Finkel
-	gTex.push_back(loadImage("CREDIT_IMG/SankethKolliCredit.jpg")); //Sanketh Kolli - ssk38
-	gTex.push_back(loadImage("CREDIT_IMG/mjl159Credits.png")); //Mitchell Leng - mjl159
+	gTex.push_back(loadImage("Images/Credits/dsgCredits.png"));
+	gTex.push_back(loadImage("Images/Credits/RyanKillenCreditImage.jpg")); //Ryan Killen - rek77
+	gTex.push_back(loadImage("Images/Credits/bmbCredits.jpg"));
+	gTex.push_back(loadImage("Images/Credits/dank_farnan_meme.jpg")); //Austin Himler - arh121
+	gTex.push_back(loadImage("Images/Credits/Kexin Wang.jpg"));
+	gTex.push_back(loadImage("Images/Credits/justin.jpg"));
+	gTex.push_back(loadImage("Images/Credits/my_greatest_creation.png")); // jake
+	gTex.push_back(loadImage("Images/Credits/ilum.jpg")); // James Finkel
+	gTex.push_back(loadImage("Images/Credits/SankethKolliCredit.jpg")); //Sanketh Kolli - ssk38
+	gTex.push_back(loadImage("Images/Credits/mjl159Credits.png")); //Mitchell Leng - mjl159
 
 
 //This is for the actual credits
@@ -380,10 +380,10 @@ void renderText(const char* text, SDL_Rect* rect, SDL_Color* color) {
 
 bool characterCreateScreen() {
 	//loads music and starts it
-	gMusic = Mix_LoadMUS("CREDIT_IMG/charactercreate.wav");
+	gMusic = Mix_LoadMUS("Audio/charactercreate.wav");
 	if (gMusic == NULL)
 		std::cout << "Failed to load music" << std::endl;
-	gBSound = Mix_LoadWAV("CREDIT_IMG/BSound.wav");
+	gBSound = Mix_LoadWAV("Audio/BSound.wav");
 	if (gBSound == NULL)
 	{
 		printf("Failed to load Button sound effect! SDL_mixer Error: %s\n", Mix_GetError());
