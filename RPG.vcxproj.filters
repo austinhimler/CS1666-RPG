@@ -16,6 +16,21 @@
     <Filter Include="Resource Files\CREDIT_IMAGES">
       <UniqueIdentifier>{befb4058-31bd-499d-9b14-cc2b850861b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ResourceManager">
+      <UniqueIdentifier>{416463e5-b8f9-4446-8bd5-643bb50ac720}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ResourceManager">
+      <UniqueIdentifier>{646f6b41-e9a5-4590-8717-4785bf66ffe4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{5e671971-b0b0-4ee3-8540-01adf38b8938}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{c995faba-4e5c-4b68-bee9-a67b62b1ba29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{b29677f9-b1d4-43aa-94b2-f9b2aa7329d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Media Include="CREDIT_IMG\BGM.wav">
@@ -145,9 +160,6 @@
     <ClCompile Include="Classes\LoadTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Classes\Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Classes\Graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -159,6 +171,27 @@
     </ClCompile>
     <ClCompile Include="Classes\CombatManager.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\ResourceManager\ResourceManager.cpp">
+      <Filter>Source Files\ResourceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\ResourceManager\Shader.cpp">
+      <Filter>Source Files\ResourceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\ResourceManager\Texture2D.cpp">
+      <Filter>Source Files\ResourceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\ResourceManager\FontData.cpp">
+      <Filter>Source Files\ResourceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\UI\CombatDialogManager.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\UI\DialogMessage.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\UI\TextRenderer.cpp">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -288,19 +321,63 @@
     <ClInclude Include="SOIL2\stb_image_write.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\Graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\Ailments\AilmentResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\ResourceManager\ResourceManager.h">
+      <Filter>Header Files\ResourceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\ResourceManager\Shader.h">
+      <Filter>Header Files\ResourceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\ResourceManager\Texture2D.h">
+      <Filter>Header Files\ResourceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\ResourceManager\FontData.h">
+      <Filter>Header Files\ResourceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\UI\DialogMessage.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\UI\CombatDialogManager.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\UI\TextRenderer.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="map1.txt">
       <Filter>Resource Files</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\simpleColorShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\simpleColorShader.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\vshader.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\fshader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\textShader.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\textShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\screenShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\screenShader.vs">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

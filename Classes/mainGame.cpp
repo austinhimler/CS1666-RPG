@@ -28,6 +28,8 @@
 #include "../Headers/LoadTexture.h"
 #include "../Headers/Globals.h"
 
+#include "../Headers/ResourceManager/ResourceManager.h"
+
 // Function declarations
 
 bool init();//Starts up SDL, creates window, and initializes OpenGL
@@ -451,6 +453,7 @@ bool characterCreateScreen() {
 	LoadTexture background; 
 	background.loadFromFile("Images/UI/CreateScreen/characterCreateV2NoButtons.png",gRenderer);
 	SDL_Event e;
+	onCharacterCreate = false;
 	while (onCharacterCreate) {
 		while (SDL_PollEvent(&e)) {
 
@@ -1037,8 +1040,8 @@ void playGame() {
 
 	SDL_Event e;
 	SDL_Rect camera = { 0,0,SCREEN_WIDTH, SCREEN_HEIGHT };
-	bool inOverworld = true;
-	bool combatStarted = false;
+	bool inOverworld = false;
+	bool combatStarted = true;
 	bool inPauseMenu = false;
 	bool keepPlaying = true;
 	while (keepPlaying) {
@@ -1336,6 +1339,35 @@ void playGame() {
 				keepPlaying = false;
 			}
 			inPauseMenu = false;
+		}
+
+		int enemyToRemove = -1;
+		for (auto z : allEnemies)
+		{
+			if (z->readyTimeLeft > -1)
+				z->readyTimeLeft -= 1;
+			if (z->readyTimeLeft == 0) {
+				z->combatReady = true;
+				z->setTextureActive(z->getTextureIdle());
+			}
+			enemyToRemove++;
+			if (true) {
+				z->combatReady = false;
+				z->readyTimeLeft = 3000;
+				z->setTextureActive(z->getTextureIdleNotReady());
+				CollidingCluster = z;
+				combatants.clear();
+				combatants.push_back(&player1);
+				for (auto i : z->characterGroup)
+				{
+					combatants.push_back(i);
+				}
+				allEnemies.erase(allEnemies.begin() + enemyToRemove);
+				charactersOnScreen.erase(charactersOnScreen.begin() + enemyToRemove + 1);
+				inOverworld = false;
+				combatStarted = true;
+				break;
+			}
 		}
 
 		while (combatStarted) {
