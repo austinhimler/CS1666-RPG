@@ -112,7 +112,7 @@ int CombatManager::textAction(Character* c) {
 		int target = rand() % player_index.size();
 		int result = participants[player_index[target]]->beingTarget(&temp[0]);
 		stringstream ss;
-		ss << c->getName() << " damages you by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left." << std::endl;
+		ss << c->getName() << " damages you by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left.";
 		m_combatDialogManager.AddMessage(ss.str());
 		
 		/*if (ailments.size() == 0) 
