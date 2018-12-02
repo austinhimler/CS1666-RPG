@@ -117,7 +117,7 @@ int CombatManager::textAction(Character* c) {
 		m_combatDialogManager.AddMessage(ss.str());
 		
 		if (ailments.size() == 0) 
-		{
+		{wwww
 			//std::cout << "Their attack did not have any status effect on you." << std::endl;
 			m_combatDialogManager.AddMessage("Their attack did not have any status effect on you.");
 		}
@@ -146,18 +146,12 @@ int CombatManager::textAction(Character* c) {
 				{
 					// Get the first event
 					auto event = events.front();
-
-					// Simple output message
-					stringstream ss;
-					ss << "You selected option " << event.selectedOption << " which was: " << event.options[event.selectedOption];
-					m_combatDialogManager.AddMessage(ss.str());
-
 					// Pop the event 
 					events.pop();
-
+					performEvent(event.options[event.selectedOption], event.selectedOption);
 					// We'll just reprint the main move selection for now
 					bool print = false;
-					textMain(print);
+					textMain(print, initialText);
 				}
 			}
 			// Clear the events
@@ -313,6 +307,18 @@ int CombatManager::textAction(Character* c) {
 	return IN_COMBAT;
 }
 
+int CombatManager::performEvent(string option, int optNum)
+{
+
+	// Simple output message
+	stringstream ss;
+	ss << "You selected " << option;
+	
+
+	
+	m_combatDialogManager.AddMessage(ss.str());
+	return 1;
+}
 void CombatManager::outputEnemy() {
 	int i = 1;
 	for (int j = 0; j < participants.size(); j++) {
@@ -432,25 +438,27 @@ void CombatManager::setNewButtons(std::vector<Button*>& buttons, int t) {
 	}
 }	//*/
 
-void CombatManager::textMain(bool& printed) {
+void CombatManager::textMain(bool& printed, bool initialText) {
 	if (printed) return;
-
-	m_combatDialogManager.AddMessage("You've encountered the colored cone of death!");
+	if (initialText)
+		m_combatDialogManager.AddMessage("You've encountered the colored cone of death!");
 	std::vector<std::string> options;
 	options.push_back("Strength Abilities");
-	options.push_back("Intelligent Abilities");
-	options.push_back("Dexerity Abilities");
 	options.push_back("Constitution Abilities");
-	options.push_back("Faith Abilities");
-	options.push_back("Inventory");
+	options.push_back("Dexerity Abilities");
 	options.push_back("Player Stats");
+	options.push_back("Faith Abilities");
 	options.push_back("Enemy Stats");
-	m_combatDialogManager.AddSelectableOption("What do you want to do? Select by option number", options);
+	options.push_back("Intelligent Abilities");
+	options.push_back("Escape");
+	
+	m_combatDialogManager.AddSelectableOption("What do you want to do?", options);
 	printed = true;
 }
 
 int CombatManager::combatMain(std::vector<Character*>& p) 
 {
+	initialText = true;
 	participants = p;
 
 	std::cerr << participants.size() << std::endl;
@@ -533,8 +541,8 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 
 	// Set up the combat dialog manager
 	m_combatDialogManager = CombatDialogManager();
-	m_combatDialogManager.SetTimePerCharacter(0.05);
-	m_combatDialogManager.SetWaitTime(2.0);
+	m_combatDialogManager.SetTimePerCharacter(0.02);
+	m_combatDialogManager.SetWaitTime(1.0);
 	m_combatDialogManager.SetColor(glm::vec4(0.0, 0.0, 0.0, 1.0));
 	m_combatDialogManager.SetSelectionColor(glm::vec4(0.0, 1.0, 0.0, 1.0));
 	m_combatDialogManager.SetFont(ResourceManager::getFontData("stacked_pixel"));
@@ -566,20 +574,41 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			SDL_GL_DeleteContext(glcontext);
 			return false; 
 		}
+		gBSound = Mix_LoadWAV("Audio/BSound.wav");
 
 		// Sent inputs to the combat dialog manager
 		if (e.type == SDL_KEYDOWN)
 		{
-			if (e.key.keysym.sym == SDLK_RIGHT)
+			if (e.key.keysym.sym == SDLK_RIGHT) 
+			{
 				m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::RIGHT);
+				Mix_PlayChannel(-1, gBSound, 0);
+			}
+				
 			if (e.key.keysym.sym == SDLK_LEFT)
+			{
 				m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::LEFT);
+				Mix_PlayChannel(-1, gBSound, 0);
+			}
+				
 			if (e.key.keysym.sym == SDLK_UP)
+			{
 				m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::UP);
+				Mix_PlayChannel(-1, gBSound, 0);
+			}
+				
 			if (e.key.keysym.sym == SDLK_DOWN)
+			{
 				m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::DOWN);
+				Mix_PlayChannel(-1, gBSound, 0);
+			}
+				
 			if (e.key.keysym.sym == SDLK_RETURN)
+			{
 				m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::SELECT);
+				Mix_PlayChannel(-1, gBSound, 0);
+			}
+				
 		}
 
 
@@ -613,8 +642,8 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		}
 		
 		
-		textMain(printed); // text combat ui initialization
-
+		textMain(printed, initialText); // text combat ui initialization
+		initialText = false;
 		// We need to fix the idle for the following part
 		// You will need to rewrite to not have an while loops
 		// We need to constantly render to the screen
@@ -638,6 +667,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 
 	}
 	SDL_GL_DeleteContext(glcontext);
+	Mix_FreeChunk(gBSound);
 	return -100;
 
 }
