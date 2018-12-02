@@ -23,7 +23,7 @@ void Graphics::init(void)
 
 	// Load textures
 	ResourceManager::loadTexture("Images/UI/CombatScene/CombatSceneTransparent.png", "combat_HUD");
-	ResourceManager::loadTexture("Images/Player/Idle_Down.png", "player");
+	//ResourceManager::loadTexture("Images/Player/Idle_Down.png", "player");
 
 	// Load fonts
 	ResourceManager::loadFont("Fonts/ka1.ttf", "ka1");
@@ -35,7 +35,7 @@ void Graphics::init(void)
 	glm::vec4 *shape_vertices = sphere(0.5, 36, 0.0, 0.0, 0.0);
 	glm::vec4 *shape_colors = genRandomTriangleColorsSimilar(glm::vec4(1.0, 0.5, 0.0, 1.0));
 
-	int x, y, height, width;
+	/*int x, y, height, width;
 	x = SCREEN_WIDTH/5;
 	y = SCREEN_HEIGHT/3;
 	height = 144;
@@ -52,12 +52,12 @@ void Graphics::init(void)
 	for (int it = 0; it < 6; it++) {
 		playerVertices[it] = glm::vec4(i + w * quadVertices[it].x, j + h * quadVertices[it].y, 0.0, quadVertices[it].w);
 		playerTexCoords[it] = glm::vec2(quadTexCoords[it].x / 6, quadTexCoords[it].y);
-	}
+	}*/
 	
 	ResourceManager::getShader("simple_color_shader").use();
 	glGenVertexArrays(1, &coneVAO);
 	glBindVertexArray(coneVAO);
-	GLuint buffer;
+	
 	glGenBuffers(1, &buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * 2 * num_vertices, NULL, GL_STATIC_DRAW);
@@ -70,7 +70,7 @@ void Graphics::init(void)
 	glEnableVertexAttribArray(vColor);
 	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid *)(sizeof(glm::vec4) * num_vertices));
 
-	glGenVertexArrays(1, &tempVAO);
+	/*glGenVertexArrays(1, &tempVAO);
 	glBindVertexArray(tempVAO);
 	glGenBuffers(1, &buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
@@ -82,10 +82,11 @@ void Graphics::init(void)
 	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), BUFFER_OFFSET(0));
 	vTexCoords = glGetAttribLocation(ResourceManager::getShader("simple_texture_shader").Program, "vTexCoords");
 	glEnableVertexAttribArray(vTexCoords);
-	glVertexAttribPointer(vTexCoords, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (GLvoid*)(sizeof(glm::vec4) * 6));
+	glVertexAttribPointer(vTexCoords, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (GLvoid*)(sizeof(glm::vec4) * 6));*/
+	genQuadTexture(SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0, 144, 144, "Images/Player/Idle_Down.png", "player", 0, 0, 6, 1);
+	genQuadColor(4 * SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0, 144, 144, glm::vec4(0.0, 0.5, 1.0, 1.0));
 
 	// Set up the vertex array object for the HUD
-	
 	glGenVertexArrays(1, &HUDVAO);
 	glBindVertexArray(HUDVAO);
 	glGenBuffers(1, &buffer);
@@ -121,12 +122,33 @@ void Graphics::display(void)
 	glDrawArrays(GL_TRIANGLES, 0, num_vertices);
 
 	// Draw the character
-	glBindVertexArray(tempVAO);
+	/*glBindVertexArray(tempVAO);
 	ResourceManager::getShader("simple_texture_shader").setInteger("texture", 0, true);
 	glActiveTexture(GL_TEXTURE0);
 	ResourceManager::getTexture("player").bind();
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawArrays(GL_TRIANGLES, 0, 6);*/
 
+	if (!objectList.empty()) {
+		for (std::list<GraphicsObject>::iterator it = objectList.begin(); it != objectList.end(); ++it) {
+			switch (it->type) {
+			case 0: //Color Object
+				ResourceManager::getShader("simple_color_shader").use();
+				ResourceManager::getShader("simple_color_shader").setMatrix4("ctm", it->ctm);
+				glBindVertexArray(it->VAO);
+				glDrawArrays(GL_TRIANGLES, 0, it->num_vertices);
+				break;
+			case 1: //Texture Object
+				glBindVertexArray(it->VAO);
+				ResourceManager::getShader("simple_texture_shader").setInteger("texture", 0, true);
+				glActiveTexture(GL_TEXTURE0);
+				ResourceManager::getTexture(it->texture_ID).bind();
+				glDrawArrays(GL_TRIANGLES, 0, it->num_vertices);
+				break;
+			default:
+				break;
+			}
+		}
+	}
 	// Draw the UI
 	// Set up the projection. We will use an orthographic projection for any UI elements.
 	glm::mat4 projection = glm::ortho(0.0f, (GLfloat)SCREEN_WIDTH, 0.0f, (GLfloat)SCREEN_HEIGHT);
@@ -162,111 +184,93 @@ void Graphics::idle(void)
 }
 
 //Returns the index in graphics arrays
-int Graphics::genQuadColor(int x, int y, GLfloat z, int height, int width, glm::vec4 color) {
+void Graphics::genQuadColor(int x, int y, GLfloat z, int height, int width, glm::vec4 color) {
+	GraphicsObject newQuad;
 	int it;
-	GLfloat i, j, h, w;
-	int index = num_vertices;
+	GLfloat h, w;	
 
-	if ((x + width / 2) < 0 || (x - width / 2) > SCREEN_WIDTH || (y + height / 2) < 0 || (y + height / 2) > SCREEN_HEIGHT || z < -1 || z > 1 || height != 0 || width != 0) {
-		return NULL;
+	newQuad.type = 0;
+	newQuad.num_vertices = quad_num_vertices;
+
+	newQuad.x = ((GLfloat)(x - SCREEN_WIDTH / 2)) / ((GLfloat)(SCREEN_WIDTH / 2));
+	newQuad.y = ((GLfloat)(SCREEN_HEIGHT / 2 - y)) / ((GLfloat)(SCREEN_HEIGHT / 2));
+	h = ((GLfloat)height) / ((GLfloat)SCREEN_HEIGHT);
+	w = ((GLfloat)width) / ((GLfloat)SCREEN_WIDTH);
+
+	newQuad.z = z;
+	newQuad.color = color;
+
+	newQuad.position_array = (glm::vec4*)malloc(sizeof(glm::vec4) * newQuad.num_vertices);
+	newQuad.color_array = (glm::vec4*)malloc(sizeof(glm::vec4) * newQuad.num_vertices);
+
+	for (it = 0; it < newQuad.num_vertices; it++) {
+		newQuad.position_array[it] = glm::translate(glm::mat4(), glm::vec3(newQuad.x, newQuad.y, z)) * (glm::vec4(w, h, 1.0f, 1.0f) * quadVertices[it]);
+		newQuad.color_array[it] = color;
 	}
 
-	i = (x - SCREEN_WIDTH / 2) / (SCREEN_WIDTH / 2);
-	j = (SCREEN_HEIGHT / 2 - y) / (SCREEN_HEIGHT / 2);
-	h = height / SCREEN_HEIGHT;
-	w = width / SCREEN_WIDTH;
+	glGenVertexArrays(1, &newQuad.VAO);
+	glBindVertexArray(newQuad.VAO);
+	glGenBuffers(1, &buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec4) * 2) * newQuad.num_vertices, NULL, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec4) * newQuad.num_vertices, newQuad.position_array);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * newQuad.num_vertices, sizeof(glm::vec4) * newQuad.num_vertices, newQuad.color_array);
+	vPosition = glGetAttribLocation(ResourceManager::getShader("simple_color_shader").Program, "vPosition");
+	glEnableVertexAttribArray(vPosition);
+	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+	vColor = glGetAttribLocation(ResourceManager::getShader("simple_color_shader").Program, "vColor");
+	glEnableVertexAttribArray(vColor);
+	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid *)(sizeof(glm::vec4) * newQuad.num_vertices));
 
-	num_vertices += 6;
-
-	glm::vec4 *temp_vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
-	glm::vec4 *temp_colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
-	glm::vec2 *temp_textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
-
-	for (it = 0; it < index; it++) {
-		temp_vertices[it] = vertices[it];
-		temp_colors[it] = colors[it];
-		temp_textures[it] = textures[it];
-	}
-
-	for (it = 0; it < 6; it++) {
-		temp_vertices[index + it] = glm::translate(glm::mat4(), glm::vec3(i, j, z)) * (glm::vec4(w, h, 1.0f, 1.0f) * quadVertices[it]);
-		temp_colors[index + it] = color;
-		temp_textures[index + it] = { 0.0f, 0.0f };
-	}
-
-	free(vertices);
-	free(colors);
-	free(textures);
-
-	vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
-	colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
-	textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
-
-	for (it = 0; it < num_vertices; it++) {
-		temp_vertices[it] = vertices[it];
-		temp_colors[it] = colors[it];
-		temp_textures[it] = textures[it];
-	}
-
-	free(temp_vertices);
-	free(temp_colors);
-	free(temp_textures);
-
-	return index;
+	objectList.push_back(newQuad);
 }
 
 //Returns the index in graphics arrays
-int Graphics::genQuadTexture(int x, int y, GLfloat z, int height, int width, std::string texture_path) {
+void Graphics::genQuadTexture(int x, int y, GLfloat z, int height, int width, const GLchar *file, std::string texture_ID, int texture_sheet_x, int texture_sheet_y, int texture_sheet_size_x, int texture_sheet_size_y) {
+	GraphicsObject newQuad;
 	int it;
-	GLfloat i, j, h, w;
-	int index = num_vertices;
+	GLfloat h, w;
 
-	if ((x + width / 2) < 0 || (x - width / 2) > SCREEN_WIDTH || (y + height / 2) < 0 || (y + height / 2) > SCREEN_HEIGHT || z < -1 || z > 1 || height != 0 || width != 0) {
-		return NULL;
+	newQuad.type = 1;
+	newQuad.num_vertices = quad_num_vertices;
+
+	newQuad.x = ((GLfloat)(x - SCREEN_WIDTH / 2)) / ((GLfloat)(SCREEN_WIDTH / 2));
+	newQuad.y = ((GLfloat)(SCREEN_HEIGHT / 2 - y)) / ((GLfloat)(SCREEN_HEIGHT / 2));
+	h = ((GLfloat)height) / ((GLfloat)SCREEN_HEIGHT);
+	w = ((GLfloat)width) / ((GLfloat)SCREEN_WIDTH);
+
+	newQuad.z = z;
+	newQuad.texture_ID = texture_ID;
+	ResourceManager::loadTexture(file, texture_ID);
+
+	newQuad.texture_sheet_x = texture_sheet_x;
+	newQuad.texture_sheet_y = texture_sheet_y;
+	newQuad.texture_sheet_size_x = texture_sheet_size_x;
+	newQuad.texture_sheet_size_y = texture_sheet_size_y;
+
+	newQuad.position_array = (glm::vec4*)malloc(sizeof(glm::vec4) * newQuad.num_vertices);
+	newQuad.texture_array = (glm::vec2*)malloc(sizeof(glm::vec2) * newQuad.num_vertices);
+
+	for (it = 0; it < newQuad.num_vertices; it++) {
+		newQuad.position_array[it] = glm::translate(glm::mat4(), glm::vec3(newQuad.x, newQuad.y, z)) * (glm::vec4(w, h, 1.0f, 1.0f) * quadVertices[it]);
+		newQuad.texture_array[it] = glm::vec2((GLfloat)(texture_sheet_x + 1) * (quadTexCoords[it].x / texture_sheet_size_x), (GLfloat)(texture_sheet_y + 1) * (quadTexCoords[it].y / texture_sheet_size_y));
 	}
 
-	i = (x - SCREEN_WIDTH / 2) / (SCREEN_WIDTH / 2);
-	j = (SCREEN_HEIGHT / 2 - y) / (SCREEN_HEIGHT / 2);
-	h = height / SCREEN_HEIGHT;
-	w = width / SCREEN_WIDTH;
+	glGenVertexArrays(1, &newQuad.VAO);
+	glBindVertexArray(newQuad.VAO);
+	glGenBuffers(1, &buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec4) + sizeof(glm::vec2)) * newQuad.num_vertices, NULL, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec4) * newQuad.num_vertices, newQuad.position_array);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * newQuad.num_vertices, sizeof(glm::vec2) * newQuad.num_vertices, newQuad.texture_array);
+	vPosition = glGetAttribLocation(ResourceManager::getShader("simple_texture_shader").Program, "vPosition");
+	glEnableVertexAttribArray(vPosition);
+	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), BUFFER_OFFSET(0));
+	vTexCoords = glGetAttribLocation(ResourceManager::getShader("simple_texture_shader").Program, "vTexCoords");
+	glEnableVertexAttribArray(vTexCoords);
+	glVertexAttribPointer(vTexCoords, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (GLvoid*)(sizeof(glm::vec4) * newQuad.num_vertices));
 
-	num_vertices += 6;
-
-	glm::vec4 *temp_vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
-	glm::vec4 *temp_colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
-	glm::vec2 *temp_textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
-	
-	for (it = 0; it < index; it++) {
-		temp_vertices[it] = vertices[it];
-		temp_colors[it] = colors[it];
-		temp_textures[it] = textures[it];
-	}
-
-	for (it = 0; it < 6; it++) {
-		temp_vertices[index + it] = glm::translate(glm::mat4(), glm::vec3(i, j, z)) * (glm::vec4(w, h, 1.0f, 1.0f) * quadVertices[it]);
-		temp_colors[index + it] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		temp_textures[index + it] = quadTexCoords[it];
-	}
-
-	free(vertices);
-	free(colors);
-	free(textures);
-
-	vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
-	colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
-	textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
-
-	for (it = 0; it < num_vertices; it++) {
-		temp_vertices[it] = vertices[it];
-		temp_colors[it] = colors[it];
-		temp_textures[it] = textures[it];
-	}
-
-	free(temp_vertices);
-	free(temp_colors);
-	free(temp_textures);
-
-	return index;
+	objectList.push_back(newQuad);
 }
 
 //Recolors the rectangle based on index
