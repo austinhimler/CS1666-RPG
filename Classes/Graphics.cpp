@@ -1,7 +1,6 @@
 #include "../Headers/Graphics.h"
 #include "time.h"
 #include <iostream>
-#include <string>
 
 #include "../dev_lib/includes/ft2build.h"
 #include "../dev_lib/includes/freetype/freetype.h"
@@ -9,8 +8,6 @@
 #include "../Headers/UI/TextRenderer.h"
 
 GLuint textVAO, textVBO, coneVAO, HUDVAO, tempVAO;
-
-GLuint vPosition, vColor, vTexCoords;
 
 void Graphics::init(void)
 {
@@ -36,35 +33,29 @@ void Graphics::init(void)
 	textRenderer.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	int shape_num_vertices;
-	glm::vec4 *shape_vertices = cone(&shape_num_vertices);  // Consider using glm::vec3, theres not really a need to have a glm::vec4 here
+	glm::vec4 *shape_vertices = cone(&shape_num_vertices);
 	glm::vec4 *shape_colors = genRandomTriangleColors(shape_num_vertices);
 	num_vertices = shape_num_vertices;
 
-	// Vertices for a simple 1x1 textured quad
-	glm::vec4 quadVertices[] = {
-		{ -1.0f, 1.0f, 0.0f, 1.0f },
-		{ -1.0f, -1.0f, 0.0f, 1.0f },
-		{ 1.0f, -1.0f, 0.0f, 1.0f },
-		{ -1.0f, 1.0f, 0.0f, 1.0f },
-		{ 1.0f, -1.0f, 0.0f, 1.0f },
-		{ 1.0f, 1.0f, 0.0f, 1.0f }
-	};
-	glm::vec2 quadTexCoords[] = {
-		{ 0.0f, 0.0f },
-		{ 0.0f, 1.0f },
-		{ 1.0f, 1.0f },
-		{ 0.0f, 0.0f },
-		{ 1.0f, 1.0f },
-		{ 1.0f, 0.0f }
-	};
+	int x, y, height, width;
+	x = SCREEN_WIDTH/5;
+	y = SCREEN_HEIGHT/3;
+	height = 144;
+	width = 144;
+	
+	GLfloat i, j, h, w;
+	i = ((GLfloat)(x - SCREEN_WIDTH / 2)) / ((GLfloat)(SCREEN_WIDTH / 2));
+	j = ((GLfloat)(SCREEN_HEIGHT / 2 - y)) / ((GLfloat)(SCREEN_HEIGHT / 2));
+	h = ((GLfloat)height) / ((GLfloat)SCREEN_HEIGHT);
+	w = ((GLfloat)width) / ((GLfloat)SCREEN_WIDTH);
 
 	glm::vec4 playerVertices[6];
-	for (int i = 0; i < 6; i++) {
-		playerVertices[i] = glm::vec4(0.5 * quadVertices[i].x, 0.5 * quadVertices[i].y, 0.5, quadVertices[i].w);
+	glm::vec2 playerTexCoords[6];
+	for (int it = 0; it < 6; it++) {
+		playerVertices[it] = glm::vec4(i + w * quadVertices[it].x, j + h * quadVertices[it].y, 0.0, quadVertices[it].w);
+		playerTexCoords[it] = glm::vec2(quadTexCoords[it].x / 6, quadTexCoords[it].y);
 	}
-
-
-
+	
 	ResourceManager::getShader("simple_color_shader").use();
 	glGenVertexArrays(1, &coneVAO);
 	glBindVertexArray(coneVAO);
@@ -87,7 +78,7 @@ void Graphics::init(void)
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec4) + sizeof(glm::vec2)) * 6, NULL, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec4) * 6, playerVertices);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * 6, sizeof(glm::vec2) * 6, quadTexCoords);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * 6, sizeof(glm::vec2) * 6, playerTexCoords);
 	vPosition = glGetAttribLocation(ResourceManager::getShader("simple_texture_shader").Program, "vPosition");
 	glEnableVertexAttribArray(vPosition);
 	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), BUFFER_OFFSET(0));
@@ -130,19 +121,19 @@ void Graphics::display(void)
 	glBindVertexArray(coneVAO);
 	glDrawArrays(GL_TRIANGLES, 0, num_vertices);
 
-	// Draw the UI
-	// Set up the projection. We will use an orthographic projection for any UI elements.
-	glm::mat4 projection = glm::ortho(0.0f, (GLfloat)SCREEN_WIDTH, 0.0f, (GLfloat)SCREEN_HEIGHT);
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 	// Draw the character
 	glBindVertexArray(tempVAO);
 	ResourceManager::getShader("simple_texture_shader").setInteger("texture", 0, true);
 	glActiveTexture(GL_TEXTURE0);
 	ResourceManager::getTexture("player").bind();
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	// Draw the UI
+	// Set up the projection. We will use an orthographic projection for any UI elements.
+	glm::mat4 projection = glm::ortho(0.0f, (GLfloat)SCREEN_WIDTH, 0.0f, (GLfloat)SCREEN_HEIGHT);
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Draw the HUD background image
 	glBindVertexArray(HUDVAO);
@@ -169,78 +160,6 @@ void Graphics::idle(void)
 {
 	ctm = ctm * glm::rotate(0.01f, randomRotationAxis);
 	display();
-}
-
-/*void Graphics::loadTexture(string file, int width, int height)
-{
-	GLubyte* my_texels = (GLubyte*)malloc(sizeof(GLubyte) * width * height * 3);
-	FILE *fp = fopen(file, "r");
-	if (fp == NULL)
-	{
-		printf("Unable to open the texture file\n");
-	}
-	fread(my_texels, width * height * 3, 1, fp);
-	glUseProgram(program);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-}*/
-
-void Graphics::generateCombat(glm::vec4 *vert, glm::vec4 *color, glm::vec2 *text)
-{
-	int i, j, outp;
-	int it = 0;
-	//Background
-	/*for (i = 0; i < 6; i++) {
-		vert[it] = glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, -0.9f)) * rectangle[i];
-		color[it] = { 0.0f, 0.0f, 1.0f, 1.0f };
-		//Filler
-		text[it] = { 0.0f, 0.0f };
-		it++;
-	}*/
-	printf("test\n");
-	
-
-	//Player
-	for (i = 0; i < 6; i++) {
-		vert[it] = glm::translate(glm::mat4(), glm::vec3(-0.5f, 0.25f, 0.0f)) * (glm::vec4(0.25f, 0.25f, 0.25f, 1.0f) * rectangle[i]);
-		color[it] = { 0.0f, 0.0f, 0.0f, 1.0f };
-		//Filler
-		text[it] = { 0.0f, 0.0f };
-		it++;
-	}
-
-	//Enemy
-	for (i = 0; i < 6; i++) {
-		vert[it] = glm::translate(glm::mat4(), glm::vec3(0.5f, 0.25f, 0.0f)) * (glm::vec4(0.25f, 0.25f, 0.25f, 1.0f) * rectangle[i]);
-		color[it] = { 1.0f, 0.0f, 0.0f, 1.0f };
-		//Filler
-		text[it] = { 0.0f, 0.0f };
-		it++;
-	}
-	/*load texture for buttons
-	Tried getting SOIL to link correctly for hours but I had no luck, I'll try again tonight but incase someone else figures it out before I do here's some code that should work
-	GLuint tex;
-	glGenTextures(1, &tex);
-	glBindTexture(GL_TEXTURE_2D, tex);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	int width, height;
-	unsigned char* image = SOIL_load_image("Images/UI/CombatScene/Button.png", &width, &height, 0, SOIL_LOAD_RGBA);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-	*/
-	//Buttons
-	for (j = 0; j < 6; j++) {
-		for (i = 0; i < 6; i++) {
-			vert[it] = glm::translate(glm::mat4(), glm::vec3(-0.75f + (0.25f * (j % 3)), (-0.5f - (0.25f * ((j > 2) ? 1 : 0))), 1.0f)) * (glm::vec4(0.0625f, 0.0625f, 0.0625f, 1.0f) * rectangle[i]);
-			color[it] = { 0.0f, 1.0f, 0.0f, 1.0f };
-			//Filler
-			text[it] = { 0.0f, 0.0f };
-			it++;
-		}
-	}
 }
 
 //Returns the index in graphics arrays
@@ -271,7 +190,7 @@ int Graphics::generate2dRectangleColor(int x, int y, GLfloat z, int height, int 
 	}
 
 	for (it = 0; it < 6; it++) {
-		temp_vertices[index + it] = glm::translate(glm::mat4(), glm::vec3(i, j, z)) * (glm::vec4(w, h, 1.0f, 1.0f) * rectangle[it]);
+		temp_vertices[index + it] = glm::translate(glm::mat4(), glm::vec3(i, j, z)) * (glm::vec4(w, h, 1.0f, 1.0f) * quadVertices[it]);
 		temp_colors[index + it] = color;
 		temp_textures[index + it] = { 0.0f, 0.0f };
 	}
@@ -325,7 +244,7 @@ int Graphics::generate2dRectangleColorCorners(int x, int y, GLfloat z, int heigh
 	}
 	
 	for (it = 0; it < 6; it++) {
-		temp_vertices[index + it] = glm::translate(glm::mat4(), glm::vec3(i, j, z)) * (glm::vec4(w, h, 1.0f, 1.0f) * rectangle[it]);
+		temp_vertices[index + it] = glm::translate(glm::mat4(), glm::vec3(i, j, z)) * (glm::vec4(w, h, 1.0f, 1.0f) * quadVertices[it]);
 		temp_textures[index + it] = { 0.0f, 0.0f };
 	}
 	temp_colors[index + 0] = color_bl;
@@ -384,9 +303,9 @@ int Graphics::generate2dRectangleTexture(int x, int y, GLfloat z, int height, in
 	}
 
 	for (it = 0; it < 6; it++) {
-		temp_vertices[index + it] = glm::translate(glm::mat4(), glm::vec3(i, j, z)) * (glm::vec4(w, h, 1.0f, 1.0f) * rectangle[it]);
+		temp_vertices[index + it] = glm::translate(glm::mat4(), glm::vec3(i, j, z)) * (glm::vec4(w, h, 1.0f, 1.0f) * quadVertices[it]);
 		temp_colors[index + it] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		temp_textures[index + it] = rectangle_texture[it];
+		temp_textures[index + it] = quadTexCoords[it];
 	}
 
 	free(vertices);

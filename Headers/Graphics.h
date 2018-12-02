@@ -29,9 +29,6 @@ public:
 	void display(void);
 	void idle(void);
 
-	//void Graphics::loadTexture(string file, int width, int height)
-	void generateCombat(glm::vec4 *vert, glm::vec4 *color, glm::vec2 *text);
-
 	int generate2dRectangleColor(int x, int y, GLfloat z, int height, int width, glm::vec4 color);
 	int generate2dRectangleColorCorners(int x, int y, GLfloat z, int height, int width, glm::vec4 color_tl, glm::vec4 color_bl, glm::vec4 color_tr, glm::vec4 color_br);
 	int generate2dRectangleTexture(int x, int y, GLfloat z, int height, int width, std::string texture_path);
@@ -52,20 +49,30 @@ public:
 	TextRenderer textRenderer;
 private:
 	int num_vertices = 0;
+	GLuint vPosition;
+	GLuint vColor;
+	GLuint vTexCoords;
 	glm::vec4 *vertices;
 	glm::vec4 *colors;
 	glm::vec2 *textures;
 	glm::mat4 ctm = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
 	glm::vec3 randomRotationAxis = { 0.0, 0.0, 0.0 };
-	glm::vec4 rectangle[6] = { { -1.0, -1.0, 0.0, 1.0 },
-								{ 1.0, 1.0, 0.0, 1.0 },
-								{ -1.0, 1.0, 0.0, 1.0 },
-								{ -1.0, -1.0, 0.0, 1.0 },
-								{ 1.0, -1.0, 0.0, 1.0 },
-								{ 1.0, 1.0, 0.0, 1.0 },
-							};
-	glm::vec2 rectangle_texture[6] = { { -1.0, -1.0 }, { 1.0, 1.0 }, { -1.0, 1.0 },
-								{ -1.0, -1.0 }, { 1.0, -1.0 }, { 1.0, 1.0 },
+	// Vertices for a simple 1x1 textured quad
+	glm::vec4 quadVertices[6] = {
+		{ -1.0f, 1.0f, 0.0f, 1.0f },
+		{ -1.0f, -1.0f, 0.0f, 1.0f },
+		{ 1.0f, -1.0f, 0.0f, 1.0f },
+		{ -1.0f, 1.0f, 0.0f, 1.0f },
+		{ 1.0f, -1.0f, 0.0f, 1.0f },
+		{ 1.0f, 1.0f, 0.0f, 1.0f }
+	};
+	glm::vec2 quadTexCoords[6] = {
+		{ 0.0f, 0.0f },
+		{ 0.0f, 1.0f },
+		{ 1.0f, 1.0f },
+		{ 0.0f, 0.0f },
+		{ 1.0f, 1.0f },
+		{ 1.0f, 0.0f }
 	};
 	std::vector<RenderableText> m_textToRender; // Stores the text to render for the current tick. Cleared after flushing to screen.
 };
