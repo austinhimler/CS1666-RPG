@@ -1229,12 +1229,15 @@ bool handleNetworkingSetup() {
 
 void playGame() {
 
+	std::vector<Character*> charactersOnScreen;
+	std::vector<Character*> combatants;
+	
 	bool doNetworking = handleNetworkingSetup();
 	if (doNetworking) {
 		int length;
 		int result;
 
-		length = sizeof(Player) + 1; 
+		length = sizeof(Player); 
 
 		// serialize into stream
 		char* stream = reinterpret_cast<char*>(&player1);
@@ -1247,9 +1250,9 @@ void playGame() {
 		while (notYou == NULL) {
 			int result;
 			int length;
-			length = sizeof(Player) + 1;
+			length = sizeof(Player);
 
-			char buffer[sizeof(Player) + 1];
+			char buffer[sizeof(Player)];
 			result = SDLNet_TCP_Recv(clientSocket, buffer, length);
 			notYou = reinterpret_cast<Player*>(buffer);
 
@@ -1258,6 +1261,7 @@ void playGame() {
 			}
 			cout << notYou << endl;
 		}
+		charactersOnScreen.push_back(notYou);
 		
 	}
 
@@ -1318,8 +1322,7 @@ void playGame() {
 			}
 		}
 
-		std::vector<Character*> charactersOnScreen;
-		std::vector<Character*> combatants;
+
 
 
 		Uint32 timeSinceLastMovement = SDL_GetTicks();
@@ -1566,32 +1569,37 @@ void playGame() {
 					tiles[i]->render(&camera);
 				}
 
+
+				if (doNetworking) {
+
+				}
+
 				if (isClient) {
 					int length;
 					int result;
-					const char* msg = "test!";
 
-					length = strlen(msg) + 1; // add one for the terminating NULL
-					result = SDLNet_TCP_Send(clientSocket, msg, length);
+					length = sizeof(Player);
+
+					// serialize into stream
+					char* stream = reinterpret_cast<char*>(&player1);
+					result = SDLNet_TCP_Send(clientSocket, stream, length);
 					if (result < length) {
 						printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-						// It may be good to disconnect sock because it is likely invalid now.
 					}
+
 
 				} if (isHost) {
-
-					// receive some text from sock
-					//TCPsocket sock;
-					#define MAXLEN 1024
 					int result;
-					char msg[MAXLEN];
+					int length;
+					length = sizeof(Player);
 
-					result = SDLNet_TCP_Recv(clientSocket, msg, MAXLEN);
-					if (result <= 0) {
-						// An error may have occured, but sometimes you can just ignore it
-						// It may be good to disconnect sock because it is likely invalid now.
+					char buffer[sizeof(Player)];
+					result = SDLNet_TCP_Recv(clientSocket, buffer, length);
+					notYou = reinterpret_cast<Player*>(buffer);
+
+					if (result < length) {
+						printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 					}
-					printf("Received: \"%s\"\n", msg);
 				}
 
 
