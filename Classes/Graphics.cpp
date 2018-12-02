@@ -8,9 +8,9 @@
 #include "../Headers/ResourceManager/ResourceManager.h"
 #include "../Headers/UI/TextRenderer.h"
 
-GLuint textVAO, textVBO;
-GLuint coneVAO;
-GLuint HUDVAO;
+GLuint textVAO, textVBO, coneVAO, HUDVAO, tempVAO;
+
+GLuint vPosition, vColor, vTexCoords;
 
 void Graphics::init(void)
 {
@@ -22,10 +22,11 @@ void Graphics::init(void)
 
 	// Load shaders
 	ResourceManager::loadShader("Shaders/simpleColorShader.vs", "Shaders/simpleColorShader.frag", nullptr, "simple_color_shader");
-	ResourceManager::loadShader("Shaders/screenShader.vs", "Shaders/screenShader.frag", nullptr, "screen_shader");
+	ResourceManager::loadShader("Shaders/simpleTextureShader.vs", "Shaders/simpleTextureShader.frag", nullptr, "simple_texture_shader");
 
 	// Load textures
 	ResourceManager::loadTexture("Images/UI/CombatScene/CombatSceneTransparent.png", "combat_HUD");
+	ResourceManager::loadTexture("Images/Player/Idle_Down.png", "player");
 
 	// Load fonts
 	ResourceManager::loadFont("Fonts/ka1.ttf", "ka1");
@@ -39,6 +40,31 @@ void Graphics::init(void)
 	glm::vec4 *shape_colors = genRandomTriangleColors(shape_num_vertices);
 	num_vertices = shape_num_vertices;
 
+	// Vertices for a simple 1x1 textured quad
+	glm::vec4 quadVertices[] = {
+		{ -1.0f, 1.0f, 0.0f, 1.0f },
+		{ -1.0f, -1.0f, 0.0f, 1.0f },
+		{ 1.0f, -1.0f, 0.0f, 1.0f },
+		{ -1.0f, 1.0f, 0.0f, 1.0f },
+		{ 1.0f, -1.0f, 0.0f, 1.0f },
+		{ 1.0f, 1.0f, 0.0f, 1.0f }
+	};
+	glm::vec2 quadTexCoords[] = {
+		{ 0.0f, 0.0f },
+		{ 0.0f, 1.0f },
+		{ 1.0f, 1.0f },
+		{ 0.0f, 0.0f },
+		{ 1.0f, 1.0f },
+		{ 1.0f, 0.0f }
+	};
+
+	glm::vec4 playerVertices[6];
+	for (int i = 0; i < 6; i++) {
+		playerVertices[i] = glm::vec4(0.5 * quadVertices[i].x, 0.5 * quadVertices[i].y, 0.5, quadVertices[i].w);
+	}
+
+
+
 	ResourceManager::getShader("simple_color_shader").use();
 	glGenVertexArrays(1, &coneVAO);
 	glBindVertexArray(coneVAO);
@@ -48,58 +74,57 @@ void Graphics::init(void)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * 2 * num_vertices, NULL, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec4) * num_vertices, shape_vertices);
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * num_vertices, sizeof(glm::vec4) * num_vertices, shape_colors);
-	GLuint vPosition = glGetAttribLocation(ResourceManager::getShader("simple_color_shader").Program, "vPosition");
+	vPosition = glGetAttribLocation(ResourceManager::getShader("simple_color_shader").Program, "vPosition");
 	glEnableVertexAttribArray(vPosition);
 	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-	GLuint vColor = glGetAttribLocation(ResourceManager::getShader("simple_color_shader").Program, "vColor");
+	vColor = glGetAttribLocation(ResourceManager::getShader("simple_color_shader").Program, "vColor");
 	glEnableVertexAttribArray(vColor);
 	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid *)(sizeof(glm::vec4) * num_vertices));
 
-	//GLuint vTexCoord = glGetAttribLocation(program, "vTexCoord");
-	//glEnableVertexAttribArray(vTexCoord);
-	//glVertexAttribPointer(vTexCoord, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid *)(sizeof(glm::vec2) * 2 * num_vertices));
+	glGenVertexArrays(1, &tempVAO);
+	glBindVertexArray(tempVAO);
+	glGenBuffers(1, &buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec4) + sizeof(glm::vec2)) * 6, NULL, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec4) * 6, playerVertices);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * 6, sizeof(glm::vec2) * 6, quadTexCoords);
+	vPosition = glGetAttribLocation(ResourceManager::getShader("simple_texture_shader").Program, "vPosition");
+	glEnableVertexAttribArray(vPosition);
+	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), BUFFER_OFFSET(0));
+	vTexCoords = glGetAttribLocation(ResourceManager::getShader("simple_texture_shader").Program, "vTexCoords");
+	glEnableVertexAttribArray(vTexCoords);
+	glVertexAttribPointer(vTexCoords, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (GLvoid*)(sizeof(glm::vec4) * 6));
 
-	//ctm_location = glGetUniformLocation(program, "ctm");
+	// Set up the vertex array object for the HUD
+	
+	glGenVertexArrays(1, &HUDVAO);
+	glBindVertexArray(HUDVAO);
+	glGenBuffers(1, &buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec4) + sizeof(glm::vec2)) * 6, NULL, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec4) * 6, quadVertices);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * 6, sizeof(glm::vec2) * 6, quadTexCoords);
+	vPosition = glGetAttribLocation(ResourceManager::getShader("simple_texture_shader").Program, "vPosition");
+	glEnableVertexAttribArray(vPosition);
+	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+	vTexCoords = glGetAttribLocation(ResourceManager::getShader("simple_texture_shader").Program, "vTexCoords");
+	glEnableVertexAttribArray(vTexCoords);
+	glVertexAttribPointer(vTexCoords, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(sizeof(glm::vec4) * 6));
 
 	glEnable(GL_DEPTH_TEST);
 	// Set the clear color to light green (same as combatScene.png)
 	glClearColor(0.694, 0.886, 0.78, 1.0);
 	glDepthRange(1, 0);
-
-	// Vertices for a simple 1x1 textured quad
-	GLfloat quadVertices[] = {
-		// Positions   // TexCoords
-		-1.0f, 1.0f,   0.0f, 1.0f,
-		-1.0f, -1.0f,  0.0f, 0.0f,
-		1.0f, -1.0f,   1.0f, 0.0f,
-		-1.0f, 1.0f,   0.0f, 1.0f,
-		1.0f, -1.0f,   1.0f, 0.0f,
-		1.0f, 1.0f,    1.0f, 1.0f
-	};
-
-	// Set up the vertex array object for the HUD
-	GLuint HUDVBO;
-	glGenVertexArrays(1, &HUDVAO);
-	glGenBuffers(1, &HUDVBO);
-	glBindVertexArray(HUDVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, HUDVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
-	glBindVertexArray(0);
 }
 
 void Graphics::display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// Set the clear color to light green (same as combatScene.png)
-	//glClearColor(0.694, 0.886, 0.78, 1.0);
 
-	// Draw the cone
 	glPolygonMode(GL_FRONT, GL_FILL);
 	glPolygonMode(GL_BACK, GL_LINE);
+
+	// Draw the cone
 	ResourceManager::getShader("simple_color_shader").use();
 	ResourceManager::getShader("simple_color_shader").setMatrix4("ctm", ctm);
 	glBindVertexArray(coneVAO);
@@ -111,10 +136,17 @@ void Graphics::display(void)
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// Draw the character
+	glBindVertexArray(tempVAO);
+	ResourceManager::getShader("simple_texture_shader").setInteger("texture", 0, true);
+	glActiveTexture(GL_TEXTURE0);
+	ResourceManager::getTexture("player").bind();
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
 	// Draw the HUD background image
 	glBindVertexArray(HUDVAO);
-	glDisable(GL_DEPTH_TEST);
-	ResourceManager::getShader("screen_shader").setInteger("screenTexture", 0, true);
+	ResourceManager::getShader("simple_texture_shader").setInteger("texture", 0, true);
 	glActiveTexture(GL_TEXTURE0);
 	ResourceManager::getTexture("combat_HUD").bind();
 	glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -125,13 +157,12 @@ void Graphics::display(void)
 		textRenderer.RenderText(text);
 	}
 
-	glEnable(GL_DEPTH_TEST);
-	glBindVertexArray(0);
-
-	SDL_GL_SwapWindow(gWindow);
-
 	// Clear the text
 	m_textToRender.clear();
+
+	glEnable(GL_DEPTH_TEST);
+
+	SDL_GL_SwapWindow(gWindow);
 }
 
 void Graphics::idle(void)

@@ -51,7 +51,6 @@ public:
 	glm::vec4* genRandomTriangleColors(int num_vertices);
 	TextRenderer textRenderer;
 private:
-	GLuint ctm_location;
 	int num_vertices = 0;
 	glm::vec4 *vertices;
 	glm::vec4 *colors;

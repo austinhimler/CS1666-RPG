@@ -1,7 +1,7 @@
-
 #version 330 core
-attribute vec4 vPosition;
-attribute vec4 vColor;
+
+in vec4 vPosition;
+in vec4 vColor;
 
 out vec4 color;
 
