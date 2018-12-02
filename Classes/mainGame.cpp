@@ -1573,6 +1573,11 @@ void playGame() {
 				cout << "\nYOU HAVE DIED\nGAME OVER MAN, GAME OVER" << endl;
 				exit(1);
 			}
+			//Random integer for Quitting the game
+			else if (combatResult == -69)
+			{
+				exit(1);
+			}
 			else if (combatResult == PLAYER_WINS){
 
 			}

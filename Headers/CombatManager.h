@@ -28,11 +28,11 @@ public:
 	/*
 	*	the folloiwng 3 fucntions return true if player wins the combat, return false if player dies and thus lose the combat
 	*/
-	int performEvent(string option, int optNum);
+	int performEvent(Character *c, string option, int optNum);
 	int takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e);
 	int textAction(Character* c);
 	int combatMain(std::vector<Character*>& c);
-
+	void textAttributes(Character *c, int optNum);
 	void textMain(bool& printed, bool initialText);
 	void setNewButtons(std::vector<Button*>& buttons, int t);
 	void outputEnemy();
@@ -40,6 +40,7 @@ public:
 
 private:
 	bool inCombat;
+	bool allPlayersMoved;
 	int livingCount[2];
 	std::vector<Character*> participants;
 	std::vector<int> enemy_index;
