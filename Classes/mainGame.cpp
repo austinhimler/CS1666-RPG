@@ -1259,7 +1259,8 @@ void playGame() {
 			if (result < length) {
 				printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 			}
-			cout << notYou << endl;
+			cout << notYou->xPosition << endl;
+			cout << notYou->yPosition << endl;
 		}
 		charactersOnScreen.push_back(notYou);
 		
