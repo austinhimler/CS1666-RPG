@@ -32,10 +32,8 @@ void Graphics::init(void)
 	// Intitialise text renderer
 	textRenderer.Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	int shape_num_vertices;
-	glm::vec4 *shape_vertices = cone(&shape_num_vertices);
-	glm::vec4 *shape_colors = genRandomTriangleColors(shape_num_vertices);
-	num_vertices = shape_num_vertices;
+	glm::vec4 *shape_vertices = sphere(0.5, 36, 0.0, 0.0, 0.0);
+	glm::vec4 *shape_colors = genRandomTriangleColorsSimilar(glm::vec4(1.0, 0.5, 0.0, 1.0));
 
 	int x, y, height, width;
 	x = SCREEN_WIDTH/5;
@@ -102,6 +100,7 @@ void Graphics::init(void)
 	glEnableVertexAttribArray(vTexCoords);
 	glVertexAttribPointer(vTexCoords, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(sizeof(glm::vec4) * 6));
 
+	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	// Set the clear color to light green (same as combatScene.png)
 	glClearColor(0.694, 0.886, 0.78, 1.0);
@@ -163,7 +162,7 @@ void Graphics::idle(void)
 }
 
 //Returns the index in graphics arrays
-int Graphics::generate2dRectangleColor(int x, int y, GLfloat z, int height, int width, glm::vec4 color) {
+int Graphics::genQuadColor(int x, int y, GLfloat z, int height, int width, glm::vec4 color) {
 	int it;
 	GLfloat i, j, h, w;
 	int index = num_vertices;
@@ -217,66 +216,7 @@ int Graphics::generate2dRectangleColor(int x, int y, GLfloat z, int height, int 
 }
 
 //Returns the index in graphics arrays
-int Graphics::generate2dRectangleColorCorners(int x, int y, GLfloat z, int height, int width, glm::vec4 color_tl, glm::vec4 color_bl, glm::vec4 color_tr, glm::vec4 color_br) {
-	int it;
-	GLfloat i, j, h, w;
-	int index = num_vertices;
-
-	if ((x + width / 2) < 0 || (x - width / 2) > SCREEN_WIDTH || (y + height / 2) < 0 || (y + height / 2) > SCREEN_HEIGHT || z < -1 || z > 1 || height != 0 || width != 0) {
-		return NULL;
-	}
-
-	i = (x - SCREEN_WIDTH / 2) / (SCREEN_WIDTH / 2);
-	j = (SCREEN_HEIGHT / 2 - y) / (SCREEN_HEIGHT / 2);
-	h = height / SCREEN_HEIGHT;
-	w = width / SCREEN_WIDTH;
-
-	num_vertices += 6;
-
-	glm::vec4 *temp_vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
-	glm::vec4 *temp_colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
-	glm::vec2 *temp_textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
-
-	for (it = 0; it < index; it++) {
-		temp_vertices[it] = vertices[it];
-		temp_colors[it] = colors[it];
-		temp_textures[it] = textures[it];
-	}
-	
-	for (it = 0; it < 6; it++) {
-		temp_vertices[index + it] = glm::translate(glm::mat4(), glm::vec3(i, j, z)) * (glm::vec4(w, h, 1.0f, 1.0f) * quadVertices[it]);
-		temp_textures[index + it] = { 0.0f, 0.0f };
-	}
-	temp_colors[index + 0] = color_bl;
-	temp_colors[index + 1] = color_tr;
-	temp_colors[index + 2] = color_tl;
-	temp_colors[index + 3] = color_bl;
-	temp_colors[index + 4] = color_br;
-	temp_colors[index + 5] = color_tr;
-	
-	free(vertices);
-	free(colors);
-	free(textures);
-
-	vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
-	colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
-	textures = (glm::vec2 *)malloc(sizeof(glm::vec2) * num_vertices);
-
-	for (it = 0; it < num_vertices; it++) {
-		temp_vertices[it] = vertices[it];
-		temp_colors[it] = colors[it];
-		temp_textures[it] = textures[it];
-	}
-
-	free(temp_vertices);
-	free(temp_colors);
-	free(temp_textures);
-
-	return index;
-}
-
-//Returns the index in graphics arrays
-int Graphics::generate2dRectangleTexture(int x, int y, GLfloat z, int height, int width, std::string texture_path) {
+int Graphics::genQuadTexture(int x, int y, GLfloat z, int height, int width, std::string texture_path) {
 	int it;
 	GLfloat i, j, h, w;
 	int index = num_vertices;
@@ -330,25 +270,20 @@ int Graphics::generate2dRectangleTexture(int x, int y, GLfloat z, int height, in
 }
 
 //Recolors the rectangle based on index
-void Graphics::recolor2dRectangle(int index, glm::vec4 color) {
+void Graphics::recolorQuad(int index, glm::vec4 color) {
 	int it;
 	for (it = 0; it < 6; it++) {
 		colors[index + it] = color;
 	}
 }
 
-//Recolors the rectangle's corners based on index
-void Graphics::recolorCorners2dRectangle(int index, glm::vec4 color_tl, glm::vec4 color_bl, glm::vec4 color_tr, glm::vec4 color_br) {
-	colors[index + 0] = color_bl;
-	colors[index + 1] = color_tr;
-	colors[index + 2] = color_tl;
-	colors[index + 3] = color_bl;
-	colors[index + 4] = color_br;
-	colors[index + 5] = color_tr;
+//
+void Graphics::retextureQuad(int index) {
+
 }
 
 //Removes rectangle based on index
-void Graphics::remove2dRectangle(int index) {
+void Graphics::removeObject(int index) {
 	int it;
 
 	glm::vec4 *temp_vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
@@ -413,13 +348,15 @@ void Graphics::addTextsToRender(std::vector<RenderableText> text)
 	}
 }
 
-glm::vec4* Graphics::cone(int *num_vertices)
+glm::vec4* Graphics::cone()
 {
 	float theta, theta_r, theta10_r;
 	int index = 0;
+	int cone_num_vertices = 216;
+	
+	glm::vec4 *vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * cone_num_vertices);
 
-	*num_vertices = 216;
-	glm::vec4 *vertices = (glm::vec4 *)malloc(sizeof(glm::vec4) * 216);
+	num_vertices = cone_num_vertices;
 
 	for (theta = 0; theta <= 350; theta = theta + 10)
 	{
@@ -438,20 +375,129 @@ glm::vec4* Graphics::cone(int *num_vertices)
 	return vertices;
 }
 
-glm::vec4* Graphics::genRandomTriangleColors(int num_vertices)
+//Generates a sphere centered at 0.0, 0.0, 0.0
+glm::vec4* Graphics::sphere(GLfloat radius, GLfloat resolution, GLfloat x, GLfloat y, GLfloat z)
+{
+	GLfloat sphere_it, sphere_i, sphere_j;
+	GLfloat band_it, band_i, band_j;
+	GLfloat circle_it, circle_i, circle_j;
+	int it;
+	GLfloat increment = 360.0 / resolution;
+	int index = 0;
+	int sphere_num_vertices = 3 * ((floor((ceil(resolution / 2) * 2) / 2) - 1) * 2 * resolution); //Not Perfect, but I was tinkering with this
+
+	glm::vec4* sphere_vertices = (glm::vec4*)malloc(sizeof(glm::vec4) * (sphere_num_vertices));
+
+	num_vertices = sphere_num_vertices;
+
+	for (sphere_it = 0; sphere_it < 180.0; sphere_it += increment) {
+		sphere_i = sphere_it * M_PI / 180.0;
+		sphere_j = (sphere_it + increment) * M_PI / 180.0;
+
+
+		if (sphere_it == 0) {
+			for (circle_it = 0; circle_it < 360.0; circle_it += increment) {
+				circle_i = circle_it * M_PI / 180.0;
+				circle_j = (circle_it + increment) * M_PI / 180.0;
+
+				sphere_vertices[index] = glm::vec4(x, y + (radius * cos(sphere_i)), z, 1.0);
+				sphere_vertices[index + 1] = glm::vec4(x + ((radius * cos(circle_i)) * sin(sphere_j)), y + (radius * cos(sphere_j)), z + ((radius * sin(circle_i)) * sin(sphere_j)), 1.0);
+				sphere_vertices[index + 2] = glm::vec4(x + ((radius * cos(circle_j)) * sin(sphere_j)), y + (radius * cos(sphere_j)), z + ((radius * sin(circle_j)) * sin(sphere_j)), 1.0);
+				index += 3;
+			}
+		}
+
+		if (sphere_it != 0 && sphere_it + increment < 180.0) {
+			for (band_it = 0; band_it < 360.0; band_it += increment) {
+				band_i = band_it * M_PI / 180.0;
+				band_j = (band_it + increment) * M_PI / 180.0;
+
+				sphere_vertices[index] = glm::vec4(x + ((radius * cos(band_i)) * sin(sphere_i)), y + (radius * cos(sphere_i)), z + ((radius * sin(band_i)) * sin(sphere_i)), 1.0);
+				sphere_vertices[index + 1] = glm::vec4(x + ((radius * cos(band_i)) * sin(sphere_j)), y + (radius * cos(sphere_j)), z + ((radius * sin(band_i)) * sin(sphere_j)), 1.0);
+				sphere_vertices[index + 2] = glm::vec4(x + ((radius * cos(band_j)) * sin(sphere_j)), y + (radius * cos(sphere_j)), z + ((radius * sin(band_j)) * sin(sphere_j)), 1.0);
+				sphere_vertices[index + 3] = glm::vec4(x + ((radius * cos(band_i)) * sin(sphere_i)), y + (radius * cos(sphere_i)), z + ((radius * sin(band_i)) * sin(sphere_i)), 1.0);
+				sphere_vertices[index + 4] = glm::vec4(x + ((radius * cos(band_j)) * sin(sphere_j)), y + (radius * cos(sphere_j)), z + ((radius * sin(band_j)) * sin(sphere_j)), 1.0);
+				sphere_vertices[index + 5] = glm::vec4(x + ((radius * cos(band_j)) * sin(sphere_i)), y + (radius * cos(sphere_i)), z + ((radius * sin(band_j)) * sin(sphere_i)), 1.0);
+				index += 6;
+			}
+		}
+
+		if (sphere_it + increment >= 180.0) {
+			for (circle_it = 0; circle_it < 360.0; circle_it += increment) {
+				circle_i = circle_it * M_PI / 180.0;
+				circle_j = (circle_it + increment) * M_PI / 180.0;
+
+				sphere_vertices[index] = glm::vec4(x, y + (radius * cos(sphere_j)), z, 1.0);
+				sphere_vertices[index + 1] = glm::vec4(x + ((radius * cos(circle_j)) * sin(sphere_i)), y + (radius * cos(sphere_i)), z + ((radius * sin(circle_j)) * sin(sphere_i)), 1.0);
+				sphere_vertices[index + 2] = glm::vec4(x + ((radius * cos(circle_i)) * sin(sphere_i)), y + (radius * cos(sphere_i)), z + ((radius * sin(circle_i)) * sin(sphere_i)), 1.0);
+				index += 3;
+			}
+		}
+
+	}
+	return sphere_vertices;
+}
+
+glm::vec4* Graphics::cube(GLfloat scale, GLfloat x, GLfloat y, GLfloat z)
+{
+	int it;
+	glm::vec4 cube[36] = { {-0.5, -0.5, 0.5, 1.0}, {0.5, -0.5, 0.5, 1.0}, {0.5, 0.5, 0.5, 1.0}, {-0.5, -0.5, 0.5, 1.0}, {0.5, 0.5, 0.5, 1.0}, {-0.5, 0.5, 0.5, 1.0}, //Front
+						{0.5, -0.5, 0.5, 1.0}, {0.5, -0.5, -0.5, 1.0}, {0.5, 0.5, -0.5, 1.0}, {0.5, -0.5, 0.5, 1.0}, {0.5, 0.5, -0.5, 1.0}, {0.5, 0.5, 0.5, 1.0}, //Right
+						{0.5, -0.5, -0.5, 1.0}, {-0.5, -0.5, -0.5, 1.0}, {-0.5, 0.5, -0.5, 1.0}, {0.5, -0.5, -0.5, 1.0}, {-0.5, 0.5, -0.5, 1.0}, {0.5, 0.5, -0.5, 1.0}, //Back
+						{-0.5, -0.5, -0.5, 1.0}, {-0.5, -0.5, 0.5, 1.0}, {-0.5, 0.5, 0.5, 1.0}, {-0.5, -0.5, -0.5, 1.0}, {-0.5, 0.5, 0.5, 1.0}, {-0.5, 0.5, -0.5, 1.0}, //Left
+						{-0.5, 0.5, 0.5, 1.0}, {0.5, 0.5, 0.5, 1.0}, {0.5, 0.5, -0.5, 1.0}, {-0.5, 0.5, 0.5, 1.0}, {0.5, 0.5, -0.5, 1.0}, {-0.5, 0.5, -0.5, 1.0}, //Up
+						{-0.5, -0.5, -0.5, 1.0}, {0.5, -0.5, -0.5, 1.0}, {0.5, -0.5, 0.5, 1.0}, {-0.5, -0.5, -0.5, 1.0}, {0.5, -0.5, 0.5, 1.0}, {-0.5, -0.5, 0.5, 1.0} }; //Down
+	int cube_num_vertices = 36;
+	glm::vec4* cube_vertices = (glm::vec4*)malloc(sizeof(glm::vec4) * (cube_num_vertices));
+
+	num_vertices = cube_num_vertices;
+
+	for (it = 0; it < cube_num_vertices; it++) {
+		cube_vertices[it] = glm::vec4(x + (scale * cube[it].x), y + (scale * cube[it].y), z + (scale * cube[it].z), cube[it].w);
+	}
+
+	return cube_vertices;
+}
+
+glm::vec4* Graphics::genRandomTriangleColors()
 {
 	GLfloat r, g, b;
-	int index = 0, i;
+	int index = 0, it;
 
 	srand(time(0));
 
 	glm::vec4 *colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
 
-	for (i = 0; i < num_vertices / 3; i++)
+	for (it = 0; it < num_vertices / 3; it++)
 	{
 		r = rand() / (float)RAND_MAX;
 		g = rand() / (float)RAND_MAX;
 		b = rand() / (float)RAND_MAX;
+
+		colors[index] = glm::vec4(r, g, b, 1.0);
+		colors[index + 1] = glm::vec4(r, g, b, 1.0);
+		colors[index + 2] = glm::vec4(r, g, b, 1.0);
+		index += 3;
+	}
+
+	return colors;
+}
+
+glm::vec4* Graphics::genRandomTriangleColorsSimilar(glm::vec4 color)
+{
+	GLfloat r, g, b, modifying_color;
+	int index = 0, it;
+
+	srand(time(0));
+
+	glm::vec4 *colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+
+	for (it = 0; it < num_vertices / 3; it++)
+	{
+		modifying_color = (rand() / (float)RAND_MAX) - 0.5;
+		r = color.x + modifying_color * 0.1;
+		g = color.y + modifying_color * 0.1;
+		b = color.z + modifying_color * 0.1;
 
 		colors[index] = glm::vec4(r, g, b, 1.0);
 		colors[index + 1] = glm::vec4(r, g, b, 1.0);

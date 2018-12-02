@@ -23,19 +23,15 @@
 class Graphics
 {
 public:
-	
-
 	void init(void);
 	void display(void);
 	void idle(void);
 
-	int generate2dRectangleColor(int x, int y, GLfloat z, int height, int width, glm::vec4 color);
-	int generate2dRectangleColorCorners(int x, int y, GLfloat z, int height, int width, glm::vec4 color_tl, glm::vec4 color_bl, glm::vec4 color_tr, glm::vec4 color_br);
-	int generate2dRectangleTexture(int x, int y, GLfloat z, int height, int width, std::string texture_path);
-	void recolor2dRectangle(int index, glm::vec4 color);
-	void recolorCorners2dRectangle(int index, glm::vec4 color_tl, glm::vec4 color_bl, glm::vec4 color_tr, glm::vec4 color_br);
-	//void retexture2dRectangle(int index);
-	void remove2dRectangle(int index);
+	int genQuadColor(int x, int y, GLfloat z, int height, int width, glm::vec4 color);
+	int genQuadTexture(int x, int y, GLfloat z, int height, int width, std::string texture_path);
+	void recolorQuad(int index, glm::vec4 color);
+	void retextureQuad(int index);
+	void removeObject(int index);
 
 	void rotateRandom(void);
 
@@ -44,8 +40,11 @@ public:
 	void addTextToRender(RenderableText text);
 	void addTextsToRender(std::vector<RenderableText> texts);
 
-	glm::vec4* cone(int *num_vertices);
-	glm::vec4* genRandomTriangleColors(int num_vertices);
+	glm::vec4* cone();
+	glm::vec4* sphere(GLfloat radius, GLfloat resolution, GLfloat x, GLfloat y, GLfloat z);
+	glm::vec4* cube(GLfloat scale, GLfloat x, GLfloat y, GLfloat z);
+	glm::vec4* genRandomTriangleColors();
+	glm::vec4* genRandomTriangleColorsSimilar(glm::vec4 color);
 	TextRenderer textRenderer;
 private:
 	int num_vertices = 0;
