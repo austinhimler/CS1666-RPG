@@ -112,11 +112,11 @@ int CombatManager::textAction(Character* c) {
 		int target = rand() % player_index.size();
 		int result = participants[player_index[target]]->beingTarget(&temp[0]);
 		stringstream ss;
-		ss << c->getName() << " damages you by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left." << std::endl;
+		ss << c->getName() << " damages you by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left.";
 		m_combatDialogManager.AddMessage(ss.str());
 		
 		/*if (ailments.size() == 0) 
-		{
+		{ 
 			//std::cout << "Their attack did not have any status effect on you." << std::endl;
 			m_combatDialogManager.AddMessage("Their attack did not have any status effect on you.");
 		}
@@ -319,19 +319,14 @@ int CombatManager::performEvent(Character *c, string option, int optNum)
 		break;
 	default:
 		textAttributes(c, optNum);
+		outputEnemy();
 		break;
 	}
 	
 	m_combatDialogManager.ClearEvents();
 	return returnVal;
 }
-void CombatManager::outputEnemy() {
-	int i = 1;
-	for (int j = 0; j < participants.size(); j++) {
-		if ((Enemy*)participants[j]->is_Enemy())
-			std::cout << i++ << ". " << participants[j]->getName() << std::endl;
-	}
-}
+
 
 int CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e) {
 	/*
@@ -445,6 +440,20 @@ void CombatManager::setNewButtons(std::vector<Button*>& buttons, int t) {
 		// create button for every item in inveotry
 	}
 }	//*/
+
+void CombatManager::outputEnemy() {
+	/*int i = 1;
+	for (int j = 0; j < participants.size(); j++) {
+		if ((Enemy*)participants[j]->is_Enemy())
+			std::cout << i++ << ". " << participants[j]->getName() << std::endl;
+	}*/
+	std::vector<std::string> options;
+	for (int j = 0; j < participants.size(); j++) {
+		if ((Enemy*)participants[j]->is_Enemy())
+			options.push_back(participants[j]->getName());
+	}
+	m_combatDialogManager.AddSelectableOption("Choose your target", options);
+}
 void CombatManager::textAttributes(Character *c, int optNum)
 {
 	std::vector<std::string> options;
