@@ -1235,16 +1235,24 @@ void playGame() {
 		int result;
 
 		length = sizeof(Player) + 1; 
-		result = SDLNet_TCP_Send(clientSocket, &player1, length);
+
+		// serialize into stream
+		char* stream = reinterpret_cast<char*>(&player1);
+		result = SDLNet_TCP_Send(clientSocket, stream, length);
 		if (result < length) {
 			printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 		}
+
 
 		while (notYou == NULL) {
 			int result;
 			int length;
 			length = sizeof(Player) + 1;
-			result = SDLNet_TCP_Recv(clientSocket, &notYou, length);
+
+			char buffer[sizeof(Player) + 1];
+			result = SDLNet_TCP_Recv(clientSocket, buffer, length);
+			notYou = reinterpret_cast<Player*>(buffer);
+
 			if (result < length) {
 				printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 			}
