@@ -72,6 +72,7 @@ TTF_Font* font;
 //Player ONE
 Player* player1 = new Player("nlf4",1,1,1,1,1);
 Player* notYou;
+std::vector<int> attr;
 
 bool init() {
 	// Flag what subsystems to initialize
@@ -283,8 +284,6 @@ SDL_Texture* loadImage(std::string fname) {
 }
 
 void close() {
-	
-	
 
 	for (auto i : gTex) {
 		SDL_DestroyTexture(i);
@@ -671,10 +670,22 @@ bool characterCreateScreen() {
 							if (nameInputText != "") {
 								Mix_PlayChannel(-1, gBSound, 0);
 								onCharacterCreate = false;
-								if (nameInputText == "nfl4" || nameInputText == "nlf4")
+								if (nameInputText == "nfl4" || nameInputText == "nlf4"){
 									player1 = new Player(nameInputText, 10, 10, 10, 10, 10);//player1->setAll(nameInputText, 10, 10, 10, 10, 10);
-								else
+									attr.push_back(10);
+									attr.push_back(10);
+									attr.push_back(10);
+									attr.push_back(10);
+									attr.push_back(10);
+
+								}else {
+									attr.push_back(strength);
+									attr.push_back(intelligence);
+									attr.push_back(dexterity);
+									attr.push_back(constitution);
+									attr.push_back(faith);
 									player1 = new Player(nameInputText, strength, intelligence, dexterity, constitution, faith);//player1->setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
+								}
 								std::cout << std::string(*player1); //displays player 1
 								//make Character Object, validate, return to main
 								for (auto i : buttons) {
@@ -1246,7 +1257,6 @@ void playGame() {
 			printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 		}
 
-
 		while (notYou == NULL) {
 			int result;
 			int length;
@@ -1602,8 +1612,6 @@ void playGame() {
 						printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 					}
 				}
-
-
 
 				moveCluster(allEnemies, "random", timePassed, tiles, cycle);
 				cycle++;
