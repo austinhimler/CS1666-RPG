@@ -1235,7 +1235,7 @@ void playGame() {
 		int result;
 
 		length = sizeof(Player) + 1; 
-		result = SDLNet_TCP_Send(clientSocket, player1, length);
+		result = SDLNet_TCP_Send(clientSocket, &player1, length);
 		if (result < length) {
 			printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 		}
@@ -1244,7 +1244,7 @@ void playGame() {
 			int result;
 			int length;
 			length = sizeof(Player) + 1;
-			result = SDLNet_TCP_Recv(clientSocket, notYou, length);
+			result = SDLNet_TCP_Recv(clientSocket, &notYou, length);
 			if (result < length) {
 				printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 			}
