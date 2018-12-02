@@ -62,7 +62,8 @@ void Graphics::init(void)
 	//ctm_location = glGetUniformLocation(program, "ctm");
 
 	glEnable(GL_DEPTH_TEST);
-	glClearColor(0.0, 0.0, 0.0, 1.0);
+	// Set the clear color to light green (same as combatScene.png)
+	glClearColor(0.694, 0.886, 0.78, 1.0);
 	glDepthRange(1, 0);
 
 	// Vertices for a simple 1x1 textured quad
@@ -94,7 +95,7 @@ void Graphics::display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Set the clear color to light green (same as combatScene.png)
-	glClearColor(0.694, 0.886, 0.78, 1.0);
+	//glClearColor(0.694, 0.886, 0.78, 1.0);
 
 	// Draw the cone
 	glPolygonMode(GL_FRONT, GL_FILL);
@@ -135,8 +136,8 @@ void Graphics::display(void)
 
 void Graphics::idle(void)
 {
-	//ctm = ctm * glm::rotate(0.01f, randomRotationAxis);
-	//display();
+	ctm = ctm * glm::rotate(0.01f, randomRotationAxis);
+	display();
 }
 
 /*void Graphics::loadTexture(string file, int width, int height)
