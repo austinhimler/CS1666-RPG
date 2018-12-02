@@ -23,10 +23,7 @@
 class Graphics
 {
 public:
-	GLuint ctm_location;
-	int num_vertices;
-	glm::mat4 ctm = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
-	glm::vec3 randomRotationAxis = { 0.0, 0.0, 0.0 };
+	
 
 	void init(void);
 	void display(void);
@@ -54,7 +51,6 @@ public:
 	glm::vec4* genRandomTriangleColors(int num_vertices);
 	TextRenderer textRenderer;
 private:
-	GLuint program;
 	GLuint ctm_location;
 	int num_vertices = 0;
 	glm::vec4 *vertices;

@@ -36,7 +36,6 @@ bool init();//Starts up SDL, creates window, and initializes OpenGL
 
 void close();//Frees media and shuts down SDL
 
-
 SDL_Texture* loadImage(std::string fname);
 
 SDL_Renderer* gRenderer = nullptr;
@@ -453,7 +452,7 @@ bool characterCreateScreen() {
 	LoadTexture background; 
 	background.loadFromFile("Images/UI/CreateScreen/characterCreateV2NoButtons.png",gRenderer);
 	SDL_Event e;
-	onCharacterCreate = false;
+	//onCharacterCreate = false;
 	while (onCharacterCreate) {
 		while (SDL_PollEvent(&e)) {
 
@@ -1227,8 +1226,8 @@ void playGame() {
 
 	SDL_Event e;
 	SDL_Rect camera = { 0,0,SCREEN_WIDTH, SCREEN_HEIGHT };
-	bool inOverworld = false;
-	bool combatStarted = true;
+	bool inOverworld = true;
+	bool combatStarted = false;
 	bool inPauseMenu = false;
 	bool keepPlaying = true;
 	while (keepPlaying) {
