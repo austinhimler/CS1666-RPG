@@ -1248,32 +1248,39 @@ void playGame() {
 		int length;
 		int result;
 
-		length = sizeof(Player); 
+		length = sizeof(attr); 
+
 
 		// serialize into stream
-		char* stream = reinterpret_cast<char*>(&player1);
-		result = SDLNet_TCP_Send(clientSocket, stream, length);
+		//char* stream = reinterpret_cast<char*>(&attr);
+		result = SDLNet_TCP_Send(clientSocket, &attr, length);
 		if (result < length) {
 			printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 		}
 
-		while (notYou == NULL) {
+
+		std::vector<int> notYouattr;
+		bool gettingattr = true;
+		while (gettingattr) {
 			int result;
 			int length;
-			length = sizeof(Player);
+			length = sizeof(attr);
 
-			char buffer[sizeof(Player)];
-			result = SDLNet_TCP_Recv(clientSocket, buffer, length);
-			notYou = reinterpret_cast<Player*>(buffer);
+			//char buffer[sizeof(attr)];
+			result = SDLNet_TCP_Recv(clientSocket, &notYouattr, length);
+			//notYouattr = reinterpret_cast<std::vector<int>>(buffer);
 
 			if (result < length) {
-				printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+				printf("SDLNet_TCP_RECV: %s\n", SDLNet_GetError());
 			}
-			cout << notYou->xPosition << endl;
-			cout << notYou->yPosition << endl;
+			else {
+				gettingattr = false;
+			}
+			//cout << notYou->xPosition << endl;
+			//cout << notYou->yPosition << endl;
 		}
+		notYou = new Player("meme", notYouattr[0], notYouattr[1], notYouattr[2], notYouattr[3], notYouattr[4]);
 		charactersOnScreen.push_back(notYou);
-		
 	}
 
 	//Load the music
@@ -1585,33 +1592,33 @@ void playGame() {
 
 				}
 
-				if (isClient) {
-					int length;
-					int result;
+				//if (isClient) {
+				//	int length;
+				//	int result;
 
-					length = sizeof(Player);
+				//	length = sizeof(Player);
 
-					// serialize into stream
-					char* stream = reinterpret_cast<char*>(&player1);
-					result = SDLNet_TCP_Send(clientSocket, stream, length);
-					if (result < length) {
-						printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-					}
+				//	// serialize into stream
+				//	char* stream = reinterpret_cast<char*>(&player1);
+				//	result = SDLNet_TCP_Send(clientSocket, stream, length);
+				//	if (result < length) {
+				//		printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+				//	}
 
 
-				} if (isHost) {
-					int result;
-					int length;
-					length = sizeof(Player);
+				//} if (isHost) {
+				//	int result;
+				//	int length;
+				//	length = sizeof(Player);
 
-					char buffer[sizeof(Player)];
-					result = SDLNet_TCP_Recv(clientSocket, buffer, length);
-					notYou = reinterpret_cast<Player*>(buffer);
+				//	char buffer[sizeof(Player)];
+				//	result = SDLNet_TCP_Recv(clientSocket, buffer, length);
+				//	notYou = reinterpret_cast<Player*>(buffer);
 
-					if (result < length) {
-						printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-					}
-				}
+				//	if (result < length) {
+				//		printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+				//	}
+				//}
 
 				moveCluster(allEnemies, "random", timePassed, tiles, cycle);
 				cycle++;
