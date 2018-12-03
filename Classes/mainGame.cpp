@@ -1250,25 +1250,44 @@ void playGame() {
 		
 
 		notYou = new Player("meme", 10, 10, 10, 10, 10);
-		// serialize into stream
-		//char* stream = reinterpret_cast<char*>(&attr);
-		const char* myString = player1->toString().c_str();
-		length = strlen(myString) + 1;
-		result = SDLNet_TCP_Send(clientSocket, &myString, length);
-		if (result < length) {
-			printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-		}
 
+		if (isHost)
+		{
+			const char* myString = player1->toString().c_str();
+			length = strlen(myString) + 1;
+			result = SDLNet_TCP_Send(clientSocket, &myString, length);
+			if (result < length) {
+				printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+			}
 
-		bool gettingattr = true;
-		std::stringstream notyoStream;
-		char*temp[200];
-		while (SDLNet_TCP_Recv(clientSocket, temp, 200)) {
-			notyoStream << temp;
+			bool gettingattr = true;
+			std::stringstream notyoStream;
+			char*temp[200];
+			while (SDLNet_TCP_Recv(clientSocket, temp, 200)) {
+				notyoStream << temp;
+			}
+			std::string notYourSTD(notyoStream.str());
+			notYou->fromString(notYourSTD);
+			charactersOnScreen.push_back(notYou);
 		}
-		std::string notYourSTD(notyoStream.str());
-		notYou->fromString(notYourSTD);
-		charactersOnScreen.push_back(notYou);
+		else
+		{
+			bool gettingattr = true;
+			std::stringstream notyoStream;
+			char*temp[200];
+			while (SDLNet_TCP_Recv(clientSocket, temp, 200)) {
+				notyoStream << temp;
+			}
+			std::string notYourSTD(notyoStream.str());
+			notYou->fromString(notYourSTD);
+			charactersOnScreen.push_back(notYou);
+			const char* myString = player1->toString().c_str();
+			length = strlen(myString) + 1;
+			result = SDLNet_TCP_Send(clientSocket, &myString, length);
+			if (result < length) {
+				printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+			}
+		}
 	}
 
 	//Load the music
