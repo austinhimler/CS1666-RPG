@@ -39,8 +39,12 @@ public:
 	glm::vec4* color_array;
 	glm::vec2* texture_array;
 	glm::mat4 ctm = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
-	int idle_type = 0; //0 = no animation, 1 = sprite animation, 2 = motion animation, 3 = sprite and motion animation
-	glm::mat4 idle_motion = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
+	int idle_animation_type = 0; //0 = no animation, 1 = sprite animation, 2 = motion animation, 3 = sprite and motion animation
+	glm::mat4 idle_animation_motion = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
+	int animation_type = 0; //0 = no animation, 1 = sprite animation, 2 = motion animation, 3 = sprite and motion animation
+	int animation_frame = 0;
+	int animation_frame_max;
+	glm::mat4 animation_motion = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
 private:
 };
 
@@ -70,8 +74,12 @@ public:
 
 	glm::vec3 rotateRandom(void);
 
-	int setIdleType(int ID, int type);
-	int setIdleMotion(int ID, glm::mat4 motion);
+	int setIdleAnimationType(int ID, int type);
+	int setIdleAnimationMotion(int ID, glm::mat4 motion);
+
+	int setAnimation(int ID, int type);
+	int setAnimationMotion(int ID, glm::mat4 motion);
+	int setAnimationFrameMax(int ID, int frame_max);
 
 	// Adds text to render to the screen.
 	// You will need to do this every tick for it to continuously display 

@@ -120,22 +120,40 @@ void Graphics::idle(void)
 {
 	if (!objectList.empty()) {
 		for (std::list<GraphicsObject>::iterator it = objectList.begin(); it != objectList.end(); ++it) {
-			switch (it->idle_type) {
+			switch (it->idle_animation_type) {
 			case 0: //0 = no animation
 				break;
 			case 1: //1 = sprite animation
 				iterateSpriteAnimation(it);
 				break;
 			case 2: //2 = motion animation
-				it->ctm = it->ctm * it->idle_motion;
+				it->ctm = it->ctm * it->idle_animation_motion;
 				break;
 			case 3: //3 = sprite and motion animation
 				iterateSpriteAnimation(it);
-				it->ctm = it->ctm * it->idle_motion;
+				it->ctm = it->ctm * it->idle_animation_motion;
 				break;
 			default:
 				break;
 			}
+			/* Commented out until new functions implemented
+			switch (it->animation_type) {
+			case 0: //0 = no animation
+				break;
+			case 1: //1 = sprite animation
+				//iterateSpriteAnimation(it); Needs new function for active sprite animations
+				break;
+			case 2: //2 = motion animation
+				//it->ctm = it->ctm * it->idle_animation_motion; Needs new function for active ctm animation which will travel according to simple motion matrix over a set amount
+				break;
+			case 3: //3 = sprite and motion animation
+				//iterateSpriteAnimation(it); Needs new function for active sprite animations
+				//it->ctm = it->ctm * it->idle_animation_motion; Needs new function for active ctm animation which will travel according to simple motion matrix over a set amount of frames
+				break;
+			default:
+				break;
+			}
+			*/
 		}
 	}
 	display();
@@ -569,11 +587,11 @@ glm::vec3 Graphics::rotateRandom(void)
 	return glm::vec3(x, y, z);
 }
 
-int Graphics::setIdleType(int ID, int type)
+int Graphics::setIdleAnimationType(int ID, int type)
 {
 	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
 	if (it != objectList.end()) {
-		it->idle_type = type;
+		it->idle_animation_type = type;
 		return 1;
 	}
 	else {
@@ -581,11 +599,47 @@ int Graphics::setIdleType(int ID, int type)
 	}
 }
 
-int Graphics::setIdleMotion(int ID, glm::mat4 motion)
+int Graphics::setIdleAnimationMotion(int ID, glm::mat4 motion)
 {
 	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
 	if (it != objectList.end()) {
-		it->idle_motion = motion;
+		it->idle_animation_motion = motion;
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+int Graphics::setAnimation(int ID, int type)
+{
+	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
+	if (it != objectList.end()) {
+		it->animation_type = type;
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+int Graphics::setAnimationMotion(int ID, glm::mat4 motion)
+{
+	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
+	if (it != objectList.end()) {
+		it->animation_motion = motion;
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+int Graphics::setAnimationFrameMax(int ID, int frame_max)
+{
+	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
+	if (it != objectList.end()) {
+		it->animation_frame_max = frame_max;
 		return 1;
 	}
 	else {
