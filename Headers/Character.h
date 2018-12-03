@@ -97,6 +97,7 @@ public:
 	void checkStatus();
 
 	int updateEnergy(Ability* a);
+	void refillEnergy();
 
 	string toString();
 	void setTextureActive(SDL_Texture*);

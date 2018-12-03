@@ -1133,7 +1133,6 @@ void moveCluster(std::vector<Cluster*> c, std::string move, double time, Tile* m
 		}
 	}
 }
-
 void combatScene(std::vector<Character*> combatants) {
 	/*for (auto i : combatants) {
 		std::cout << i->getName();
@@ -1211,6 +1210,7 @@ void playGame() {
 	Mix_VolumeMusic(MIX_MAX_VOLUME / 8);
 	for (MAP_INDEX = 0; MAP_INDEX < ALL_MAPS.size(); MAP_INDEX++)
 	{
+		player1->refillEnergy();
 		//bool doNetworking = handleNetworkingSetup();
 		vector<Cluster*> allEnemies = vector<Cluster*>();
 		Cluster* CollidingCluster;

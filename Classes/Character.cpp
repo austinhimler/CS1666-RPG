@@ -178,6 +178,7 @@
 	void Character::setHPMax() { hpMax = 100 * attributes[CON].current; }
 	void Character::setMPMax() { mpMax = 100 * attributes[INT].current; }
 	void Character::setEnergyMax() { energyMax = 50 + attributes[DEX].current; }
+	void Character::refillEnergy() { energyCurrent = energyMax;	}
 	void Character::setTextureActive(SDL_Texture* text) { textureActive = text; }
 	int Character::getHPCurrent() { return hpCurrent; }
 	int Character::getMPCurrent() { return mpCurrent; }
