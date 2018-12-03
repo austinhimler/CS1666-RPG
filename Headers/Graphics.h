@@ -3,6 +3,7 @@
 #define _____GRAPHICS_H_____
 
 #include <string>
+#include <list>
 
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
@@ -20,6 +21,29 @@
 
 #define BUFFER_OFFSET( offset )   ((GLvoid*) (offset))
 
+class GraphicsObject
+{
+public:
+	int ID;
+	int type; //0 = 3d object color, 1 = 3d object texture
+	GLuint VAO;
+	int num_vertices;
+	GLfloat x;
+	GLfloat y;
+	GLfloat z;
+	glm::vec4 color;
+	std::string texture_ID;
+	int texture_sheet_x;
+	int texture_sheet_y;
+	int texture_sheet_size_x;
+	int texture_sheet_size_y;
+	glm::vec4* position_array;
+	glm::vec4* color_array;
+	glm::vec2* texture_array;
+	glm::mat4 ctm = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
+private:
+};
+
 class Graphics
 {
 public:
@@ -28,10 +52,10 @@ public:
 	void idle(void);
 
 	int genQuadColor(int x, int y, GLfloat z, int height, int width, glm::vec4 color);
-	int genQuadTexture(int x, int y, GLfloat z, int height, int width, std::string texture_path);
-	void recolorQuad(int index, glm::vec4 color);
-	void retextureQuad(int index);
-	void removeObject(int index);
+	int genQuadTexture(int x, int y, GLfloat z, int height, int width, const GLchar *file, std::string texture_ID, int texture_sheet_x, int texture_sheet_y, int texture_sheet_size_x, int texture_sheet_size_y);
+	void recolorQuad(int ID, glm::vec4 color);
+	void retextureQuad(int ID);
+	void removeObject(int ID);
 
 	void rotateRandom(void);
 
@@ -40,23 +64,24 @@ public:
 	void addTextToRender(RenderableText text);
 	void addTextsToRender(std::vector<RenderableText> texts);
 
-	glm::vec4* cone();
-	glm::vec4* sphere(GLfloat radius, GLfloat resolution, GLfloat x, GLfloat y, GLfloat z);
-	glm::vec4* cube(GLfloat scale, GLfloat x, GLfloat y, GLfloat z);
-	glm::vec4* genRandomTriangleColors();
-	glm::vec4* genRandomTriangleColorsSimilar(glm::vec4 color);
+	int genCone(GLfloat radius, GLfloat height, int resolution, int color_type, glm::vec4 color);
+	int genSphere(GLfloat radius, int resolution, int color_type, glm::vec4 color);
+	int genCube(int color_type, glm::vec4 color);
+	//Color Options
+	glm::vec4* genRandomTriangleColors(int num_vertices); //color_type == 0
+	glm::vec4* genRandomTriangleColorsSimilar(int num_vertices, glm::vec4 color);//color_type == 1
+
 	TextRenderer textRenderer;
 private:
-	int num_vertices = 0;
+	int object_counter = 0;
+	GLuint buffer;
 	GLuint vPosition;
 	GLuint vColor;
 	GLuint vTexCoords;
-	glm::vec4 *vertices;
-	glm::vec4 *colors;
-	glm::vec2 *textures;
-	glm::mat4 ctm = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
+	std::list<GraphicsObject> objectList;
 	glm::vec3 randomRotationAxis = { 0.0, 0.0, 0.0 };
 	// Vertices for a simple 1x1 textured quad
+	int quad_num_vertices = 6;
 	glm::vec4 quadVertices[6] = {
 		{ -1.0f, 1.0f, 0.0f, 1.0f },
 		{ -1.0f, -1.0f, 0.0f, 1.0f },

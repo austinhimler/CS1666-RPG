@@ -108,10 +108,9 @@ int CombatManager::textAction(Character* c) {
 	if (c->is_Enemy() == true)
 	{
 		//Enemy attack player
-		/*std::vector<Ability> temp = c->getAbilities();
+		std::vector<Ability> temp = c->getAbilities();
 		int target = rand() % player_index.size();
 		int result = participants[player_index[target]]->beingTarget(&temp[0]);
-		printf("HIT\n");
 		stringstream ss;
 		ss << c->getName() << " damages you by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left.";
 		m_combatDialogManager.AddMessage(ss.str());
@@ -123,14 +122,14 @@ int CombatManager::textAction(Character* c) {
 		}
 		else {
 
-		}
+		}*/
 		if (participants[player_index[target]]->getHPCurrent() == 0) {
 			//std::cout << "Why are your so weak? You are dead, dude!" << std::endl;
 			m_combatDialogManager.AddMessage("Why are your so weak? You are dead, dude!");
 			inCombat = false;
 			return ENEMY_WINS;
 		}
-		m_combatDialogManager.ClearEvents();*/
+		m_combatDialogManager.ClearEvents();
 	}
 	else
 	{
@@ -150,7 +149,6 @@ int CombatManager::textAction(Character* c) {
 					if (status != 1)
 						return status;
 					// We'll just reprint the main move selection for now
-
 
 					bool print = false;
 					textMain(print, initialText);
@@ -455,7 +453,6 @@ void CombatManager::outputEnemy() {
 			options.push_back(participants[j]->getName());
 	}
 	m_combatDialogManager.AddSelectableOption("Choose your target", options);
-	m_combatDialogManager.ClearEvents();
 }
 void CombatManager::textAttributes(Character *c, int optNum)
 {
@@ -471,15 +468,12 @@ void CombatManager::textAttributes(Character *c, int optNum)
 		}
 	}
 	m_combatDialogManager.AddSelectableOption("Choose your attack", options);
-	m_combatDialogManager.ClearEvents();
-
-	turnOrder = 2;
 	
 }
 void CombatManager::textMain(bool& printed, bool initialText) {
 	if (printed) return;
 	if (initialText)
-		m_combatDialogManager.AddMessage("You've encountered the fireball of death!");
+		m_combatDialogManager.AddMessage("You've encountered the colored cone of death!");
 	std::vector<std::string> options;
 	options.push_back("Strength Abilities");
 	options.push_back("Intelligence Abilities");
@@ -513,7 +507,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			livingCount[PLAYER]++;
 		}
 	}
-	turnOrder = 0;
+
 	int charImageX = 0;
 	int charImageY = 0;
 	int charImageW = 128;
@@ -551,29 +545,22 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 	SDL_Color txt_color = {0,0,0,0};
 	
 	int bw = 100;
-	int bh = 50;
-	/*std::vector<Button*> buttons;
-	buttons.push_back(new Button("character", scene_box.x + 10, scene_box.y + 200, bw, bh, "Images/Player/Player_Idle.png", "", gRenderer));
-	buttons.push_back(new Button("character", scene_box.x + 500, scene_box.y + 200, bw, bh, "Images/Enemies/shadow_cluster/owl.png", "", gRenderer));
-	buttons.push_back(new Button("button", ui_box.x , ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[STR], gRenderer));
-	buttons.push_back(new Button("button", ui_box.x, ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[INT], gRenderer));
-	buttons.push_back(new Button("button", ui_box.x, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[DEX], gRenderer));
-	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[CON], gRenderer));
-	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[FAI], gRenderer));
-	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "Inventory", gRenderer));*/
-	
+	int bh = 50;	
 
 	bool printed = false; // for text combat ui
 
 	//OpenGL Setup
-	SDL_GLContext glcontext = SDL_GL_CreateContext(gWindow);
-	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	glewInit();
 
 	// We shouldn't initialize the graphics class every time we run into a battle. Id recommend initializing it once, then using it
 	// Same goes for the dialog manager.
 	// I'll leave this up to you to do
 	m_combatGraphics.init();
+	m_combatGraphics.genQuadTexture(SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0, 144, 144, "Images/Player/Idle_Down.png", "player", 0, 0, 6, 1);
+	m_combatGraphics.genQuadTexture(4 * SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0, 144, 144, "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png", "owl", 0, 0, 6, 1);
+	m_combatGraphics.genCone(0.25, 0.5, 36, 1, glm::vec4(0.7, 0.7, 0.7, 0.0));
+	//m_combatGraphics.genSphere(0.5, 36, 0, glm::vec4());
+	//m_combatGraphics.genCube(0, glm::vec4());
 
 	// Set up the combat dialog manager
 	m_combatDialogManager = CombatDialogManager();
@@ -605,128 +592,116 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		// You can keep this for now but it will probably have to change down the road
 		m_combatGraphics.idle();
 		while (SDL_PollEvent(&e)) {
-			
-		if (e.type == SDL_QUIT) {
-			SDL_GL_DeleteContext(glcontext);
-			//Random integer for quitting the game
-			return -69; 
-		}
-		gBSound = Mix_LoadWAV("Audio/BSound.wav");
+			if (e.type == SDL_QUIT) {
+				Mix_FreeChunk(gBSound);
+				//Random integer for quitting the game
+				return -69; 
+			}
+			gBSound = Mix_LoadWAV("Audio/BSound.wav");
 
-		// Sent inputs to the combat dialog manager
-		if (e.type == SDL_KEYDOWN)
-		{
-			if (e.key.keysym.sym == SDLK_RIGHT) 
+			// Sent inputs to the combat dialog manager
+			if (e.type == SDL_KEYDOWN)
 			{
-				m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::RIGHT);
-				Mix_PlayChannel(-1, gBSound, 0);
-			}
+				if (e.key.keysym.sym == SDLK_RIGHT || e.key.keysym.sym == SDLK_d)
+				{
+					m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::RIGHT);
+					Mix_PlayChannel(-1, gBSound, 0);
+				}
 				
-			if (e.key.keysym.sym == SDLK_LEFT)
-			{
-				m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::LEFT);
-				Mix_PlayChannel(-1, gBSound, 0);
-			}
+				if (e.key.keysym.sym == SDLK_LEFT || e.key.keysym.sym == SDLK_a)
+				{
+					m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::LEFT);
+					Mix_PlayChannel(-1, gBSound, 0);
+				}
 				
-			if (e.key.keysym.sym == SDLK_UP)
-			{
-				m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::UP);
-				Mix_PlayChannel(-1, gBSound, 0);
-			}
+				if (e.key.keysym.sym == SDLK_UP || e.key.keysym.sym == SDLK_w)
+				{
+					m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::UP);
+					Mix_PlayChannel(-1, gBSound, 0);
+				}
 				
-			if (e.key.keysym.sym == SDLK_DOWN)
-			{
-				m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::DOWN);
-				Mix_PlayChannel(-1, gBSound, 0);
-			}
+				if (e.key.keysym.sym == SDLK_DOWN || e.key.keysym.sym == SDLK_s)
+				{
+					m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::DOWN);
+					Mix_PlayChannel(-1, gBSound, 0);
+				}
 				
-			if (e.key.keysym.sym == SDLK_RETURN)
-			{
-				allPlayersMoved = true;
-				m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::SELECT);
-				Mix_PlayChannel(-1, gBSound, 0);
-			}
+				if (e.key.keysym.sym == SDLK_RETURN)
+				{
+					allPlayersMoved = true;
+					m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::SELECT);
+					Mix_PlayChannel(-1, gBSound, 0);
+				}
 				
-		}
+			}
 
 
-		/*
-		background.renderBackground(gRenderer);
-		delaysPerFrame++;
-		if (delaysPerFrame >= 6) {
-			frame++;
-			delaysPerFrame = 0;
-		}
-		if (frame == 4) {
-			frame = 0;
-		}
-		charImageX = frame * charAnimationPixelShift;
-		for (auto i : buttons) {
-			if (i->type == "character")	// render participants
-			{
-				SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };
-				SDL_RenderCopy(gRenderer, i->texture, &charactersRectangle, &(i->rect));
+			/*
+			background.renderBackground(gRenderer);
+			delaysPerFrame++;
+			if (delaysPerFrame >= 6) {
+				frame++;
+				delaysPerFrame = 0;
 			}
-			else // render UI in initial state
-			{
-				// render buttons on the buttom
-				SDL_RenderCopy(gRenderer, i->texture, NULL, &(i->rect));
-				Helper::renderText(i->type.c_str(), &(i->rect), &txt_color, font);
+			if (frame == 4) {
+				frame = 0;
 			}
+			charImageX = frame * charAnimationPixelShift;
+			for (auto i : buttons) {
+				if (i->type == "character")	// render participants
+				{
+					SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };
+					SDL_RenderCopy(gRenderer, i->texture, &charactersRectangle, &(i->rect));
+				}
+				else // render UI in initial state
+				{
+					// render buttons on the buttom
+					SDL_RenderCopy(gRenderer, i->texture, NULL, &(i->rect));
+					Helper::renderText(i->type.c_str(), &(i->rect), &txt_color, font);
+				}
+			}
+			//SDL_RenderPresent(gRenderer);
+
+			SDL_Delay(16);*/
 		}
-		//SDL_RenderPresent(gRenderer);
 		
-		SDL_Delay(16);*/
-		}
 		
-		if (turnOrder == 0)
-		{
-			textMain(printed, initialText); // text combat ui initialization
-			initialText = false;
-			turnOrder = 1;
-		}
-
+		textMain(printed, initialText); // text combat ui initialization
+		initialText = false;
 		// We need to fix the idle for the following part
 		// You will need to rewrite to not have an while loops
 		// We need to constantly render to the screen
-		else if (turnOrder == 1)
+		if (e.key.keysym.sym == SDLK_RETURN)
 		{
-			if (e.key.keysym.sym == SDLK_RETURN)
-			{
-				switch (int result_temp = textAction(participants[0])) {
+			switch (int result_temp = textAction(participants[0])) {
 				case IN_COMBAT:
 					break;
 				default:
+					Mix_FreeChunk(gBSound);
+					return result_temp;
+					//takeAction(participants[i], buttons, e);
+			}
+			updateStatus();
+		}
+		for (int i = 1; i < participants.size(); i++)
+		{
+			//updateStatus(participants[i]);
+			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0 && allPlayersMoved)
+				switch (int result_temp = textAction(participants[i])) {
+				case IN_COMBAT:
+					break;
+				default:
+					Mix_FreeChunk(gBSound);
 					return result_temp;
 					//takeAction(participants[i], buttons, e);
 				}
-				updateStatus();
-			}
+			updateStatus();
 		}
-		else
-		{
-			for (int i = 1; i < participants.size(); i++)
-			{
-				//updateStatus(participants[i]);
-				if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0 && allPlayersMoved)
-					switch (int result_temp = textAction(participants[i])) {
-					case IN_COMBAT:
-						break;
-					default:
-						return result_temp;
-						//takeAction(participants[i], buttons, e);
-					}
-				updateStatus();
-			}
-			allPlayersMoved = false;
-			turnOrder = 0;
-		}
-	
+		allPlayersMoved = false;
 		//printed = false; // for text combat ui
 		qm.changeRounds();
 
 	}
-	SDL_GL_DeleteContext(glcontext);
 	Mix_FreeChunk(gBSound);
 	return -100;
 
