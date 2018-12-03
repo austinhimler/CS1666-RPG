@@ -556,12 +556,25 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 	// Same goes for the dialog manager.
 	// I'll leave this up to you to do
 	m_combatGraphics.init();
-	int player = m_combatGraphics.genQuadTexture(144, 144, "Images/Player/Idle_Down.png", "player", 0, 0, 6, 1);
+
+	//Create Player with Player Texture, translate it, then set it to animate the sprite
+	int player = m_combatGraphics.genQuadTexture(144, 144, "Images/Player/Idle_Down.png", "player", 0, 6);
 	m_combatGraphics.translateObjectByPixel(player, SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
-	int enemy = m_combatGraphics.genQuadTexture(144, 144, "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png", "owl", 0, 0, 6, 1);
+	m_combatGraphics.setIdleType(player, 1);
+	//Create Enemy with Player Texture, translate it, retexture it to owl, then set it to animate the sprite
+	int enemy = m_combatGraphics.genQuadTexture(144, 144, "Images/Player/Idle_Down.png", "player", 0, 6);
 	m_combatGraphics.translateObjectByPixel(enemy, 4 * SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
-	m_combatGraphics.genCone(0.25, 0.5, 36, 1, glm::vec4(0.7, 0.7, 0.7, 0.0));
-	//m_combatGraphics.genSphere(0.5, 36, 0, glm::vec4());
+	m_combatGraphics.retextureQuad(enemy, "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png", "owl");
+	m_combatGraphics.setIdleType(enemy, 1);
+	//Create cone with similar colors, then remove it
+	int cone = m_combatGraphics.genCone(0.25, 0.5, 36, 1, glm::vec4(0.7, 0.7, 0.7, 0.0));
+	m_combatGraphics.removeObject(cone);
+	//Create sphere with similar colorsm then set to animate with motion
+	int sphere = m_combatGraphics.genSphere(0.5, 36, 1, glm::vec4(1.0, 0.5, 0.0, 0.0));
+	m_combatGraphics.setIdleType(sphere, 2);
+	m_combatGraphics.setIdleMotion(sphere, glm::rotate(0.01f, m_combatGraphics.rotateRandom()));
+
+	//Create a cube with random colors
 	//m_combatGraphics.genCube(0, glm::vec4());
 
 	// Set up the combat dialog manager

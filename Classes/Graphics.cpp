@@ -7,8 +7,9 @@
 #include "../Headers/ResourceManager/ResourceManager.h"
 #include "../Headers/UI/TextRenderer.h"
 
-GLuint textVAO, textVBO, coneVAO, HUDVAO, tempVAO;
-
+/*
+	Initalize Graphics
+*/
 void Graphics::init(void)
 {
 	// We want to put the following resource manager stuff somewhere earlier in the program.
@@ -34,8 +35,8 @@ void Graphics::init(void)
 	// Set up the vertex array object for the HUD
 	glGenVertexArrays(1, &HUDVAO);
 	glBindVertexArray(HUDVAO);
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glGenBuffers(1, &HUDVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, HUDVBO);
 	glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec4) + sizeof(glm::vec2)) * 6, NULL, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec4) * 6, quadVertices);
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * 6, sizeof(glm::vec2) * 6, quadTexCoords);
@@ -46,6 +47,7 @@ void Graphics::init(void)
 	glEnableVertexAttribArray(vTexCoords);
 	glVertexAttribPointer(vTexCoords, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(sizeof(glm::vec4) * 6));
 
+	// Some OpenGL settings we want to set
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	// Set the clear color to light green (same as combatScene.png)
@@ -115,12 +117,31 @@ void Graphics::display(void)
 
 void Graphics::idle(void)
 {
-	//ctm = ctm * glm::rotate(0.01f, randomRotationAxis);
+	if (!objectList.empty()) {
+		for (std::list<GraphicsObject>::iterator it = objectList.begin(); it != objectList.end(); ++it) {
+			switch (it->idle_type) {
+			case 0: //0 = no animation
+				break;
+			case 1: //1 = sprite animation
+				iterateSpriteAnimation(it);
+				break;
+			case 2: //2 = motion animation
+				it->ctm = it->ctm * it->idle_motion;
+				break;
+			case 3: //3 = sprite and motion animation
+				iterateSpriteAnimation(it);
+				it->ctm = it->ctm * it->idle_motion;
+				break;
+			default:
+				break;
+			}
+		}
+	}
 	display();
 }
 
-//Returns the index in graphics arrays
-int Graphics::genQuadColor(int height, int width, glm::vec4 color) {
+int Graphics::genQuadColor(int height, int width, glm::vec4 color)
+{
 	GraphicsObject newQuad;
 	int it;
 	GLfloat h, w;	
@@ -144,8 +165,8 @@ int Graphics::genQuadColor(int height, int width, glm::vec4 color) {
 
 	glGenVertexArrays(1, &newQuad.VAO);
 	glBindVertexArray(newQuad.VAO);
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glGenBuffers(1, &newQuad.VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, newQuad.VBO);
 	glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec4) * 2) * newQuad.num_vertices, NULL, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec4) * newQuad.num_vertices, newQuad.position_array);
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * newQuad.num_vertices, sizeof(glm::vec4) * newQuad.num_vertices, newQuad.color_array);
@@ -161,8 +182,8 @@ int Graphics::genQuadColor(int height, int width, glm::vec4 color) {
 	return newQuad.ID;
 }
 
-//Returns the index in graphics arrays
-int Graphics::genQuadTexture(int height, int width, const GLchar *file, std::string texture_ID, int texture_sheet_x, int texture_sheet_y, int texture_sheet_size_x, int texture_sheet_size_y) {
+int Graphics::genQuadTexture(int height, int width, const GLchar *file, std::string texture_ID, int texture_sheet_it, int texture_sheet_size)
+{
 	GraphicsObject newQuad;
 	int it;
 	GLfloat h, w;
@@ -177,23 +198,21 @@ int Graphics::genQuadTexture(int height, int width, const GLchar *file, std::str
 	newQuad.texture_ID = texture_ID;
 	ResourceManager::loadTexture(file, texture_ID);
 
-	newQuad.texture_sheet_x = texture_sheet_x;
-	newQuad.texture_sheet_y = texture_sheet_y;
-	newQuad.texture_sheet_size_x = texture_sheet_size_x;
-	newQuad.texture_sheet_size_y = texture_sheet_size_y;
+	newQuad.texture_sheet_it = texture_sheet_it;
+	newQuad.texture_sheet_size = texture_sheet_size;
 
 	newQuad.position_array = (glm::vec4*)malloc(sizeof(glm::vec4) * newQuad.num_vertices);
 	newQuad.texture_array = (glm::vec2*)malloc(sizeof(glm::vec2) * newQuad.num_vertices);
 
 	for (it = 0; it < newQuad.num_vertices; it++) {
 		newQuad.position_array[it] = glm::vec4(w, h, 1.0f, 1.0f) * quadVertices[it];
-		newQuad.texture_array[it] = glm::vec2((GLfloat)(texture_sheet_x + 1) * (quadTexCoords[it].x / texture_sheet_size_x), (GLfloat)(texture_sheet_y + 1) * (quadTexCoords[it].y / texture_sheet_size_y));
+		newQuad.texture_array[it] = glm::vec2((GLfloat)(newQuad.texture_sheet_it + quadTexCoords[it].x) * (1.0 / newQuad.texture_sheet_size), quadTexCoords[it].y);
 	}
 
 	glGenVertexArrays(1, &newQuad.VAO);
 	glBindVertexArray(newQuad.VAO);
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glGenBuffers(1, &newQuad.VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, newQuad.VBO);
 	glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec4) + sizeof(glm::vec2)) * newQuad.num_vertices, NULL, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec4) * newQuad.num_vertices, newQuad.position_array);
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * newQuad.num_vertices, sizeof(glm::vec2) * newQuad.num_vertices, newQuad.texture_array);
@@ -250,8 +269,8 @@ int Graphics::genCone(GLfloat radius, GLfloat height, int resolution, int color_
 
 	glGenVertexArrays(1, &newCone.VAO);
 	glBindVertexArray(newCone.VAO);
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glGenBuffers(1, &newCone.VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, newCone.VBO);
 	glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec4) * 2) * newCone.num_vertices, NULL, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec4) * newCone.num_vertices, newCone.position_array);
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * newCone.num_vertices, sizeof(glm::vec4) * newCone.num_vertices, newCone.color_array);
@@ -267,7 +286,6 @@ int Graphics::genCone(GLfloat radius, GLfloat height, int resolution, int color_
 	return newCone.ID;
 }
 
-//Generates a sphere centered at 0.0, 0.0, 0.0
 int Graphics::genSphere(GLfloat radius, int resolution, int color_type, glm::vec4 color)
 {
 	GraphicsObject newSphere;
@@ -344,8 +362,8 @@ int Graphics::genSphere(GLfloat radius, int resolution, int color_type, glm::vec
 
 	glGenVertexArrays(1, &newSphere.VAO);
 	glBindVertexArray(newSphere.VAO);
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glGenBuffers(1, &newSphere.VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, newSphere.VBO);
 	glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec4) * 2) * newSphere.num_vertices, NULL, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec4) * newSphere.num_vertices, newSphere.position_array);
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * newSphere.num_vertices, sizeof(glm::vec4) * newSphere.num_vertices, newSphere.color_array);
@@ -369,8 +387,6 @@ int Graphics::genCube(int color_type, glm::vec4 color)
 	newCube.ID = object_counter++;
 	newCube.type = 0;
 	newCube.num_vertices = 36;
-
-	printf("genCube\n");
 
 	glm::vec4 cube[36] = { {-0.5, -0.5, 0.5, 1.0}, {0.5, -0.5, 0.5, 1.0}, {0.5, 0.5, 0.5, 1.0}, {-0.5, -0.5, 0.5, 1.0}, {0.5, 0.5, 0.5, 1.0}, {-0.5, 0.5, 0.5, 1.0}, //Front
 						{0.5, -0.5, 0.5, 1.0}, {0.5, -0.5, -0.5, 1.0}, {0.5, 0.5, -0.5, 1.0}, {0.5, -0.5, 0.5, 1.0}, {0.5, 0.5, -0.5, 1.0}, {0.5, 0.5, 0.5, 1.0}, //Right
@@ -397,8 +413,8 @@ int Graphics::genCube(int color_type, glm::vec4 color)
 
 	glGenVertexArrays(1, &newCube.VAO);
 	glBindVertexArray(newCube.VAO);
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glGenBuffers(1, &newCube.VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, newCube.VBO);
 	glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec4) * 2) * newCube.num_vertices, NULL, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec4) * newCube.num_vertices, newCube.position_array);
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * newCube.num_vertices, sizeof(glm::vec4) * newCube.num_vertices, newCube.color_array);
@@ -463,30 +479,15 @@ glm::vec4* Graphics::genRandomTriangleColorsSimilar(int num_vertices, glm::vec4 
 	return colors;
 }
 
-//Recolors the rectangle based on index
-void Graphics::recolorQuad(int index, glm::vec4 color) {
-	
-}
-
-//
-void Graphics::retextureQuad(int index) {
-
-}
-
-//Removes rectangle based on index
-void Graphics::removeObject(int index) {
-	
-}
-
-int Graphics::translateObjectByPixel(int ID, int x, int y, GLfloat z) {
-	GLfloat i, j;
-	i = ((GLfloat)(x - SCREEN_WIDTH / 2)) / ((GLfloat)(SCREEN_WIDTH / 2));
-	j = ((GLfloat)(SCREEN_HEIGHT / 2 - y)) / ((GLfloat)(SCREEN_HEIGHT / 2));
-
+int Graphics::recolorQuad(int ID, glm::vec4 color)
+{
+	int i;
 	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
 	if (it != objectList.end()) {
-		it->ctm = glm::translate(it->ctm, glm::vec3(i, j, z));
-		std::cout << glm::to_string(it->ctm) << std::endl;
+		it->color = color;
+		for (i = 0; i < it->num_vertices; i++) {
+			it->color_array[i] = color;
+		}
 		return 1;
 	}
 	else {
@@ -494,7 +495,69 @@ int Graphics::translateObjectByPixel(int ID, int x, int y, GLfloat z) {
 	}
 }
 
-void Graphics::rotateRandom(void)
+int Graphics::retextureQuad(int ID, const GLchar *file, std::string texture_ID)
+{
+	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
+	if (it != objectList.end()) {
+		it->texture_ID = texture_ID;
+		ResourceManager::loadTexture(file, texture_ID);
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+int Graphics::removeObject(int ID)
+{
+	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
+	if (it != objectList.end()) {
+		//glDeleteVertexArrays(1, it->VAO);
+		//glDeleteBuffers(1, it->VBO);
+		objectList.erase(it);
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+int Graphics::translateObjectByPixel(int ID, int x, int y, GLfloat z)
+{
+	GLfloat i, j;
+	i = ((GLfloat)(x - SCREEN_WIDTH / 2)) / ((GLfloat)(SCREEN_WIDTH / 2));
+	j = ((GLfloat)(SCREEN_HEIGHT / 2 - y)) / ((GLfloat)(SCREEN_HEIGHT / 2));
+
+	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
+	if (it != objectList.end()) {
+		it->ctm = glm::translate(it->ctm, glm::vec3(i, j, z));
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+void Graphics::iterateSpriteAnimation(std::list<GraphicsObject>::iterator it) 
+{
+	int i;
+	if (++it->texture_sheet_it >= it->texture_sheet_size) {
+		it->texture_sheet_it = 0;
+	}
+
+	for (i = 0; i < it->num_vertices; i++) {
+		it->texture_array[i] = glm::vec2((GLfloat)(it->texture_sheet_it + quadTexCoords[i].x) * (1.0 / it->texture_sheet_size), quadTexCoords[i].y);
+	}
+
+	glBindVertexArray(it->VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, it->VBO);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * it->num_vertices, sizeof(glm::vec2) * it->num_vertices, it->texture_array);
+	vTexCoords = glGetAttribLocation(ResourceManager::getShader("simple_texture_shader").Program, "vTexCoords");
+	glEnableVertexAttribArray(vTexCoords);
+	glVertexAttribPointer(vTexCoords, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (GLvoid*)(sizeof(glm::vec4) * it->num_vertices));
+}
+
+glm::vec3 Graphics::rotateRandom(void)
 {
 	GLfloat x, y, z;
 
@@ -502,7 +565,31 @@ void Graphics::rotateRandom(void)
 	y = rand() / (float)RAND_MAX;
 	z = rand() / (float)RAND_MAX;
 
-	randomRotationAxis = glm::vec3(x, y, z);
+	return glm::vec3(x, y, z);
+}
+
+int Graphics::setIdleType(int ID, int type)
+{
+	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
+	if (it != objectList.end()) {
+		it->idle_type = type;
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+int Graphics::setIdleMotion(int ID, glm::mat4 motion)
+{
+	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
+	if (it != objectList.end()) {
+		it->idle_motion = motion;
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
 
 void Graphics::addTextToRender(RenderableText text)
