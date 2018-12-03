@@ -1255,17 +1255,20 @@ void playGame() {
 		{
 			const char* myString = player1->toString().c_str();
 			length = strlen(myString) + 1;
+			std::cout << "Host Sending\n" << std::endl;
 			result = SDLNet_TCP_Send(clientSocket, &myString, length);
 			if (result < length) {
 				printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 			}
-
+			std::cout << "Host Done Sending\n" << std::endl;
 			bool gettingattr = true;
 			std::stringstream notyoStream;
 			char*temp[200];
+			std::cout << "Host Recieving\n" << std::endl;
 			while (SDLNet_TCP_Recv(clientSocket, temp, 200)) {
 				notyoStream << temp;
 			}
+			std::cout << "Host Done Recieving\n" << std::endl;
 			std::string notYourSTD(notyoStream.str());
 			notYou->fromString(notYourSTD);
 			charactersOnScreen.push_back(notYou);
@@ -1273,20 +1276,26 @@ void playGame() {
 		else
 		{
 			bool gettingattr = true;
+			//recieve character and push back
 			std::stringstream notyoStream;
 			char*temp[200];
+			std::cout << "Client Recieving\n" << std::endl;
 			while (SDLNet_TCP_Recv(clientSocket, temp, 200)) {
 				notyoStream << temp;
 			}
+			std::cout << "Client Done Recieving\n" << std::endl;
 			std::string notYourSTD(notyoStream.str());
 			notYou->fromString(notYourSTD);
 			charactersOnScreen.push_back(notYou);
+			//Send Character
 			const char* myString = player1->toString().c_str();
 			length = strlen(myString) + 1;
+			std::cout << "Client Sending\n" << std::endl;
 			result = SDLNet_TCP_Send(clientSocket, &myString, length);
 			if (result < length) {
 				printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 			}
+			std::cout << "Client Done Sending\n" << std::endl;
 		}
 	}
 
