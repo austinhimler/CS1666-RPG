@@ -453,7 +453,6 @@ void CombatManager::outputEnemy() {
 			options.push_back(participants[j]->getName());
 	}
 	m_combatDialogManager.AddSelectableOption("Choose your target", options);
-
 }
 void CombatManager::textAttributes(Character *c, int optNum)
 {
@@ -474,7 +473,7 @@ void CombatManager::textAttributes(Character *c, int optNum)
 void CombatManager::textMain(bool& printed, bool initialText) {
 	if (printed) return;
 	if (initialText)
-		m_combatDialogManager.AddMessage("You've encountered the Owls!");
+		m_combatDialogManager.AddMessage("You've encountered the colored cone of death!");
 	std::vector<std::string> options;
 	options.push_back("Strength Abilities");
 	options.push_back("Intelligence Abilities");
@@ -668,49 +667,39 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			SDL_Delay(16);*/
 		}
 		
-		if (turnOrder == 0)
-		{
-			textMain(printed, initialText); // text combat ui initialization
-			turnOrder = 1;
-		}
-			
+		
+		textMain(printed, initialText); // text combat ui initialization
 		initialText = false;
 		// We need to fix the idle for the following part
 		// You will need to rewrite to not have an while loops
 		// We need to constantly render to the screen
-		if (turnOrder == 1)
+		if (e.key.keysym.sym == SDLK_RETURN)
 		{
-			if (e.key.keysym.sym == SDLK_RETURN)
-			{
-				switch (int result_temp = textAction(participants[0])) {
+			switch (int result_temp = textAction(participants[0])) {
 				case IN_COMBAT:
 					break;
 				default:
 					Mix_FreeChunk(gBSound);
 					return result_temp;
-				}
-				updateStatus();
-				turnOrder = 2;
+					//takeAction(participants[i], buttons, e);
 			}
+			updateStatus();
 		}
-		else if (turnOrder == 2)
+		for (int i = 1; i < participants.size(); i++)
 		{
-			for (int i = 1; i < participants.size(); i++)
-			{
-				if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0 && allPlayersMoved)
-					switch (int result_temp = textAction(participants[i])) {
-					case IN_COMBAT:
-						break;
-					default:
-						Mix_FreeChunk(gBSound);
-						return result_temp;
-					}
-				updateStatus();
-			}
-			allPlayersMoved = false;
-			turnOrder = 0;
+			//updateStatus(participants[i]);
+			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0 && allPlayersMoved)
+				switch (int result_temp = textAction(participants[i])) {
+				case IN_COMBAT:
+					break;
+				default:
+					Mix_FreeChunk(gBSound);
+					return result_temp;
+					//takeAction(participants[i], buttons, e);
+				}
+			updateStatus();
 		}
-		
+		allPlayersMoved = false;
 		//printed = false; // for text combat ui
 		qm.changeRounds();
 
