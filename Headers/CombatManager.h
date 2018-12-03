@@ -41,6 +41,7 @@ public:
 private:
 	bool inCombat;
 	bool allPlayersMoved;
+	int turnOrder;
 	int livingCount[2];
 	std::vector<Character*> participants;
 	std::vector<int> enemy_index;

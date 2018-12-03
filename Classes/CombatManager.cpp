@@ -108,9 +108,10 @@ int CombatManager::textAction(Character* c) {
 	if (c->is_Enemy() == true)
 	{
 		//Enemy attack player
-		std::vector<Ability> temp = c->getAbilities();
+		/*std::vector<Ability> temp = c->getAbilities();
 		int target = rand() % player_index.size();
 		int result = participants[player_index[target]]->beingTarget(&temp[0]);
+		printf("HIT\n");
 		stringstream ss;
 		ss << c->getName() << " damages you by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left.";
 		m_combatDialogManager.AddMessage(ss.str());
@@ -122,14 +123,14 @@ int CombatManager::textAction(Character* c) {
 		}
 		else {
 
-		}*/
+		}
 		if (participants[player_index[target]]->getHPCurrent() == 0) {
 			//std::cout << "Why are your so weak? You are dead, dude!" << std::endl;
 			m_combatDialogManager.AddMessage("Why are your so weak? You are dead, dude!");
 			inCombat = false;
 			return ENEMY_WINS;
 		}
-		m_combatDialogManager.ClearEvents();
+		m_combatDialogManager.ClearEvents();*/
 	}
 	else
 	{
@@ -149,6 +150,7 @@ int CombatManager::textAction(Character* c) {
 					if (status != 1)
 						return status;
 					// We'll just reprint the main move selection for now
+
 
 					bool print = false;
 					textMain(print, initialText);
@@ -453,6 +455,7 @@ void CombatManager::outputEnemy() {
 			options.push_back(participants[j]->getName());
 	}
 	m_combatDialogManager.AddSelectableOption("Choose your target", options);
+	m_combatDialogManager.ClearEvents();
 }
 void CombatManager::textAttributes(Character *c, int optNum)
 {
@@ -468,12 +471,15 @@ void CombatManager::textAttributes(Character *c, int optNum)
 		}
 	}
 	m_combatDialogManager.AddSelectableOption("Choose your attack", options);
+	m_combatDialogManager.ClearEvents();
+
+	turnOrder = 2;
 	
 }
 void CombatManager::textMain(bool& printed, bool initialText) {
 	if (printed) return;
 	if (initialText)
-		m_combatDialogManager.AddMessage("You've encountered the colored cone of death!");
+		m_combatDialogManager.AddMessage("You've encountered the fireball of death!");
 	std::vector<std::string> options;
 	options.push_back("Strength Abilities");
 	options.push_back("Intelligence Abilities");
@@ -507,7 +513,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			livingCount[PLAYER]++;
 		}
 	}
-
+	turnOrder = 0;
 	int charImageX = 0;
 	int charImageY = 0;
 	int charImageW = 128;
@@ -673,37 +679,49 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		SDL_Delay(16);*/
 		}
 		
-		
-		textMain(printed, initialText); // text combat ui initialization
-		initialText = false;
+		if (turnOrder == 0)
+		{
+			textMain(printed, initialText); // text combat ui initialization
+			initialText = false;
+			turnOrder = 1;
+		}
+
 		// We need to fix the idle for the following part
 		// You will need to rewrite to not have an while loops
 		// We need to constantly render to the screen
-		if (e.key.keysym.sym == SDLK_RETURN)
+		else if (turnOrder == 1)
 		{
-			switch (int result_temp = textAction(participants[0])) {
-			case IN_COMBAT:
-				break;
-			default:
-				return result_temp;
-				//takeAction(participants[i], buttons, e);
-			}
-			updateStatus();
-		}
-		for (int i = 1; i < participants.size(); i++)
-		{
-			//updateStatus(participants[i]);
-			if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0 && allPlayersMoved)
-				switch (int result_temp = textAction(participants[i])) {
+			if (e.key.keysym.sym == SDLK_RETURN)
+			{
+				switch (int result_temp = textAction(participants[0])) {
 				case IN_COMBAT:
 					break;
 				default:
 					return result_temp;
 					//takeAction(participants[i], buttons, e);
 				}
-			updateStatus();
+				updateStatus();
+			}
 		}
-		allPlayersMoved = false;
+		else
+		{
+			for (int i = 1; i < participants.size(); i++)
+			{
+				//updateStatus(participants[i]);
+				if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0 && allPlayersMoved)
+					switch (int result_temp = textAction(participants[i])) {
+					case IN_COMBAT:
+						break;
+					default:
+						return result_temp;
+						//takeAction(participants[i], buttons, e);
+					}
+				updateStatus();
+			}
+			allPlayersMoved = false;
+			turnOrder = 0;
+		}
+	
 		//printed = false; // for text combat ui
 		qm.changeRounds();
 
