@@ -64,8 +64,8 @@ public:
 	void addTextToRender(RenderableText text);
 	void addTextsToRender(std::vector<RenderableText> texts);
 
-	int genCone(GLfloat radius, GLfloat height, GLfloat resolution, int color_type, glm::vec4 color);
-	int genSphere(GLfloat radius, GLfloat resolution, int color_type, glm::vec4 color);
+	int genCone(GLfloat radius, GLfloat height, int resolution, int color_type, glm::vec4 color);
+	int genSphere(GLfloat radius, int resolution, int color_type, glm::vec4 color);
 	int genCube(int color_type, glm::vec4 color);
 	//Color Options
 	glm::vec4* genRandomTriangleColors(int num_vertices); //color_type == 0

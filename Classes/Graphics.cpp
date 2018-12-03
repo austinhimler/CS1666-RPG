@@ -250,7 +250,7 @@ void Graphics::addTextsToRender(std::vector<RenderableText> text)
 	}
 }
 
-int Graphics::genCone(GLfloat radius, GLfloat height, GLfloat resolution, int color_type, glm::vec4 color)
+int Graphics::genCone(GLfloat radius, GLfloat height, int resolution, int color_type, glm::vec4 color)
 {
 	GraphicsObject newCone;
 	float theta, theta_r, theta_next_r;
@@ -303,11 +303,13 @@ int Graphics::genCone(GLfloat radius, GLfloat height, GLfloat resolution, int co
 	glEnableVertexAttribArray(vColor);
 	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid *)(sizeof(glm::vec4) * newCone.num_vertices));
 
+	objectList.push_back(newCone);
+
 	return newCone.ID;
 }
 
 //Generates a sphere centered at 0.0, 0.0, 0.0
-int Graphics::genSphere(GLfloat radius, GLfloat resolution, int color_type, glm::vec4 color)
+int Graphics::genSphere(GLfloat radius, int resolution, int color_type, glm::vec4 color)
 {
 	GraphicsObject newSphere;
 	GLfloat sphere_it, sphere_i, sphere_j;
@@ -319,7 +321,7 @@ int Graphics::genSphere(GLfloat radius, GLfloat resolution, int color_type, glm:
 
 	newSphere.ID = object_counter++;
 	newSphere.type = 0;
-	newSphere.num_vertices = 3 * ((floor((ceil(resolution / 2) * 2) / 2) - 1) * 2 * resolution); //Not Perfect, but I was tinkering with this
+	newSphere.num_vertices = 3 * (resolution * (2 + (2 * ((180.0 / increment) - 2))));
 
 	newSphere.position_array = (glm::vec4*)malloc(sizeof(glm::vec4) * (newSphere.num_vertices));
 	
@@ -395,6 +397,8 @@ int Graphics::genSphere(GLfloat radius, GLfloat resolution, int color_type, glm:
 	glEnableVertexAttribArray(vColor);
 	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid *)(sizeof(glm::vec4) * newSphere.num_vertices));
 
+	objectList.push_back(newSphere);
+
 	return newSphere.ID;
 }
 
@@ -406,6 +410,8 @@ int Graphics::genCube(int color_type, glm::vec4 color)
 	newCube.ID = object_counter++;
 	newCube.type = 0;
 	newCube.num_vertices = 36;
+
+	printf("genCube\n");
 
 	glm::vec4 cube[36] = { {-0.5, -0.5, 0.5, 1.0}, {0.5, -0.5, 0.5, 1.0}, {0.5, 0.5, 0.5, 1.0}, {-0.5, -0.5, 0.5, 1.0}, {0.5, 0.5, 0.5, 1.0}, {-0.5, 0.5, 0.5, 1.0}, //Front
 						{0.5, -0.5, 0.5, 1.0}, {0.5, -0.5, -0.5, 1.0}, {0.5, 0.5, -0.5, 1.0}, {0.5, -0.5, 0.5, 1.0}, {0.5, 0.5, -0.5, 1.0}, {0.5, 0.5, 0.5, 1.0}, //Right
@@ -443,6 +449,8 @@ int Graphics::genCube(int color_type, glm::vec4 color)
 	vColor = glGetAttribLocation(ResourceManager::getShader("simple_color_shader").Program, "vColor");
 	glEnableVertexAttribArray(vColor);
 	glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid *)(sizeof(glm::vec4) * newCube.num_vertices));
+
+	objectList.push_back(newCube);
 
 	return newCube.ID;
 }
