@@ -48,7 +48,7 @@ void Graphics::init(void)
 	glVertexAttribPointer(vTexCoords, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(sizeof(glm::vec4) * 6));
 
 	// Some OpenGL settings we want to set
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	// Set the clear color to light green (same as combatScene.png)
 	glClearColor(0.694, 0.886, 0.78, 1.0);
 	glDepthRange(1, 0);
@@ -59,14 +59,14 @@ void Graphics::display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glPolygonMode(GL_FRONT, GL_FILL);
-	glPolygonMode(GL_BACK, GL_LINE);
+	glPolygonMode(GL_BACK, GL_FILL);
 
 
 	if (!objectList.empty()) {
 		for (std::list<GraphicsObject>::iterator it = objectList.begin(); it != objectList.end(); ++it) {
 			switch (it->type) {
 			case 0: //Color Object
-				glEnable(GL_DEPTH_TEST);
+				//glEnable(GL_DEPTH_TEST);
 				ResourceManager::getShader("simple_color_shader").use();
 				ResourceManager::getShader("simple_color_shader").setMatrix4("ctm", it->ctm);
 				glBindVertexArray(it->VAO);
@@ -279,6 +279,9 @@ int Graphics::genCone(GLfloat radius, GLfloat height, int resolution, int color_
 		newCone.color_array = genRandomTriangleColors(newCone.num_vertices);
 		break;
 	case 1:
+		newCone.color_array = genRandomTriangleColorsAlpha(newCone.num_vertices);
+		break;
+	case 2:
 		newCone.color = color;
 		newCone.color_array = genRandomTriangleColorsSimilar(newCone.num_vertices, newCone.color);
 		break;
@@ -372,6 +375,9 @@ int Graphics::genSphere(GLfloat radius, int resolution, int color_type, glm::vec
 		newSphere.color_array = genRandomTriangleColors(newSphere.num_vertices);
 		break;
 	case 1:
+		newSphere.color_array = genRandomTriangleColorsAlpha(newSphere.num_vertices);
+		break;
+	case 2:
 		newSphere.color = color;
 		newSphere.color_array = genRandomTriangleColorsSimilar(newSphere.num_vertices, newSphere.color);
 		break;
@@ -423,6 +429,9 @@ int Graphics::genCube(int color_type, glm::vec4 color)
 		newCube.color_array = genRandomTriangleColors(newCube.num_vertices);
 		break;
 	case 1:
+		newCube.color_array = genRandomTriangleColorsAlpha(newCube.num_vertices);
+		break;
+	case 2:
 		newCube.color = color;
 		newCube.color_array = genRandomTriangleColorsSimilar(newCube.num_vertices, newCube.color);
 		break;
@@ -473,9 +482,35 @@ glm::vec4* Graphics::genRandomTriangleColors(int num_vertices)
 	return colors;
 }
 
+glm::vec4* Graphics::genRandomTriangleColorsAlpha(int num_vertices)
+{
+	GLfloat r, g, b, a;
+	int index = 0, it;
+
+	srand(time(0));
+
+	glm::vec4 *colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
+
+	for (it = 0; it < num_vertices / 3; it++)
+	{
+		r = rand() / (float)RAND_MAX;
+		g = rand() / (float)RAND_MAX;
+		b = rand() / (float)RAND_MAX;
+		a = rand() / (float)RAND_MAX;
+
+		colors[index] = glm::vec4(r, g, b, a);
+		colors[index + 1] = glm::vec4(r, g, b, a);
+		colors[index + 2] = glm::vec4(r, g, b, a);
+		index += 3;
+	}
+
+	return colors;
+}
+
+
 glm::vec4* Graphics::genRandomTriangleColorsSimilar(int num_vertices, glm::vec4 color)
 {
-	GLfloat r, g, b, modifying_color;
+	GLfloat r, g, b, a, modifying_color;
 	int index = 0, it;
 
 	srand(time(0));
@@ -488,10 +523,11 @@ glm::vec4* Graphics::genRandomTriangleColorsSimilar(int num_vertices, glm::vec4 
 		r = color.x + modifying_color * 0.1;
 		g = color.y + modifying_color * 0.1;
 		b = color.z + modifying_color * 0.1;
+		a = color.w + modifying_color * 0.1;
 
-		colors[index] = glm::vec4(r, g, b, 1.0);
-		colors[index + 1] = glm::vec4(r, g, b, 1.0);
-		colors[index + 2] = glm::vec4(r, g, b, 1.0);
+		colors[index] = glm::vec4(r, g, b, a);
+		colors[index + 1] = glm::vec4(r, g, b, a);
+		colors[index + 2] = glm::vec4(r, g, b, a);
 		index += 3;
 	}
 

@@ -63,7 +63,8 @@ public:
 	
 	//Color Options
 	glm::vec4* genRandomTriangleColors(int num_vertices); //color_type == 0
-	glm::vec4* genRandomTriangleColorsSimilar(int num_vertices, glm::vec4 color); //color_type == 1
+	glm::vec4* genRandomTriangleColorsAlpha(int num_vertices); //color_type == 1
+	glm::vec4* genRandomTriangleColorsSimilar(int num_vertices, glm::vec4 color); //color_type == 2
 
 	int recolorQuad(int ID, glm::vec4 color);
 	int retextureQuad(int ID, const GLchar *file, std::string texture_ID);

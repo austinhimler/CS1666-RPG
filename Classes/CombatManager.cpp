@@ -568,19 +568,22 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 	m_combatGraphics.retextureQuad(enemy, "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png", "owl");
 	m_combatGraphics.setIdleAnimationType(enemy, 1);
 	//Create cone with similar colors, then remove it
-	int cone = m_combatGraphics.genCone(0.25, 0.5, 36, 1, glm::vec4(0.7, 0.7, 0.7, 0.0));
+	int cone = m_combatGraphics.genCone(0.5, 1.0, 36, 2, glm::vec4(1.0, 1.0, 0.0, 0.3));
+	m_combatGraphics.setIdleAnimationType(cone, 2);
+	m_combatGraphics.setIdleAnimationMotion(cone, glm::rotate(0.01f, m_combatGraphics.rotateRandom()));
 	m_combatGraphics.removeObject(cone);
 	//Create sphere with similar colorsm then set to animate with motion
-	int sphere = m_combatGraphics.genSphere(0.5, 36, 1, glm::vec4(1.0, 0.5, 0.0, 0.0));
+	int sphere = m_combatGraphics.genSphere(0.5, 36, 1, glm::vec4());
 	m_combatGraphics.setIdleAnimationType(sphere, 2);
 	m_combatGraphics.setIdleAnimationMotion(sphere, glm::rotate(0.01f, m_combatGraphics.rotateRandom()));
 	//m_combatGraphics.removeObject(sphere);
-
 	//Create a cube with random colors
 	int cube = m_combatGraphics.genCube(0, glm::vec4());
 	m_combatGraphics.setIdleAnimationType(cube, 2);
 	m_combatGraphics.setIdleAnimationMotion(cube, glm::rotate(0.01f, m_combatGraphics.rotateRandom()));
 	m_combatGraphics.removeObject(cube);
+
+
 
 	// Set up the combat dialog manager
 	m_combatDialogManager = CombatDialogManager();
