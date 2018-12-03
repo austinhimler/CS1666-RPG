@@ -1239,7 +1239,6 @@ bool handleNetworkingSetup() {
 }
 
 void playGame() {
-
 	std::vector<Character*> charactersOnScreen;
 	std::vector<Character*> combatants;
 	
@@ -1248,7 +1247,7 @@ void playGame() {
 		int length;
 		int result;
 
-		length = sizeof(attr); 
+		length = attr.size() * 4;
 
 
 		// serialize into stream
@@ -1339,9 +1338,6 @@ void playGame() {
 					break;
 			}
 		}
-
-
-
 
 		Uint32 timeSinceLastMovement = SDL_GetTicks();
 		Uint32 timeSinceLastAnimation = SDL_GetTicks();
