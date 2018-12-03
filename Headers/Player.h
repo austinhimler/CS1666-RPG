@@ -3,7 +3,7 @@
 #define _____PLAYER_H_____
 #include <string>
 #include <vector>
-
+#include <iterator>
 #include "Inventory.h"
 #include "Ability.h"
 #include "Character.h"
@@ -20,6 +20,8 @@ public:
 	int getLevel();
 	int getCurrentExperience();
 	operator std::string();
+	std::string toString();
+	void fromString(std::string in);
 private:
 	int level;
 	int currentExperience;

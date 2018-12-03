@@ -100,3 +100,29 @@
 		return s;
 		
 	}
+	//name currentFrame xPosition yPosition xVelocity yVelocity
+	std::string Player::toString()
+	{
+		std::string pString = name + " " + std::to_string(currentFrame) + " " + std::to_string(xPosition) + " " +
+			std::to_string(yPosition) + " " + std::to_string(xVelocity) + " " + std::to_string(yVelocity);
+		
+		return pString;
+	}
+	void Player::fromString(std::string in)
+	{
+		std::vector<std::string> vars;
+		size_t pos = 0;
+		std::string token;
+		while ((pos = in.find(" ")) != std::string::npos) {
+			token = in.substr(0, pos);
+			vars.push_back(token);
+			in.erase(0, pos + 1);
+		}
+		name = vars[0];
+		currentFrame = std::stoi(vars[2]);
+		xPosition = atof(vars[3].c_str());
+		yPosition = atof(vars[4].c_str());
+		xVelocity = atof(vars[5].c_str());
+		yVelocity = atof(vars[6].c_str());
+		return;
+	}

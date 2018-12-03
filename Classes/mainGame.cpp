@@ -4,7 +4,7 @@
 #include <time.h>
 #include <cmath>
 #include <fstream>
-
+#include <sstream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
@@ -1247,38 +1247,27 @@ void playGame() {
 		int length;
 		int result;
 
-		length = attr.size() * 4;
+		
 
-
+		notYou = new Player("meme", 10, 10, 10, 10, 10);
 		// serialize into stream
 		//char* stream = reinterpret_cast<char*>(&attr);
-		result = SDLNet_TCP_Send(clientSocket, &attr, length);
+		const char* myString = player1->toString().c_str();
+		length = strlen(myString) + 1;
+		result = SDLNet_TCP_Send(clientSocket, &myString, length);
 		if (result < length) {
 			printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 		}
 
 
-		std::vector<int> notYouattr;
 		bool gettingattr = true;
-		while (gettingattr) {
-			int result;
-			int length;
-			length = sizeof(attr);
-
-			//char buffer[sizeof(attr)];
-			result = SDLNet_TCP_Recv(clientSocket, &notYouattr, length);
-			//notYouattr = reinterpret_cast<std::vector<int>>(buffer);
-
-			if (result < length) {
-				printf("SDLNet_TCP_RECV: %s\n", SDLNet_GetError());
-			}
-			else {
-				gettingattr = false;
-			}
-			//cout << notYou->xPosition << endl;
-			//cout << notYou->yPosition << endl;
+		std::stringstream notyoStream;
+		char*temp[200];
+		while (SDLNet_TCP_Recv(clientSocket, temp, 200)) {
+			notyoStream << temp;
 		}
-		notYou = new Player("meme", notYouattr[0], notYouattr[1], notYouattr[2], notYouattr[3], notYouattr[4]);
+		std::string notYourSTD(notyoStream.str());
+		notYou->fromString(notYourSTD);
 		charactersOnScreen.push_back(notYou);
 	}
 
