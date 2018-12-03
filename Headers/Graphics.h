@@ -4,6 +4,7 @@
 
 #include <string>
 #include <list>
+#include <algorithm>
 
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
@@ -11,6 +12,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include "Globals.h"
 #include "ResourceManager/ResourceManager.h"
 #include "UI/TextRenderer.h"
@@ -28,9 +30,6 @@ public:
 	int type; //0 = 3d object color, 1 = 3d object texture
 	GLuint VAO;
 	int num_vertices;
-	GLfloat x;
-	GLfloat y;
-	GLfloat z;
 	glm::vec4 color;
 	std::string texture_ID;
 	int texture_sheet_x;
@@ -51,12 +50,21 @@ public:
 	void display(void);
 	void idle(void);
 
-	int genQuadColor(int x, int y, GLfloat z, int height, int width, glm::vec4 color);
-	int genQuadTexture(int x, int y, GLfloat z, int height, int width, const GLchar *file, std::string texture_ID, int texture_sheet_x, int texture_sheet_y, int texture_sheet_size_x, int texture_sheet_size_y);
+	int genQuadColor(int height, int width, glm::vec4 color);
+	int genQuadTexture(int height, int width, const GLchar *file, std::string texture_ID, int texture_sheet_x, int texture_sheet_y, int texture_sheet_size_x, int texture_sheet_size_y);
+	int genCone(GLfloat radius, GLfloat height, int resolution, int color_type, glm::vec4 color);
+	int genSphere(GLfloat radius, int resolution, int color_type, glm::vec4 color);
+	int genCube(int color_type, glm::vec4 color);
+	
+	//Color Options
+	glm::vec4* genRandomTriangleColors(int num_vertices); //color_type == 0
+	glm::vec4* genRandomTriangleColorsSimilar(int num_vertices, glm::vec4 color);//color_type == 1
+
 	void recolorQuad(int ID, glm::vec4 color);
 	void retextureQuad(int ID);
 	void removeObject(int ID);
 
+	int translateObjectByPixel(int ID, int x, int y, GLfloat z);
 	void rotateRandom(void);
 
 	// Adds text to render to the screen.
@@ -64,12 +72,7 @@ public:
 	void addTextToRender(RenderableText text);
 	void addTextsToRender(std::vector<RenderableText> texts);
 
-	int genCone(GLfloat radius, GLfloat height, int resolution, int color_type, glm::vec4 color);
-	int genSphere(GLfloat radius, int resolution, int color_type, glm::vec4 color);
-	int genCube(int color_type, glm::vec4 color);
-	//Color Options
-	glm::vec4* genRandomTriangleColors(int num_vertices); //color_type == 0
-	glm::vec4* genRandomTriangleColorsSimilar(int num_vertices, glm::vec4 color);//color_type == 1
+	
 
 	TextRenderer textRenderer;
 private:

@@ -361,22 +361,16 @@
     <None Include="Shaders\simpleColorShader.vs">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\vshader.vs">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\fshader.frag">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="Shaders\textShader.vs">
       <Filter>Shaders</Filter>
     </None>
     <None Include="Shaders\textShader.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\screenShader.frag">
+    <None Include="Shaders\simpleTextureShader.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\screenShader.vs">
+    <None Include="Shaders\simpleTextureShader.vs">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

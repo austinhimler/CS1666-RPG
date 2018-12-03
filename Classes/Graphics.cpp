@@ -70,8 +70,10 @@ void Graphics::display(void)
 				glDrawArrays(GL_TRIANGLES, 0, it->num_vertices);
 				break;
 			case 1: //Texture Object
-				glBindVertexArray(it->VAO);
+				ResourceManager::getShader("simple_texture_shader").use();
 				ResourceManager::getShader("simple_texture_shader").setInteger("texture", 0, true);
+				ResourceManager::getShader("simple_texture_shader").setMatrix4("ctm", it->ctm);
+				glBindVertexArray(it->VAO);
 				glActiveTexture(GL_TEXTURE0);
 				ResourceManager::getTexture(it->texture_ID).bind();
 				glDrawArrays(GL_TRIANGLES, 0, it->num_vertices);
@@ -89,8 +91,10 @@ void Graphics::display(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Draw the HUD background image
-	glBindVertexArray(HUDVAO);
+	ResourceManager::getShader("simple_texture_shader").use();
 	ResourceManager::getShader("simple_texture_shader").setInteger("texture", 0, true);
+	ResourceManager::getShader("simple_texture_shader").setMatrix4("ctm", { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } });
+	glBindVertexArray(HUDVAO);
 	glActiveTexture(GL_TEXTURE0);
 	ResourceManager::getTexture("combat_HUD").bind();
 	glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -116,7 +120,7 @@ void Graphics::idle(void)
 }
 
 //Returns the index in graphics arrays
-int Graphics::genQuadColor(int x, int y, GLfloat z, int height, int width, glm::vec4 color) {
+int Graphics::genQuadColor(int height, int width, glm::vec4 color) {
 	GraphicsObject newQuad;
 	int it;
 	GLfloat h, w;	
@@ -125,19 +129,16 @@ int Graphics::genQuadColor(int x, int y, GLfloat z, int height, int width, glm::
 	newQuad.type = 0;
 	newQuad.num_vertices = quad_num_vertices;
 
-	newQuad.x = ((GLfloat)(x - SCREEN_WIDTH / 2)) / ((GLfloat)(SCREEN_WIDTH / 2));
-	newQuad.y = ((GLfloat)(SCREEN_HEIGHT / 2 - y)) / ((GLfloat)(SCREEN_HEIGHT / 2));
 	h = ((GLfloat)height) / ((GLfloat)SCREEN_HEIGHT);
 	w = ((GLfloat)width) / ((GLfloat)SCREEN_WIDTH);
 
-	newQuad.z = z;
 	newQuad.color = color;
 
 	newQuad.position_array = (glm::vec4*)malloc(sizeof(glm::vec4) * newQuad.num_vertices);
 	newQuad.color_array = (glm::vec4*)malloc(sizeof(glm::vec4) * newQuad.num_vertices);
 
 	for (it = 0; it < newQuad.num_vertices; it++) {
-		newQuad.position_array[it] = glm::translate(glm::mat4(), glm::vec3(newQuad.x, newQuad.y, z)) * (glm::vec4(w, h, 1.0f, 1.0f) * quadVertices[it]);
+		newQuad.position_array[it] = glm::vec4(w, h, 1.0f, 1.0f) * quadVertices[it];
 		newQuad.color_array[it] = color;
 	}
 
@@ -161,7 +162,7 @@ int Graphics::genQuadColor(int x, int y, GLfloat z, int height, int width, glm::
 }
 
 //Returns the index in graphics arrays
-int Graphics::genQuadTexture(int x, int y, GLfloat z, int height, int width, const GLchar *file, std::string texture_ID, int texture_sheet_x, int texture_sheet_y, int texture_sheet_size_x, int texture_sheet_size_y) {
+int Graphics::genQuadTexture(int height, int width, const GLchar *file, std::string texture_ID, int texture_sheet_x, int texture_sheet_y, int texture_sheet_size_x, int texture_sheet_size_y) {
 	GraphicsObject newQuad;
 	int it;
 	GLfloat h, w;
@@ -170,12 +171,9 @@ int Graphics::genQuadTexture(int x, int y, GLfloat z, int height, int width, con
 	newQuad.type = 1;
 	newQuad.num_vertices = quad_num_vertices;
 
-	newQuad.x = ((GLfloat)(x - SCREEN_WIDTH / 2)) / ((GLfloat)(SCREEN_WIDTH / 2));
-	newQuad.y = ((GLfloat)(SCREEN_HEIGHT / 2 - y)) / ((GLfloat)(SCREEN_HEIGHT / 2));
 	h = ((GLfloat)height) / ((GLfloat)SCREEN_HEIGHT);
 	w = ((GLfloat)width) / ((GLfloat)SCREEN_WIDTH);
 
-	newQuad.z = z;
 	newQuad.texture_ID = texture_ID;
 	ResourceManager::loadTexture(file, texture_ID);
 
@@ -188,7 +186,7 @@ int Graphics::genQuadTexture(int x, int y, GLfloat z, int height, int width, con
 	newQuad.texture_array = (glm::vec2*)malloc(sizeof(glm::vec2) * newQuad.num_vertices);
 
 	for (it = 0; it < newQuad.num_vertices; it++) {
-		newQuad.position_array[it] = glm::translate(glm::mat4(), glm::vec3(newQuad.x, newQuad.y, z)) * (glm::vec4(w, h, 1.0f, 1.0f) * quadVertices[it]);
+		newQuad.position_array[it] = glm::vec4(w, h, 1.0f, 1.0f) * quadVertices[it];
 		newQuad.texture_array[it] = glm::vec2((GLfloat)(texture_sheet_x + 1) * (quadTexCoords[it].x / texture_sheet_size_x), (GLfloat)(texture_sheet_y + 1) * (quadTexCoords[it].y / texture_sheet_size_y));
 	}
 
@@ -211,45 +209,6 @@ int Graphics::genQuadTexture(int x, int y, GLfloat z, int height, int width, con
 	return newQuad.ID;
 }
 
-//Recolors the rectangle based on index
-void Graphics::recolorQuad(int index, glm::vec4 color) {
-	
-}
-
-//
-void Graphics::retextureQuad(int index) {
-
-}
-
-//Removes rectangle based on index
-void Graphics::removeObject(int index) {
-	
-}
-
-void Graphics::rotateRandom(void)
-{
-	GLfloat x, y, z;
-
-	x = rand() / (float)RAND_MAX;
-	y = rand() / (float)RAND_MAX;
-	z = rand() / (float)RAND_MAX;
-
-	randomRotationAxis = glm::vec3(x, y, z);
-}
-
-void Graphics::addTextToRender(RenderableText text)
-{
-	m_textToRender.push_back(text);
-}
-
-void Graphics::addTextsToRender(std::vector<RenderableText> text)
-{
-	for (auto t : text)
-	{
-		addTextToRender(t);
-	}
-}
-
 int Graphics::genCone(GLfloat radius, GLfloat height, int resolution, int color_type, glm::vec4 color)
 {
 	GraphicsObject newCone;
@@ -260,9 +219,9 @@ int Graphics::genCone(GLfloat radius, GLfloat height, int resolution, int color_
 	newCone.ID = object_counter++;
 	newCone.type = 0;
 	newCone.num_vertices = 3 * (2 * resolution);
-	
+
 	newCone.position_array = (glm::vec4*)malloc(sizeof(glm::vec4) * newCone.num_vertices);
-	
+
 	for (theta = 0; theta < 360.0; theta += increment)
 	{
 		theta_r = theta * M_PI / 180.0;
@@ -324,7 +283,7 @@ int Graphics::genSphere(GLfloat radius, int resolution, int color_type, glm::vec
 	newSphere.num_vertices = 3 * (resolution * (2 + (2 * ((180.0 / increment) - 2))));
 
 	newSphere.position_array = (glm::vec4*)malloc(sizeof(glm::vec4) * (newSphere.num_vertices));
-	
+
 	for (sphere_it = 0; sphere_it < 180.0; sphere_it += increment) {
 		sphere_i = sphere_it * M_PI / 180.0;
 		sphere_j = (sphere_it + increment) * M_PI / 180.0;
@@ -502,4 +461,59 @@ glm::vec4* Graphics::genRandomTriangleColorsSimilar(int num_vertices, glm::vec4 
 	}
 
 	return colors;
+}
+
+//Recolors the rectangle based on index
+void Graphics::recolorQuad(int index, glm::vec4 color) {
+	
+}
+
+//
+void Graphics::retextureQuad(int index) {
+
+}
+
+//Removes rectangle based on index
+void Graphics::removeObject(int index) {
+	
+}
+
+int Graphics::translateObjectByPixel(int ID, int x, int y, GLfloat z) {
+	GLfloat i, j;
+	i = ((GLfloat)(x - SCREEN_WIDTH / 2)) / ((GLfloat)(SCREEN_WIDTH / 2));
+	j = ((GLfloat)(SCREEN_HEIGHT / 2 - y)) / ((GLfloat)(SCREEN_HEIGHT / 2));
+
+	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
+	if (it != objectList.end()) {
+		it->ctm = glm::translate(it->ctm, glm::vec3(i, j, z));
+		std::cout << glm::to_string(it->ctm) << std::endl;
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+void Graphics::rotateRandom(void)
+{
+	GLfloat x, y, z;
+
+	x = rand() / (float)RAND_MAX;
+	y = rand() / (float)RAND_MAX;
+	z = rand() / (float)RAND_MAX;
+
+	randomRotationAxis = glm::vec3(x, y, z);
+}
+
+void Graphics::addTextToRender(RenderableText text)
+{
+	m_textToRender.push_back(text);
+}
+
+void Graphics::addTextsToRender(std::vector<RenderableText> text)
+{
+	for (auto t : text)
+	{
+		addTextToRender(t);
+	}
 }

@@ -5,8 +5,10 @@ in vec2 vTexCoords;
 
 out vec2 TexCoords;
 
+uniform mat4 ctm;
+
 void main()
 {
-    gl_Position = vPosition; 
+    gl_Position = ctm * vPosition; 
     TexCoords = vTexCoords;
 }  

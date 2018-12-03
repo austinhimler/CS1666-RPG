@@ -556,8 +556,10 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 	// Same goes for the dialog manager.
 	// I'll leave this up to you to do
 	m_combatGraphics.init();
-	m_combatGraphics.genQuadTexture(SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0, 144, 144, "Images/Player/Idle_Down.png", "player", 0, 0, 6, 1);
-	m_combatGraphics.genQuadTexture(4 * SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0, 144, 144, "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png", "owl", 0, 0, 6, 1);
+	int player = m_combatGraphics.genQuadTexture(144, 144, "Images/Player/Idle_Down.png", "player", 0, 0, 6, 1);
+	m_combatGraphics.translateObjectByPixel(player, SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
+	int enemy = m_combatGraphics.genQuadTexture(144, 144, "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png", "owl", 0, 0, 6, 1);
+	m_combatGraphics.translateObjectByPixel(enemy, 4 * SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
 	m_combatGraphics.genCone(0.25, 0.5, 36, 1, glm::vec4(0.7, 0.7, 0.7, 0.0));
 	//m_combatGraphics.genSphere(0.5, 36, 0, glm::vec4());
 	//m_combatGraphics.genCube(0, glm::vec4());

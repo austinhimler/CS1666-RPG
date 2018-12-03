@@ -283,14 +283,12 @@
     <Text Include="map1.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\screenShader.frag" />
-    <None Include="Shaders\screenShader.vs" />
+    <None Include="Shaders\simpleTextureShader.frag" />
+    <None Include="Shaders\simpleTextureShader.vs" />
     <None Include="Shaders\textShader.frag" />
     <None Include="Shaders\textShader.vs" />
-    <None Include="Shaders\fshader.frag" />
     <None Include="Shaders\simpleColorShader.frag" />
     <None Include="Shaders\simpleColorShader.vs" />
-    <None Include="Shaders\vshader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
