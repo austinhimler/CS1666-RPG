@@ -49,7 +49,6 @@ void Graphics::init(void)
 
 	// Some OpenGL settings we want to set
 	glEnable(GL_CULL_FACE);
-	glEnable(GL_DEPTH_TEST);
 	// Set the clear color to light green (same as combatScene.png)
 	glClearColor(0.694, 0.886, 0.78, 1.0);
 	glDepthRange(1, 0);
@@ -62,16 +61,20 @@ void Graphics::display(void)
 	glPolygonMode(GL_FRONT, GL_FILL);
 	glPolygonMode(GL_BACK, GL_LINE);
 
+
 	if (!objectList.empty()) {
 		for (std::list<GraphicsObject>::iterator it = objectList.begin(); it != objectList.end(); ++it) {
 			switch (it->type) {
 			case 0: //Color Object
+				glEnable(GL_DEPTH_TEST);
 				ResourceManager::getShader("simple_color_shader").use();
 				ResourceManager::getShader("simple_color_shader").setMatrix4("ctm", it->ctm);
 				glBindVertexArray(it->VAO);
 				glDrawArrays(GL_TRIANGLES, 0, it->num_vertices);
 				break;
 			case 1: //Texture Object
+				glEnable(GL_BLEND);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				ResourceManager::getShader("simple_texture_shader").use();
 				ResourceManager::getShader("simple_texture_shader").setInteger("texture", 0, true);
 				ResourceManager::getShader("simple_texture_shader").setMatrix4("ctm", it->ctm);
@@ -109,8 +112,6 @@ void Graphics::display(void)
 
 	// Clear the text
 	m_textToRender.clear();
-
-	glEnable(GL_DEPTH_TEST);
 
 	SDL_GL_SwapWindow(gWindow);
 }
@@ -313,8 +314,8 @@ int Graphics::genSphere(GLfloat radius, int resolution, int color_type, glm::vec
 				circle_j = (circle_it + increment) * M_PI / 180.0;
 
 				newSphere.position_array[index] = glm::vec4(0.0, radius * cos(sphere_i), 0.0, 1.0);
-				newSphere.position_array[index + 1] = glm::vec4((radius * cos(circle_i)) * sin(sphere_j), radius * cos(sphere_j), (radius * sin(circle_i) * sin(sphere_j)), 1.0);
-				newSphere.position_array[index + 2] = glm::vec4((radius * cos(circle_j)) * sin(sphere_j), radius * cos(sphere_j), (radius * sin(circle_j) * sin(sphere_j)), 1.0);
+				newSphere.position_array[index + 1] = glm::vec4((radius * cos(circle_j)) * sin(sphere_j), radius * cos(sphere_j), (radius * sin(circle_j) * sin(sphere_j)), 1.0);
+				newSphere.position_array[index + 2] = glm::vec4((radius * cos(circle_i)) * sin(sphere_j), radius * cos(sphere_j), (radius * sin(circle_i) * sin(sphere_j)), 1.0);
 				index += 3;
 			}
 		}
@@ -325,11 +326,11 @@ int Graphics::genSphere(GLfloat radius, int resolution, int color_type, glm::vec
 				band_j = (band_it + increment) * M_PI / 180.0;
 
 				newSphere.position_array[index] = glm::vec4((radius * cos(band_i)) * sin(sphere_i), radius * cos(sphere_i), (radius * sin(band_i) * sin(sphere_i)), 1.0);
-				newSphere.position_array[index + 1] = glm::vec4((radius * cos(band_i)) * sin(sphere_j), radius * cos(sphere_j), (radius * sin(band_i)) * sin(sphere_j), 1.0);
-				newSphere.position_array[index + 2] = glm::vec4((radius * cos(band_j)) * sin(sphere_j), radius * cos(sphere_j), (radius * sin(band_j)) * sin(sphere_j), 1.0);
+				newSphere.position_array[index + 1] = glm::vec4((radius * cos(band_j)) * sin(sphere_j), radius * cos(sphere_j), (radius * sin(band_j)) * sin(sphere_j), 1.0);
+				newSphere.position_array[index + 2] = glm::vec4((radius * cos(band_i)) * sin(sphere_j), radius * cos(sphere_j), (radius * sin(band_i)) * sin(sphere_j), 1.0);
 				newSphere.position_array[index + 3] = glm::vec4((radius * cos(band_i)) * sin(sphere_i), radius * cos(sphere_i), (radius * sin(band_i)) * sin(sphere_i), 1.0);
-				newSphere.position_array[index + 4] = glm::vec4((radius * cos(band_j)) * sin(sphere_j), radius * cos(sphere_j), (radius * sin(band_j)) * sin(sphere_j), 1.0);
-				newSphere.position_array[index + 5] = glm::vec4((radius * cos(band_j)) * sin(sphere_i), radius * cos(sphere_i), (radius * sin(band_j)) * sin(sphere_i), 1.0);
+				newSphere.position_array[index + 4] = glm::vec4((radius * cos(band_j)) * sin(sphere_i), radius * cos(sphere_i), (radius * sin(band_j)) * sin(sphere_i), 1.0);
+				newSphere.position_array[index + 5] = glm::vec4((radius * cos(band_j)) * sin(sphere_j), radius * cos(sphere_j), (radius * sin(band_j)) * sin(sphere_j), 1.0);
 				index += 6;
 			}
 		}
@@ -340,8 +341,8 @@ int Graphics::genSphere(GLfloat radius, int resolution, int color_type, glm::vec
 				circle_j = (circle_it + increment) * M_PI / 180.0;
 
 				newSphere.position_array[index] = glm::vec4(0.0, radius * cos(sphere_j), 0.0, 1.0);
-				newSphere.position_array[index + 1] = glm::vec4((radius * cos(circle_j)) * sin(sphere_i), radius * cos(sphere_i), (radius * sin(circle_j)) * sin(sphere_i), 1.0);
-				newSphere.position_array[index + 2] = glm::vec4((radius * cos(circle_i)) * sin(sphere_i), radius * cos(sphere_i), (radius * sin(circle_i)) * sin(sphere_i), 1.0);
+				newSphere.position_array[index + 1] = glm::vec4((radius * cos(circle_i)) * sin(sphere_i), radius * cos(sphere_i), (radius * sin(circle_i)) * sin(sphere_i), 1.0);
+				newSphere.position_array[index + 2] = glm::vec4((radius * cos(circle_j)) * sin(sphere_i), radius * cos(sphere_i), (radius * sin(circle_j)) * sin(sphere_i), 1.0);
 				index += 3;
 			}
 		}

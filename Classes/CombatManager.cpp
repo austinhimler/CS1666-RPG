@@ -574,9 +574,13 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 	int sphere = m_combatGraphics.genSphere(0.5, 36, 1, glm::vec4(1.0, 0.5, 0.0, 0.0));
 	m_combatGraphics.setIdleType(sphere, 2);
 	m_combatGraphics.setIdleMotion(sphere, glm::rotate(0.01f, m_combatGraphics.rotateRandom()));
+	//m_combatGraphics.removeObject(sphere);
 
 	//Create a cube with random colors
-	//m_combatGraphics.genCube(0, glm::vec4());
+	int cube = m_combatGraphics.genCube(0, glm::vec4());
+	m_combatGraphics.setIdleType(cube, 2);
+	m_combatGraphics.setIdleMotion(cube, glm::rotate(0.01f, m_combatGraphics.rotateRandom()));
+	m_combatGraphics.removeObject(cube);
 
 	// Set up the combat dialog manager
 	m_combatDialogManager = CombatDialogManager();
