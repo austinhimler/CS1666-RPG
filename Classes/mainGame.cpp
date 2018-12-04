@@ -1429,6 +1429,75 @@ void playGame() {
 				//Change sprite if character is in motion
 				int beforeMoveX = player1->xPosition;
 				int beforeMoveY = player1->yPosition;
+				if (doNetworking) {
+					int length;
+					int result;
+
+
+
+
+					if (isHost)
+					{
+						std::string cppString = player1->ptoString();
+						const char* myString = cppString.c_str();
+						length = strlen(myString) + 1;
+						printf("Host Sending %s\n", myString);
+						result = SDLNet_TCP_Send(clientSocket, myString, length);
+						if (result < length) {
+							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+						}
+						std::cout << "Host Done Sending\n" << std::endl;
+
+						std::stringstream notyoStream;
+						notyoStream << "#";
+						char temp[100];
+						std::cout << "Host Recieving\n" << notyoStream.str().back() << std::endl;
+
+						while (notyoStream.str().back() != '*')
+						{
+							SDLNet_TCP_Recv(clientSocket, temp, 100);
+							notyoStream << temp;
+							std::cout << notyoStream.str() << endl;
+						}
+						std::string notYourSTD(notyoStream.str());
+						notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
+						std::cout << "Recieved " << notYourSTD << std::endl;
+						notYou->fromString(notYourSTD);
+
+					}
+					else
+					{
+
+						//recieve character and push back
+						std::stringstream notyoStream;
+						notyoStream << "#";
+						char temp[100];
+						std::cout << "Client Recieving\n" << notyoStream.str().back() << std::endl;
+
+						while (notyoStream.str().back() != '*')
+						{
+							SDLNet_TCP_Recv(clientSocket, temp, 100);
+							notyoStream << temp;
+							std::cout << notyoStream.str() << endl;
+						}
+						std::string notYourSTD(notyoStream.str());
+						notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
+						std::cout << "Recieved " << notYourSTD << std::endl;
+						notYou->fromString(notYourSTD);
+
+						//Send Character
+						std::string cppString = player1->ptoString();
+						const char* myString = cppString.c_str();
+						length = strlen(myString) + 1;
+						printf("Client Sending %s\n", myString);
+						result = SDLNet_TCP_Send(clientSocket, myString, length);
+						if (result < length) {
+							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+						}
+						std::cout << "Client Done Sending\n" << std::endl;
+
+
+					}
 				for (auto &i : playersOnScreen)
 				{
 					if (i->xVelocity != 0 || i->yVelocity != 0) {
@@ -1671,75 +1740,7 @@ void playGame() {
 						z->setTextureActive(z->getTextureIdle());
 					}
 				}
-				if (doNetworking) {
-					int length;
-					int result;
-
-
-
-					
-					if (isHost)
-					{
-						std::string cppString = player1->ptoString();
-						const char* myString = cppString.c_str();
-						length = strlen(myString) + 1;
-						printf("Host Sending %s\n", myString);
-						result = SDLNet_TCP_Send(clientSocket, myString, length);
-						if (result < length) {
-							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-						}
-						std::cout << "Host Done Sending\n" << std::endl;
-						
-						std::stringstream notyoStream;
-						notyoStream << "#";
-						char temp[100];
-						std::cout << "Host Recieving\n" << notyoStream.str().back() << std::endl;
-
-						while (notyoStream.str().back() != '*')
-						{
-							SDLNet_TCP_Recv(clientSocket, temp, 100);
-							notyoStream << temp;
-							std::cout << notyoStream.str() << endl;
-						}
-						std::string notYourSTD(notyoStream.str());
-						notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
-						std::cout << "Recieved " << notYourSTD << std::endl;
-						notYou->fromString(notYourSTD);
-						
-					}
-					else
-					{
-						
-						//recieve character and push back
-						std::stringstream notyoStream;
-						notyoStream << "#";
-						char temp[100];
-						std::cout << "Client Recieving\n" << notyoStream.str().back()<< std::endl;
-		
-						while (notyoStream.str().back()!='*')
-						{
-							SDLNet_TCP_Recv(clientSocket, temp, 100);
-							notyoStream << temp;
-							std::cout << notyoStream.str() << endl;
-						}
-						std::string notYourSTD(notyoStream.str());
-						notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
-						std::cout << "Recieved " << notYourSTD << std::endl;
-						notYou->fromString(notYourSTD);
-						
-						//Send Character
-						std::string cppString = player1->ptoString();
-						const char* myString = cppString.c_str();
-						length = strlen(myString) + 1;
-						printf("Client Sending %s\n", myString);
-						result = SDLNet_TCP_Send(clientSocket, myString, length);
-						if (result < length) {
-							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-						}
-						std::cout << "Client Done Sending\n" << std::endl;
-
-						
-					}
+				
 				}
 			}
 
