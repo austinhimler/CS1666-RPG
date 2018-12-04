@@ -20,8 +20,7 @@ public:
 	int getLevel();
 	int getCurrentExperience();
 	operator std::string();
-	std::string ptoString();
-	void fromString(std::string in);
+	
 private:
 	int level;
 	int currentExperience;
