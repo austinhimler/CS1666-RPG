@@ -11,6 +11,13 @@
 #include <map>
 #include <vector>
 
+// SOIL used for image loading
+#include <SOIL2/SOIL2.h>
+
+// Freetype used for loading fonts
+#include <ft2build.h>
+#include <freetype/freetype.h>
+
 // A static ResourceManager class that manages resources for the game
 class ResourceManager
 {

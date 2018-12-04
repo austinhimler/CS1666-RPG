@@ -1,12 +1,4 @@
-
 #include "../../Headers/ResourceManager/ResourceManager.h"
-
-// SOIL used for image loading
-#include "../../dev_lib/includes/SOIL2/SOIL2.h"
-
-// Freetype used for loading fonts
-#include "../../dev_lib/includes/ft2build.h"
-#include "../../dev_lib/includes/freetype/freetype.h"
 
 // Instantiate static variables
 std::map<std::string, Shader> ResourceManager::Shaders;
