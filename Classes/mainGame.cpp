@@ -1316,8 +1316,8 @@ void playGame() {
 		player1->timeSinceLastAnimation = timeSinceLastAnimation;
 		if (doNetworking)
 		{
-			notYou->setTextureActive(player1->getTextureIdle());
-			notYou->currentMaxFrame = player1->getNumIdleAnimationFrames();
+			notYou->setTextureActive(notYou->getTextureIdle());
+			notYou->currentMaxFrame = notYou->getNumIdleAnimationFrames();
 			notYou->timeSinceLastMovement = timeSinceLastMovement;
 			notYou->timeSinceLastAnimation = timeSinceLastAnimation;
 		}
