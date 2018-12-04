@@ -31,6 +31,7 @@ public:
 	GLuint VAO;
 	GLuint VBO;
 	int num_vertices;
+	glm::vec3 position = { 0.0, 0.0, 0.0 };
 	glm::vec4 color;
 	std::string texture_ID;
 	int texture_sheet_it;
@@ -77,6 +78,9 @@ public:
 
 	glm::vec3 rotateRandom(void);
 
+	int setPosition(int ID, glm::vec3 position);
+	glm::vec3 getVectorFromTo(int ID1, int ID2);
+
 	int setIdleAnimationType(int ID, int type);
 	int setIdleAnimationMotion(int ID, glm::mat4 motion);
 
@@ -88,8 +92,6 @@ public:
 	// You will need to do this every tick for it to continuously display 
 	void addTextToRender(RenderableText text);
 	void addTextsToRender(std::vector<RenderableText> texts);
-
-	
 
 	TextRenderer textRenderer;
 private:

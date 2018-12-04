@@ -583,6 +583,7 @@ int Graphics::translateObjectByPixel(int ID, int x, int y, GLfloat z)
 
 	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
 	if (it != objectList.end()) {
+		it->position = glm::vec3(i, j, z);
 		it->ctm = glm::translate(it->ctm, glm::vec3(i, j, z));
 		return 1;
 	}
@@ -641,6 +642,35 @@ glm::vec3 Graphics::rotateRandom(void)
 	z = rand() / (float)RAND_MAX;
 
 	return glm::vec3(x, y, z);
+}
+
+int Graphics::setPosition(int ID, glm::vec3 position)
+{
+	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
+	if (it != objectList.end()) {
+		it->position = position;
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+glm::vec3 Graphics::getVectorFromTo(int ID1, int ID2)
+{
+	std::list<GraphicsObject>::iterator it1 = std::find_if(objectList.begin(), objectList.end(), [&ID1](GraphicsObject const& gObj) { return gObj.ID == ID1; });
+	if (it1 != objectList.end()) {
+		std::list<GraphicsObject>::iterator it2 = std::find_if(objectList.begin(), objectList.end(), [&ID2](GraphicsObject const& gObj) { return gObj.ID == ID2; });
+		if (it2 != objectList.end()) {
+			return it2->position - it1->position;
+		}
+		else {
+			return glm::vec3();
+		}
+	}
+	else {
+		return glm::vec3();
+	}
 }
 
 int Graphics::setIdleAnimationType(int ID, int type)
