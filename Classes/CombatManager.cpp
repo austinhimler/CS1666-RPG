@@ -709,21 +709,25 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		{
 			if (e.key.keysym.sym == SDLK_RETURN)
 			{
-				switch (int result_temp = textAction(participants[0])) {
-				case IN_COMBAT:
-					break;
-				default:
-					Mix_FreeChunk(gBSound);
-					return result_temp;
-					//takeAction(participants[i], buttons, e);
+				for (int i = 0; i < player_index.size(); i++)
+				{
+					switch (int result_temp = textAction(participants[i])) {
+					case IN_COMBAT:
+						break;
+					default:
+						Mix_FreeChunk(gBSound);
+							return result_temp;
+							//takeAction(participants[i], buttons, e);
+					}
+					updateStatus();
 				}
-				updateStatus();
+				
 			
 			}
 		}
 		else if (turnOrder == 2)
 		{
-			for (int i = 1; i < participants.size(); i++)
+			for (int i = player_index.size(); i < participants.size(); i++)
 			{
 				//updateStatus(participants[i]);
 				if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0 && allPlayersMoved)
