@@ -254,3 +254,39 @@
 		}
 		return;
 	}
+	std::string Character::combatToString()
+	{
+
+		int s = attributes[STR].getCur();
+		int i = attributes[INT].getCur();
+		int d = attributes[DEX].getCur();
+		int c = attributes[CON].getCur();
+		int f = attributes[FAI].getCur();
+		
+		std::stringstream st;
+		st << name << " " << s << " " << i << " " << d << " " << c << " " << f << " *" << std::ends;
+		std::cout << st.str() << std::endl;
+		return st.str();
+	}
+	void Character::combatFromString(std::string in)
+	{
+		std::vector<std::string> vars;
+		size_t pos = 0;
+		std::string token;
+		while ((pos = in.find(" ")) != std::string::npos) {
+			token = in.substr(0, pos);
+			//std::cout << "Parsed: " << token << endl;
+			vars.push_back(token);
+			in.erase(0, pos + 1);
+		}
+		if (vars.size() > 4)
+		{
+			name = vars[0];
+			attributes[STR].current = stoi(vars[1].c_str());
+			attributes[INT].current = stoi(vars[2].c_str());
+			attributes[DEX].current = stoi(vars[3].c_str());
+			attributes[CON].current = stoi(vars[4].c_str());
+			attributes[FAI].current = stoi(vars[5].c_str());
+		}
+		return;
+	}
