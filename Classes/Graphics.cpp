@@ -61,6 +61,9 @@ void Graphics::display(void)
 	glPolygonMode(GL_FRONT, GL_FILL);
 	glPolygonMode(GL_BACK, GL_FILL);
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 
 	if (!objectList.empty()) {
 		for (std::list<GraphicsObject>::iterator it = objectList.begin(); it != objectList.end(); ++it) {
@@ -73,8 +76,8 @@ void Graphics::display(void)
 				glDrawArrays(GL_TRIANGLES, 0, it->num_vertices);
 				break;
 			case 1: //Texture Object
-				glEnable(GL_BLEND);
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				//glEnable(GL_BLEND);
+				//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				ResourceManager::getShader("simple_texture_shader").use();
 				ResourceManager::getShader("simple_texture_shader").setInteger("texture", 0, true);
 				ResourceManager::getShader("simple_texture_shader").setMatrix4("ctm", it->ctm);
@@ -91,9 +94,9 @@ void Graphics::display(void)
 	// Draw the UI
 	// Set up the projection. We will use an orthographic projection for any UI elements.
 	glm::mat4 projection = glm::ortho(0.0f, (GLfloat)SCREEN_WIDTH, 0.0f, (GLfloat)SCREEN_HEIGHT);
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glDisable(GL_DEPTH_TEST);
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Draw the HUD background image
 	ResourceManager::getShader("simple_texture_shader").use();
@@ -109,6 +112,8 @@ void Graphics::display(void)
 	{
 		textRenderer.RenderText(text);
 	}
+
+	m_textToRender.clear();
 
 	//glDrawArrays(GL_TRIANGLES, 0, num_vertices);
 
