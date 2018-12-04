@@ -1269,8 +1269,8 @@ void playGame() {
 			SDL_Delay(1000);
 			SDLNet_TCP_Recv(clientSocket, temp, 100);
 			notyoStream << temp;
-			std::cout << "Host Done Recieving\n" << std::endl;
 			std::string notYourSTD(notyoStream.str());
+			std::cout << "Recieved " << notYourSTD << std::endl;
 			notYou->fromString(notYourSTD);
 			charactersOnScreen.push_back(notYou);
 		}
@@ -1284,9 +1284,8 @@ void playGame() {
 			SDL_Delay(1000);
 			SDLNet_TCP_Recv(clientSocket, temp, 100);
 				notyoStream << temp;
-			
-			std::cout << "Client Done Recieving\n" << std::endl;
 			std::string notYourSTD(notyoStream.str());
+			std::cout << "Recieved "<< notYourSTD << std::endl;
 			notYou->fromString(notYourSTD);
 			charactersOnScreen.push_back(notYou);
 			//Send Character
