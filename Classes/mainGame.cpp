@@ -1398,7 +1398,6 @@ void playGame() {
 		bool inPauseMenu = false;
 		bool keepPlaying = true;
 		while (keepPlaying) {
-
 			while (inOverworld) 
 			{
 				while (SDL_PollEvent(&e)) {
