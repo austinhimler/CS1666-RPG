@@ -1263,12 +1263,12 @@ void playGame() {
 			std::cout << "Host Done Sending\n" << std::endl;
 			bool gettingattr = true;
 			std::stringstream notyoStream;
-			char*temp[100];
+			char temp[100];
 			std::cout << "Host Recieving\n" << std::endl;
 			//delay to test something should be removed
 			SDL_Delay(1000);
 			SDLNet_TCP_Recv(clientSocket, temp, 100);
-				notyoStream << temp;
+			notyoStream << temp;
 			std::cout << "Host Done Recieving\n" << std::endl;
 			std::string notYourSTD(notyoStream.str());
 			notYou->fromString(notYourSTD);
@@ -1279,7 +1279,7 @@ void playGame() {
 			bool gettingattr = true;
 			//recieve character and push back
 			std::stringstream notyoStream;
-			char*temp[100];
+			char temp[100];
 			std::cout << "Client Recieving\n" << std::endl;
 			SDL_Delay(1000);
 			SDLNet_TCP_Recv(clientSocket, temp, 100);
