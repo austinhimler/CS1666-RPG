@@ -1244,6 +1244,14 @@ void playGame() {
 	std::vector<Character*> playersOnScreen;
 	playersOnScreen.push_back(player1);
 	std::vector<Character*> combatants;
+
+	Uint32 timeSinceLastMovement = SDL_GetTicks();
+	Uint32 timeSinceLastAnimation = SDL_GetTicks();
+	Uint32 lastSync = SDL_GetTicks();
+	player1->timeSinceLastMovement = timeSinceLastMovement;
+	player1->timeSinceLastAnimation = timeSinceLastAnimation;
+	vector<Cluster*> allEnemies;
+	Cluster* CollidingCluster;
 	
 	bool doNetworking = handleNetworkingSetup();
 	if (doNetworking)
@@ -1263,23 +1271,6 @@ void playGame() {
 	Mix_VolumeMusic(MIX_MAX_VOLUME / 8);
 	for (MAP_INDEX = 0; MAP_INDEX < ALL_MAPS.size(); MAP_INDEX++)
 	{
-		vector<Cluster*> allEnemies = vector<Cluster*>();
-		Cluster* CollidingCluster;
-		for (int num_enemy = 0; num_enemy < STARTING_ENEMIES * (MAP_INDEX + 1); num_enemy++)
-		{
-			Cluster* enemy = new Cluster((rand() % (ENEMIES_PER_CLUSTER + MAP_INDEX)) + 1);
-			cout << "Enemy " << num_enemy + 1 << " Cluster Size: " << enemy->clusterSize << endl;
-			allEnemies.push_back(enemy);
-		}
-
-		//SDL_RendererFlip flip = SDL_FLIP_NONE;
-
-		int tile_test = -1;
-
-		player1->setTextureActive(player1->getTextureIdle());
-		player1->currentMaxFrame = player1->getNumIdleAnimationFrames();
-
-
 		Tile*  tiles[TOTAL_TILES];
 
 		//tiles
@@ -1295,27 +1286,85 @@ void playGame() {
 			player1->yPosition = rand() % (LEVEL_HEIGHT - player1->getImageHeight());
 		}
 
-		for (auto i : allEnemies)
-		{
-			i->setTextureActive(i->getTextureIdle());
-			i->currentMaxFrame = i->getNumIdleAnimationFrames();
-			// Randomly spawn the enemy
-			for (;;)
-			{
-				i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
-				i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
-				int t_tile = (int)(i->xPosition + (i->rectangle.w / 2)) / TILE_WIDTH;
-				t_tile += (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) * 30;
-				if (tiles[t_tile]->mType == 0)
-					break;
+		if (doNetworking) {
+			if (isHost) {
+				allEnemies = vector<Cluster*>();
+				for (int num_enemy = 0; num_enemy < STARTING_ENEMIES * (MAP_INDEX + 1); num_enemy++)
+				{
+					Cluster* enemy = new Cluster((rand() % (ENEMIES_PER_CLUSTER + MAP_INDEX)) + 1);
+					cout << "Enemy " << num_enemy + 1 << " Cluster Size: " << enemy->clusterSize << endl;
+					allEnemies.push_back(enemy);
+				}
+
+				for (auto i : allEnemies)
+				{
+					i->setTextureActive(i->getTextureIdle());
+					i->currentMaxFrame = i->getNumIdleAnimationFrames();
+					// Randomly spawn the enemy
+					for (;;)
+					{
+						i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
+						i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
+						int t_tile = (int)(i->xPosition + (i->rectangle.w / 2)) / TILE_WIDTH;
+						t_tile += (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) * 30;
+						if (tiles[t_tile]->mType == 0)
+							break;
+					}
+				}
+
+				for (auto i : allEnemies)
+				{
+					cout << "Enemy Coordinates: (" << i->xPosition << "," << i->yPosition << ")" << endl;
+					i->timeSinceLastAnimation = timeSinceLastAnimation;
+					charactersOnScreen.push_back(i);
+				}
+
 			}
 		}
+		else {
+			allEnemies = vector<Cluster*>();
+			for (int num_enemy = 0; num_enemy < STARTING_ENEMIES * (MAP_INDEX + 1); num_enemy++)
+			{
+				Cluster* enemy = new Cluster((rand() % (ENEMIES_PER_CLUSTER + MAP_INDEX)) + 1);
+				cout << "Enemy " << num_enemy + 1 << " Cluster Size: " << enemy->clusterSize << endl;
+				allEnemies.push_back(enemy);
+			}
 
-		Uint32 timeSinceLastMovement = SDL_GetTicks();
-		Uint32 timeSinceLastAnimation = SDL_GetTicks();
-		Uint32 lastSync = SDL_GetTicks();
-		player1->timeSinceLastMovement = timeSinceLastMovement;
-		player1->timeSinceLastAnimation = timeSinceLastAnimation;
+			for (auto i : allEnemies)
+			{
+				i->setTextureActive(i->getTextureIdle());
+				i->currentMaxFrame = i->getNumIdleAnimationFrames();
+				// Randomly spawn the enemy
+				for (;;)
+				{
+					i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
+					i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
+					int t_tile = (int)(i->xPosition + (i->rectangle.w / 2)) / TILE_WIDTH;
+					t_tile += (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) * 30;
+					if (tiles[t_tile]->mType == 0)
+						break;
+				}
+			}
+
+			for (auto i : allEnemies)
+			{
+				cout << "Enemy Coordinates: (" << i->xPosition << "," << i->yPosition << ")" << endl;
+				i->timeSinceLastAnimation = timeSinceLastAnimation;
+				charactersOnScreen.push_back(i);
+			}
+
+
+		}
+
+		//SDL_RendererFlip flip = SDL_FLIP_NONE;
+
+		int tile_test = -1;
+
+		player1->setTextureActive(player1->getTextureIdle());
+		player1->currentMaxFrame = player1->getNumIdleAnimationFrames();
+
+
+		
 		if (doNetworking)
 		{
 			notYou->setTextureActive(notYou->getTextureIdle());
@@ -1323,11 +1372,7 @@ void playGame() {
 			notYou->timeSinceLastMovement = timeSinceLastMovement;
 			notYou->timeSinceLastAnimation = timeSinceLastAnimation;
 		}
-		for (auto i : allEnemies)
-		{
-			cout << "Enemy Coordinates: (" << i->xPosition << "," << i->yPosition << ")" << endl;
-			i->timeSinceLastAnimation = timeSinceLastAnimation;
-		}
+
 		std::string hudHealthString = "Health: " + to_string(player1->getHPCurrent());
 		std::string hudLevelString = "Level: " + to_string(player1->getLevel());
 		SDL_Rect hudHealthTextRectangle = { 10, 10, 0, 0 };
@@ -1338,10 +1383,6 @@ void playGame() {
 		int response = 0;
 
 		charactersOnScreen.push_back(player1);
-		for (auto i : allEnemies)
-		{
-			charactersOnScreen.push_back(i);
-		}
 
 
 		std::cout << player1->xPosition;
@@ -1711,7 +1752,6 @@ void playGame() {
 					}
 					else
 					{
-						
 						//recieve character and push back
 						std::stringstream notyoStream;
 						notyoStream << "#";
