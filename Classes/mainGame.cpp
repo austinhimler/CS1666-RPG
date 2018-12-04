@@ -1287,9 +1287,11 @@ void playGame() {
 		}
 
 		if (doNetworking) {
+			int numEnemies = STARTING_ENEMIES * (MAP_INDEX + 1);
+			allEnemies = vector<Cluster*>();
 			if (isHost) {
-				allEnemies = vector<Cluster*>();
-				for (int num_enemy = 0; num_enemy < STARTING_ENEMIES * (MAP_INDEX + 1); num_enemy++)
+			
+				for (int num_enemy = 0; num_enemy < numEnemies; num_enemy++)
 				{
 					Cluster* enemy = new Cluster((rand() % (ENEMIES_PER_CLUSTER + MAP_INDEX)) + 1);
 					cout << "Enemy " << num_enemy + 1 << " Cluster Size: " << enemy->clusterSize << endl;
@@ -1319,6 +1321,12 @@ void playGame() {
 					charactersOnScreen.push_back(i);
 				}
 
+			}
+			else if (isClient) {
+				//recieve character and push back
+				for (int i = 0; i < numEnemies; i++) {
+
+				}
 			}
 		}
 		else {
