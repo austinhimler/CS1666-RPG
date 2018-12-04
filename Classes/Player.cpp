@@ -109,7 +109,7 @@
 		//std::string pString = name + " " + std::to_string(currentFrame) + " " + std::to_string(xPosition) + " " +
 		//	std::to_string(yPosition) + " " + std::to_string(xVelocity) + " " + std::to_string(yVelocity);
 		std::stringstream st;
-		st << name << " " << currentFrame << " " << xPosition << " " << yPosition << " " << xVelocity << " " << yVelocity <<" "<<currentMaxFrame<<" "<< std::ends;
+		st << name << " " << currentFrame << " " << xPosition << " " << yPosition << " " << xVelocity << " " << yVelocity <<" "<< std::ends;
 		std::cout << st.str() << std::endl;
 		return st.str();
 	}
@@ -130,6 +130,5 @@
 		yPosition = atof(vars[3].c_str());
 		xVelocity = atof(vars[4].c_str());
 		yVelocity = atof(vars[5].c_str());
-		currentMaxFrame = std::stoi(vars[6]);
 		return;
 	}

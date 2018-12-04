@@ -1695,7 +1695,7 @@ void playGame() {
 						char temp[100];
 						std::cout << "Host Recieving\n" << std::endl;
 						//delay to test something should be removed
-						SDL_Delay(1000);
+						SDL_Delay(5000);
 						SDLNet_TCP_Recv(clientSocket, temp, 100);
 						notyoStream << temp;
 						std::string notYourSTD(notyoStream.str());
