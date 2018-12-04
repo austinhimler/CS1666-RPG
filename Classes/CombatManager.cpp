@@ -451,6 +451,9 @@ int CombatManager::performEvent(Character *c, string option, int optNum)
 	case 5:
 		returnVal = PLAYER_ESCAPES;
 		break;
+	case 3:
+		//Do defense buff
+		break;
 	default:
 		textAttributes(c, optNum);
 		outputEnemy();

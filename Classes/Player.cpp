@@ -17,7 +17,7 @@
 	Player::Player(std::string n) : Character(n) {}
 	Player::Player(std::string n, int s, int i, int d, int c, int f) : Character(n, s, i, d, c, f) {
 		learnAbility(FIREBALL);
-		learnAbility(SUMMON);
+		learnAbility(SMITE);
 		isEnemy = false;
 		level = 10;
 		pixelShiftAmountForAnimationInSpriteSheet = 144;
@@ -55,7 +55,7 @@
 	}
 	Player::Player(std::string n, std::vector<Attribute> attr) : Character(n, attr) {
 		learnAbility(FIREBALL);
-		learnAbility(SUMMON);
+		learnAbility(SMITE);
 		isEnemy = false;
 	}
 	void Player::setAll(std::string n, int s, int i, int d, int c, int f) {

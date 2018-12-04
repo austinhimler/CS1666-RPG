@@ -17,7 +17,7 @@
 		level = 1;
 		learnAbility(ATTACK);
 		learnAbility(DEFEND);
-		learnAbility(ESCAPE);
+		learnAbility(ARROWSHOT);
 		xVelocity = 0;
 		yVelocity = 0;
 	}
