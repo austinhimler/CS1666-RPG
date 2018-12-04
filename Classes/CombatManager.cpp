@@ -232,6 +232,7 @@ int CombatManager::textAction(Character* c) {
 	else
 	{
 		// Get the recent events from the combat dialog manager
+		
 		std::queue<CombatDialogManager::SelectionEvent> events = m_combatDialogManager.GetEvents();
 		if (events.size() > 0)
 		{
@@ -247,8 +248,8 @@ int CombatManager::textAction(Character* c) {
 					return status;
 				// We'll just reprint the main move selection for now
 
-				bool print = false;
-				textMain(print, initialText);
+				//bool print = false;
+				//textMain(print, initialText);
 			}
 		}
 		// Clear the events
@@ -731,6 +732,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				updateStatus();
 			}
 			allPlayersMoved = false;
+			printed = false;
 			turnOrder = 0;
 		}
 		
