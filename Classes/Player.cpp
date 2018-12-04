@@ -117,11 +117,18 @@
 	{
 		std::vector<std::string> vars;
 		size_t pos = 0;
-		std::string token;
-		while ((pos = in.find(" ")) != std::string::npos) {
-			token = in.substr(0, pos);
-			vars.push_back(token);
-			in.erase(0, pos + 1);
+		std::string token = " ";
+		while (in.size()) {
+			int index = in.find(token);
+			if (index != string::npos) {
+				vars.push_back(in.substr(0, index));
+				in = in.substr(index + token.size());
+				if (in.size() == 0)vars.push_back(in);
+			}
+			else {
+				vars.push_back(in);
+				in = "";
+			}
 		}
 		name = vars[0];
 		currentFrame = std::stoi(vars[2]);
