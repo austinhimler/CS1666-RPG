@@ -1241,12 +1241,16 @@ bool handleNetworkingSetup() {
 
 void playGame() {
 	std::vector<Character*> charactersOnScreen;
+	std::vector<Character*> playersOnScreen;
+	playersOnScreen.push_back(player1);
 	std::vector<Character*> combatants;
 	
 	bool doNetworking = handleNetworkingSetup();
 	if (doNetworking)
 	{
 		notYou = new Player("meme", 10, 10, 10, 10, 10);
+		notYou->setTextureActive(player1->getTextureIdle());
+		notYou->currentMaxFrame = player1->getNumIdleAnimationFrames();
 		charactersOnScreen.push_back(notYou);
 	}
 
@@ -1311,6 +1315,11 @@ void playGame() {
 		Uint32 timeSinceLastAnimation = SDL_GetTicks();
 		player1->timeSinceLastMovement = timeSinceLastMovement;
 		player1->timeSinceLastAnimation = timeSinceLastAnimation;
+		if (doNetworking)
+		{
+			notYou->timeSinceLastMovement = timeSinceLastMovement;
+			notYou->timeSinceLastAnimation = timeSinceLastAnimation;
+		}
 		for (auto i : allEnemies)
 		{
 			cout << "Enemy Coordinates: (" << i->xPosition << "," << i->yPosition << ")" << endl;
@@ -1417,77 +1426,81 @@ void playGame() {
 					player1->yVelocity = (player1->getSpeedMax() + runningAddSpeed);
 
 				//Change sprite if character is in motion
-				if (player1->xVelocity != 0 || player1->yVelocity != 0) {
-
-					if (player1->yVelocity == 0) {
-						if (player1->getTextureActive() != player1->getTextureRun()) {
-							player1->setTextureActive(player1->getTextureRun());
-							player1->currentFrame = 0;
-							player1->currentMaxFrame = player1->getNumRunAnimationFrames();
-						}
-					}
-
-
-					if (player1->xVelocity == 0 && player1->yVelocity > 0) {
-						if (player1->getTextureActive() != player1->getTextureDownRun()) {
-							player1->setTextureActive(player1->getTextureDownRun());
-							player1->currentFrame = 0;
-							player1->currentMaxFrame = player1->getNumRunAnimationFrames();
-						}
-					}
-
-
-
-					if (player1->xVelocity != 0 && player1->yVelocity > 0) {
-						if (player1->getTextureActive() != player1->getTextureDownRightRun()) {
-							player1->setTextureActive(player1->getTextureDownRightRun());
-							player1->currentFrame = 0;
-							player1->currentMaxFrame = player1->getNumRunAnimationFrames();
-						}
-					}
-
-					if (player1->xVelocity != 0 && player1->yVelocity < 0) {
-						if (player1->getTextureActive() != player1->getTextureUpRightRun()) {
-							player1->setTextureActive(player1->getTextureUpRightRun());
-							player1->currentFrame = 0;
-							player1->currentMaxFrame = player1->getNumRunAnimationFrames();
-						}
-					}
-
-
-
-					if (player1->xVelocity == 0 && player1->yVelocity < 0) {
-						if (player1->getTextureActive() != player1->getTextureUpRun()) {
-							player1->setTextureActive(player1->getTextureUpRun());
-							player1->currentFrame = 0;
-							player1->currentMaxFrame = player1->getNumRunAnimationFrames();
-
-						}
-					}
-				}
-
-				else {
-					if (player1->getTextureActive() != player1->getTextureIdle()) {
-						player1->setTextureActive(player1->getTextureIdle());
-						player1->currentFrame = 0;
-						player1->currentMaxFrame = player1->getNumIdleAnimationFrames();
-					}
-				}
-
 				int beforeMoveX = player1->xPosition;
 				int beforeMoveY = player1->yPosition;
-				//Move vertically
-				player1->yPosition += (player1->yVelocity * timePassed);
-				if (player1->yPosition < 0 || (player1->yPosition + player1->getImageHeight() > LEVEL_HEIGHT)) {
-					//go back into window
-					player1->yPosition -= (player1->yVelocity * timePassed);
-				}
+				for (auto &i : playersOnScreen)
+				{
+					if (i->xVelocity != 0 || i->yVelocity != 0) {
 
-				//Move horizontally
-				player1->xPosition += (player1->xVelocity * timePassed);
-				if (player1->xPosition < 0 || (player1->xPosition + player1->getImageWidth() > LEVEL_WIDTH)) {
-					//go back into window
-					player1->xPosition -= (player1->xVelocity * timePassed);
+						if (i->yVelocity == 0) {
+							if (i->getTextureActive() != i->getTextureRun()) {
+								i->setTextureActive(i->getTextureRun());
+								i->currentFrame = 0;
+								i->currentMaxFrame = i->getNumRunAnimationFrames();
+							}
+						}
+
+
+						if (i->xVelocity == 0 && i->yVelocity > 0) {
+							if (i->getTextureActive() != i->getTextureDownRun()) {
+								i->setTextureActive(i->getTextureDownRun());
+								i->currentFrame = 0;
+								i->currentMaxFrame = i->getNumRunAnimationFrames();
+							}
+						}
+
+
+
+						if (i->xVelocity != 0 && i->yVelocity > 0) {
+							if (i->getTextureActive() != i->getTextureDownRightRun()) {
+								i->setTextureActive(i->getTextureDownRightRun());
+								i->currentFrame = 0;
+								i->currentMaxFrame = i->getNumRunAnimationFrames();
+							}
+						}
+
+						if (i->xVelocity != 0 && i->yVelocity < 0) {
+							if (i->getTextureActive() != i->getTextureUpRightRun()) {
+								i->setTextureActive(i->getTextureUpRightRun());
+								i->currentFrame = 0;
+								i->currentMaxFrame = i->getNumRunAnimationFrames();
+							}
+						}
+
+
+
+						if (i->xVelocity == 0 && i->yVelocity < 0) {
+							if (i->getTextureActive() != i->getTextureUpRun()) {
+								i->setTextureActive(i->getTextureUpRun());
+								i->currentFrame = 0;
+								i->currentMaxFrame = i->getNumRunAnimationFrames();
+
+							}
+						}
+					}
+
+					else {
+						if (i->getTextureActive() != i->getTextureIdle()) {
+							i->setTextureActive(i->getTextureIdle());
+							i->currentFrame = 0;
+							i->currentMaxFrame = i->getNumIdleAnimationFrames();
+						}
+					}
+
+					
+					//Move vertically
+					i->yPosition += (i->yVelocity * timePassed);
+					if (i->yPosition < 0 || (i->yPosition + i->getImageHeight() > LEVEL_HEIGHT)) {
+						//go back into window
+						i->yPosition -= (i->yVelocity * timePassed);
+					}
+
+					//Move horizontally
+					i->xPosition += (i->xVelocity * timePassed);
+					if (i->xPosition < 0 || (i->xPosition + i->getImageWidth() > LEVEL_WIDTH)) {
+						//go back into window
+						i->xPosition -= (i->xVelocity * timePassed);
+					}
 				}
 				//calculate tile player is currently standing on
 				int currentTile = (int)(player1->xPosition + (player1->rectangle.w / 2)) / TILE_WIDTH;
