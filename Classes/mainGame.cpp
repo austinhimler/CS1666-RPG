@@ -1733,11 +1733,12 @@ void playGame() {
 						const char* myString = cppString.c_str();
 						length = strlen(myString) + 1;
 						printf("Client Sending %s\n", myString);
-						result = SDLNet_TCP_Send(clientSocket, &myString, length);
+						result = SDLNet_TCP_Send(clientSocket, myString, length);
 						if (result < length) {
 							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 						}
 						std::cout << "Client Done Sending\n" << std::endl;
+
 						
 					}
 				}
