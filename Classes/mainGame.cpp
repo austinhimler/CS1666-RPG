@@ -1249,8 +1249,7 @@ void playGame() {
 	if (doNetworking)
 	{
 		notYou = new Player("meme", 10, 10, 10, 10, 10);
-		notYou->setTextureActive(player1->getTextureIdle());
-		notYou->currentMaxFrame = player1->getNumIdleAnimationFrames();
+		
 		charactersOnScreen.push_back(notYou);
 	}
 
@@ -1317,6 +1316,8 @@ void playGame() {
 		player1->timeSinceLastAnimation = timeSinceLastAnimation;
 		if (doNetworking)
 		{
+			notYou->setTextureActive(player1->getTextureIdle());
+			notYou->currentMaxFrame = player1->getNumIdleAnimationFrames();
 			notYou->timeSinceLastMovement = timeSinceLastMovement;
 			notYou->timeSinceLastAnimation = timeSinceLastAnimation;
 		}
@@ -1566,9 +1567,7 @@ void playGame() {
 				}
 
 
-				if (doNetworking) {
-
-				}
+				
 
 				//if (isClient) {
 				//	int length;
