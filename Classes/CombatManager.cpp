@@ -1,8 +1,6 @@
 #include "../Headers/CombatManager.h"
 #include <stdio.h>
 
-
-
 QueueManager::QueueManager(vector<Character *> c)
 {
 	for (auto C : c) {
@@ -614,7 +612,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 
 	// Set up the combat dialog manager
 	m_combatDialogManager = CombatDialogManager();
-	m_combatDialogManager.SetTimePerCharacter(0.02);
+	m_combatDialogManager.SetTimePerCharacter(0.02f);
 	m_combatDialogManager.SetWaitTime(1.0);
 	m_combatDialogManager.SetColor(glm::vec4(0.0, 0.0, 0.0, 1.0));
 	m_combatDialogManager.SetSelectionColor(glm::vec4(0.0, 1.0, 0.0, 1.0));
@@ -631,7 +629,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		// Update the combat dialog manager
 		// We need to know the time between frames so we can update things accordingly. We'll just pass in a set number for now. 
 		// In the future you should pass in the update delta time.
-		m_combatDialogManager.Update(1.0 / 60.0);
+		m_combatDialogManager.Update(1.0f / 60.0f);
 
 		// Add the renderable texts generated from the combat dialog manager to the renderer
 		m_combatGraphics.addTextsToRender(m_combatDialogManager.GetTextToRender());

@@ -1,6 +1,5 @@
 #include "../../Headers/UI/CombatDialogManager.h"
 #include <stdio.h>
-#include <io.h>
 
 CombatDialogManager::CombatDialogManager()
 	: m_writeSpeedMultiplier(1.0)
