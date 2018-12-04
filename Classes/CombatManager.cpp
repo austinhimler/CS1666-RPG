@@ -243,9 +243,13 @@ int CombatManager::textAction(Character* c) {
 				auto event = events.front();
 				// Pop the event 
 				events.pop();
-				int status = performEvent(c, event.options[event.selectedOption], event.selectedOption);
-				if (status != 1)
-					return status;
+				if (event.options[event.selectedOption].length() > 10 || event.options[event.selectedOption] == "Escape")
+				{
+					int status = performEvent(c, event.options[event.selectedOption], event.selectedOption);
+					if (status != 1)
+						return status;
+				}
+				
 				// We'll just reprint the main move selection for now
 
 				//bool print = false;
@@ -454,6 +458,8 @@ int CombatManager::performEvent(Character *c, string option, int optNum)
 		break;
 	case 3:
 		//Do defense buff
+		returnVal = 1;
+		turnOrder = 2;
 		break;
 	default:
 		textAttributes(c, optNum);
