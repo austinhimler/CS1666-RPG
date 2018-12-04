@@ -1265,9 +1265,8 @@ void playGame() {
 			std::stringstream notyoStream;
 			char*temp[100];
 			std::cout << "Host Recieving\n" << std::endl;
-			while (SDLNet_TCP_Recv(clientSocket, temp, 100)) {
+			SDLNet_TCP_Recv(clientSocket, temp, 100);
 				notyoStream << temp;
-			}
 			std::cout << "Host Done Recieving\n" << std::endl;
 			std::string notYourSTD(notyoStream.str());
 			notYou->fromString(notYourSTD);
@@ -1280,9 +1279,9 @@ void playGame() {
 			std::stringstream notyoStream;
 			char*temp[100];
 			std::cout << "Client Recieving\n" << std::endl;
-			while (SDLNet_TCP_Recv(clientSocket, temp, 100)) {
+			SDLNet_TCP_Recv(clientSocket, temp, 100);
 				notyoStream << temp;
-			}
+			
 			std::cout << "Client Done Recieving\n" << std::endl;
 			std::string notYourSTD(notyoStream.str());
 			notYou->fromString(notYourSTD);
