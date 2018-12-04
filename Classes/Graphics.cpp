@@ -125,39 +125,33 @@ void Graphics::idle(void)
 	if (!objectList.empty()) {
 		for (std::list<GraphicsObject>::iterator it = objectList.begin(); it != objectList.end(); ++it) {
 			switch (it->idle_animation_type) {
-			case 0: //0 = no animation
-				break;
-			case 1: //1 = sprite animation
-				iterateSpriteAnimation(it);
-				break;
-			case 2: //2 = motion animation
-				it->ctm = it->ctm * it->idle_animation_motion;
-				break;
-			case 3: //3 = sprite and motion animation
-				iterateSpriteAnimation(it);
-				it->ctm = it->ctm * it->idle_animation_motion;
-				break;
-			default:
-				break;
+				case 0: //0 = no animation
+					break;
+				case 1: //1 = sprite animation
+					iterateSpriteAnimation(it);
+					break;
+				case 2: //2 = motion animation
+					it->ctm = it->ctm * it->idle_animation_motion;
+					break;
+				case 3: //3 = sprite and motion animation
+					iterateSpriteAnimation(it);
+					it->ctm = it->ctm * it->idle_animation_motion;
+					break;
+				default:
+					break;
 			}
-			/* Commented out until new functions implemented
 			switch (it->animation_type) {
-			case 0: //0 = no animation
-				break;
-			case 1: //1 = sprite animation
-				//iterateSpriteAnimation(it); Needs new function for active sprite animations
-				break;
-			case 2: //2 = motion animation
-				//it->ctm = it->ctm * it->idle_animation_motion; Needs new function for active ctm animation which will travel according to simple motion matrix over a set amount
-				break;
-			case 3: //3 = sprite and motion animation
-				//iterateSpriteAnimation(it); Needs new function for active sprite animations
-				//it->ctm = it->ctm * it->idle_animation_motion; Needs new function for active ctm animation which will travel according to simple motion matrix over a set amount of frames
-				break;
-			default:
-				break;
-			}
-			*/
+				case 0: //0 = no animation
+					break;
+				case 1: //1 = motion animation
+					animateMotion(it);
+					break;
+				case 2: //2 = motion animation then consume
+					animateMotionConsume(it);
+					break;
+				default:
+					break;
+				}
 		}
 	}
 	display();
@@ -614,6 +608,28 @@ void Graphics::iterateSpriteAnimation(std::list<GraphicsObject>::iterator it)
 	vTexCoords = glGetAttribLocation(ResourceManager::getShader("simple_texture_shader").Program, "vTexCoords");
 	glEnableVertexAttribArray(vTexCoords);
 	glVertexAttribPointer(vTexCoords, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (GLvoid*)(sizeof(glm::vec4) * it->num_vertices));
+}
+
+void Graphics::animateMotion(std::list<GraphicsObject>::iterator it)
+{
+	if (++it->animation_frame > it->animation_frame_max) {
+		it->animation_frame = 0;
+		it->animation_type = 0;
+		it->animation_motion = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
+	}
+	else {
+		it->ctm = it->ctm * ((GLfloat)(1 / it->animation_frame_max) * it->animation_motion);
+	}
+}
+
+void Graphics::animateMotionConsume(std::list<GraphicsObject>::iterator it)
+{
+	if (++it->animation_frame > it->animation_frame_max) {
+		objectList.erase(it);
+	}
+	else {
+		it->ctm = it->ctm * ((GLfloat)(1 / it->animation_frame_max) * it->animation_motion);
+	}
 }
 
 glm::vec3 Graphics::rotateRandom(void)

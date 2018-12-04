@@ -41,7 +41,7 @@ public:
 	glm::mat4 ctm = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
 	int idle_animation_type = 0; //0 = no animation, 1 = sprite animation, 2 = motion animation, 3 = sprite and motion animation
 	glm::mat4 idle_animation_motion = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
-	int animation_type = 0; //0 = no animation, 1 = sprite animation, 2 = motion animation, 3 = sprite and motion animation
+	int animation_type = 0; //0 = no animation, 1 = motion animation, 2 = motion animation consume
 	int animation_frame = 0;
 	int animation_frame_max;
 	glm::mat4 animation_motion = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
@@ -72,6 +72,8 @@ public:
 
 	int translateObjectByPixel(int ID, int x, int y, GLfloat z);
 	void iterateSpriteAnimation(std::list<GraphicsObject>::iterator it);
+	void animateMotion(std::list<GraphicsObject>::iterator it);
+	void animateMotionConsume(std::list<GraphicsObject>::iterator it);
 
 	glm::vec3 rotateRandom(void);
 
