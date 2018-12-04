@@ -5,6 +5,8 @@
 #include <string>
 #include <list>
 #include <algorithm>
+#include <iostream>
+#include "time.h"
 
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
@@ -13,9 +15,15 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include <ft2build.h>
+#include <freetype/freetype.h>
+
 #include "Globals.h"
 #include "ResourceManager/ResourceManager.h"
 #include "UI/TextRenderer.h"
+#include "ResourceManager/ResourceManager.h"
+#include "UI/TextRenderer.h"
+
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846

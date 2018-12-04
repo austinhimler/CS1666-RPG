@@ -1,11 +1,4 @@
 #include "../Headers/Graphics.h"
-#include "time.h"
-#include <iostream>
-
-#include "../dev_lib/includes/ft2build.h"
-#include "../dev_lib/includes/freetype/freetype.h"
-#include "../Headers/ResourceManager/ResourceManager.h"
-#include "../Headers/UI/TextRenderer.h"
 
 /*
 	Initalize Graphics

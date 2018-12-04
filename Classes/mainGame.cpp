@@ -104,7 +104,6 @@ bool init() {
 	//SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);//Double-buffering
 	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-
 	//Create rendering context for OpenGL
 	gContext = SDL_GL_CreateContext(gWindow);
 

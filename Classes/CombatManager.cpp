@@ -437,9 +437,6 @@ int CombatManager::textAction(Character* c) {
 	return IN_COMBAT;
 }
 
-
-
-
 int CombatManager::performEvent(Character *c, string option, int optNum)
 {
 	m_combatDialogManager.ClearEvents();
@@ -477,6 +474,7 @@ void CombatManager::outputEnemy() {
 	m_combatDialogManager.AddSelectableOption("Choose your target", options);
 	turnOrder = 4;
 }
+
 void CombatManager::textAttributes(Character *c, int optNum)
 {
 	//m_combatDialogManager.ClearEvents();
@@ -494,6 +492,7 @@ void CombatManager::textAttributes(Character *c, int optNum)
 	m_combatDialogManager.AddSelectableOption("Choose your attack", options);
 
 }
+
 void CombatManager::textMain(bool& printed, bool initialText) {
 	if (printed) return;
 	if (initialText)
@@ -579,7 +578,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 	bool printed = false; // for text combat ui
 
 	//OpenGL Setup
-	glewInit();
+	//glewInit();
 
 	// We shouldn't initialize the graphics class every time we run into a battle. Id recommend initializing it once, then using it
 	// Same goes for the dialog manager.
@@ -784,6 +783,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			turnOrder = 0;
 			qm.changeRounds();
 		}
+		SDL_Delay(60);
 	}
 	Mix_FreeChunk(gBSound);
 	return -100;
