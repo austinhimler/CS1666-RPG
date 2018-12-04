@@ -1312,6 +1312,7 @@ void playGame() {
 
 		Uint32 timeSinceLastMovement = SDL_GetTicks();
 		Uint32 timeSinceLastAnimation = SDL_GetTicks();
+		Uint32 lastSync = SDL_GetTicks();
 		player1->timeSinceLastMovement = timeSinceLastMovement;
 		player1->timeSinceLastAnimation = timeSinceLastAnimation;
 		if (doNetworking)
@@ -1671,10 +1672,10 @@ void playGame() {
 						z->setTextureActive(z->getTextureIdle());
 					}
 				}
-				if (doNetworking) {
+				if (doNetworking&&(SDL_GetTicks()-lastSync>25)) {
 					int length;
 					int result;
-
+					lastSync = SDL_GetTicks();
 
 
 					
