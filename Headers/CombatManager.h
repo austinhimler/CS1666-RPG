@@ -25,6 +25,7 @@ public:
 	CombatManager();
 	~CombatManager();
 
+	int checkCombatStatus();
 	int updateStatus();
 	
 	/*
@@ -32,11 +33,11 @@ public:
 	*/
 	int performEvent(Character *c, string option, int optNum);
 	int takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e);
-	int textAction(Character* c, int EnemyOrderCount);
+	int textAction(Character* c);
 	int combatMain(std::vector<Character*>& c);
 	void textAttributes(Character *c, int optNum);
 	void textMain(bool& printed, bool initialText);
-	void setNewButtons(std::vector<Button*>& buttons, int t);
+	//void setNewButtons(std::vector<Button*>& buttons, int t);
 	void outputEnemy();
 
 	Action takeActionByAI(Character* c, int EnemyActionOrderCount);
@@ -52,7 +53,7 @@ private:
 	//std::vector<Enemy*> Enemies;
 	std::vector<int> player_index;
 	//std::vector<Player*> Players;
-	SDL_Texture* loadImage(std::string fname);
+	//SDL_Texture* loadImage(std::string fname);
 	SDL_Rect scene_box = { 0,0,720,540 };
 	SDL_Rect ui_box = { 17,529,685,167 };
 	SDL_Rect info_box = { 240,529,480, 167 };

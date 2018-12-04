@@ -110,7 +110,7 @@ void Graphics::display(void)
 		textRenderer.RenderText(text);
 	}
 
-	glDrawArrays(GL_TRIANGLES, 0, num_vertices);
+	//glDrawArrays(GL_TRIANGLES, 0, num_vertices);
 
 	SDL_GL_SwapWindow(gWindow);
 }
