@@ -1690,7 +1690,7 @@ void playGame() {
 							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 						}
 						std::cout << "Host Done Sending\n" << std::endl;
-						/*
+						
 						std::stringstream notyoStream;
 						notyoStream << "#";
 						char temp[100];
@@ -1706,7 +1706,7 @@ void playGame() {
 						notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
 						std::cout << "Recieved " << notYourSTD << std::endl;
 						notYou->fromString(notYourSTD);
-						*/
+						
 					}
 					else
 					{
@@ -1727,7 +1727,7 @@ void playGame() {
 						notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
 						std::cout << "Recieved " << notYourSTD << std::endl;
 						notYou->fromString(notYourSTD);
-						/*
+						
 						//Send Character
 						std::string cppString = player1->ptoString();
 						const char* myString = cppString.c_str();
@@ -1738,7 +1738,7 @@ void playGame() {
 							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 						}
 						std::cout << "Client Done Sending\n" << std::endl;
-						*/
+						
 					}
 				}
 			}
