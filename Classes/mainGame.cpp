@@ -1251,6 +1251,7 @@ void playGame() {
 		notYou = new Player("meme", 10, 10, 10, 10, 10);
 		
 		charactersOnScreen.push_back(notYou);
+		playersOnScreen.push_back(notYou);
 	}
 
 	//Load the music
