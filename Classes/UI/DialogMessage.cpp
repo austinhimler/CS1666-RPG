@@ -1,6 +1,5 @@
 #include "../../Headers/UI/DialogMessage.h"
 #include <stdio.h>
-#include <io.h>
 #include <algorithm>
 
 DialogMessage::DialogMessage(std::string message, std::vector<std::string> options)
