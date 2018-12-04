@@ -124,11 +124,14 @@
 			vars.push_back(token);
 			in.erase(0, pos + 1);
 		}
-		name = vars[0];
-		currentFrame = std::stoi(vars[1]);
-		xPosition = atof(vars[2].c_str());
-		yPosition = atof(vars[3].c_str());
-		xVelocity = atof(vars[4].c_str());
-		yVelocity = atof(vars[5].c_str());
+		if (vars.size > 5)
+		{
+			name = vars[0];
+			currentFrame = std::stoi(vars[1]);
+			xPosition = atof(vars[2].c_str());
+			yPosition = atof(vars[3].c_str());
+			xVelocity = atof(vars[4].c_str());
+			yVelocity = atof(vars[5].c_str());
+		}
 		return;
 	}
