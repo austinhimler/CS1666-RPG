@@ -1696,7 +1696,7 @@ void playGame() {
 						char temp[100];
 						std::cout << "Host Recieving\n" << std::endl;
 						//delay to test something should be removed
-						while (notyoStream.str().back() == '*')
+						while (notyoStream.str().back() != '*')
 						{
 							SDLNet_TCP_Recv(clientSocket, temp, 100);
 							notyoStream << temp;
@@ -1717,7 +1717,7 @@ void playGame() {
 						char temp[100];
 						std::cout << "Client Recieving\n" << notyoStream.str().back()<< std::endl;
 		
-						while (notyoStream.str().back()=='*')
+						while (notyoStream.str().back()!='*')
 						{
 							SDLNet_TCP_Recv(clientSocket, temp, 100);
 							notyoStream << temp;
