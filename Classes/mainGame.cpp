@@ -1695,10 +1695,13 @@ void playGame() {
 						char temp[100];
 						std::cout << "Host Recieving\n" << std::endl;
 						//delay to test something should be removed
-						SDL_Delay(5000);
-						SDLNet_TCP_Recv(clientSocket, temp, 100);
-						notyoStream << temp;
+						while (notyoStream.str().back() == '*')
+						{
+							SDLNet_TCP_Recv(clientSocket, temp, 100);
+							notyoStream << temp;
+						}
 						std::string notYourSTD(notyoStream.str());
+						notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
 						std::cout << "Recieved " << notYourSTD << std::endl;
 						notYou->fromString(notYourSTD);
 						
@@ -1708,12 +1711,17 @@ void playGame() {
 						bool gettingattr = true;
 						//recieve character and push back
 						std::stringstream notyoStream;
+						notyoStream << " ";
 						char temp[100];
 						std::cout << "Client Recieving\n" << std::endl;
-						SDL_Delay(1000);
-						SDLNet_TCP_Recv(clientSocket, temp, 100);
-						notyoStream << temp;
+		
+						while (notyoStream.str().back()=='*')
+						{
+							SDLNet_TCP_Recv(clientSocket, temp, 100);
+							notyoStream << temp;
+						}
 						std::string notYourSTD(notyoStream.str());
+						notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
 						std::cout << "Recieved " << notYourSTD << std::endl;
 						notYou->fromString(notYourSTD);
 						
