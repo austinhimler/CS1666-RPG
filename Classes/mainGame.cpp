@@ -1699,6 +1699,7 @@ void playGame() {
 						{
 							SDLNet_TCP_Recv(clientSocket, temp, 100);
 							notyoStream << temp;
+							std::cout << notyoStream.str() << endl;
 						}
 						std::string notYourSTD(notyoStream.str());
 						notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
@@ -1719,6 +1720,7 @@ void playGame() {
 						{
 							SDLNet_TCP_Recv(clientSocket, temp, 100);
 							notyoStream << temp;
+							std::cout << notyoStream.str() << endl;
 						}
 						std::string notYourSTD(notyoStream.str());
 						notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
