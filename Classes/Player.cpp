@@ -120,6 +120,7 @@
 		std::string token;
 		while ((pos = in.find(" ")) != std::string::npos) {
 			token = in.substr(0, pos);
+			std::cout << "Parsed: " << token << endl;
 			vars.push_back(token);
 			in.erase(0, pos + 1);
 		}
