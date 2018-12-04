@@ -4,19 +4,18 @@
 
 #include <map>
 #include <string>
-#include "GL/glew.h"
-#include "Shader.h"
-#include "Texture2D.h"
-#include "FontData.h"
-#include <map>
 #include <vector>
-
 // SOIL used for image loading
 #include <SOIL2/SOIL2.h>
-
 // Freetype used for loading fonts
 #include <ft2build.h>
 #include <freetype/freetype.h>
+#include <GL/glew.h>
+
+#include "Shader.h"
+#include "Texture2D.h"
+#include "FontData.h"
+
 
 // A static ResourceManager class that manages resources for the game
 class ResourceManager
