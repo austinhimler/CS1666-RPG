@@ -250,10 +250,6 @@ int CombatManager::textAction(Character* c) {
 						return status;
 				}
 				
-				// We'll just reprint the main move selection for now
-
-				//bool print = false;
-				//textMain(print, initialText);
 			}
 		}
 		// Clear the events
@@ -473,11 +469,7 @@ int CombatManager::performEvent(Character *c, string option, int optNum)
 
 void CombatManager::outputEnemy() {
 	m_combatDialogManager.ClearEvents();
-	/*int i = 1;
-	for (int j = 0; j < participants.size(); j++) {
-		if ((Enemy*)participants[j]->is_Enemy())
-			std::cout << i++ << ". " << participants[j]->getName() << std::endl;
-	}*/
+
 	std::vector<std::string> options;
 	for (int j = 0; j < participants.size(); j++) {
 		if ((Enemy*)participants[j]->is_Enemy())
@@ -687,7 +679,6 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				
 				if (e.key.keysym.sym == SDLK_RETURN)
 				{
-					allPlayersMoved = true;
 					m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::SELECT);
 					Mix_PlayChannel(-1, gBSound, 0);
 				}
@@ -717,7 +708,6 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 					default:
 						Mix_FreeChunk(gBSound);
 							return result_temp;
-							//takeAction(participants[i], buttons, e);
 					}
 					updateStatus();
 				}
@@ -730,23 +720,20 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			for (int i = player_index.size(); i < participants.size(); i++)
 			{
 				//updateStatus(participants[i]);
-				if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0 && allPlayersMoved)
+				if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0 )
 					switch (int result_temp = textAction(participants[i])) {
 					case IN_COMBAT:
 						break;
 					default:
 						Mix_FreeChunk(gBSound);
 						return result_temp;
-						//takeAction(participants[i], buttons, e);
 					}
 				updateStatus();
 			}
-			allPlayersMoved = false;
 			printed = false;
 			turnOrder = 0;
 		}
 		
-		//printed = false; // for text combat ui
 		qm.changeRounds();
 
 	}
