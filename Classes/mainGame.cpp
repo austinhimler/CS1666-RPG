@@ -1715,7 +1715,7 @@ void playGame() {
 						std::stringstream notyoStream;
 						notyoStream << "#";
 						char temp[100];
-						std::cout << "Client Recieving\n" << std::endl;
+						std::cout << "Client Recieving\n" << notyoStream.str().back()<< std::endl;
 		
 						while (notyoStream.str().back()=='*')
 						{
