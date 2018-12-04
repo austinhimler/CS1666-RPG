@@ -53,6 +53,7 @@ public:
 	std::vector<Attribute> getAttributes();
 	Attribute getAttr(int i);
 	std::vector<Ability> getAbilities();
+	std::vector<Ability*> getAbilityPointers();
 	std::vector<Ailment> getAilm();
 	
 	double xVelocity;
@@ -96,6 +97,7 @@ public:
 	void checkStatus();
 
 	int updateEnergy(Ability* a);
+	void refillEnergy();
 
 	string toString();
 	void setTextureActive(SDL_Texture*);

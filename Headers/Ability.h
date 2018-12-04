@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "Attribute.h"
+#include "Abilities/AbilityResource.h"
 #include "Globals.h"
 #include "Ailment.h"
 
@@ -28,6 +29,9 @@ public:
 	int getCD();
 	int getVal();
 	int getType();
+	int getMPSTaskType();
+
+	bool isAOE();
 
 	operator std::string();
 private:
@@ -36,8 +40,13 @@ private:
 	int energyCost;
 	int MPCost;
 	int cooldown; //might not add
+	int baseValue;
 	int value;	// the possiblity of succes for escape and summon
 	int type;
+	int MPSTaskType;
+
+	bool IsAOE;
+
 	//maybe determine these with another subclass of each type? e.g. class for DamageAbility, HealingAbility, DefenseAbility
 	//or we might not even need something like this
 	bool isDamage;

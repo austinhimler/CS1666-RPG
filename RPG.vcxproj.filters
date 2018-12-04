@@ -68,15 +68,6 @@
     <Image Include="CREDIT_IMG\SankethKolliCredit.jpg">
       <Filter>Resource Files\CREDIT_IMAGES</Filter>
     </Image>
-    <Image Include="..\..\..\..\..\Programming\cs1666\StartButton.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\..\..\..\Programming\cs1666\pointDownArrow.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\..\..\..\Programming\cs1666\pointUpArrow.png">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="Images\Tiles\64^64 Grasstiles.png">
       <Filter>Resource Files</Filter>
     </Image>
@@ -172,7 +163,7 @@
     <ClCompile Include="Classes\CombatManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Classes\ResourceManager\ResourceManager.cpp">
+	<ClCompile Include="Classes\ResourceManager\ResourceManager.cpp">
       <Filter>Source Files\ResourceManager</Filter>
     </ClCompile>
     <ClCompile Include="Classes\ResourceManager\Shader.cpp">
@@ -192,6 +183,27 @@
     </ClCompile>
     <ClCompile Include="Classes\UI\TextRenderer.cpp">
       <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\AI\Action.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\AI\MPS_TaskAssignment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\AI\MPS_Task.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\AI\MPS_Data.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\AI\MPS_Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\AI\MPS_ASModifier.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\AI\CombatAI.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -348,9 +360,42 @@
     <ClInclude Include="Headers\UI\TextRenderer.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\AI\CombatAI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\AI\CombatAIResource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\AI\Action.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\AI\MPS_TaskAssignment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\AI\MPS_Modifier.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\AI\MPS_Task.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\AI\MPS_Data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\AI\MPS_Main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\AI\MPS_ASModifier.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="map1.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="map2.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="map3.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>
@@ -372,6 +417,9 @@
     </None>
     <None Include="Shaders\simpleTextureShader.vs">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="Data\AI\MPS_Effectiveness.csv">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
 </Project>

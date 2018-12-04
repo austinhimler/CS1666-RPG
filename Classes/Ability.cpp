@@ -12,21 +12,47 @@
 		value = v; 
 		type = t;
 		if (value < 0) value = 1;
+		IsAOE = AbilityResource::abilityIsAOE[n];
+		MPSTaskType = AbilityResource::MPS_TASKTYPE[n];
+
 	}
 	Ability::Ability(int n, std::vector<int> re, std::vector<Attribute> attr) {
 		name = n;
 		description = AbilityResource::abilityDescrip(n);
 		energyCost = AbilityResource::baseEnergyCost(n) - DEX / 10;
+		baseValue = AbilityResource::baseValue(n);
 		if (energyCost < 1) energyCost = 1;
 		MPCost = AbilityResource::abilityMPCost[n];
 		cooldown = AbilityResource::abilityCD[n];
 		if (cooldown < 0) cooldown = 0;
 		if (re.size() >= 3)
-			value = 6 * attr[re[0]].getCur() + 3 * attr[re[1]].getCur() + 2 * attr[re[2]].getCur();
-		else
-			value = 0;
+		{
+			switch (name)
+			{
+			case 0:
+				value = baseValue + attr[re[0]].getCur() + ((attr[re[1]].getCur()+baseValue) / 2);
+				break;
+			case 1:
+				value = 2 * baseValue * attr[re[0]].getCur() + 1.5 * baseValue * attr[re[1]].getCur();
+				break;
+			case 2:
+				value = baseValue + 2 * attr[re[0]].getCur();
+				break;
+			case 3:
+				value = baseValue + 2 * attr[re[0]].getCur();
+				break;
+			case 4:
+				value = baseValue;
+				break;
+			default:
+				value = 1;
+			}
+		}
+		else value = 1;
 		if (value < 0) value = 1;
 		type = AbilityResource::abilityType[n];
+		IsAOE = AbilityResource::abilityIsAOE[n];
+		MPSTaskType = AbilityResource::MPS_TASKTYPE[n];
 	}
 
 	Ability::Ability() {}
@@ -59,6 +85,12 @@
 	}
 	int Ability::getType() {
 		return type;
+	}
+	int Ability::getMPSTaskType() {
+		return MPSTaskType;
+	}
+	bool Ability::isAOE() {
+		return IsAOE;
 	}
 
 	Ability::operator std::string() {

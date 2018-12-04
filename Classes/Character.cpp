@@ -11,7 +11,7 @@
 		mpCurrent = mpMax;
 		flip = SDL_FLIP_NONE;
 		energyCurrent = energyMax;
-		energyRegen = (energyMax < 10)?1:0.1 * energyMax;
+		energyRegen = 20 + (energyMax < 10)?1:0.1 * energyMax*attr[DEX].current;
 		name = n;
 		buff = std::vector<int>(BUFFCOUNT, 0);
 		level = 1;
@@ -43,8 +43,8 @@
 			break;
 		case AbilityResource::tESCAPE:
 			i = rand() % 100;
-			if (i <= 49 + FAI) result = -2; // successful escape
-			else result = -1; // failing escape
+			if (i > a->getVal()) result = -1; // failed escape
+			else result = -2; // successful escape
 			break;
 		case AbilityResource::tDEFENSE:
 			buff[ENERGYREGEN]++;
@@ -106,15 +106,15 @@
 
 	
 	void Character::learnAbility(int a) {
-		Ability* abil = new Ability(a, AbilityResource::abilityAttr[a], attributes);
+		Ability abil = Ability(a, AbilityResource::abilityAttr[a], attributes);
 		for (auto& i : abilities) {
 			if (i.cmp(a)) {
-				i = *abil;//used for updating learned abilities
+				i = abil;//used for updating learned abilities
 				return;
 			}
 		}
-		abilities.push_back(*abil);
-		abil_helper[a] = abilities.size() - 1;
+		abilities.push_back(abil);
+		abil_helper[a] = (int)abilities.size() - 1;
 	}
 
 	int Character::updateEnergy(Ability* a) {
@@ -177,7 +177,8 @@
 	int Character::getStatus() { return 0; }
 	void Character::setHPMax() { hpMax = 100 * attributes[CON].current; }
 	void Character::setMPMax() { mpMax = 100 * attributes[INT].current; }
-	void Character::setEnergyMax() { energyMax = 100 * attributes[DEX].current; }
+	void Character::setEnergyMax() { energyMax = 50 + attributes[DEX].current; }
+	void Character::refillEnergy() { energyCurrent = energyMax;	}
 	void Character::setTextureActive(SDL_Texture* text) { textureActive = text; }
 	int Character::getHPCurrent() { return hpCurrent; }
 	int Character::getMPCurrent() { return mpCurrent; }
@@ -209,6 +210,13 @@
 	SDL_Rect Character::getRectangle() { return rectangle; }
 	std::vector<Attribute> Character::getAttributes() { return attributes; }
 	std::vector<Ability> Character::getAbilities() { return abilities; }
+	std::vector<Ability*> Character::getAbilityPointers() {
+		std::vector<Ability*> AbilityPointers;
+		for (auto& a : abilities) {
+			AbilityPointers.push_back(&a);
+		}
+		return AbilityPointers;
+	}
 	double Character::getSpeedMax() { return speedMax; }
 	double Character::getAcceleration() { return acceleration; }
 	bool Character::is_Enemy() { return isEnemy; }

@@ -3,7 +3,7 @@ SRC = $(wildcard Classes/*.cpp) $(wildcard Classes/*/*.cpp)
 DEP = $(wildcard Headers/*/*.h) $(wildcard Headers/*.h)
 OBJ = $(patsubst Classes/%.cpp, obj/%.o, $(SRC))
 COMPILER_FLAGS = -Wall -I/usr/include/SDL2 -I/usr/include/SOIL -I/usr/include/glm -I/usr/include/GL -I/usr/include -I/Headers
-LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_net -lGLEW -lGL -lSOIL
+LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_net -lGLEW -lGL -lSOIL -lGLU -lglut
 
 all: cs1666rpg.o
 	

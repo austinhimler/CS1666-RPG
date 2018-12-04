@@ -6,8 +6,8 @@
 #include <stack>
 #include <array>
 #include <exception>
-#include "Headers/Tile.h"
-#include "Headers/Globals.h"
+#include "Tile.h"
+#include "Globals.h"
 
 struct Node {
 	int x;

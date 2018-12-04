@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <random>
-#include "Globals.h"
+#include "Ailments/AilmentResource.h"
 #include "Resistance.h"
 
 /**
