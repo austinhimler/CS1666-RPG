@@ -1254,10 +1254,11 @@ void playGame() {
 
 		if (isHost)
 		{
-			const char* myString = player1->ptoString().c_str();
+			std::string cppString=player1->ptoString();
+			const char* myString = cppString.c_str();
 			length = strlen(myString) + 1;
-			std::cout << "Host Sending " << myString<< std::endl;
-			result = SDLNet_TCP_Send(clientSocket, &myString, length);
+			printf("Host Sending %s\n", myString);
+			result = SDLNet_TCP_Send(clientSocket, myString, length);
 			if (result < length) {
 				printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 			}
@@ -1290,9 +1291,10 @@ void playGame() {
 			notYou->fromString(notYourSTD);
 			charactersOnScreen.push_back(notYou);
 			//Send Character
-			const char* myString = player1->ptoString().c_str();
+			std::string cppString = player1->ptoString();
+			const char* myString = cppString.c_str();
 			length = strlen(myString) + 1;
-			std::cout << "client Sending " << myString << std::endl;
+			printf("Client Sending %s\n", myString);
 			result = SDLNet_TCP_Send(clientSocket, &myString, length);
 			if (result < length) {
 				printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
