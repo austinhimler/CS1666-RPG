@@ -1694,8 +1694,8 @@ void playGame() {
 						std::stringstream notyoStream;
 						notyoStream << "#";
 						char temp[100];
-						std::cout << "Host Recieving\n" << std::endl;
-						//delay to test something should be removed
+						std::cout << "Host Recieving\n" << notyoStream.str().back() << std::endl;
+
 						while (notyoStream.str().back() != '*')
 						{
 							SDLNet_TCP_Recv(clientSocket, temp, 100);
