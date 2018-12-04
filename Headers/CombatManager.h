@@ -43,6 +43,8 @@ public:
 	Action takeActionByAI(Character* c, int EnemyActionOrderCount);
 
 private:
+	string atk;
+	string target;
 	bool inCombat;
 	bool allPlayersMoved;
 	int turnOrder;
