@@ -3,6 +3,7 @@
 #include <string>
 #include <time.h>
 #include <cmath>
+#include <cstring>
 #include <fstream>
 #include <sstream>
 #include <SDL2/SDL.h>
@@ -1253,7 +1254,7 @@ void playGame() {
 
 		if (isHost)
 		{
-			const char* myString = player1->toString().c_str();
+			const char* myString = player1->ptoString().c_str();
 			length = strlen(myString) + 1;
 			std::cout << "Host Sending " << myString<< std::endl;
 			result = SDLNet_TCP_Send(clientSocket, &myString, length);
@@ -1289,7 +1290,7 @@ void playGame() {
 			notYou->fromString(notYourSTD);
 			charactersOnScreen.push_back(notYou);
 			//Send Character
-			const char* myString = player1->toString().c_str();
+			const char* myString = player1->ptoString().c_str();
 			length = strlen(myString) + 1;
 			std::cout << "client Sending " << myString << std::endl;
 			result = SDLNet_TCP_Send(clientSocket, &myString, length);

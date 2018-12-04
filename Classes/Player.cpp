@@ -3,6 +3,7 @@
 #include "../Headers/Helper.h"
 #include <iostream>
 #include <sstream>
+#include <cstring>
 	/*
 	int strength = 1;
 	int intelligence = 1;
@@ -102,13 +103,14 @@
 		
 	}
 	//name currentFrame xPosition yPosition xVelocity yVelocity
-	std::string Player::toString()
+	std::string Player::ptoString()
 	{
 		//previous attempt, new attempt uses a stream
 		//std::string pString = name + " " + std::to_string(currentFrame) + " " + std::to_string(xPosition) + " " +
 		//	std::to_string(yPosition) + " " + std::to_string(xVelocity) + " " + std::to_string(yVelocity);
 		std::stringstream st;
 		st << name << " " << currentFrame << " " << xPosition << " " << yPosition << " " << xVelocity << " " << yVelocity << std::ends;
+		std::cout << st.str() << std::endl;
 		return st.str();
 	}
 	void Player::fromString(std::string in)
