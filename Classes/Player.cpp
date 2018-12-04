@@ -117,24 +117,17 @@
 	{
 		std::vector<std::string> vars;
 		size_t pos = 0;
-		std::string token = " ";
-		while (in.size()) {
-			int index = in.find(token);
-			if (index != string::npos) {
-				vars.push_back(in.substr(0, index));
-				in = in.substr(index + token.size());
-				if (in.size() == 0)vars.push_back(in);
-			}
-			else {
-				vars.push_back(in);
-				in = "";
-			}
+		std::string token;
+		while ((pos = in.find(" ")) != std::string::npos) {
+			token = in.substr(0, pos);
+			vars.push_back(token);
+			in.erase(0, pos + 1);
 		}
 		name = vars[0];
-		currentFrame = std::stoi(vars[2]);
-		xPosition = atof(vars[3].c_str());
-		yPosition = atof(vars[4].c_str());
-		xVelocity = atof(vars[5].c_str());
-		yVelocity = atof(vars[6].c_str());
+		currentFrame = std::stoi(vars[1]);
+		xPosition = atof(vars[2].c_str());
+		yPosition = atof(vars[3].c_str());
+		xVelocity = atof(vars[4].c_str());
+		yVelocity = atof(vars[5].c_str());
 		return;
 	}
