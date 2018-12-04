@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 // SOIL used for image loading
-#include <SOIL2/SOIL2.h>
+#include "../../dev_lib/includes/SOIL2/SOIL2.h"
 // Freetype used for loading fonts
 #include <ft2build.h>
 #include <freetype/freetype.h>
