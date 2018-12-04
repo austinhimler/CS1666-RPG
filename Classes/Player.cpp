@@ -124,7 +124,7 @@
 			vars.push_back(token);
 			in.erase(0, pos + 1);
 		}
-		if (vars.size > 5)
+		if (vars.size() > 5)
 		{
 			name = vars[0];
 			currentFrame = std::stoi(vars[1]);
