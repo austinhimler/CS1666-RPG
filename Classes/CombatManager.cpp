@@ -455,15 +455,14 @@ int CombatManager::performEvent(Character *c, string option, int optNum)
 	case 3:
 		//Do defense buff
 		returnVal = 1;
-		turnOrder = 2;
+		turnOrder = 6;
 		break;
 	default:
 		textAttributes(c, optNum);
-		outputEnemy();
+		turnOrder = 2;
+		//outputEnemy();
 		break;
 	}
-	
-	m_combatDialogManager.ClearEvents();
 	return returnVal;
 }
 
@@ -476,10 +475,11 @@ void CombatManager::outputEnemy() {
 			options.push_back(participants[j]->getName());
 	}
 	m_combatDialogManager.AddSelectableOption("Choose your target", options);
-	turnOrder = 2;
+	turnOrder = 4;
 }
 void CombatManager::textAttributes(Character *c, int optNum)
 {
+	//m_combatDialogManager.ClearEvents();
 	std::vector<std::string> options;
 	std::vector<Ability> abil_temp = c->getAbilities(); // get ability lists of the character
 	std::vector<int> helper; // stores relative index of the abilites within the same attribute category
@@ -492,7 +492,7 @@ void CombatManager::textAttributes(Character *c, int optNum)
 		}
 	}
 	m_combatDialogManager.AddSelectableOption("Choose your attack", options);
-	
+
 }
 void CombatManager::textMain(bool& printed, bool initialText) {
 	if (printed) return;
@@ -626,9 +626,9 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 	
 
 	int width, height;
-	
+	int allPlayers = 0;
 	while (inCombat) {
-		
+		//printf("%d", turnOrder);
 		// Update the combat dialog manager
 		// We need to know the time between frames so we can update things accordingly. We'll just pass in a set number for now. 
 		// In the future you should pass in the update delta time.
@@ -696,13 +696,12 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		// We need to fix the idle for the following part
 		// You will need to rewrite to not have an while loops
 		// We need to constantly render to the screen
+		
 		if (turnOrder == 1)
 		{
 			if (e.key.keysym.sym == SDLK_RETURN)
 			{
-				for (int i = 0; i < player_index.size(); i++)
-				{
-					switch (int result_temp = textAction(participants[i])) {
+					switch (int result_temp = textAction(participants[allPlayers])) {
 					case IN_COMBAT:
 						break;
 					default:
@@ -710,12 +709,63 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 							return result_temp;
 					}
 					updateStatus();
-				}
 				
-			
 			}
 		}
 		else if (turnOrder == 2)
+		{
+			std::queue<CombatDialogManager::SelectionEvent> events = m_combatDialogManager.GetEvents();
+			if (events.size() > 0)
+			{
+				// Get the first event
+				auto event = events.front();
+				// Pop the event 
+				events.pop();
+				atk = event.options[event.selectedOption];
+				turnOrder = 3;
+			}
+		}
+		else if (turnOrder == 3)
+		{
+			stringstream ss;
+			ss << "You selected " << atk;
+			m_combatDialogManager.AddMessage(ss.str());
+			outputEnemy();
+			turnOrder = 4;
+		}
+		else if (turnOrder == 4)
+		{
+			std::queue<CombatDialogManager::SelectionEvent> events = m_combatDialogManager.GetEvents();
+			if (events.size() > 0)
+			{
+				// Get the first event
+				auto event = events.front();
+				// Pop the event 
+				events.pop();
+				target = event.options[event.selectedOption];
+				turnOrder = 5;
+			}
+		}
+		else if (turnOrder == 5)
+		{
+			stringstream ss;
+			ss << "You selected " << target;
+			m_combatDialogManager.AddMessage(ss.str());
+			//PLACE THE ATTACK ANIMATIONS HERE USING THE atk VARIABLE
+			if (allPlayers == player_index.size() - 1)
+			{
+				turnOrder = 6;
+				allPlayers = 0;
+			}
+				
+			else
+			{
+				turnOrder = 1;
+				allPlayers++;
+			}
+		
+		}
+		else if (turnOrder == 6)
 		{
 			for (int i = player_index.size(); i < participants.size(); i++)
 			{
@@ -732,10 +782,8 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			}
 			printed = false;
 			turnOrder = 0;
+			qm.changeRounds();
 		}
-		
-		qm.changeRounds();
-
 	}
 	Mix_FreeChunk(gBSound);
 	return -100;
