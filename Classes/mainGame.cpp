@@ -1692,6 +1692,7 @@ void playGame() {
 						std::cout << "Host Done Sending\n" << std::endl;
 						bool gettingattr = true;
 						std::stringstream notyoStream;
+						notyoStream << "#";
 						char temp[100];
 						std::cout << "Host Recieving\n" << std::endl;
 						//delay to test something should be removed
@@ -1712,7 +1713,7 @@ void playGame() {
 						bool gettingattr = true;
 						//recieve character and push back
 						std::stringstream notyoStream;
-						notyoStream << " ";
+						notyoStream << "#";
 						char temp[100];
 						std::cout << "Client Recieving\n" << std::endl;
 		
