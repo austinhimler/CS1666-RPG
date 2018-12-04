@@ -1801,6 +1801,7 @@ void playGame() {
 				else if (combatResult == PLAYER_ESCAPES) {
 					allEnemies.push_back(CollidingCluster);
 					charactersOnScreen.push_back(CollidingCluster);
+					charactersOnScreen.push_back(player1);
 				}
 				combatStarted = false;
 				inOverworld = true;
