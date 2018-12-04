@@ -397,6 +397,7 @@ void levelTransition() {
 	SDL_Color TextColor = { 255, 255, 255, 0 };
 	renderText(level.c_str(), &words, &TextColor);
 	SDL_RenderPresent(gRenderer);
+	SDL_Delay(100);
 	SDL_Rect wipe = { 180,240,20,20 };
 	SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);
 	for (; wipe.x < 540; wipe.x += 20)
@@ -1210,7 +1211,7 @@ void playGame() {
 	Mix_VolumeMusic(MIX_MAX_VOLUME / 8);
 	for (MAP_INDEX = 0; MAP_INDEX < ALL_MAPS.size(); MAP_INDEX++)
 	{
-		player1->refillEnergy();
+		player1->refillEnergy(2);
 		//bool doNetworking = handleNetworkingSetup();
 		vector<Cluster*> allEnemies = vector<Cluster*>();
 		Cluster* CollidingCluster;
@@ -1275,8 +1276,10 @@ void playGame() {
 		}
 		std::string hudHealthString = "Health: " + to_string(player1->getHPCurrent());
 		std::string hudLevelString = "Level: " + to_string(player1->getLevel());
+		std::string hudEnergyString = "Energy: " + to_string(player1->getEnergyCurrent());
 		SDL_Rect hudHealthTextRectangle = { 10, 10, 0, 0 };
 		SDL_Rect hudLevelTextRectangle = { 10, 35, 0, 0 };
+		SDL_Rect hudEnergyTextRectangle = { 10, 60, 0, 0 };
 		SDL_Color hudTextColor = { 0, 0, 0, 0 };
 
 		double timePassed = 0;
@@ -1546,8 +1549,10 @@ void playGame() {
 
 				hudHealthString = "Health: " + to_string(player1->getHPCurrent());
 				hudLevelString = "Level: " + to_string(player1->getLevel());
+				hudEnergyString = "Energy: " + to_string(player1->getEnergyCurrent());
 				renderText(hudHealthString.c_str(), &hudHealthTextRectangle, &hudTextColor);
 				renderText(hudLevelString.c_str(), &hudLevelTextRectangle, &hudTextColor);
+				renderText(hudEnergyString.c_str(), &hudEnergyTextRectangle, &hudTextColor);
 
 				SDL_RenderPresent(gRenderer);
 
@@ -1608,6 +1613,7 @@ void playGame() {
 				//vector<Character *> c;
 				//for (auto i : combatants)
 					//c.push_back(&i);
+				player1->refillEnergy(1);
 				int combatResult = cm.combatMain(combatants);
 				gMusic = Mix_LoadMUS("Audio/Walking_Test.wav");
 				if (gMusic == NULL)
@@ -1616,6 +1622,7 @@ void playGame() {
 				Mix_PlayMusic(gMusic, -1);
 				Mix_ResumeMusic();
 				timeSinceLastMovement = SDL_GetTicks();
+				std::cout << allEnemies.size() << endl;
 				std::cout << combatResult << std::endl;
 				if (combatResult == ENEMY_WINS) {
 					cout << "\nYOU HAVE DIED\nGAME OVER MAN, GAME OVER" << endl;

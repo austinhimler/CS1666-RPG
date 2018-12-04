@@ -11,7 +11,7 @@
 		mpCurrent = mpMax;
 		flip = SDL_FLIP_NONE;
 		energyCurrent = energyMax;
-		energyRegen = 20 + (energyMax < 10)?1:0.1 * energyMax*attr[DEX].current;
+		energyRegen = attr[DEX].current*3;
 		name = n;
 		buff = std::vector<int>(BUFFCOUNT, 0);
 		level = 1;
@@ -168,6 +168,22 @@
 		}
 		return s;
 	}
+	void Character::refillEnergy(int mode) {
+		switch (mode)
+		{
+		case 1: // In Combat
+			if (energyCurrent + energyRegen <= energyMax)
+				energyCurrent += energyRegen;
+			else energyCurrent = energyMax;
+			break;
+		case 2: // Level Switch
+			energyCurrent = energyMax;
+			break;
+		default:
+			cout << "Unable to refill Energy" << endl;
+			break;
+		}
+	}
 
 	int Character::getHelp(int n) { return abil_helper[n]; }
 	int Character::getDex() { return attributes[DEX].current;}
@@ -178,7 +194,6 @@
 	void Character::setHPMax() { hpMax = 100 * attributes[CON].current; }
 	void Character::setMPMax() { mpMax = 100 * attributes[INT].current; }
 	void Character::setEnergyMax() { energyMax = 50 + attributes[DEX].current; }
-	void Character::refillEnergy() { energyCurrent = energyMax;	}
 	void Character::setTextureActive(SDL_Texture* text) { textureActive = text; }
 	int Character::getHPCurrent() { return hpCurrent; }
 	int Character::getMPCurrent() { return mpCurrent; }
