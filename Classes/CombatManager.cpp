@@ -436,8 +436,12 @@ int CombatManager::textAction(Character* c) {
 	return IN_COMBAT;
 }
 
+
+
+
 int CombatManager::performEvent(Character *c, string option, int optNum)
 {
+	m_combatDialogManager.ClearEvents();
 	int returnVal = 1;
 	// Simple output message
 	stringstream ss;
@@ -457,121 +461,8 @@ int CombatManager::performEvent(Character *c, string option, int optNum)
 	return returnVal;
 }
 
-
-int CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e) {
-	/*
-		If c is an emeny, do enemy attack
-		Else, wait for user input
-		If mouse hovers over player or enemy, display stats in info screen
-		If attribute/inventory buttons are clicked, display options in info screen
-		If a skill is clicked wait for user to click on character to use the skill on
-		If energy = 0 or player clicks End Turn, return
-	
-
-	int charImageX = 0;
-	int charImageY = 0;
-	int charImageW = 200;
-	int charImageH = 148;
-
-	if (c->is_Enemy() == true)
-	{
-		//Enemy attack player
-	}
-	else
-	{
-		bool takingAction = true;
-		while (takingAction) {
-			
-
-			while (SDL_PollEvent(&e))
-			{
-				int mouseX, mouseY;
-				SDL_GetMouseState(&mouseX, &mouseY);
-				
-				for (auto i : buttons)
-				{
-					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
-						((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
-					{
-						if (i->type == "character")
-						{
-							//Display character info in info sheet
-						}
-						else if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN)
-						{
-							bool abil_button = true;
-							
-							/*
-							while (abil_button) {
-								std::vector<Button*> Abil_Buttons;
-								setNewButtons(Abil_Buttons, i->attribute);
-								
-								
-								if(Escape button is clicked) {
-								Ability* a = c->abilities[c->getHelp(ESCAPE)];
-									if(c->beingTarget(a) == -1) {
-										// escape successfully
-										// play animation
-										// end combat
-									}
-									else {
-										//escape failed
-										//play animation
-									}
-								}
-								if(Ability buttons are clicked) {
-									Ability* a = c->abilities[c->getHelp(the abilities whose button is clicked)];
-									// create/activate character buttons
-									while(Character buttons are clicked) {
-										Character* target = the character whose button is clicked
-										int result = target->beingTarget(a); // result gives the how many hp increased or decresed
-									}
-								}
-							
-							}
-						}
-					}
-				}
-			}
-
-			if (c->getEnergyCurrent() == 0) {
-				takingAction = false;
-				break;
-			}
-			bool temp = false;
-			for (auto& i : enemy_index) { // check whether at least 1 enemy survives
-				if (participants[i]->getHPCurrent() != 0) temp = true;
-			}
-			if (!temp) {
-				takingAction = false;
-				inCombat = false;
-				break;
-			}
-		}
-	}
-
-	return IN_COMBAT; 
-	*/
-	return IN_COMBAT;
-
-}
-
-/*
-// t gives which of the intial 6 buttons are pressed
-void CombatManager::setNewButtons(std::vector<Button*>& buttons, int t) {
-	int bw = 100, bh = 50;
-	int num_per_row = 1, num_per_col = 1;
-	if (t >= STR && t <= FAI) { // if the button pressed is an attribute button
-		for (int i = 0; i < AbilityResource::abilityNames[t].size(); i++) {
-			buttons.push_back(new Button("Abilty", info_box.x + 5 * (i%num_per_row * 50), info_box.y + 10 * ((i / num_per_row) % num_per_col * 50), bw, bh, "Images/UI/CombatScene/Button.png", AbilityResource::abilityNames[t][i], gRenderer));
-		}
-	}
-	else { // if the button is the inventory button
-		// create button for every item in inveotry
-	}
-}	//*/
-
 void CombatManager::outputEnemy() {
+	m_combatDialogManager.ClearEvents();
 	/*int i = 1;
 	for (int j = 0; j < participants.size(); j++) {
 		if ((Enemy*)participants[j]->is_Enemy())
@@ -604,7 +495,9 @@ void CombatManager::textAttributes(Character *c, int optNum)
 void CombatManager::textMain(bool& printed, bool initialText) {
 	if (printed) return;
 	if (initialText)
-		m_combatDialogManager.AddMessage("You've encountered the colored cone of death!");
+	{
+		m_combatDialogManager.AddMessage("You've encountered the Owls!"); 
+	}
 	std::vector<std::string> options;
 	options.push_back("Strength Abilities");
 	options.push_back("Intelligence Abilities");
@@ -790,35 +683,6 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				}
 				
 			}
-
-
-			/*
-			background.renderBackground(gRenderer);
-			delaysPerFrame++;
-			if (delaysPerFrame >= 6) {
-				frame++;
-				delaysPerFrame = 0;
-			}
-			if (frame == 4) {
-				frame = 0;
-			}
-			charImageX = frame * charAnimationPixelShift;
-			for (auto i : buttons) {
-				if (i->type == "character")	// render participants
-				{
-					SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };
-					SDL_RenderCopy(gRenderer, i->texture, &charactersRectangle, &(i->rect));
-				}
-				else // render UI in initial state
-				{
-					// render buttons on the buttom
-					SDL_RenderCopy(gRenderer, i->texture, NULL, &(i->rect));
-					Helper::renderText(i->type.c_str(), &(i->rect), &txt_color, font);
-				}
-			}
-			//SDL_RenderPresent(gRenderer);
-
-			SDL_Delay(16);*/
 		}
 		
 		if (turnOrder == 0)
