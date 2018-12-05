@@ -229,7 +229,7 @@
 		//std::string pString = name + " " + std::to_string(currentFrame) + " " + std::to_string(xPosition) + " " +
 		//	std::to_string(yPosition) + " " + std::to_string(xVelocity) + " " + std::to_string(yVelocity);
 		std::stringstream st;
-		st << name << " " << xPosition << " " << yPosition << " " << xVelocity << " " << yVelocity << " *" << std::ends;
+		st << name << " " << xPosition << " " << yPosition << " " << xVelocity << " " << yVelocity << " *";
 		std::cout << st.str() << std::endl;
 		return st.str();
 	}
