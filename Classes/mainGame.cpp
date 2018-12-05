@@ -1791,11 +1791,14 @@ void playGame() {
 							notyoStream << temp;
 							receiveString += notyoStream.str();
 							notyoStream.flush();
-							std::string notYourSTD = receiveString;
-						notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
-						receiveString = receiveString.substr(receiveString.find("*") + 1, receiveString.length());
-						std::cout << "Recieved PLAYER" << notYourSTD << std::endl;
-						notYou->fromString(notYourSTD);
+							while(receiveString.find('*') != string::npos)
+							{
+								std::string notYourSTD = receiveString;
+								notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
+								receiveString = receiveString.substr(receiveString.find("*") + 1, receiveString.length());
+								std::cout << "Recieved PLAYER" << notYourSTD << std::endl;
+								notYou->fromString(notYourSTD);
+							}
 
 						
 					}
@@ -1814,7 +1817,7 @@ void playGame() {
 						receiveStream.flush();
 						//std::cout << receiveStream.str() << endl;
 						
-						if (receiveString.find('Z') != string::npos)
+						while(receiveString.find('Z') != string::npos)
 						{
 							std::cout << receiveString << endl;
 							std::string notYourSTD = receiveString.substr(1, receiveString.find("*"));
