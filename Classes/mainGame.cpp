@@ -1252,7 +1252,7 @@ void playGame() {
 	player1->timeSinceLastAnimation = timeSinceLastAnimation;
 	vector<Cluster*> allEnemies;
 	Cluster* CollidingCluster;
-	std::string receiveString;
+	std::string receiveString="";
 	bool doNetworking = handleNetworkingSetup();
 	if (doNetworking)
 	{
@@ -1791,7 +1791,7 @@ void playGame() {
 							notyoStream << temp;
 							receiveString += notyoStream.str();
 							notyoStream.flush();
-							if (receiveString.length() > 1)
+							if (receiveString.length() > 3)
 							{
 								while (receiveString.find('*') != string::npos)
 								{
@@ -1819,7 +1819,7 @@ void playGame() {
 						receiveString += receiveStream.str();
 						receiveStream.flush();
 						//std::cout << receiveStream.str() << endl;
-						if (receiveString.length() > 1)
+						if (receiveString.length() > 3)
 						{
 							while (receiveString.find('Z') != string::npos)
 							{
