@@ -1759,27 +1759,41 @@ void playGame() {
 					
 					if (isHost)
 					{
+						std::string sendString;
 						std::string cppString = player1->ptoString();
-						const char* myString = cppString.c_str();
+						sendString += cppString;
+	/*					const char* myString = cppString.c_str();
 						length = strlen(myString) + 1;
 						printf("Host Sending PLAYER %s\n", myString);
 						result = SDLNet_TCP_Send(clientSocket, myString, length);
 						if (result < length) {
 							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 						}
-						std::cout << "Host Done Sending PLAYER\n" << std::endl;
+						std::cout << "Host Done Sending PLAYER\n" << std::endl;*/
+
 
 						for (auto i : allEnemies) {
 							std::string enemyString = i->ptoString();
-							const char* enemyStringChar = enemyString.c_str();
-							length = strlen(enemyStringChar) + 1;
-							printf("Host Sending ENEMY %s\n", enemyStringChar);
-							result = SDLNet_TCP_Send(clientSocket, enemyStringChar, length);
-							if (result < length) {
-								printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-							}
-							std::cout << "Host Done Sending ENEMY\n" << std::endl;
+							sendString += enemyString;
+							////const char* enemyStringChar = enemyString.c_str();
+							////length = strlen(enemyStringChar) + 1;
+							////printf("Host Sending ENEMY %s\n", enemyStringChar);
+							////result = SDLNet_TCP_Send(clientSocket, enemyStringChar, length);
+							////if (result < length) {
+							////	printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+							////}
+							////std::cout << "Host Done Sending ENEMY\n" << std::endl;
 						}
+						const char* myString = sendString.c_str();
+						length = strlen(myString) + 1;
+						printf("Host Sending PLAYER and ENEMIES %s\n", myString);
+						result = SDLNet_TCP_Send(clientSocket, myString, length);
+						if (result < length) {
+							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+						}
+						std::cout << "Host Done Sending PLAYER and ENEMIES\n" << std::endl;
+
+
 						
 						std::stringstream notyoStream;
 						
