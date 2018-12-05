@@ -88,6 +88,7 @@ public:
 	glm::vec3 rotateRandom(void);
 
 	int setPosition(int ID, glm::vec3 position);
+	glm::vec3 getPosition(int ID);
 	glm::vec3 getVectorFromTo(int ID1, int ID2);
 
 	int setIdleAnimationType(int ID, int type);

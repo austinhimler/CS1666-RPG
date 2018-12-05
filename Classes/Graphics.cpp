@@ -670,6 +670,17 @@ int Graphics::setPosition(int ID, glm::vec3 position)
 	}
 }
 
+glm::vec3 Graphics::getPosition(int ID)
+{
+	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
+	if (it != objectList.end()) {
+		return it->position;
+	}
+	else {
+		return glm::vec3();
+	}
+}
+
 glm::vec3 Graphics::getVectorFromTo(int ID1, int ID2)
 {
 	std::list<GraphicsObject>::iterator it1 = std::find_if(objectList.begin(), objectList.end(), [&ID1](GraphicsObject const& gObj) { return gObj.ID == ID1; });

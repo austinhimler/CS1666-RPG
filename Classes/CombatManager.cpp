@@ -745,7 +745,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		m_combatGraphics.setIdleAnimationType(enemy[i], 1);
 	}
 
-	
+	/*
 	//Create cone with similar colors, then remove it
 	int cone = m_combatGraphics.genCone(0.5, 1.0, 36, 2, glm::vec4(1.0, 1.0, 0.0, 0.3));
 	m_combatGraphics.setIdleAnimationType(cone, 2);
@@ -761,9 +761,14 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 	m_combatGraphics.setIdleAnimationType(cube, 2);
 	m_combatGraphics.setIdleAnimationMotion(cube, glm::rotate(0.01f, m_combatGraphics.rotateRandom()));
 	m_combatGraphics.removeObject(cube);
-
-
-
+	
+	int attack = m_combatGraphics.genCone(0.01, 0.1, 36, 2, glm::vec4(0.0, 0.0, 0.0, 1.0));
+	m_combatGraphics.translateObjectByPixel(attack, SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
+	m_combatGraphics.setAnimation(attack, 2);
+	m_combatGraphics.setAnimationFrameMax(attack, 30);
+	m_combatGraphics.transformCtm(attack, glm::rotate((float)(-M_PI / 2.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+	m_combatGraphics.setAnimationMotion(attack, glm::rotate((float)(M_PI / 2.0f), glm::vec3(0.0f, 0.0f, 1.0f)) * glm::translate(glm::mat4(), (1.0f / 30.f) * m_combatGraphics.getVectorFromTo(player, enemy[0])) * glm::rotate((float)(-M_PI / 2.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+	*/
 	// Set up the combat dialog manager
 	m_combatDialogManager = CombatDialogManager();
 	m_combatDialogManager.SetTimePerCharacter(0.005f);
