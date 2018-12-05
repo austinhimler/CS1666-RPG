@@ -1851,7 +1851,7 @@ void playGame() {
 
 						for (auto i : allEnemies) {
 							std::stringstream enemyStream;
-							notyoStream << "#";
+							enemyStream << "#";
 							char temp[100];
 							std::cout << "Client Recieving ENEMY\n" << enemyStream.str().back() << std::endl;
 
