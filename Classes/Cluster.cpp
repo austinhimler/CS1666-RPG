@@ -7,7 +7,7 @@ Cluster::Cluster(int q) {
 	{
 		string t_name = "Owl ";
 		t_name.push_back(char(temp + 65));
-		characterGroup.push_back(new Enemy(t_name, 1, 1, 1, 1, 1));
+		characterGroup.push_back(new Enemy(t_name, rand() % 10 + 1, rand() % 10 + 1, rand() % 10 + 1, rand() % 2 + 1, rand() % 10 + 1));
 	}
 	clusterSize = q;
 	pixelShiftAmountForAnimationInSpriteSheet = 144;

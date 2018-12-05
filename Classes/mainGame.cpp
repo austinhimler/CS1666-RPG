@@ -434,6 +434,31 @@ void EndTransition() {
 	SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);
 	SDL_Delay(200);
 }
+void GameOverTransition() {
+	gMusic = Mix_LoadMUS("Audio/Defeat_Test.wav");
+	if (gMusic == NULL)
+		std::cout << "Failed to load music" << std::endl;
+	//Play the music
+	Mix_PlayMusic(gMusic, -1);
+	SDL_Rect wholeS = { 0,0,720,720 };
+	SDL_Rect word1 = { 280,200,120,60 };
+	SDL_Rect word2 = { 180, 240,120,60 };
+	SDL_Rect word3 = { 110, 280,120,60 };
+	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+	SDL_RenderFillRect(gRenderer, &wholeS);
+	SDL_RenderPresent(gRenderer);
+	string line1 = "Game Over!";
+	string line2 = "You have been defeated!";
+	string line3 = "You were not up to the challenge!";
+	SDL_Color TextColor = { 255, 255, 255, 0 };
+	renderText(line1.c_str(), &word1, &TextColor);
+	renderText(line2.c_str(), &word2, &TextColor);
+	renderText(line3.c_str(), &word3, &TextColor);
+	SDL_RenderPresent(gRenderer);
+	SDL_Rect wipe = { 180,240,20,20 };
+	SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);
+	SDL_Delay(200);
+}
 
 bool characterCreateScreen() {
 	//loads music and starts it
@@ -1936,6 +1961,8 @@ void playGame() {
 				timeSinceLastMovement = SDL_GetTicks();
 				std::cout << combatResult << std::endl;
 				if (combatResult == ENEMY_WINS) {
+					GameOverTransition();
+					SDL_Delay(8000);
 					cout << "\nYOU HAVE DIED\nGAME OVER MAN, GAME OVER" << endl;
 					exit(1);
 				}
