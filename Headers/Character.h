@@ -68,6 +68,7 @@ public:
 	SDL_Rect rectangle;
 	SDL_Rect drawRectangle;
 	SDL_RendererFlip flip;
+	int isAlive();
 	std::string getImageIdleResource();
 	std::string getImageRightIdleResource();
 	std::string getImageRunResource();

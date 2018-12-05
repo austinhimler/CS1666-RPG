@@ -67,6 +67,15 @@ std::string Cluster::ptoString()
 	std::cout << st.str() << std::endl;
 	return st.str();
 }
+int Cluster::isAlive()
+{
+	for (auto z : characterGroup)
+	{
+		if (z->isAlive())
+			return 1;
+	}
+	return 0;
+}
 void Cluster::fromString(std::string in)
 {
 	std::vector<std::string> vars;
