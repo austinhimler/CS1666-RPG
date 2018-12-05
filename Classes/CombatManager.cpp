@@ -953,7 +953,25 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			
 			//PLACE THE ATTACK ANIMATIONS HERE USING THE atk VARIABLE
 			//std::cout << atk;
-			if (atk == "Fireball") {
+			if (atk == "Attack") {
+				glm::vec3 playerToEnemyVector = m_combatGraphics.getVectorFromTo(player, enemy[target]);
+				glm::vec3 enemyToPlayerVector = m_combatGraphics.getVectorFromTo(enemy[target], player);
+				glm::mat4 motion;
+				glm::mat4 motion2;
+				motion = glm::translate(motion, (1.0f / 20.0f)* playerToEnemyVector);
+				motion2 = glm::translate(motion2, (1.0f / 20.0f)*enemyToPlayerVector);
+				m_combatGraphics.setAnimation(player, 4);
+				glm::mat4 multiMotion[2] = { motion, motion2 };
+				int maxFrames[2] = { 20,20 };
+				m_combatGraphics.setAnimationMultiStep(player,2, multiMotion,maxFrames);
+				for (int i = 0; i < 40; i++) {
+					SDL_Delay(60);
+					m_combatDialogManager.Update(1.0f / 60.0f);
+					m_combatGraphics.addTextsToRender(m_combatDialogManager.GetTextToRender());
+					m_combatGraphics.idle();
+				}
+			}
+			else if (atk == "Fireball") {
 				//std::cout << "Fireball Reached";
 				int attack = m_combatGraphics.genSphere(0.1, 36, 2, glm::vec4(1.0, 0.345, 0.133, 0.4));
 				m_combatGraphics.translateObjectByPixel(attack, SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
