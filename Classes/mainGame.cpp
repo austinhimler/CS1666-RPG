@@ -1697,8 +1697,17 @@ void playGame() {
 				//	}
 				//}
 
-				moveCluster(allEnemies, "random", timePassed, tiles, cycle);
-				cycle++;
+				if (doNetworking) {
+					if (isHost) {
+						moveCluster(allEnemies, "random", timePassed, tiles, cycle);
+						cycle++;
+					}
+				}
+				else {
+					moveCluster(allEnemies, "random", timePassed, tiles, cycle);
+					cycle++;
+				}
+
 
 				for (auto &i : charactersOnScreen) {
 					if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
@@ -1824,18 +1833,18 @@ void playGame() {
 						//recieve character and push back
 						std::stringstream receiveStream;
 						receiveStream << "#";
-						char buffer[400];
+						char buffer[100];
 						std::cout << "Client Recieving PLAYER\n" << receiveStream.str().back()<< std::endl;
 		
 						while (receiveStream.str().back()!='Z')
 						{
-							SDLNet_TCP_Recv(clientSocket, buffer, 400);
+							SDLNet_TCP_Recv(clientSocket, buffer, 100);
 							receiveStream << buffer;
 							std::cout << receiveStream.str() << endl;
 						}
 						std::string streamSTD(receiveStream.str());
 						std::string notYourSTD =  streamSTD.substr(1, streamSTD.find("*"));
-						std::string enemySTD = streamSTD.substr(streamSTD.find("*"), streamSTD.find("Z"));
+						std::string enemySTD = streamSTD.substr(streamSTD.find("*") , streamSTD.find("Z"));
 
 						std::cout << "client Recieved PLAYER " << notYourSTD << std::endl;
 						notYou->fromString(notYourSTD);

@@ -77,7 +77,7 @@ void Cluster::fromString(std::string in)
 		vars.push_back(token);
 		in.erase(0, pos + 1);
 	}
-	if (vars.size() > 3)
+	if (vars.size() > 2)
 	{
 		//name = vars[0];
 		xPosition = atof(vars[0].c_str());
