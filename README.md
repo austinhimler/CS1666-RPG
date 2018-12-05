@@ -4,7 +4,7 @@
 
 Turn-based combat, real-time overworld RPG/JRPG (roguelite/rougue-like). Interactive co-op (2+) i.e. multiplayer.  
 
-Character development focus on stats, level progression should feel significant but not overpowered. Items/equipment should influence combat.
+Character development focus on stats, ~~level progression should feel significant but not overpowered. Items/equipment should influence combat.~~
 
 Top-down overworld aspect for level/map exploration and enemy encounter/engagement. 
 
