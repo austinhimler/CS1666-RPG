@@ -51,7 +51,7 @@ public:
 	glm::mat4 idle_animation_motion = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
 	int animation_type = 0; //0 = no animation, 1 = motion animation, 2 = motion animation consume
 	int animation_frame = 0;
-	int animation_frame_max;
+	int animation_frame_max = 0;
 	glm::mat4 animation_motion = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
 private:
 };
@@ -109,6 +109,7 @@ private:
 	GLuint vColor;
 	GLuint vTexCoords;
 	std::list<GraphicsObject> objectList;
+	std::list<int> eraseBuffer;
 	// Vertices for a simple 1x1 textured quad
 	int quad_num_vertices = 6;
 	glm::vec4 quadVertices[6] = {

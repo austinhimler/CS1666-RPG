@@ -43,7 +43,7 @@ void Graphics::init(void)
 	// Some OpenGL settings we want to set
 	//glEnable(GL_CULL_FACE);
 	// Set the clear color to light green (same as combatScene.png)
-	glClearColor(0.694, 0.886, 0.78, 1.0);
+	glClearColor(0.694f, 0.886f, 0.78f, 1.0f);
 	glDepthRange(1, 0);
 }
 
@@ -144,9 +144,17 @@ void Graphics::idle(void)
 					break;
 				default:
 					break;
-				}
+			}
+		}
+		
+	}
+	if (!eraseBuffer.empty()) {
+		for (std::list<int>::iterator it = eraseBuffer.begin(); it != eraseBuffer.end(); ++it) {
+			removeObject(*it);
 		}
 	}
+	eraseBuffer.clear();
+
 	display();
 }
 
@@ -243,7 +251,7 @@ int Graphics::genCone(GLfloat radius, GLfloat height, int resolution, int color_
 	GraphicsObject newCone;
 	float theta, theta_r, theta_next_r;
 	int index = 0;
-	GLfloat increment = 360.0 / resolution;
+	GLfloat increment = 360.0f / resolution;
 
 	newCone.ID = object_counter++;
 	newCone.type = 0;
@@ -251,10 +259,10 @@ int Graphics::genCone(GLfloat radius, GLfloat height, int resolution, int color_
 
 	newCone.position_array = (glm::vec4*)malloc(sizeof(glm::vec4) * newCone.num_vertices);
 
-	for (theta = 0; theta < 360.0; theta += increment)
+	for (theta = 0; theta < 360.0f; theta += increment)
 	{
-		theta_r = theta * M_PI / 180.0;
-		theta_next_r = (theta + increment) * M_PI / 180.0;
+		theta_r = theta * M_PI / 180.0f;
+		theta_next_r = (theta + increment) * M_PI / 180.0f;
 
 		newCone.position_array[index] = glm::vec4(0.0, -height / 2, 0.0, 1.0);
 		newCone.position_array[index + 1] = glm::vec4(radius * cos(theta_r), -height / 2, radius * sin(theta_r), 1.0);
@@ -305,25 +313,24 @@ int Graphics::genSphere(GLfloat radius, int resolution, int color_type, glm::vec
 	GLfloat sphere_it, sphere_i, sphere_j;
 	GLfloat band_it, band_i, band_j;
 	GLfloat circle_it, circle_i, circle_j;
-	int it;
 	int index = 0;
-	GLfloat increment = 360.0 / resolution;
+	GLfloat increment = 360.0f / resolution;
 
 	newSphere.ID = object_counter++;
 	newSphere.type = 0;
-	newSphere.num_vertices = 3 * (resolution * (2 + (2 * ((180.0 / increment) - 2))));
+	newSphere.num_vertices = 3 * (resolution * (2 + (2 * ((180.0f / increment) - 2))));
 
 	newSphere.position_array = (glm::vec4*)malloc(sizeof(glm::vec4) * (newSphere.num_vertices));
 
-	for (sphere_it = 0; sphere_it < 180.0; sphere_it += increment) {
-		sphere_i = sphere_it * M_PI / 180.0;
-		sphere_j = (sphere_it + increment) * M_PI / 180.0;
+	for (sphere_it = 0; sphere_it < 180.0f; sphere_it += increment) {
+		sphere_i = sphere_it * M_PI / 180.0f;
+		sphere_j = (sphere_it + increment) * M_PI / 180.0f;
 
 
 		if (sphere_it == 0) {
-			for (circle_it = 0; circle_it < 360.0; circle_it += increment) {
-				circle_i = circle_it * M_PI / 180.0;
-				circle_j = (circle_it + increment) * M_PI / 180.0;
+			for (circle_it = 0; circle_it < 360.0f; circle_it += increment) {
+				circle_i = circle_it * M_PI / 180.0f;
+				circle_j = (circle_it + increment) * M_PI / 180.0f;
 
 				newSphere.position_array[index] = glm::vec4(0.0, radius * cos(sphere_i), 0.0, 1.0);
 				newSphere.position_array[index + 1] = glm::vec4((radius * cos(circle_j)) * sin(sphere_j), radius * cos(sphere_j), (radius * sin(circle_j) * sin(sphere_j)), 1.0);
@@ -332,10 +339,10 @@ int Graphics::genSphere(GLfloat radius, int resolution, int color_type, glm::vec
 			}
 		}
 
-		if (sphere_it != 0 && sphere_it + increment < 180.0) {
-			for (band_it = 0; band_it < 360.0; band_it += increment) {
-				band_i = band_it * M_PI / 180.0;
-				band_j = (band_it + increment) * M_PI / 180.0;
+		if (sphere_it != 0 && sphere_it + increment < 180.0f) {
+			for (band_it = 0; band_it < 360.0f; band_it += increment) {
+				band_i = band_it * M_PI / 180.0f;
+				band_j = (band_it + increment) * M_PI / 180.0f;
 
 				newSphere.position_array[index] = glm::vec4((radius * cos(band_i)) * sin(sphere_i), radius * cos(sphere_i), (radius * sin(band_i) * sin(sphere_i)), 1.0);
 				newSphere.position_array[index + 1] = glm::vec4((radius * cos(band_j)) * sin(sphere_j), radius * cos(sphere_j), (radius * sin(band_j)) * sin(sphere_j), 1.0);
@@ -347,10 +354,10 @@ int Graphics::genSphere(GLfloat radius, int resolution, int color_type, glm::vec
 			}
 		}
 
-		if (sphere_it + increment >= 180.0) {
-			for (circle_it = 0; circle_it < 360.0; circle_it += increment) {
-				circle_i = circle_it * M_PI / 180.0;
-				circle_j = (circle_it + increment) * M_PI / 180.0;
+		if (sphere_it + increment >= 180.0f) {
+			for (circle_it = 0; circle_it < 360.0f; circle_it += increment) {
+				circle_i = circle_it * M_PI / 180.0f;
+				circle_j = (circle_it + increment) * M_PI / 180.0f;
 
 				newSphere.position_array[index] = glm::vec4(0.0, radius * cos(sphere_j), 0.0, 1.0);
 				newSphere.position_array[index + 1] = glm::vec4((radius * cos(circle_i)) * sin(sphere_i), radius * cos(sphere_i), (radius * sin(circle_i)) * sin(sphere_i), 1.0);
@@ -510,11 +517,11 @@ glm::vec4* Graphics::genRandomTriangleColorsSimilar(int num_vertices, glm::vec4 
 
 	for (it = 0; it < num_vertices / 3; it++)
 	{
-		modifying_color = (rand() / (float)RAND_MAX) - 0.5;
-		r = color.x + modifying_color * 0.1;
-		g = color.y + modifying_color * 0.1;
-		b = color.z + modifying_color * 0.1;
-		a = color.w + modifying_color * 0.1;
+		modifying_color = (rand() / (float)RAND_MAX) - 0.5f;
+		r = color.x + modifying_color * 0.1f;
+		g = color.y + modifying_color * 0.1f;
+		b = color.z + modifying_color * 0.1f;
+		a = color.w + modifying_color * 0.1f;
 
 		colors[index] = glm::vec4(r, g, b, a);
 		colors[index + 1] = glm::vec4(r, g, b, a);
@@ -606,23 +613,25 @@ void Graphics::iterateSpriteAnimation(std::list<GraphicsObject>::iterator it)
 
 void Graphics::animateMotion(std::list<GraphicsObject>::iterator it)
 {
-	if (++it->animation_frame > it->animation_frame_max) {
+	if (it->animation_frame >= it->animation_frame_max) {
 		it->animation_frame = 0;
 		it->animation_type = 0;
 		it->animation_motion = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
 	}
 	else {
-		it->ctm = it->ctm * ((GLfloat)(1 / it->animation_frame_max) * it->animation_motion);
+		it->animation_frame++;
+		it->ctm = it->ctm * it->animation_motion;
 	}
 }
 
 void Graphics::animateMotionConsume(std::list<GraphicsObject>::iterator it)
 {
-	if (++it->animation_frame > it->animation_frame_max) {
-		objectList.erase(it);
+	if (it->animation_frame >= it->animation_frame_max) {
+		eraseBuffer.push_back(it->ID);
 	}
 	else {
-		it->ctm = it->ctm * ((GLfloat)(1 / it->animation_frame_max) * it->animation_motion);
+		it->animation_frame++;
+		it->ctm = it->ctm * it->animation_motion;
 	}
 }
 
