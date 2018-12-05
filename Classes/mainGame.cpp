@@ -1252,7 +1252,7 @@ void playGame() {
 	player1->timeSinceLastAnimation = timeSinceLastAnimation;
 	vector<Cluster*> allEnemies;
 	Cluster* CollidingCluster;
-	
+	std::string receiveString;
 	bool doNetworking = handleNetworkingSetup();
 	if (doNetworking)
 	{
@@ -1816,16 +1816,17 @@ void playGame() {
 						char temp[100];
 						std::cout << "Host Recieving PLAYER\n" << notyoStream.str().back() << std::endl;
 
-						while (notyoStream.str().back() != '*')
-						{
+						
 							SDLNet_TCP_Recv(clientSocket, temp, 100);
 							notyoStream << temp;
-							std::cout << notyoStream.str() << endl;
-						}
-						std::string notYourSTD(notyoStream.str());
+							receiveString += notyoStream.str();
+							notyoStream.flush();
+							std::string notYourSTD = receiveString;
 						notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
+						receiveString = receiveString.substr(receiveString.find("*") + 1, receiveString.length());
 						std::cout << "Recieved PLAYER" << notYourSTD << std::endl;
 						notYou->fromString(notYourSTD);
+
 						
 					}
 					else
@@ -1836,25 +1837,27 @@ void playGame() {
 						char buffer[100];
 						std::cout << "Client Recieving PLAYER\n" << receiveStream.str().back()<< std::endl;
 		
-						while (receiveStream.str().back()!='Z')
-						{
-							SDLNet_TCP_Recv(clientSocket, buffer, 100);
-							receiveStream << buffer;
-							//std::cout << receiveStream.str() << endl;
-						}
-						std::string streamSTD(receiveStream.str());
-						std::cout << streamSTD << endl;
-						std::string notYourSTD =  streamSTD.substr(1, streamSTD.find("*"));
-						std::string enemySTD = streamSTD.substr(streamSTD.find("*")+1 , streamSTD.find("Z"));
-
-						std::cout << "client Recieved PLAYER " << notYourSTD << std::endl;
-						notYou->fromString(notYourSTD);
-
-						std::cout << "client Recieved ENEMY" << enemySTD << std::endl;
-						allEnemies[0]->fromString(enemySTD);
-
-						std::cout << "enemy x" << allEnemies[0]->xPosition << std::endl;
 						
+						SDLNet_TCP_Recv(clientSocket, buffer, 100);
+						receiveStream << buffer;
+						receiveString += receiveStream.str();
+						receiveStream.flush();
+						//std::cout << receiveStream.str() << endl;
+						
+						if (receiveString.find('Z') != string::npos)
+						{
+							std::cout << receiveString << endl;
+							std::string notYourSTD = receiveString.substr(1, receiveString.find("*"));
+							std::string enemySTD = receiveString.substr(receiveString.find("*") + 1, receiveString.find("Z"));
+							receiveString = receiveString.substr(receiveString.find("Z") + 1, receiveString.length());
+							std::cout << "client Recieved PLAYER " << notYourSTD << std::endl;
+							notYou->fromString(notYourSTD);
+
+							std::cout << "client Recieved ENEMY" << enemySTD << std::endl;
+							allEnemies[0]->fromString(enemySTD);
+
+							std::cout << "enemy x" << allEnemies[0]->xPosition << std::endl;
+						}
 						
 						//Send Character
 						std::string cppString = player1->ptoString();
