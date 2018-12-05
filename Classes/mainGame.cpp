@@ -1791,14 +1791,15 @@ void playGame() {
 							notyoStream << temp;
 							receiveString += notyoStream.str();
 							notyoStream.flush();
-							if(receiveString.length()>1)
-							while(receiveString.find('*') != string::npos)
-							{
-								std::string notYourSTD = receiveString;
-								notYourSTD = notYourSTD.substr(0, notYourSTD.find("*"));
-								receiveString = receiveString.substr(receiveString.find("*") + 1, receiveString.length());
-								std::cout << "Recieved PLAYER" << notYourSTD << std::endl;
-								notYou->fromString(notYourSTD);
+							if (receiveString.length() > 1) {
+								while (receiveString.find('*') != string::npos)
+								{
+									std::string notYourSTD = receiveString;
+									notYourSTD = notYourSTD.substr(0, notYourSTD.find("*"));
+									receiveString = receiveString.substr(receiveString.find("*") + 1, receiveString.length());
+									std::cout << "Recieved PLAYER" << notYourSTD << std::endl;
+									notYou->fromString(notYourSTD);
+								}
 							}
 
 						
@@ -1817,20 +1818,22 @@ void playGame() {
 						receiveString += receiveStream.str();
 						receiveStream.flush();
 						//std::cout << receiveStream.str() << endl;
-						if(receiveString.length()>1)
-						while(receiveString.find('Z') != string::npos)
+						if (receiveString.length() > 1)
 						{
-							std::cout << receiveString << endl;
-							std::string notYourSTD = receiveString.substr(0, receiveString.find("*"));
-							std::string enemySTD = receiveString.substr(receiveString.find("*") + 1, receiveString.find("Z"));
-							receiveString = receiveString.substr(receiveString.find("Z") + 1, receiveString.length());
-							std::cout << "client Recieved PLAYER " << notYourSTD << std::endl;
-							notYou->fromString(notYourSTD);
+							while (receiveString.find('Z') != string::npos)
+							{
+								std::cout << receiveString << endl;
+								std::string notYourSTD = receiveString.substr(0, receiveString.find("*"));
+								std::string enemySTD = receiveString.substr(receiveString.find("*") + 1, receiveString.find("Z"));
+								receiveString = receiveString.substr(receiveString.find("Z") + 1, receiveString.length());
+								std::cout << "client Recieved PLAYER " << notYourSTD << std::endl;
+								notYou->fromString(notYourSTD);
 
-							std::cout << "client Recieved ENEMY" << enemySTD << std::endl;
-							allEnemies[0]->fromString(enemySTD);
+								std::cout << "client Recieved ENEMY" << enemySTD << std::endl;
+								allEnemies[0]->fromString(enemySTD);
 
-							std::cout << "enemy x" << allEnemies[0]->xPosition << std::endl;
+								std::cout << "enemy x" << allEnemies[0]->xPosition << std::endl;
+							}
 						}
 						
 						//Send Character
