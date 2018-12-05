@@ -1297,7 +1297,7 @@ void playGame() {
 					int length = sizeof(int);
 					int param = (rand() % (ENEMIES_PER_CLUSTER + MAP_INDEX)) + 1;
 					Cluster* enemy = new Cluster(param);
-					//printf("Host Sending %d\n", param);
+					//printf("Host Sending %d\n", &param);
 					//result = SDLNet_TCP_Send(clientSocket, &param, sizeof(int));
 					//if (result < length) {
 					//	printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
@@ -1330,37 +1330,39 @@ void playGame() {
 					i->timeSinceLastAnimation = timeSinceLastAnimation;
 					charactersOnScreen.push_back(i);
 
-					////std::string cppString = player1->ptoString();
-					////const char* myString = cppString.c_str();
-					////length = strlen(myString) + 1;
-					////printf("Host Sending %s\n", myString);
-					////result = SDLNet_TCP_Send(clientSocket, myString, length);
-					////if (result < length) {
-					////	printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-					////}
-					////std::cout << "Host Done Sending\n" << std::endl;
+					//std::string cppString = player1->ptoString();
+					//const char* myString = cppString.c_str();
+					//length = strlen(myString) + 1;
+					//printf("Host Sending %s\n", myString);
+					//result = SDLNet_TCP_Send(clientSocket, myString, length);
+					//if (result < length) {
+					//	printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+					//}
+					//std::cout << "Host Done Sending\n" << std::endl;
 				}
 
 			}
 			else if (isClient) {
-			/*	std::vector<int> params;
-				char temp[100];
-				for (int i = 0; i < numEnemies; i++) {					
-					SDLNet_TCP_Recv(clientSocket, temp, sizeof(int));
-				}
+				//std::vector<int> params;
+				//char temp[100];
+				//for (int i = 0; i < numEnemies; i++) {					
+				//	SDLNet_TCP_Recv(clientSocket, temp, sizeof(int));
+				//}
 
-				int j = 0;
-				while (temp[j] != 0) {
-					params.push_back(temp[j] - '0');
-					j++;
-				}
+				//int j = 0;
+				//while (temp[j] != 0) {
+				//	std::cout << "param buffer at index " << j << " with  " << temp[j] << std::endl;
+				//	params.push_back(temp[j] - '0');
+				//	j++;
+				//}
 
-				for (int i = 0; i < params.size(); i++) {
-					std::cout << params[i] << std::endl;
-					Cluster* enemy = new Cluster(params[i]);
-					cout << "Enemy " << i + 1 << " Cluster Size: " << enemy->clusterSize << endl;
-					allEnemies.push_back(enemy);
-				}*/
+				//for (int i = 0; i < params.size(); i++) {
+				//	std::cout << params[i] << std::endl;
+				//	Cluster* enemy = new Cluster(params[i]);
+				//	cout << "Enemy " << i + 1 << " Cluster Size: " << enemy->clusterSize << endl;
+				//	allEnemies.push_back(enemy);
+				//}
+
 				for (int i = 0; i < numEnemies; i++) {
 					Cluster* enemy = new Cluster(1);
 					cout << "Enemy " << i + 1 << " Cluster Size: " << enemy->clusterSize << endl;
