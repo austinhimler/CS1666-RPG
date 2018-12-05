@@ -97,7 +97,7 @@ int CombatManager::updateStatus() {
 	return checkCombatStatus();
 }
 
-Action CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
+Action CombatManager::ActionByAI(Character* c, int EnemyActionOrderCount) {
 	std::vector<Player*> Players;
 	std::vector<Enemy*> Friends;
 	for (int i = 0; i < participants.size(); i++) {
@@ -118,6 +118,120 @@ enum BattleState
 
 BattleState m_currentState = BATTLE;
 
+int CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
+	while (c->getEnergyCurrent() != 0 && ParticipantsStatus[enemy_index[EnemyActionOrderCount]] == IN_COMBAT) {
+		// AI decides which action to take
+		Action ActionToTake = ActionByAI(c, EnemyActionOrderCount);
+		// Carry out action and out put result for every target
+		std::vector<Character*> tars = ActionToTake.getTar();
+		int TarNum = tars.size();
+		Ability* abil = ActionToTake.getAbil();
+		//std::cout << c->getEnergyCurrent() << " " << abil->getEnergyCost() << std::endl;
+		if (c->getEnergyCurrent() < abil->getEnergyCost()) {
+			break;
+		}
+		else {
+			for (int i = 0; i < TarNum; i++) { // act on every target and output result
+				int result = tars[i]->beingTarget(abil);
+				c->updateEnergy(abil);
+				// output ability name
+				m_combatDialogManager.AddMessage(c->getName() + " uses " + AbilityResource::abilityNames[abil->getName()]);
+				//output target
+				switch (abil->getType()) {
+					using namespace AbilityResource;
+				case tSUMMON:
+				case tDEFENSE:
+				case tESCAPE:
+					m_combatDialogManager.AddMessage(c->getName() + " uses " + AbilityResource::abilityNames[abil->getName()]);
+					break;
+				default:
+					m_combatDialogManager.AddMessage(c->getName() + " uses " + AbilityResource::abilityNames[abil->getName()] + " to " + tars[i]->getName());
+					break;
+				}
+				// output impact
+				std::string stmp;
+				switch (abil->getType()) {
+				case AbilityResource::tDAMAGE:
+					stmp = tars[i]->getName() + "'s HP is decreased by " + std::to_string(result) + "!\n";
+					stmp += tars[i]->getName() + " now has " + std::to_string(participants[0]->getHPCurrent()) + " HP left.";
+					m_combatDialogManager.AddMessage(stmp);
+					break;
+				case AbilityResource::tSUMMON:
+					stmp = "NLF4 is lecturing, can't make it.";
+					m_combatDialogManager.AddMessage(stmp);
+					break;
+				case AbilityResource::tESCAPE:
+					if (result == -2) {
+						stmp = c->getName() + " has escaped from combat!";
+						m_combatDialogManager.AddMessage(stmp);
+						ParticipantsStatus[enemy_index[EnemyActionOrderCount]] = ESCAPED;
+						livingCount[ENEMY]--;
+						if (livingCount[ENEMY] <= 0) {
+							return PLAYER_WINS;
+						}
+					}
+					else {
+						stmp = c->getName() + " tried to escape but failed.";
+						m_combatDialogManager.AddMessage(stmp);
+					}
+					break;
+				case AbilityResource::tDEFENSE:
+					stmp = c->getName() + "'s Energy Regeneration for next round will be increased.";
+					m_combatDialogManager.AddMessage(stmp);
+					return IN_COMBAT;
+					break;
+				default:
+					break;
+				}
+				// check if the target is dead
+				if (tars[i]->getHPCurrent() == 0) {
+					stmp = tars[i]->getName() + " is dead!";
+					m_combatDialogManager.AddMessage(stmp);
+					if (!tars[i]->is_Enemy()) {
+						livingCount[PLAYER]--;
+						for (auto& pi : player_index) {
+							if (participants[pi] == tars[i]) {
+								ParticipantsStatus[pi] = DEAD;
+								break;
+							}
+						}
+					}
+					else {
+						livingCount[ENEMY]--;
+						for (auto& pi : enemy_index) {
+							if (participants[pi] == tars[i]) {
+								ParticipantsStatus[pi] = DEAD;
+								break;
+							}
+						}
+					}
+					int temp_status = checkCombatStatus();
+					if (temp_status != IN_COMBAT) return temp_status;
+				}
+			}
+		}
+		//*/
+			/*
+			//Enemy attack player
+			std::vector<Ability> temp = c->getAbilities();
+			int target = rand() % player_index.size();
+			int result = participants[player_index[target]]->beingTarget(&temp[0]);
+			stringstream ss;
+			ss << c->getName() << " damages you by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left.";
+			m_combatDialogManager.AddMessage(ss.str());
+			//*/
+			/*if (ailments.size() == 0)
+			{
+				//std::cout << "Their attack did not have any status effect on you." << std::endl;
+				m_combatDialogManager.AddMessage("Their attack did not have any status effect on you.");
+			}
+			else {
+
+			}*/
+	}
+	m_combatDialogManager.ClearEvents();
+}
+
 int CombatManager::textAction(Character* c) {
 
 	vector<int> ailments;
@@ -127,7 +241,7 @@ int CombatManager::textAction(Character* c) {
 			//Enemy takes action
 
 			// AI decides which action to take 
-			Action ActionToTake = takeActionByAI(c, EnemyActionOrderCount);
+			Action ActionToTake = ActionByAI(c, EnemyActionOrderCount);
 			// Carry out action and out put result for every target 
 			std::vector<Character*> tars = ActionToTake.getTar();
 			int TarNum = tars.size();
@@ -768,7 +882,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			{
 				//updateStatus(participants[i]);
 				if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0 )
-					switch (int result_temp = textAction(participants[i])) {
+					switch (int result_temp = takeActionByAI(participants[i], i-player_index.size())) {
 					case IN_COMBAT:
 						break;
 					default:
