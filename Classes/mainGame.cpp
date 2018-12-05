@@ -1790,7 +1790,7 @@ void playGame() {
 							////}
 							////std::cout << "Host Done Sending ENEMY\n" << std::endl;
 						}
-						
+						ssfull << "+";
 						std::string ctemp=ssfull.str();
 						const char* myString = ctemp.c_str();
 						length = strlen(myString) + 1;
@@ -1839,19 +1839,28 @@ void playGame() {
 						receiveStream.flush();
 						//std::cout << receiveStream.str() << endl;
 						
-							while (receiveString.length() > 1 && receiveString.find('Z') != string::npos)
+							while (receiveString.length() > 1 && receiveString.find('+') != string::npos)
 							{
 								std::cout << receiveString << endl;
 								std::string notYourSTD = receiveString.substr(0, receiveString.find("*"));
-								std::string enemySTD = receiveString.substr(receiveString.find("*") + 1, receiveString.find("Z"));
-								receiveString = receiveString.substr(receiveString.find("Z") + 1, receiveString.length());
 								std::cout << "client Recieved PLAYER " << notYourSTD << std::endl;
 								notYou->fromString(notYourSTD);
+								std::string enemySTD = receiveString.substr(receiveString.find("*") + 1, receiveString.find("Z"));
+								bool firstrun = true;
+								for (auto i : allEnemies)
+								{
 
-								std::cout << "client Recieved ENEMY" << enemySTD << std::endl;
-								allEnemies[0]->fromString(enemySTD);
+									if (!firstrun)
+									{
+										enemySTD = receiveString.substr(0, receiveString.find("Z"));
+									}
+									else
+										firstrun = false;
+									std::cout << "client Recieved ENEMY" << enemySTD << std::endl;
+									i->fromString(enemySTD);
+									receiveString = receiveString.substr(receiveString.find("Z") + 1, receiveString.length());
 
-								std::cout << "enemy x" << allEnemies[0]->xPosition << std::endl;
+								}
 							}
 						
 						
