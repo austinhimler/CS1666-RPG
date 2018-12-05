@@ -1840,12 +1840,12 @@ void playGame() {
 						{
 							SDLNet_TCP_Recv(clientSocket, buffer, 100);
 							receiveStream << buffer;
-							std::cout << receiveStream.str() << endl;
+							//std::cout << receiveStream.str() << endl;
 						}
 						std::string streamSTD(receiveStream.str());
 						std::cout << streamSTD << endl;
 						std::string notYourSTD =  streamSTD.substr(1, streamSTD.find("*"));
-						std::string enemySTD = streamSTD.substr(streamSTD.find("*") , streamSTD.find("Z"));
+						std::string enemySTD = streamSTD.substr(streamSTD.find("*")+1 , streamSTD.find("Z"));
 
 						std::cout << "client Recieved PLAYER " << notYourSTD << std::endl;
 						notYou->fromString(notYourSTD);
