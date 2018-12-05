@@ -223,3 +223,71 @@
 	int Character::getLevel() { return level; }
 	Attribute Character::getAttr(int i) { return attributes[i]; }
 	std::vector<Ailment> Character::getAilm() { return ailments; }
+
+	std::string Character::ptoString()
+	{
+		//previous attempt, new attempt uses a stream
+		//std::string pString = name + " " + std::to_string(currentFrame) + " " + std::to_string(xPosition) + " " +
+		//	std::to_string(yPosition) + " " + std::to_string(xVelocity) + " " + std::to_string(yVelocity);
+		std::stringstream st;
+		st << name << " " << xPosition << " " << yPosition << " " << xVelocity << " " << yVelocity << " *";
+		std::cout << st.str() << std::endl;
+		return st.str();
+	}
+	void Character::fromString(std::string in)
+	{
+		std::vector<std::string> vars;
+		size_t pos = 0;
+		std::string token;
+		while ((pos = in.find(" ")) != std::string::npos) {
+			token = in.substr(0, pos);
+			//std::cout << "Parsed: " << token << endl;
+			vars.push_back(token);
+			in.erase(0, pos + 1);
+		}
+		if (vars.size() > 4)
+		{
+			name = vars[0];
+			xPosition = atof(vars[1].c_str());
+			yPosition = atof(vars[2].c_str());
+			xVelocity = atof(vars[3].c_str());
+			yVelocity = atof(vars[4].c_str());
+		}
+		return;
+	}
+	std::string Character::combatToString()
+	{
+
+		int s = attributes[STR].getCur();
+		int i = attributes[INT].getCur();
+		int d = attributes[DEX].getCur();
+		int c = attributes[CON].getCur();
+		int f = attributes[FAI].getCur();
+		
+		std::stringstream st;
+		st << name << " " << s << " " << i << " " << d << " " << c << " " << f << " *" << std::ends;
+		std::cout << st.str() << std::endl;
+		return st.str();
+	}
+	void Character::combatFromString(std::string in)
+	{
+		std::vector<std::string> vars;
+		size_t pos = 0;
+		std::string token;
+		while ((pos = in.find(" ")) != std::string::npos) {
+			token = in.substr(0, pos);
+			//std::cout << "Parsed: " << token << endl;
+			vars.push_back(token);
+			in.erase(0, pos + 1);
+		}
+		if (vars.size() > 5)
+		{
+			name = vars[0];
+			attributes[STR].current = stoi(vars[1].c_str());
+			attributes[INT].current = stoi(vars[2].c_str());
+			attributes[DEX].current = stoi(vars[3].c_str());
+			attributes[CON].current = stoi(vars[4].c_str());
+			attributes[FAI].current = stoi(vars[5].c_str());
+		}
+		return;
+	}
