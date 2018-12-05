@@ -800,6 +800,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
 				Mix_FreeChunk(gBSound);
+				m_combatGraphics.clean();
 				//Random integer for quitting the game
 				return -69; 
 			}
@@ -861,13 +862,15 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 						break;
 					default:
 						Mix_FreeChunk(gBSound);
-							return result_temp;
+						m_combatGraphics.clean();
+						return result_temp;
 					}
 					switch (int result_temp = updateStatus()) {
 					case IN_COMBAT:
 						break;
 					default:
 						Mix_FreeChunk(gBSound);
+						m_combatGraphics.clean();
 						return result_temp;
 					}
 				
@@ -949,6 +952,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 					case IN_COMBAT:
 						break;
 					default:
+						m_combatGraphics.clean();
 						Mix_FreeChunk(gBSound);
 						return result_temp;
 					}
@@ -956,6 +960,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				case IN_COMBAT:
 					break;
 				default:
+					m_combatGraphics.clean();
 					Mix_FreeChunk(gBSound);
 					return result_temp;
 				}
@@ -967,6 +972,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		SDL_Delay(60);
 	}
 	Mix_FreeChunk(gBSound);
+	m_combatGraphics.clean();
 	return -100;
 
 }

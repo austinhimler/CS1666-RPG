@@ -47,6 +47,13 @@ void Graphics::init(void)
 	glDepthRange(1, 0);
 }
 
+void Graphics::clean(void)
+{
+	glDeleteVertexArrays(1, &HUDVAO);
+	glDeleteBuffers(1, &HUDVBO);
+	objectList.clear();
+}
+
 void Graphics::display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

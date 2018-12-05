@@ -60,6 +60,7 @@ class Graphics
 {
 public:
 	void init(void);
+	void clean(void);
 	void display(void);
 	void idle(void);
 
