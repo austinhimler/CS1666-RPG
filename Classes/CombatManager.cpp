@@ -73,7 +73,10 @@ CombatManager::~CombatManager()
 
 int CombatManager::checkCombatStatus() {
 	if (livingCount[PLAYER] == 0) return ENEMY_WINS;
-	else if (livingCount[ENEMY] == 0) return PLAYER_WINS;
+	else if (livingCount[ENEMY] == 0)
+	{
+		return PLAYER_WINS;
+	}
 	else return IN_COMBAT;
 }
 
@@ -176,8 +179,7 @@ int CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
 							m_combatDialogManager.Update(1.0f / 60.0f);
 							m_combatGraphics.addTextsToRender(m_combatDialogManager.GetTextToRender());
 							m_combatGraphics.idle();
-							SDL_Delay(60);
-							m_combatDialogManager.ClearEvents();
+							SDL_Delay(600);
 							return PLAYER_WINS;
 						}
 					}
@@ -370,6 +372,7 @@ int CombatManager::textAction(Character* c) {
 			//std::cout << "Why are your so weak? You are dead, dude!" << std::endl;
 			m_combatDialogManager.AddMessage("Why are your so weak? You are dead, dude!");
 			inCombat = false;
+			SDL_Delay(100);
 			return ENEMY_WINS;
 		}
 		m_combatDialogManager.ClearEvents();
@@ -613,7 +616,7 @@ void CombatManager::outputEnemy() {
 
 	std::vector<std::string> options;
 	for (int j = 0; j < participants.size(); j++) {
-		if ((Enemy*)participants[j]->is_Enemy())
+		if ((Enemy*)participants[j]->is_Enemy()&&participants[j]->getHPCurrent()>0)
 			options.push_back(participants[j]->getName());
 	}
 	m_combatDialogManager.AddSelectableOption("Choose your target", options);
