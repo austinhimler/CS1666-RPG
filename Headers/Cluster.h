@@ -3,6 +3,7 @@
 #define _____CLUSTER_H_____
 #include <string>
 #include <vector>
+#include <queue>
 #include "Enemy.h"
 #include <random>
 
@@ -25,6 +26,8 @@ public:
 	void fromString(std::string in);
 
 	int lastDirection = -1;
-
+	std::queue<int> seqX;
+	std::queue<int> seqY;
+	double aRange = 1750.0;
 };
 #endif

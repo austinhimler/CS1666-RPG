@@ -181,6 +181,7 @@
     <ClCompile Include="Classes\AI\MPS_RModifier.cpp" />
     <ClCompile Include="Classes\AI\MPS_Task.cpp" />
     <ClCompile Include="Classes\AI\MPS_TaskAssignment.cpp" />
+    <ClCompile Include="Classes\aStar.cpp" />
     <ClCompile Include="Classes\Attribute.cpp" />
     <ClCompile Include="Classes\Attributes\Constitution.cpp" />
     <ClCompile Include="Classes\Attributes\Dexterity.cpp" />
@@ -251,6 +252,7 @@
     <ClInclude Include="Headers\AI\MPS_RModifier.h" />
     <ClInclude Include="Headers\AI\MPS_Task.h" />
     <ClInclude Include="Headers\AI\MPS_TaskAssignment.h" />
+    <ClInclude Include="Headers\aStar.h" />
     <ClInclude Include="Headers\Attribute.h" />
     <ClInclude Include="Headers\Attributes\Constitution.h" />
     <ClInclude Include="Headers\Attributes\Dexterity.h" />
