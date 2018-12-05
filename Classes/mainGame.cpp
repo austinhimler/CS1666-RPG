@@ -1843,6 +1843,7 @@ void playGame() {
 							std::cout << receiveStream.str() << endl;
 						}
 						std::string streamSTD(receiveStream.str());
+						std::cout << streamSTD << endl;
 						std::string notYourSTD =  streamSTD.substr(1, streamSTD.find("*"));
 						std::string enemySTD = streamSTD.substr(streamSTD.find("*") , streamSTD.find("Z"));
 
