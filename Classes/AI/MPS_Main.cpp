@@ -14,7 +14,16 @@ void MPS_Main::readTBP() {
 }
 
 void MPS_Main::createTLMs(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*> Friends) {
-	TaskLevelModifiers.push_back(new MPS_ASModifier(Self));
+	// create ASM
+	TaskLevelModifiers.push_back(new MPS_CSModifier((Character*)Self, MPS_Resource::tASM));
+	// create PSM
+	for (auto& p : Players) {
+		TaskLevelModifiers.push_back(new MPS_CSModifier((Character*)p, MPS_Resource::tPSM));
+	}
+	// create FSM
+	for (auto& f : Friends) {
+		TaskLevelModifiers.push_back(new MPS_CSModifier((Character*)f, MPS_Resource::tFSM));
+	}
 }
 
 void MPS_Main::createTasks(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*> Friends) {
@@ -28,6 +37,7 @@ void MPS_Main::createTasks(Enemy* Self, std::vector<Player*> Players, std::vecto
 			if (a->getMPSTaskType() == i) UsableAbilities.push_back(a);
 		}
 		std::vector<Character*> tar;
+		std::vector<MPS_Modifier*> ms;
 		switch (i) {
 			using namespace MPS_Resource;
 		case tMPS_TASK_DAMAGE:
@@ -39,6 +49,9 @@ void MPS_Main::createTasks(Enemy* Self, std::vector<Player*> Players, std::vecto
 			for (auto& p : Players) {
 				tar.push_back((Character*)p);
 			}
+			for (auto& tlm : TaskLevelModifiers) {
+				if (tlm->getType() == MPS_Resource::tPSM) ms.push_back(tlm);
+			}
 			break;
 		case tBUFF_SELF_DEF:
 		case tBUFF_SELF_OFF:
@@ -46,14 +59,18 @@ void MPS_Main::createTasks(Enemy* Self, std::vector<Player*> Players, std::vecto
 		case tADD_SELF_RE:
 		case tMPS_TASK_ESCAPE:
 			tar.push_back((Character*)Self);
+			ms.push_back(TaskLevelModifiers[0]);
 			break;
 		default:
 			for (auto& f : Friends) {
 				tar.push_back((Character*)f);
 			}
+			for (auto& tlm : TaskLevelModifiers) {
+				if (tlm->getType() == MPS_Resource::tFSM) ms.push_back(tlm);
+			}
 			break;
 		}
-		Tasks.push_back(MPS_Task(i, UsableAbilities, tar, TaskBasePriority[i], TaskLevelModifiers));
+		Tasks.push_back(MPS_Task(i, UsableAbilities, tar, TaskBasePriority[i], ms));
 	}
 }
 

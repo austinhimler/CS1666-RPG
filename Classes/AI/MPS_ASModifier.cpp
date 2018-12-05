@@ -4,8 +4,10 @@ MPS_ASModifier::MPS_ASModifier() {
 	Val = 1;
 	Type = MPS_Resource::tASM;
 }
-MPS_ASModifier::MPS_ASModifier(Character* c) : MPS_ASModifier() {
-	
+MPS_ASModifier::MPS_ASModifier(Character* c) {
+	if (c->getHPCurrent() == 0) Val = 1;
+	else Val = c->getHPMax() / c->getHPCurrent();
+	Type = MPS_Resource::tASM;
 }
 MPS_ASModifier::MPS_ASModifier(std::string Path) {}
 

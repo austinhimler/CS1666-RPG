@@ -6,7 +6,7 @@
 #include "MPS_Data.h"
 #include "MPS_Task.h"
 #include "MPS_Modifier.h"
-#include "MPS_ASModifier.h"
+#include "MPS_CSModifier.h"
 #include "MPS_TaskAssignment.h"
 #include "../Ability.h"
 #include "Action.h"

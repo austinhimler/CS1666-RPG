@@ -13,7 +13,7 @@ protected:
 
 public:
 	//void createAction(Ability* abil, std::vector<Character*> tar);
-	//void createModifiers();
+	void createModifiers();
 	//void computeScore(float TaskPriority);
 
 	/** Constructors **/
