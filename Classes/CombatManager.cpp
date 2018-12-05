@@ -482,6 +482,7 @@ void CombatManager::textAttributes(Character *c, int optNum)
 	int k = 1;
 	for (int i = 0; i < abil_temp.size(); i++) {
 		if (optNum == AbilityResource::abilityAttr[abil_temp[i].getName()][0]) { //if the ability is of current attribute
+			abil = abil_temp[i];
 			//std::cout << k << ". " << AbilityResource::abilityNames[abil_temp[i].getName()] << std::endl; // print as an option
 			options.push_back(AbilityResource::abilityNames[abil_temp[i].getName()]);
 			helper.push_back(i); // stores index to helper vector
@@ -612,8 +613,8 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 
 	// Set up the combat dialog manager
 	m_combatDialogManager = CombatDialogManager();
-	m_combatDialogManager.SetTimePerCharacter(0.02f);
-	m_combatDialogManager.SetWaitTime(1.0);
+	m_combatDialogManager.SetTimePerCharacter(0.005f);
+	m_combatDialogManager.SetWaitTime(.2);
 	m_combatDialogManager.SetColor(glm::vec4(0.0, 0.0, 0.0, 1.0));
 	m_combatDialogManager.SetSelectionColor(glm::vec4(0.0, 1.0, 0.0, 1.0));
 	m_combatDialogManager.SetFont(ResourceManager::getFontData("stacked_pixel"));
@@ -739,14 +740,22 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				auto event = events.front();
 				// Pop the event 
 				events.pop();
-				target = event.options[event.selectedOption];
+				target = event.selectedOption;
 				turnOrder = 5;
 			}
 		}
 		else if (turnOrder == 5)
 		{
 			stringstream ss;
-			ss << "You selected " << target;
+			//ss << "You selected " << target;
+			//m_combatDialogManager.AddMessage(ss.str());
+
+			int result = participants[enemy_index[target]]->beingTarget(&abil);
+		
+			if (participants[enemy_index[target]]->getHPCurrent() == 0) {
+				livingCount[ENEMY]--;
+			}
+			ss << "You damage " << participants[enemy_index[target]]->getName() << " amazingly by " << result << " HP!" << " " << participants[enemy_index[target]]->getName() << " now has only " << participants[enemy_index[target]]->getHPCurrent() << " HP left.";
 			m_combatDialogManager.AddMessage(ss.str());
 			//PLACE THE ATTACK ANIMATIONS HERE USING THE atk VARIABLE
 			if (allPlayers == player_index.size() - 1)
