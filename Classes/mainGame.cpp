@@ -1252,7 +1252,7 @@ void playGame() {
 	player1->timeSinceLastAnimation = timeSinceLastAnimation;
 	vector<Cluster*> allEnemies;
 	Cluster* CollidingCluster;
-	std::string receiveString="#";
+	std::string receiveString;
 	bool doNetworking = handleNetworkingSetup();
 	if (doNetworking)
 	{
@@ -1791,11 +1791,12 @@ void playGame() {
 							notyoStream << temp;
 							receiveString += notyoStream.str();
 							notyoStream.flush();
+							if(receiveString.length()>1)
 							while(receiveString.find('*') != string::npos)
 							{
 								std::string notYourSTD = receiveString;
-								notYourSTD = notYourSTD.substr(2, notYourSTD.find("*"));
-								receiveString = receiveString.substr(receiveString.find("*"), receiveString.length());
+								notYourSTD = notYourSTD.substr(0, notYourSTD.find("*"));
+								receiveString = receiveString.substr(receiveString.find("*") + 1, receiveString.length());
 								std::cout << "Recieved PLAYER" << notYourSTD << std::endl;
 								notYou->fromString(notYourSTD);
 							}
@@ -1816,13 +1817,13 @@ void playGame() {
 						receiveString += receiveStream.str();
 						receiveStream.flush();
 						//std::cout << receiveStream.str() << endl;
-						
+						if(receiveString.length()>1)
 						while(receiveString.find('Z') != string::npos)
 						{
 							std::cout << receiveString << endl;
-							std::string notYourSTD = receiveString.substr(2, receiveString.find("*"));
+							std::string notYourSTD = receiveString.substr(0, receiveString.find("*"));
 							std::string enemySTD = receiveString.substr(receiveString.find("*") + 1, receiveString.find("Z"));
-							receiveString = receiveString.substr(receiveString.find("Z"), receiveString.length());
+							receiveString = receiveString.substr(receiveString.find("Z") + 1, receiveString.length());
 							std::cout << "client Recieved PLAYER " << notYourSTD << std::endl;
 							notYou->fromString(notYourSTD);
 
