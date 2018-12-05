@@ -98,11 +98,11 @@ bool init() {
 		return false;
 	}
 	
-	//set all the required Options for GLFW, Use OpenGL 3.3 core
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);//Double-buffering
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	//set all the required Options for GLFW, Use OpenGL 2.1 core
+	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+	//SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);//Double-buffering
+	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 	//Create rendering context for OpenGL
 	gContext = SDL_GL_CreateContext(gWindow);

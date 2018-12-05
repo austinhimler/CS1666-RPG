@@ -1,6 +1,6 @@
-#version 330 core
+#version 120
 
-in vec4 color;
+varying vec4 color;
 
 void main(void)
 {

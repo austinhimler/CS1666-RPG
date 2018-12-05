@@ -1,9 +1,9 @@
-#version 330 core
+#version 120
 
-in vec4 vPosition;
-in vec4 vColor;
+attribute vec4 vPosition;
+attribute vec4 vColor;
 
-out vec4 color;
+varying vec4 color;
 
 uniform mat4 ctm;
 
