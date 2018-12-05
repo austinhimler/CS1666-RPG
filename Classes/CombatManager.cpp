@@ -157,7 +157,7 @@ int CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
 				stringstream stmp;
 				switch (abil->getType()) {
 				case AbilityResource::tDAMAGE:
-					stmp << tars[i]->getName() + "'s HP is decreased by " + std::to_string(result) + "!\n";
+					stmp << tars[i]->getName() + "'s HP is decreased by " + std::to_string(result) + "! ";
 					stmp << tars[i]->getName() + " now has " + std::to_string(participants[0]->getHPCurrent()) + " HP left.";
 					m_combatDialogManager.AddMessage(stmp.str());
 					break;
@@ -907,7 +907,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			if (participants[enemy_index[target]]->getHPCurrent() == 0) {
 				livingCount[ENEMY]--;
 			}
-			ss << "You damage " << participants[enemy_index[target]]->getName() << " amazingly by " << result << " HP!" << " " << participants[enemy_index[target]]->getName() << " now has only " << participants[enemy_index[target]]->getHPCurrent() << " HP left.";
+			ss << "You damage " << participants[enemy_index[target]]->getName() << " by " << result << " HP!" << " " << participants[enemy_index[target]]->getName() << " now has only " << participants[enemy_index[target]]->getHPCurrent() << " HP left.";
 			m_combatDialogManager.AddMessage(ss.str());
 			//PLACE THE ATTACK ANIMATIONS HERE USING THE atk VARIABLE
 			if (allPlayers == player_index.size() - 1)
