@@ -1,9 +1,9 @@
 #include "../../Headers/AI/MPS_EAModifier.h"
 
-MPS_EAModifier::MPS_EAModifier(Character* tar, Ability* abil) {
-	MPS_Data BaseEAMData("Data/AI/MPS_Effectiveness.csv");
-	std::vector<float> tmp = BaseEAMData.getData();
-	
+MPS_EAModifier::MPS_EAModifier(std::vector<Character*> tar, Ability* abil, int baseEA) {
+	Val = baseEA;
+	if (abil->isAOE()) Val *= 2;
+	Type = MPS_Resource::tEAM;
 }
 
 MPS_EAModifier::~MPS_EAModifier(){}

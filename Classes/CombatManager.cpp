@@ -122,6 +122,7 @@ int CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
 	while (c->getEnergyCurrent() != 0 && ParticipantsStatus[enemy_index[EnemyActionOrderCount]] == IN_COMBAT) {
 		// AI decides which action to take
 		Action ActionToTake = ActionByAI(c, EnemyActionOrderCount);
+		std::cout << c->toString() << std::endl;
 		// Carry out action and out put result for every target
 		std::vector<Character*> tars = ActionToTake.getTar();
 		int TarNum = tars.size();

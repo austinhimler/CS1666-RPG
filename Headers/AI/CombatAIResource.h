@@ -7,7 +7,7 @@ namespace MPS_Resource {
 		tPSM,
 		tFSM,
 		tEAM,
-		tRTM,
+		tRM,
 		
 		tMPS_MODIFIER_TYPE_NUM
 	};

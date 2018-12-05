@@ -1,2 +1,8 @@
-,"	Attack",Fireball,Arrow Shot,Defend,Smite,Heal,Mass Heal
-Effectiveness,10,3,60,8,10,10,6
+Attack,10
+Fireball,25
+Arrow Shot,30
+Defend,8
+Smite,100
+Heal,100
+Mass Heal,60
+Escape,10
