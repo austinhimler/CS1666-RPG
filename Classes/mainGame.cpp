@@ -1822,21 +1822,27 @@ void playGame() {
 					else
 					{
 						//recieve character and push back
-						std::stringstream notyoStream;
-						notyoStream << "#";
-						char temp[100];
-						std::cout << "Client Recieving PLAYER\n" << notyoStream.str().back()<< std::endl;
+						std::stringstream receiveStream;
+						receiveStream << "#";
+						char buffer[400];
+						std::cout << "Client Recieving PLAYER\n" << receiveStream.str().back()<< std::endl;
 		
-						while (notyoStream.str().back()!='*')
+						while (receiveStream.str().back()!='&')
 						{
-							SDLNet_TCP_Recv(clientSocket, temp, 100);
-							notyoStream << temp;
-							std::cout << notyoStream.str() << endl;
+							SDLNet_TCP_Recv(clientSocket, buffer, 400);
+							receiveStream << buffer;
+							std::cout << receiveStream.str() << endl;
 						}
-						std::string notYourSTD(notyoStream.str());
-						notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
+						std::string streamSTD(receiveStream.str());
+						std::string notYourSTD =  streamSTD.substr(1, streamSTD.find("*"));
+						std::string enemySTD = streamSTD.substr(streamSTD.find("*"), streamSTD.find("&"));
+
 						std::cout << "Recieved PLAYER " << notYourSTD << std::endl;
 						notYou->fromString(notYourSTD);
+
+						std::cout << "Recieved ENEMY" << enemySTD << std::endl;
+						allEnemies[0]->fromString(enemySTD);
+						
 						
 						//Send Character
 						std::string cppString = player1->ptoString();
@@ -1849,29 +1855,29 @@ void playGame() {
 						}
 						std::cout << "Client Done Sending PLAYER\n" << std::endl;
 
-						for (auto i : allEnemies) {
+						//for (auto i : allEnemies) {
 
-							//std::string cppString = i->ptoString();
-							//const char* myString = cppString.c_str();
-							//length = strlen(myString) + 1;
+						//	//std::string cppString = i->ptoString();
+						//	//const char* myString = cppString.c_str();
+						//	//length = strlen(myString) + 1;
 
-							std::stringstream enemyStream;
-							enemyStream << "#";
-							char tempEnemy[100];
-							std::cout << "Client Recieving ENEMY\n" << enemyStream.str().back() << std::endl;
+						//	std::stringstream enemyStream;
+						//	enemyStream << "#";
+						//	char tempEnemy[100];
+						//	std::cout << "Client Recieving ENEMY\n" << enemyStream.str().back() << std::endl;
 
-							while (enemyStream.str().back() != 'Z')
-							{
-								std::cout << "ENEMY STREAM IN LOOP before << temp: " << enemyStream.str() << std::endl;
-								SDLNet_TCP_Recv(clientSocket, tempEnemy, 100);
-								enemyStream << tempEnemy;
-								std::cout << "AFTER << temp " << enemyStream.str() << endl;
-							}
-							std::string enemySTD(enemyStream.str());
-							enemySTD = enemySTD.substr(1, enemySTD.find("Z"));
-							std::cout << "Recieved ENEMY" << enemySTD << std::endl;
-							i->fromString(enemySTD);
-						}
+						//	while (enemyStream.str().back() != 'Z')
+						//	{
+						//		std::cout << "ENEMY STREAM IN LOOP before << temp: " << enemyStream.str() << std::endl;
+						//		SDLNet_TCP_Recv(clientSocket, tempEnemy, 100);
+						//		enemyStream << tempEnemy;
+						//		std::cout << "AFTER << temp " << enemyStream.str() << endl;
+						//	}
+						//	std::string enemySTD(enemyStream.str());
+						//	enemySTD = enemySTD.substr(1, enemySTD.find("Z"));
+						//	std::cout << "Recieved ENEMY" << enemySTD << std::endl;
+						//	i->fromString(enemySTD);
+						//}
 
 						
 					}
