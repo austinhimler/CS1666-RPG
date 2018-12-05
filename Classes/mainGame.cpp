@@ -1243,7 +1243,7 @@ void playGame() {
 	std::vector<Character*> playersOnScreen;
 	playersOnScreen.push_back(player1);
 	std::vector<Character*> combatants;
-  player1->refillEnergy();
+	player1->refillEnergy();
 
 
 	Uint32 timeSinceLastMovement = SDL_GetTicks();
