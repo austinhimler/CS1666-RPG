@@ -3,8 +3,9 @@
 #include <string>
 #include <time.h>
 #include <cmath>
+#include <cstring>
 #include <fstream>
-
+#include <sstream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
@@ -18,7 +19,7 @@
 
 #include <SDL2/SDL_net.h>
 
-
+//CHCHCHCHCHANGES
 #include "../Headers/mainGame.h"
 #include "../Headers/Player.h"
 #include "../Headers/Button.h"
@@ -55,8 +56,8 @@ bool isHost;
 bool isClient;
 int port;
 IPaddress ipAddress;
-UDPsocket serverSocket;
-UDPsocket clientSocket;
+TCPsocket serverSocket;
+TCPsocket clientSocket;
 
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
@@ -72,6 +73,8 @@ TTF_Font* font;
 
 //Player ONE
 Player* player1 = new Player("nlf4",1,1,1,1,1);
+Player* notYou;
+std::vector<int> attr;
 
 bool init() {
 	// Flag what subsystems to initialize
@@ -172,6 +175,8 @@ bool init() {
 	if (font == NULL) {
 		std::cout << "font was null";
 	}
+
+	SDLNet_Init();
 
 	return true;
 }
@@ -279,7 +284,6 @@ SDL_Texture* loadImage(std::string fname) {
 }
 
 void close() {
-	
 	for (auto i : gTex) {
 		SDL_DestroyTexture(i);
 		i = nullptr;
@@ -297,6 +301,8 @@ void close() {
 	Mix_FreeChunk(gBSound);
 	gMusic = NULL;
 	// Quit SDL subsystems
+		SDLNet_TCP_Close(clientSocket);
+		SDLNet_TCP_Close(serverSocket);
 	TTF_Quit();
 	Mix_Quit();
 	IMG_Quit();
@@ -664,10 +670,22 @@ bool characterCreateScreen() {
 							if (nameInputText != "") {
 								Mix_PlayChannel(-1, gBSound, 0);
 								onCharacterCreate = false;
-								if (nameInputText == "nfl4" || nameInputText == "nlf4")
+								if (nameInputText == "nfl4" || nameInputText == "nlf4"){
 									player1 = new Player(nameInputText, 10, 10, 10, 10, 10);//player1->setAll(nameInputText, 10, 10, 10, 10, 10);
-								else
+									attr.push_back(10);
+									attr.push_back(10);
+									attr.push_back(10);
+									attr.push_back(10);
+									attr.push_back(10);
+
+								}else {
+									attr.push_back(strength);
+									attr.push_back(intelligence);
+									attr.push_back(dexterity);
+									attr.push_back(constitution);
+									attr.push_back(faith);
 									player1 = new Player(nameInputText, strength, intelligence, dexterity, constitution, faith);//player1->setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
+								}
 								std::cout << std::string(*player1); //displays player 1
 								//make Character Object, validate, return to main
 								for (auto i : buttons) {
@@ -1169,37 +1187,82 @@ bool handleNetworkingSetup() {
 			break;
 		}
 
-		std::cout << "Enter IP address:\n" << std::endl;
-		std::string ipInput;
-		std::getline(std::cin, ipInput);
-
-		std::cout << "Enter Port:\n" << std::endl;
-		int port;
-		std::cin >> port;
 
 		if (isClient) {
+			std::cout << "Enter IP address:\n" << std::endl;
+			std::string ipInput;
+			std::getline(std::cin, ipInput);
+
+			std::cout << "Enter Port:\n" << std::endl;
+			std::cin >> port;
+
 			SDLNet_ResolveHost(&ipAddress, ipInput.c_str(), port);
+			
+
+			clientSocket = NULL;
+			while (clientSocket == NULL)
+			{
+				clientSocket = SDLNet_TCP_Open(&ipAddress);
+			}
+
+			std::cout << clientSocket << std::endl;
+			std::cout << ipInput.c_str() << std::endl;
+			std::cout << ipAddress.host << std::endl;
+			std::cout << ipAddress.port << std::endl;
+		
 		}
 
 		if (isHost) {
-			//Since the IP is set to null it knows that it will be a server
+			std::cout << "Enter Port:\n" << std::endl;
+			std::cin >> port;
+
 			SDLNet_ResolveHost(&ipAddress, NULL, port);
-			serverSocket = SDLNet_UDP_Open(port);
+			serverSocket = SDLNet_TCP_Open(&ipAddress);
+			bool noClient = true;
+			while (noClient)
+			{
+				//waits for a client to connect
+				clientSocket = SDLNet_TCP_Accept(serverSocket);
+				if (clientSocket)
+				{
+					noClient = false;
+				}
+			}
+			std::cout << serverSocket << std::endl;
+			std::cout << ipAddress.host << std::endl;
+			std::cout << ipAddress.port << std::endl;
 		}
 
-		if (isClient) {
-			clientSocket = NULL;
-			while (clientSocket == NULL) {
-				clientSocket = SDLNet_UDP_Open(port); // for UDP, client can put in in 0 and be assigned?
-			}
-		}
-		
 		return true;
 	}
 
 }
 
 void playGame() {
+	std::vector<Character*> charactersOnScreen;
+	std::vector<Character*> playersOnScreen;
+	playersOnScreen.push_back(player1);
+	std::vector<Character*> combatants;
+  player1->refillEnergy();
+
+
+	Uint32 timeSinceLastMovement = SDL_GetTicks();
+	Uint32 timeSinceLastAnimation = SDL_GetTicks();
+	Uint32 lastSync = SDL_GetTicks();
+	player1->timeSinceLastMovement = timeSinceLastMovement;
+	player1->timeSinceLastAnimation = timeSinceLastAnimation;
+	vector<Cluster*> allEnemies;
+	Cluster* CollidingCluster;
+	std::string receiveString="";
+	bool doNetworking = handleNetworkingSetup();
+	if (doNetworking)
+	{
+		notYou = new Player("meme", 10, 10, 10, 10, 10);
+		
+		charactersOnScreen.push_back(notYou);
+		playersOnScreen.push_back(notYou);
+	}
+
 	//Load the music
 	gMusic = Mix_LoadMUS("Audio/Walking_Test.wav");
 	if (gMusic == NULL)
@@ -1209,25 +1272,6 @@ void playGame() {
 	Mix_VolumeMusic(MIX_MAX_VOLUME / 8);
 	for (MAP_INDEX = 0; MAP_INDEX < ALL_MAPS.size(); MAP_INDEX++)
 	{
-		player1->refillEnergy();
-		//bool doNetworking = handleNetworkingSetup();
-		vector<Cluster*> allEnemies = vector<Cluster*>();
-		Cluster* CollidingCluster;
-		for (int num_enemy = 0; num_enemy < STARTING_ENEMIES * (MAP_INDEX + 1); num_enemy++)
-		{
-			Cluster* enemy = new Cluster((rand() % (ENEMIES_PER_CLUSTER + MAP_INDEX)) + 1);
-			cout << "Enemy " << num_enemy + 1 << " Cluster Size: " << enemy->clusterSize << endl;
-			allEnemies.push_back(enemy);
-		}
-
-		//SDL_RendererFlip flip = SDL_FLIP_NONE;
-
-		int tile_test = -1;
-
-		player1->setTextureActive(player1->getTextureIdle());
-		player1->currentMaxFrame = player1->getNumIdleAnimationFrames();
-
-
 		Tile*  tiles[TOTAL_TILES];
 
 		//tiles
@@ -1243,35 +1287,153 @@ void playGame() {
 			player1->yPosition = rand() % (LEVEL_HEIGHT - player1->getImageHeight());
 		}
 
-		for (auto i : allEnemies)
-		{
-			i->setTextureActive(i->getTextureIdle());
-			i->currentMaxFrame = i->getNumIdleAnimationFrames();
-			// Randomly spawn the enemy
-			for (;;)
-			{
-				i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
-				i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
-				int t_tile = (int)(i->xPosition + (i->rectangle.w / 2)) / TILE_WIDTH;
-				t_tile += (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) * 30;
-				if (tiles[t_tile]->mType == 0)
-					break;
+		if (doNetworking) {
+			int numEnemies = STARTING_ENEMIES * (MAP_INDEX + 1); //2
+			allEnemies = vector<Cluster*>();
+			if (isHost) {
+			
+				for (int num_enemy = 0; num_enemy < numEnemies; num_enemy++)
+				{
+					int result;
+					int length = sizeof(int);
+					int param = (rand() % (ENEMIES_PER_CLUSTER + MAP_INDEX)) + 1;
+					Cluster* enemy = new Cluster(param);
+					//printf("Host Sending %d\n", &param);
+					//result = SDLNet_TCP_Send(clientSocket, &param, sizeof(int));
+					//if (result < length) {
+					//	printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+					//}
+					//std::cout << "Host Done Sending\n" << std::endl;
+
+					cout << "Enemy " << num_enemy + 1 << " Cluster Size: " << enemy->clusterSize << endl;
+					allEnemies.push_back(enemy);
+				}
+
+				for (auto i : allEnemies)
+				{
+					i->setTextureActive(i->getTextureIdle());
+					i->currentMaxFrame = i->getNumIdleAnimationFrames();
+					// Randomly spawn the enemy
+					for (;;)
+					{
+						i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
+						i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
+						int t_tile = (int)(i->xPosition + (i->rectangle.w / 2)) / TILE_WIDTH;
+						t_tile += (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) * 30;
+						if (tiles[t_tile]->mType == 0)
+							break;
+					}
+				}
+
+				for (auto i : allEnemies)
+				{
+					cout << "Enemy Coordinates: (" << i->xPosition << "," << i->yPosition << ")" << endl;
+					i->timeSinceLastAnimation = timeSinceLastAnimation;
+					charactersOnScreen.push_back(i);
+
+					//std::string cppString = player1->ptoString();
+					//const char* myString = cppString.c_str();
+					//length = strlen(myString) + 1;
+					//printf("Host Sending %s\n", myString);
+					//result = SDLNet_TCP_Send(clientSocket, myString, length);
+					//if (result < length) {
+					//	printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+					//}
+					//std::cout << "Host Done Sending\n" << std::endl;
+				}
+
+			}
+			else if (isClient) {
+				//std::vector<int> params;
+				//char temp[100];
+				//for (int i = 0; i < numEnemies; i++) {					
+				//	SDLNet_TCP_Recv(clientSocket, temp, sizeof(int));
+				//}
+
+				//int j = 0;
+				//while (temp[j] != 0) {
+				//	std::cout << "param buffer at index " << j << " with  " << temp[j] << std::endl;
+				//	params.push_back(temp[j] - '0');
+				//	j++;
+				//}
+
+				//for (int i = 0; i < params.size(); i++) {
+				//	std::cout << params[i] << std::endl;
+				//	Cluster* enemy = new Cluster(params[i]);
+				//	cout << "Enemy " << i + 1 << " Cluster Size: " << enemy->clusterSize << endl;
+				//	allEnemies.push_back(enemy);
+				//}
+
+				for (int i = 0; i < numEnemies; i++) {
+					Cluster* enemy = new Cluster(1);
+					cout << "Enemy " << i + 1 << " Cluster Size: " << enemy->clusterSize << endl;
+					allEnemies.push_back(enemy);
+				}
+
+
+				for (auto i : allEnemies)
+				{
+					cout << "Enemy Coordinates: (" << i->xPosition << "," << i->yPosition << ")" << endl;
+					i->timeSinceLastAnimation = timeSinceLastAnimation;
+					i->setTextureActive(i->getTextureIdle());
+					i->currentMaxFrame = i->getNumIdleAnimationFrames();
+					charactersOnScreen.push_back(i);
+				}
+
 			}
 		}
+		else {
+			allEnemies = vector<Cluster*>();
+			for (int num_enemy = 0; num_enemy < STARTING_ENEMIES * (MAP_INDEX + 1); num_enemy++)
+			{
+				Cluster* enemy = new Cluster((rand() % (ENEMIES_PER_CLUSTER + MAP_INDEX)) + 1);
+				cout << "Enemy " << num_enemy + 1 << " Cluster Size: " << enemy->clusterSize << endl;
+				allEnemies.push_back(enemy);
+			}
 
-		std::vector<Character*> charactersOnScreen;
-		std::vector<Character*> combatants;
+			for (auto i : allEnemies)
+			{
+				i->setTextureActive(i->getTextureIdle());
+				i->currentMaxFrame = i->getNumIdleAnimationFrames();
+				// Randomly spawn the enemy
+				for (;;)
+				{
+					i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
+					i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
+					int t_tile = (int)(i->xPosition + (i->rectangle.w / 2)) / TILE_WIDTH;
+					t_tile += (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) * 30;
+					if (tiles[t_tile]->mType == 0)
+						break;
+				}
+			}
+
+			for (auto i : allEnemies)
+			{
+				cout << "Enemy Coordinates: (" << i->xPosition << "," << i->yPosition << ")" << endl;
+				i->timeSinceLastAnimation = timeSinceLastAnimation;
+				charactersOnScreen.push_back(i);
+			}
 
 
-		Uint32 timeSinceLastMovement = SDL_GetTicks();
-		Uint32 timeSinceLastAnimation = SDL_GetTicks();
-		player1->timeSinceLastMovement = timeSinceLastMovement;
-		player1->timeSinceLastAnimation = timeSinceLastAnimation;
-		for (auto i : allEnemies)
-		{
-			cout << "Enemy Coordinates: (" << i->xPosition << "," << i->yPosition << ")" << endl;
-			i->timeSinceLastAnimation = timeSinceLastAnimation;
 		}
+
+		//SDL_RendererFlip flip = SDL_FLIP_NONE;
+
+		int tile_test = -1;
+
+		player1->setTextureActive(player1->getTextureIdle());
+		player1->currentMaxFrame = player1->getNumIdleAnimationFrames();
+
+
+		
+		if (doNetworking)
+		{
+			notYou->setTextureActive(notYou->getTextureIdle());
+			notYou->currentMaxFrame = notYou->getNumIdleAnimationFrames();
+			notYou->timeSinceLastMovement = timeSinceLastMovement;
+			notYou->timeSinceLastAnimation = timeSinceLastAnimation;
+		}
+
 		std::string hudHealthString = "Health: " + to_string(player1->getHPCurrent());
 		std::string hudLevelString = "Level: " + to_string(player1->getLevel());
 		SDL_Rect hudHealthTextRectangle = { 10, 10, 0, 0 };
@@ -1282,10 +1444,6 @@ void playGame() {
 		int response = 0;
 
 		charactersOnScreen.push_back(player1);
-		for (auto i : allEnemies)
-		{
-			charactersOnScreen.push_back(i);
-		}
 
 		std::cout << player1->xPosition;
 		std::cout << "\n";
@@ -1300,8 +1458,8 @@ void playGame() {
 		bool inPauseMenu = false;
 		bool keepPlaying = true;
 		while (keepPlaying) {
-
-			while (inOverworld) {
+			while (inOverworld) 
+			{
 				while (SDL_PollEvent(&e)) {
 					if (e.type == SDL_QUIT) {
 						inOverworld = false;
@@ -1371,77 +1529,81 @@ void playGame() {
 					player1->yVelocity = (player1->getSpeedMax() + runningAddSpeed);
 
 				//Change sprite if character is in motion
-				if (player1->xVelocity != 0 || player1->yVelocity != 0) {
-
-					if (player1->yVelocity == 0) {
-						if (player1->getTextureActive() != player1->getTextureRun()) {
-							player1->setTextureActive(player1->getTextureRun());
-							player1->currentFrame = 0;
-							player1->currentMaxFrame = player1->getNumRunAnimationFrames();
-						}
-					}
-
-
-					if (player1->xVelocity == 0 && player1->yVelocity > 0) {
-						if (player1->getTextureActive() != player1->getTextureDownRun()) {
-							player1->setTextureActive(player1->getTextureDownRun());
-							player1->currentFrame = 0;
-							player1->currentMaxFrame = player1->getNumRunAnimationFrames();
-						}
-					}
-
-
-
-					if (player1->xVelocity != 0 && player1->yVelocity > 0) {
-						if (player1->getTextureActive() != player1->getTextureDownRightRun()) {
-							player1->setTextureActive(player1->getTextureDownRightRun());
-							player1->currentFrame = 0;
-							player1->currentMaxFrame = player1->getNumRunAnimationFrames();
-						}
-					}
-
-					if (player1->xVelocity != 0 && player1->yVelocity < 0) {
-						if (player1->getTextureActive() != player1->getTextureUpRightRun()) {
-							player1->setTextureActive(player1->getTextureUpRightRun());
-							player1->currentFrame = 0;
-							player1->currentMaxFrame = player1->getNumRunAnimationFrames();
-						}
-					}
-
-
-
-					if (player1->xVelocity == 0 && player1->yVelocity < 0) {
-						if (player1->getTextureActive() != player1->getTextureUpRun()) {
-							player1->setTextureActive(player1->getTextureUpRun());
-							player1->currentFrame = 0;
-							player1->currentMaxFrame = player1->getNumRunAnimationFrames();
-
-						}
-					}
-				}
-
-				else {
-					if (player1->getTextureActive() != player1->getTextureIdle()) {
-						player1->setTextureActive(player1->getTextureIdle());
-						player1->currentFrame = 0;
-						player1->currentMaxFrame = player1->getNumIdleAnimationFrames();
-					}
-				}
-
 				int beforeMoveX = player1->xPosition;
 				int beforeMoveY = player1->yPosition;
-				//Move vertically
-				player1->yPosition += (player1->yVelocity * timePassed);
-				if (player1->yPosition < 0 || (player1->yPosition + player1->getImageHeight() > LEVEL_HEIGHT)) {
-					//go back into window
-					player1->yPosition -= (player1->yVelocity * timePassed);
-				}
+				for (auto &i : playersOnScreen)
+				{
+					if (i->xVelocity != 0 || i->yVelocity != 0) {
 
-				//Move horizontally
-				player1->xPosition += (player1->xVelocity * timePassed);
-				if (player1->xPosition < 0 || (player1->xPosition + player1->getImageWidth() > LEVEL_WIDTH)) {
-					//go back into window
-					player1->xPosition -= (player1->xVelocity * timePassed);
+						if (i->yVelocity == 0) {
+							if (i->getTextureActive() != i->getTextureRun()) {
+								i->setTextureActive(i->getTextureRun());
+								i->currentFrame = 0;
+								i->currentMaxFrame = i->getNumRunAnimationFrames();
+							}
+						}
+
+
+						if (i->xVelocity == 0 && i->yVelocity > 0) {
+							if (i->getTextureActive() != i->getTextureDownRun()) {
+								i->setTextureActive(i->getTextureDownRun());
+								i->currentFrame = 0;
+								i->currentMaxFrame = i->getNumRunAnimationFrames();
+							}
+						}
+
+
+
+						if (i->xVelocity != 0 && i->yVelocity > 0) {
+							if (i->getTextureActive() != i->getTextureDownRightRun()) {
+								i->setTextureActive(i->getTextureDownRightRun());
+								i->currentFrame = 0;
+								i->currentMaxFrame = i->getNumRunAnimationFrames();
+							}
+						}
+
+						if (i->xVelocity != 0 && i->yVelocity < 0) {
+							if (i->getTextureActive() != i->getTextureUpRightRun()) {
+								i->setTextureActive(i->getTextureUpRightRun());
+								i->currentFrame = 0;
+								i->currentMaxFrame = i->getNumRunAnimationFrames();
+							}
+						}
+
+
+
+						if (i->xVelocity == 0 && i->yVelocity < 0) {
+							if (i->getTextureActive() != i->getTextureUpRun()) {
+								i->setTextureActive(i->getTextureUpRun());
+								i->currentFrame = 0;
+								i->currentMaxFrame = i->getNumRunAnimationFrames();
+
+							}
+						}
+					}
+
+					else {
+						if (i->getTextureActive() != i->getTextureIdle()) {
+							i->setTextureActive(i->getTextureIdle());
+							i->currentFrame = 0;
+							i->currentMaxFrame = i->getNumIdleAnimationFrames();
+						}
+					}
+
+					
+					//Move vertically
+					i->yPosition += (i->yVelocity * timePassed);
+					if (i->yPosition < 0 || (i->yPosition + i->getImageHeight() > LEVEL_HEIGHT)) {
+						//go back into window
+						i->yPosition -= (i->yVelocity * timePassed);
+					}
+
+					//Move horizontally
+					i->xPosition += (i->xVelocity * timePassed);
+					if (i->xPosition < 0 || (i->xPosition + i->getImageWidth() > LEVEL_WIDTH)) {
+						//go back into window
+						i->xPosition -= (i->xVelocity * timePassed);
+					}
 				}
 				//calculate tile player is currently standing on
 				int currentTile = (int)(player1->xPosition + (player1->rectangle.w / 2)) / TILE_WIDTH;
@@ -1507,9 +1669,17 @@ void playGame() {
 				}
 
 
+				if (doNetworking) {
+					if (isHost) {
+						moveCluster(allEnemies, "random", timePassed, tiles, cycle);
+						cycle++;
+					}
+				}
+				else {
+					moveCluster(allEnemies, "random", timePassed, tiles, cycle);
+					cycle++;
+				}
 
-				moveCluster(allEnemies, "random", timePassed, tiles, cycle);
-				cycle++;
 
 				for (auto &i : charactersOnScreen) {
 					if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
@@ -1582,6 +1752,156 @@ void playGame() {
 						z->setTextureActive(z->getTextureIdle());
 					}
 				}
+				if (doNetworking&&(SDL_GetTicks()-lastSync>25)) {
+					int length;
+					int result;
+					lastSync = SDL_GetTicks();
+
+
+					
+					if (isHost)
+					{
+						std::string sendString;
+						std::string enemyString;
+						std::string cppString = player1->ptoString();
+						std::stringstream ssfull;
+						ssfull<< cppString;
+	/*					const char* myString = cppString.c_str();
+						length = strlen(myString) + 1;
+						printf("Host Sending PLAYER %s\n", myString);
+						result = SDLNet_TCP_Send(clientSocket, myString, length);
+						if (result < length) {
+							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+						}
+						std::cout << "Host Done Sending PLAYER\n" << std::endl;*/
+
+
+						for (auto i : allEnemies) {
+							enemyString = i->ptoString();
+							
+							ssfull<< enemyString;
+							
+							////const char* enemyStringChar = enemyString.c_str();
+							////length = strlen(enemyStringChar) + 1;
+							////printf("Host Sending ENEMY %s\n", enemyStringChar);
+							////result = SDLNet_TCP_Send(clientSocket, enemyStringChar, length);
+							////if (result < length) {
+							////	printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+							////}
+							////std::cout << "Host Done Sending ENEMY\n" << std::endl;
+						}
+						ssfull << "+";
+						std::string ctemp=ssfull.str();
+						const char* myString = ctemp.c_str();
+						length = strlen(myString) + 1;
+						printf("Host Sending PLAYER and ENEMIES %s\n", myString);
+						result = SDLNet_TCP_Send(clientSocket, myString, length);
+						if (result < length) {
+							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+						}
+						std::cout << "Host Done Sending PLAYER and ENEMIES\n" << std::endl;
+
+
+						
+						std::stringstream notyoStream;
+						
+						char temp[100];
+						std::cout << "Host Recieving PLAYER\n" << std::endl;
+
+						
+							SDLNet_TCP_Recv(clientSocket, temp, 100);
+							notyoStream << temp;
+							receiveString += notyoStream.str();
+							notyoStream.flush();
+								while (receiveString.length()>1&&receiveString.find('*') != string::npos)
+								{
+									std::string notYourSTD = receiveString;
+									notYourSTD = notYourSTD.substr(0, notYourSTD.find("*"));
+									receiveString = receiveString.substr(receiveString.find("*") + 1, receiveString.length());
+									std::cout << "Recieved PLAYER" << notYourSTD << std::endl;
+									notYou->fromString(notYourSTD);
+								}
+
+						
+					}
+					else
+					{
+						//recieve character and push back
+						std::stringstream receiveStream;
+						
+						char buffer[100];
+						std::cout << "Client Recieving PLAYER\n" << std::endl;
+		
+						
+						SDLNet_TCP_Recv(clientSocket, buffer, 100);
+						receiveStream << buffer;
+						receiveString += receiveStream.str();
+						receiveStream.flush();
+						//std::cout << receiveStream.str() << endl;
+						
+							while (receiveString.length() > 1 && receiveString.find('+') != string::npos)
+							{
+								std::cout << receiveString << endl;
+								std::string notYourSTD = receiveString.substr(0, receiveString.find("*"));
+								std::cout << "client Recieved PLAYER " << notYourSTD << std::endl;
+								notYou->fromString(notYourSTD);
+								std::string enemySTD = receiveString.substr(receiveString.find("*") + 1, receiveString.find("Z"));
+								bool firstrun = true;
+								for (auto i : allEnemies)
+								{
+
+									if (!firstrun)
+									{
+										enemySTD = receiveString.substr(0, receiveString.find("Z"));
+									}
+									else
+										firstrun = false;
+									std::cout << "client Recieved ENEMY" << enemySTD << std::endl;
+									i->fromString(enemySTD);
+									receiveString = receiveString.substr(receiveString.find("Z") + 1, receiveString.length());
+
+								}
+							}
+						
+						
+						//Send Character
+						std::string cppString = player1->ptoString();
+						const char* myString = cppString.c_str();
+						length = strlen(myString) + 1;
+						printf("Client Sending PLAYER%s\n", myString);
+						result = SDLNet_TCP_Send(clientSocket, myString, length);
+						if (result < length) {
+							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+						}
+						std::cout << "Client Done Sending PLAYER\n" << std::endl;
+
+						//for (auto i : allEnemies) {
+
+						//	//std::string cppString = i->ptoString();
+						//	//const char* myString = cppString.c_str();
+						//	//length = strlen(myString) + 1;
+
+						//	std::stringstream enemyStream;
+						//	enemyStream << "#";
+						//	char tempEnemy[100];
+						//	std::cout << "Client Recieving ENEMY\n" << enemyStream.str().back() << std::endl;
+
+						//	while (enemyStream.str().back() != 'Z')
+						//	{
+						//		std::cout << "ENEMY STREAM IN LOOP before << temp: " << enemyStream.str() << std::endl;
+						//		SDLNet_TCP_Recv(clientSocket, tempEnemy, 100);
+						//		enemyStream << tempEnemy;
+						//		std::cout << "AFTER << temp " << enemyStream.str() << endl;
+						//	}
+						//	std::string enemySTD(enemyStream.str());
+						//	enemySTD = enemySTD.substr(1, enemySTD.find("Z"));
+						//	std::cout << "Recieved ENEMY" << enemySTD << std::endl;
+						//	i->fromString(enemySTD);
+						//}
+
+						
+					}
+				}
 			}
 
 			if (inPauseMenu) {
@@ -1645,6 +1965,7 @@ void playGame() {
 				else if (combatResult == PLAYER_ESCAPES) {
 					allEnemies.push_back(CollidingCluster);
 					charactersOnScreen.push_back(CollidingCluster);
+					charactersOnScreen.push_back(player1);
 				}
 				combatStarted = false;
 				inOverworld = true;

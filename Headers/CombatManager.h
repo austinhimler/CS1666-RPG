@@ -40,11 +40,13 @@ public:
 	//void setNewButtons(std::vector<Button*>& buttons, int t);
 	void outputEnemy();
 
-	Action takeActionByAI(Character* c, int EnemyActionOrderCount);
+	int takeActionByAI(Character* c, int EnemyActionOrderCount); //Enemy takes action
+	Action ActionByAI(Character* c, int EnemyActionOrderCount);
 
 private:
 	string atk;
-	string target;
+	Ability abil;
+	int target;
 	bool inCombat;
 	bool allPlayersMoved;
 	int turnOrder;

@@ -2,6 +2,8 @@
 #include "../Headers/Globals.h"
 #include "../Headers/Helper.h"
 #include <iostream>
+#include <sstream>
+#include <cstring>
 	/*
 	int strength = 1;
 	int intelligence = 1;
@@ -100,3 +102,5 @@
 		return s;
 		
 	}
+	//name currentFrame xPosition yPosition xVelocity yVelocity
+	

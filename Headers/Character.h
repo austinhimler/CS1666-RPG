@@ -10,7 +10,8 @@
 #include "Ailment.h"
 #include <map>
 #include <algorithm>
-
+#include <cstring>
+#include <sstream>
 /*
 #include "Attributes/Strength.h"
 #include "Attributes/Intelligence.h"
@@ -85,7 +86,10 @@ public:
 	SDL_Texture* getTextureUpRun();
 	SDL_Texture* getTextureActive();
 	SDL_Rect getRectangle();
-	
+	std::string ptoString();
+	void fromString(std::string in);
+	std::string combatToString();
+	void combatFromString(std::string in);
 	int beingTarget(Ability* a); // return -1 for succesful escape, -2 for failed escape, non-negative integers for HP healed or damaged
 	
 	//void takeDamage(Ability a);

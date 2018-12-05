@@ -20,6 +20,8 @@ public:
 	int clusterSize;
 	bool combatReady;
 	int readyTimeLeft;
+	std::string ptoString();
+	void fromString(std::string in);
 
 	int lastDirection = -1;
 

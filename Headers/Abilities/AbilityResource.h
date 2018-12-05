@@ -100,9 +100,9 @@ namespace AbilityResource {
 	const int abilityType[] = {
 		tDAMAGE, // attack
 		tDAMAGE, // fireball
-		tESCAPE, // escape
+		tDAMAGE, // arrow shot
 		tDEFENSE, // defend
-		tSUMMON, // summon
+		tDAMAGE, // smite
 		tHEALING, // heal
 		tHEALING // mass heal
 				//etc.
