@@ -83,7 +83,7 @@ void Cluster::fromString(std::string in)
 		xPosition = atof(vars[1].c_str());
 		yPosition = atof(vars[2].c_str());
 		clusterSize = atof(vars[3].c_str());
-	}
+		
 	return;
 }
 

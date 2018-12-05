@@ -1807,11 +1807,11 @@ void playGame() {
 						notYou->fromString(notYourSTD);
 
 						for (auto i : allEnemies) {
-							std::string cppString = i->ptoString();
-							const char* myString = cppString.c_str();
-							length = strlen(myString) + 1;
-							printf("Host Sending ENEMY %s\n", myString);
-							result = SDLNet_TCP_Send(clientSocket, myString, length);
+							std::string enemyString = i->ptoString();
+							const char* enemyStringChar = enemyString.c_str();
+							length = strlen(enemyStringChar) + 1;
+							printf("Host Sending ENEMY %s\n", enemyStringChar);
+							result = SDLNet_TCP_Send(clientSocket, enemyStringChar, length);
 							if (result < length) {
 								printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 							}
@@ -1850,21 +1850,27 @@ void playGame() {
 						std::cout << "Client Done Sending PLAYER\n" << std::endl;
 
 						for (auto i : allEnemies) {
+
+							//std::string cppString = i->ptoString();
+							//const char* myString = cppString.c_str();
+							//length = strlen(myString) + 1;
+
 							std::stringstream enemyStream;
 							enemyStream << "#";
-							char temp[100];
+							char tempEnemy[100];
 							std::cout << "Client Recieving ENEMY\n" << enemyStream.str().back() << std::endl;
 
 							while (enemyStream.str().back() != '*')
 							{
-								SDLNet_TCP_Recv(clientSocket, temp, 100);
-								enemyStream << temp;
-								std::cout << enemyStream.str() << endl;
+								std::cout << "ENEMY STREAM IN LOOP before << temp: " << enemyStream.str() << std::endl;
+								SDLNet_TCP_Recv(clientSocket, tempEnemy, 100);
+								enemyStream << tempEnemy;
+								std::cout << "AFTER << temp " << enemyStream.str() << endl;
 							}
 							std::string enemySTD(enemyStream.str());
 							enemySTD = enemySTD.substr(1, enemySTD.find("*"));
 							std::cout << "Recieved ENEMY" << enemySTD << std::endl;
-							i->fromString(notYourSTD);
+							i->fromString(enemySTD);
 						}
 
 						
