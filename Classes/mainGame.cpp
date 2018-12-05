@@ -1784,7 +1784,7 @@ void playGame() {
 						std::stringstream notyoStream;
 						
 						char temp[100];
-						std::cout << "Host Recieving PLAYER\n" << notyoStream.str().back() << std::endl;
+						std::cout << "Host Recieving PLAYER\n" << std::endl;
 
 						
 							SDLNet_TCP_Recv(clientSocket, temp, 100);
@@ -1808,7 +1808,7 @@ void playGame() {
 						std::stringstream receiveStream;
 						
 						char buffer[100];
-						std::cout << "Client Recieving PLAYER\n" << receiveStream.str().back()<< std::endl;
+						std::cout << "Client Recieving PLAYER\n" << std::endl;
 		
 						
 						SDLNet_TCP_Recv(clientSocket, buffer, 100);
