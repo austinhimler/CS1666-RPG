@@ -128,6 +128,7 @@ int CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
 		Ability* abil = ActionToTake.getAbil();
 		std::cout << c->getEnergyCurrent() << " " << abil->getEnergyCost() << std::endl;
 		if (c->getEnergyCurrent() < abil->getEnergyCost()) {
+			m_combatDialogManager.ClearEvents();
 			return IN_COMBAT;
 		}
 		else {
@@ -147,9 +148,11 @@ int CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
 					m_combatDialogManager.AddMessage(c->getName() + " uses " + AbilityResource::abilityNames[abil->getName()] + " to " + tars[i]->getName());
 					break;
 				}
+				// display text
 				m_combatDialogManager.Update(1.0f / 60.0f);
 				m_combatGraphics.addTextsToRender(m_combatDialogManager.GetTextToRender());
 				m_combatGraphics.idle();
+				SDL_Delay(60);
 				// output impact
 				stringstream stmp;
 				switch (abil->getType()) {
@@ -169,10 +172,12 @@ int CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
 						ParticipantsStatus[enemy_index[EnemyActionOrderCount]] = ESCAPED;
 						livingCount[ENEMY]--;
 						if (livingCount[ENEMY] <= 0) {
+							// display text before returning
 							m_combatDialogManager.Update(1.0f / 60.0f);
 							m_combatGraphics.addTextsToRender(m_combatDialogManager.GetTextToRender());
 							m_combatGraphics.idle();
-
+							SDL_Delay(60);
+							m_combatDialogManager.ClearEvents();
 							return PLAYER_WINS;
 						}
 					}
@@ -182,11 +187,14 @@ int CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
 					}
 					break;
 				case AbilityResource::tDEFENSE:
+					// display text before returning
 					stmp << c->getName() + "'s Energy Regeneration for next round will be increased.";
 					m_combatDialogManager.AddMessage(stmp.str());
 					m_combatDialogManager.Update(1.0f / 60.0f);
 					m_combatGraphics.addTextsToRender(m_combatDialogManager.GetTextToRender());
 					m_combatGraphics.idle();
+					SDL_Delay(60);
+					m_combatDialogManager.ClearEvents();
 					return IN_COMBAT;
 					break;
 				default:
@@ -203,6 +211,7 @@ int CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
 					m_combatDialogManager.Update(1.0f / 60.0f);
 					m_combatGraphics.addTextsToRender(m_combatDialogManager.GetTextToRender());
 					m_combatGraphics.idle();
+					SDL_Delay(60);
 
 					if (!tars[i]->is_Enemy()) {
 						livingCount[PLAYER]--;
@@ -225,7 +234,10 @@ int CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
 					}
 
 					int temp_status = checkCombatStatus();
-					if (temp_status != IN_COMBAT) return temp_status;
+					if (temp_status != IN_COMBAT) {
+						m_combatDialogManager.ClearEvents();
+						return temp_status;
+					}
 				}
 			}
 		}
@@ -250,6 +262,7 @@ int CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
 	}
 
 	m_combatDialogManager.ClearEvents();
+	return IN_COMBAT;
 }
 
 int CombatManager::textAction(Character* c) {
