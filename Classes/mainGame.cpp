@@ -1760,8 +1760,10 @@ void playGame() {
 					if (isHost)
 					{
 						std::string sendString;
+						std::string enemyString;
 						std::string cppString = player1->ptoString();
-						sendString += cppString;
+						std::stringstream ssfull;
+						ssfull<< cppString;
 	/*					const char* myString = cppString.c_str();
 						length = strlen(myString) + 1;
 						printf("Host Sending PLAYER %s\n", myString);
@@ -1773,8 +1775,10 @@ void playGame() {
 
 
 						for (auto i : allEnemies) {
-							std::string enemyString = i->ptoString();
-							sendString += enemyString;
+							enemyString = i->ptoString();
+							
+							ssfull<< enemyString;
+							
 							////const char* enemyStringChar = enemyString.c_str();
 							////length = strlen(enemyStringChar) + 1;
 							////printf("Host Sending ENEMY %s\n", enemyStringChar);
@@ -1784,7 +1788,9 @@ void playGame() {
 							////}
 							////std::cout << "Host Done Sending ENEMY\n" << std::endl;
 						}
-						const char* myString = sendString.c_str();
+						
+						std::string ctemp=ssfull.str();
+						const char* myString = ctemp.c_str();
 						length = strlen(myString) + 1;
 						printf("Host Sending PLAYER and ENEMIES %s\n", myString);
 						result = SDLNet_TCP_Send(clientSocket, myString, length);
