@@ -941,19 +941,25 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				auto event = events.front();
 				// Pop the event 
 				events.pop();
-				target = event.selectedOption;
+				target = event.options[event.selectedOption];
 				turnOrder = 5;
 			}
 		}
 		else if (turnOrder == 5)
 		{
+			int t;
 			stringstream ss;
 			//ss << "You selected " << target;
 			//m_combatDialogManager.AddMessage(ss.str());
+			for (int i = 0; i < enemy_index.size(); i++)
+			{
+				if (participants[enemy_index[i]]->getName() == target)
+					t = i;
 
-			int result = participants[enemy_index[target]]->beingTarget(&abil);
+			}
+			int result = participants[enemy_index[t]]->beingTarget(&abil);
 		
-			if (participants[enemy_index[target]]->getHPCurrent() == 0) {
+			if (participants[enemy_index[t]]->getHPCurrent() == 0) {
 				livingCount[ENEMY]--;
 			}
 			//ss << "You damage " << participants[enemy_index[target]]->getName() << " by " << result << " HP!" << " " << participants[enemy_index[target]]->getName() << " now has only " << participants[enemy_index[target]]->getHPCurrent() << " HP left.";
@@ -961,8 +967,8 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			//PLACE THE ATTACK ANIMATIONS HERE USING THE atk VARIABLE
 			//std::cout << atk;
 			if (atk == "Attack") {
-				glm::vec3 playerToEnemyVector = m_combatGraphics.getVectorFromTo(player, enemy[target]);
-				glm::vec3 enemyToPlayerVector = m_combatGraphics.getVectorFromTo(enemy[target], player);
+				glm::vec3 playerToEnemyVector = m_combatGraphics.getVectorFromTo(player, enemy[t]);
+				glm::vec3 enemyToPlayerVector = m_combatGraphics.getVectorFromTo(enemy[t], player);
 				glm::mat4 motion;
 				glm::mat4 motion2;
 				motion = glm::translate(motion, (1.0f / 20.0f)* playerToEnemyVector);
@@ -982,7 +988,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				//std::cout << "Fireball Reached";
 				int attack = m_combatGraphics.genSphere(0.1, 36, 2, glm::vec4(1.0, 0.345, 0.133, 0.4));
 				m_combatGraphics.translateObjectByPixel(attack, SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
-				glm::vec3 playerToEnemyVector = m_combatGraphics.getVectorFromTo(player, enemy[target]);
+				glm::vec3 playerToEnemyVector = m_combatGraphics.getVectorFromTo(player, enemy[t]);
 				glm::mat4 motion;
 				motion = glm::translate(motion, (1.0f / 15.0f)* playerToEnemyVector);
 				m_combatGraphics.setAnimation(attack, 2);
@@ -1000,7 +1006,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				int attack = m_combatGraphics.genSphere(0.4, 36, 2, glm::vec4(1.0, 0.9, 0.0, 0.7));
 				m_combatGraphics.setIdleAnimationMotion(attack, glm::rotate(0.4f, m_combatGraphics.rotateRandom()));
 				m_combatGraphics.translateObjectByPixel(attack, 0.0f, 0.0f, 0.0);
-				glm::vec3 playerToEnemyVector = m_combatGraphics.getVectorFromTo(attack, enemy[target]);
+				glm::vec3 playerToEnemyVector = m_combatGraphics.getVectorFromTo(attack, enemy[t]);
 				glm::mat4 motion;
 				motion = glm::translate(motion, (1.0f / 90.0f)*playerToEnemyVector);
 				//motion = glm::translate(glm::mat4(), )
@@ -1019,7 +1025,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				//std::cout << "Arrow Reached";
 				int attack = m_combatGraphics.genQuadTexture(144, 144, "Images/Items/arrow.png", "arrow", 0, 1);
 				m_combatGraphics.translateObjectByPixel(attack, SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
-				glm::vec3 playerToEnemyVector = m_combatGraphics.getVectorFromTo(player, enemy[target]);
+				glm::vec3 playerToEnemyVector = m_combatGraphics.getVectorFromTo(player, enemy[t]);
 				glm::mat4 motion;
 				motion = glm::translate(motion, (1.0f / 8.0f)*playerToEnemyVector);
 				m_combatGraphics.setAnimation(attack, 2);
@@ -1032,10 +1038,10 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 					m_combatGraphics.idle();
 				}
 			}
-			ss << "You damage " << participants[enemy_index[target]]->getName() << " by " << result << " HP!" << " " << participants[enemy_index[target]]->getName() << " now has only " << participants[enemy_index[target]]->getHPCurrent() << " HP left.";
+			ss << "You damage " << participants[enemy_index[t]]->getName() << " by " << result << " HP!" << " " << participants[enemy_index[t]]->getName() << " now has only " << participants[enemy_index[t]]->getHPCurrent() << " HP left.";
 			m_combatDialogManager.AddMessage(ss.str());
-			if(participants[enemy_index[target]]->getHPCurrent()==0)
-				m_combatGraphics.retextureQuad(enemy[target], "Images/Enemies/shadow_cluster/OWL_BROWN_NOT_READY.png", "DeadOwl");
+			if(participants[enemy_index[t]]->getHPCurrent()==0)
+				m_combatGraphics.retextureQuad(enemy[t], "Images/Enemies/shadow_cluster/OWL_BROWN_NOT_READY.png", "DeadOwl");
 			//m_combatGraphics.setAnimation(attack, 2);
 			//m_combatGraphics.setAnimationMotion(attack, motion);
 			//m_combatGraphics.setAnimationFrameMax(attack, 120);

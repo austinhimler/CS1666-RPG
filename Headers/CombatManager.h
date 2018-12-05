@@ -47,7 +47,7 @@ public:
 private:
 	string atk;
 	Ability abil;
-	int target;
+	string target;
 	bool inCombat;
 	bool allPlayersMoved;
 	int turnOrder;
