@@ -474,6 +474,7 @@ void CombatManager::outputEnemy() {
 		if ((Enemy*)participants[j]->is_Enemy())
 			options.push_back(participants[j]->getName());
 	}
+	options.push_back("Back");
 	m_combatDialogManager.AddSelectableOption("Choose your target", options);
 	turnOrder = 4;
 }
@@ -491,6 +492,7 @@ void CombatManager::textAttributes(Character *c, int optNum)
 			helper.push_back(i); // stores index to helper vector
 		}
 	}
+	options.push_back("Back");
 	m_combatDialogManager.AddSelectableOption("Choose your attack", options);
 
 }
@@ -722,7 +724,12 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				// Pop the event 
 				events.pop();
 				atk = event.options[event.selectedOption];
-				turnOrder = 3;
+				if (atk == "Back")
+				{
+					turnOrder = 0;
+					printed = false;
+				}
+				else turnOrder = 3;
 			}
 		}
 		else if (turnOrder == 3)
@@ -743,7 +750,9 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				// Pop the event 
 				events.pop();
 				target = event.options[event.selectedOption];
-				turnOrder = 5;
+				if (target == "Back")
+					turnOrder = 2;
+				else turnOrder = 5;
 			}
 		}
 		else if (turnOrder == 5)
