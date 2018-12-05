@@ -91,19 +91,19 @@ bool init() {
 		std::cout << "Warning: Linear texture filtering not enabled!" << std::endl;
 	}
 
-	//Create window
-	gWindow = SDL_CreateWindow("CS1666-RPG", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN);
-	if (gWindow == nullptr) {
-		std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
-		return false;
-	}
-	
 	//set all the required Options for GLFW, Use OpenGL 2.1 core
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);//Double-buffering
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+	//Create window
+	gWindow = SDL_CreateWindow("CS1666-RPG", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+	if (gWindow == nullptr) {
+		std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+		return false;
+	}
 
 	//Create rendering context for OpenGL
 	gContext = SDL_GL_CreateContext(gWindow);
