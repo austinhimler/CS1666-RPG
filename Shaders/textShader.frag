@@ -1,6 +1,6 @@
-#version 330 core
+#version 120
 
-in vec2 texCoords;
+varying vec2 texCoords;
 
 uniform sampler2D text;
 uniform vec4 textColor;

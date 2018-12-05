@@ -1,9 +1,9 @@
-#version 330 core
+#version 120
 
-in vec4 vPosition;
-in vec2 vTexCoords;
+attribute vec4 vPosition;
+attribute vec2 vTexCoords;
 
-out vec2 TexCoords;
+varying vec2 TexCoords;
 
 uniform mat4 ctm;
 

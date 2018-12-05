@@ -1,8 +1,8 @@
-#version 330 core
+#version 120
 
-in vec4 vText;
+attribute vec4 vText;
 
-out vec2 texCoords;
+varying vec2 texCoords;
 
 uniform mat4 projection;
 

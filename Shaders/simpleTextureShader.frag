@@ -1,6 +1,6 @@
-#version 330 core
+#version 120
 
-in vec2 TexCoords;
+varying vec2 TexCoords;
 
 uniform sampler2D texture;
 
