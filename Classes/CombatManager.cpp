@@ -967,7 +967,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				glm::mat4 motion2;
 				motion = glm::translate(motion, (1.0f / 20.0f)* playerToEnemyVector);
 				motion2 = glm::translate(motion2, (1.0f / 20.0f)*enemyToPlayerVector);
-				m_combatGraphics.setAnimation(player, 4);
+				m_combatGraphics.setAnimation(player, 3);
 				glm::mat4 multiMotion[2] = { motion, motion2 };
 				int maxFrames[2] = { 20,20 };
 				m_combatGraphics.setAnimationMultiStep(player,2, multiMotion,maxFrames);
@@ -1034,6 +1034,8 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			}
 			ss << "You damage " << participants[enemy_index[target]]->getName() << " by " << result << " HP!" << " " << participants[enemy_index[target]]->getName() << " now has only " << participants[enemy_index[target]]->getHPCurrent() << " HP left.";
 			m_combatDialogManager.AddMessage(ss.str());
+			if(participants[enemy_index[target]]->getHPCurrent()==0)
+				m_combatGraphics.retextureQuad(enemy[target], "Images/Enemies/shadow_cluster/OWL_BROWN_NOT_READY.png", "DeadOwl");
 			//m_combatGraphics.setAnimation(attack, 2);
 			//m_combatGraphics.setAnimationMotion(attack, motion);
 			//m_combatGraphics.setAnimationFrameMax(attack, 120);
