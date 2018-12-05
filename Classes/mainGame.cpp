@@ -1667,36 +1667,6 @@ void playGame() {
 				}
 
 
-				
-
-				//if (isClient) {
-				//	int length;
-				//	int result;
-
-				//	length = sizeof(Player);
-
-				//	// serialize into stream
-				//	char* stream = reinterpret_cast<char*>(&player1);
-				//	result = SDLNet_TCP_Send(clientSocket, stream, length);
-				//	if (result < length) {
-				//		printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-				//	}
-
-
-				//} if (isHost) {
-				//	int result;
-				//	int length;
-				//	length = sizeof(Player);
-
-				//	char buffer[sizeof(Player)];
-				//	result = SDLNet_TCP_Recv(clientSocket, buffer, length);
-				//	notYou = reinterpret_cast<Player*>(buffer);
-
-				//	if (result < length) {
-				//		printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-				//	}
-				//}
-
 				if (doNetworking) {
 					if (isHost) {
 						moveCluster(allEnemies, "random", timePassed, tiles, cycle);
