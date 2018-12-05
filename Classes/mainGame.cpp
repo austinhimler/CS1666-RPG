@@ -1791,9 +1791,7 @@ void playGame() {
 							notyoStream << temp;
 							receiveString += notyoStream.str();
 							notyoStream.flush();
-							if (receiveString.length() > 3)
-							{
-								while (receiveString.find('*') != string::npos)
+								while (receiveString.length()>1&&receiveString.find('*') != string::npos)
 								{
 									std::string notYourSTD = receiveString;
 									notYourSTD = notYourSTD.substr(0, notYourSTD.find("*"));
@@ -1801,7 +1799,6 @@ void playGame() {
 									std::cout << "Recieved PLAYER" << notYourSTD << std::endl;
 									notYou->fromString(notYourSTD);
 								}
-							}
 
 						
 					}
@@ -1819,9 +1816,8 @@ void playGame() {
 						receiveString += receiveStream.str();
 						receiveStream.flush();
 						//std::cout << receiveStream.str() << endl;
-						if (receiveString.length() > 3)
-						{
-							while (receiveString.find('Z') != string::npos)
+						
+							while (receiveString.length() > 1 && receiveString.find('Z') != string::npos)
 							{
 								std::cout << receiveString << endl;
 								std::string notYourSTD = receiveString.substr(0, receiveString.find("*"));
@@ -1835,7 +1831,7 @@ void playGame() {
 
 								std::cout << "enemy x" << allEnemies[0]->xPosition << std::endl;
 							}
-						}
+						
 						
 						//Send Character
 						std::string cppString = player1->ptoString();
