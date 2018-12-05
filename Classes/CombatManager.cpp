@@ -659,6 +659,7 @@ void CombatManager::textMain(bool& printed, bool initialText) {
 	printed = true;
 }
 
+
 int CombatManager::combatMain(std::vector<Character*>& p) 
 {
 	initialText = true;
@@ -746,7 +747,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		m_combatGraphics.setIdleAnimationType(enemy[i], 1);
 	}
 
-	
+	/*
 	//Create cone with similar colors, then remove it
 	int cone = m_combatGraphics.genCone(0.5, 1.0, 36, 2, glm::vec4(1.0, 1.0, 0.0, 0.3));
 	m_combatGraphics.setIdleAnimationType(cone, 2);
@@ -762,9 +763,14 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 	m_combatGraphics.setIdleAnimationType(cube, 2);
 	m_combatGraphics.setIdleAnimationMotion(cube, glm::rotate(0.01f, m_combatGraphics.rotateRandom()));
 	m_combatGraphics.removeObject(cube);
-
-
-
+	
+	int attack = m_combatGraphics.genCone(0.01, 0.1, 36, 2, glm::vec4(0.0, 0.0, 0.0, 1.0));
+	m_combatGraphics.translateObjectByPixel(attack, SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
+	m_combatGraphics.setAnimation(attack, 2);
+	m_combatGraphics.setAnimationFrameMax(attack, 30);
+	m_combatGraphics.transformCtm(attack, glm::rotate((float)(-M_PI / 2.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+	m_combatGraphics.setAnimationMotion(attack, glm::rotate((float)(M_PI / 2.0f), glm::vec3(0.0f, 0.0f, 1.0f)) * glm::translate(glm::mat4(), (1.0f / 30.f) * m_combatGraphics.getVectorFromTo(player, enemy[0])) * glm::rotate((float)(-M_PI / 2.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+	*/
 	// Set up the combat dialog manager
 	m_combatDialogManager = CombatDialogManager();
 	m_combatDialogManager.SetTimePerCharacter(0.005f);
@@ -796,6 +802,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
 				Mix_FreeChunk(gBSound);
+				m_combatGraphics.clean();
 				//Random integer for quitting the game
 				return -69; 
 			}
@@ -857,13 +864,15 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 						break;
 					default:
 						Mix_FreeChunk(gBSound);
-							return result_temp;
+						m_combatGraphics.clean();
+						return result_temp;
 					}
 					switch (int result_temp = updateStatus()) {
 					case IN_COMBAT:
 						break;
 					default:
 						Mix_FreeChunk(gBSound);
+						m_combatGraphics.clean();
 						return result_temp;
 					}
 				
@@ -874,6 +883,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			std::queue<CombatDialogManager::SelectionEvent> events = m_combatDialogManager.GetEvents();
 			if (events.size() > 0)
 			{
+				
 				// Get the first event
 				auto event = events.front();
 				// Pop the event 
@@ -922,6 +932,48 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			ss << "You damage " << participants[enemy_index[target]]->getName() << " by " << result << " HP!" << " " << participants[enemy_index[target]]->getName() << " now has only " << participants[enemy_index[target]]->getHPCurrent() << " HP left.";
 			m_combatDialogManager.AddMessage(ss.str());
 			//PLACE THE ATTACK ANIMATIONS HERE USING THE atk VARIABLE
+			std::cout << atk;
+			if (atk == "Fireball") {
+				//std::cout << "Fireball Reached";
+				//int attack = m_combatGraphics.genSphere(0.1, 36, 2, glm::vec4(1.0, 0.0, 0.0, 0.5));
+				int attack = m_combatGraphics.genQuadTexture(144, 144, "Images/Items/fireball.png", "fireball", 0, 1);
+				m_combatGraphics.translateObjectByPixel(attack, SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
+				glm::vec3 playerToEnemyVector = m_combatGraphics.getVectorFromTo(player, enemy[target]);
+				glm::mat4 motion;
+				motion = glm::translate(motion, (1.0f / 15.0f)* playerToEnemyVector);
+				m_combatGraphics.setAnimation(attack, 2);
+				m_combatGraphics.setAnimationFrameMax(attack, 15);
+				m_combatGraphics.setAnimationMotion(attack, motion);
+			}
+			else if (atk == "Smite") {
+				//std::cout << "Smite Reached";
+				int attack = m_combatGraphics.genSphere(0.4, 36, 2, glm::vec4(1.0, 0.9, 0.0, 0.7));
+				m_combatGraphics.setIdleAnimationMotion(attack, glm::rotate(0.4f, m_combatGraphics.rotateRandom()));
+				m_combatGraphics.translateObjectByPixel(attack, 0.0f, 0.0f, 0.0);
+				glm::vec3 playerToEnemyVector = m_combatGraphics.getVectorFromTo(attack, enemy[target]);
+				glm::mat4 motion;
+				motion = glm::translate(motion, (1.0f / 90.0f)*playerToEnemyVector);
+				//motion = glm::translate(glm::mat4(), )
+				m_combatGraphics.setAnimation(attack, 2);
+				m_combatGraphics.setAnimationFrameMax(attack, 90);
+				m_combatGraphics.setAnimationMotion(attack, motion);
+			}
+			else if (atk == "Arrow Shot") {
+				//std::cout << "Arrow Reached";
+				int attack = m_combatGraphics.genQuadTexture(144, 144, "Images/Items/arrow.png", "arrow", 0, 1);
+				m_combatGraphics.translateObjectByPixel(attack, SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
+				glm::vec3 playerToEnemyVector = m_combatGraphics.getVectorFromTo(player, enemy[target]);
+				glm::mat4 motion;
+				motion = glm::translate(motion, (1.0f / 10.0f)*playerToEnemyVector);
+				m_combatGraphics.setAnimation(attack, 2);
+				m_combatGraphics.setAnimationFrameMax(attack, 10);
+				m_combatGraphics.setAnimationMotion(attack, motion);
+			}
+
+			//m_combatGraphics.setAnimation(attack, 2);
+			//m_combatGraphics.setAnimationMotion(attack, motion);
+			//m_combatGraphics.setAnimationFrameMax(attack, 120);
+
 			if (allPlayers == player_index.size() - 1)
 			{
 				turnOrder = 6;
@@ -945,6 +997,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 					case IN_COMBAT:
 						break;
 					default:
+						m_combatGraphics.clean();
 						Mix_FreeChunk(gBSound);
 						return result_temp;
 					}
@@ -952,6 +1005,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				case IN_COMBAT:
 					break;
 				default:
+					m_combatGraphics.clean();
 					Mix_FreeChunk(gBSound);
 					return result_temp;
 				}
@@ -963,6 +1017,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		SDL_Delay(60);
 	}
 	Mix_FreeChunk(gBSound);
+	m_combatGraphics.clean();
 	return -100;
 
 }
