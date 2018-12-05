@@ -52,7 +52,11 @@ public:
 	int animation_type = 0; //0 = no animation, 1 = motion animation, 2 = motion animation consume
 	int animation_frame = 0;
 	int animation_frame_max = 0;
+	int animation_it = 0;
+	int animation_size;
+	int* animation_frame_max_array;
 	glm::mat4 animation_motion = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
+	glm::mat4* animation_motion_array;
 private:
 };
 
@@ -82,22 +86,25 @@ public:
 	int translateObjectByPixel(int ID, int x, int y, GLfloat z);
 	int transformCtm(int ID, glm::mat4 transform);
 
-	void iterateSpriteAnimation(std::list<GraphicsObject>::iterator it);
-	void animateMotion(std::list<GraphicsObject>::iterator it);
-	void animateMotionConsume(std::list<GraphicsObject>::iterator it);
-
 	glm::vec3 rotateRandom(void);
 
 	int setPosition(int ID, glm::vec3 position);
 	glm::vec3 getPosition(int ID);
 	glm::vec3 getVectorFromTo(int ID1, int ID2);
-
+	
 	int setIdleAnimationType(int ID, int type);
-	int setIdleAnimationMotion(int ID, glm::mat4 motion);
+	void iterateSpriteAnimation(std::list<GraphicsObject>::iterator it); // 1 = sprite animation
+	int setIdleAnimationMotion(int ID, glm::mat4 motion); // 2 = motion animation
 
-	int setAnimation(int ID, int type);
+	int setAnimation(int ID, int type); 
 	int setAnimationMotion(int ID, glm::mat4 motion);
 	int setAnimationFrameMax(int ID, int frame_max);
+	int setAnimationMultiStep(int ID, int animation_size, glm::mat4* animation_motion_array, int* animation_frame_max_array);
+
+	void animateMotion(std::list<GraphicsObject>::iterator it); // 1 = motion animation 
+	void animateMotionConsume(std::list<GraphicsObject>::iterator it); // 2 = motion animation consume
+	void animateMultiStep(std::list<GraphicsObject>::iterator it); // 3 = multistep animation
+	void animateMultiStepConsume(std::list<GraphicsObject>::iterator it); // 4 = multistep animation consume
 
 	// Adds text to render to the screen.
 	// You will need to do this every tick for it to continuously display 

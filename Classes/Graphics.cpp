@@ -149,6 +149,12 @@ void Graphics::idle(void)
 				case 2: //2 = motion animation then consume
 					animateMotionConsume(it);
 					break;
+				case 3: //3 = multistep motion animation
+					animateMultiStep(it);
+					break;
+				case 4: //3 = multistep motion animation then consume
+					animateMultiStepConsume(it);
+					break;
 				default:
 					break;
 			}
@@ -611,49 +617,6 @@ int Graphics::transformCtm(int ID, glm::mat4 transform)
 	}
 }
 
-void Graphics::iterateSpriteAnimation(std::list<GraphicsObject>::iterator it) 
-{
-	int i;
-	if (++it->texture_sheet_it >= it->texture_sheet_size) {
-		it->texture_sheet_it = 0;
-	}
-
-	for (i = 0; i < it->num_vertices; i++) {
-		it->texture_array[i] = glm::vec2((GLfloat)(it->texture_sheet_it + quadTexCoords[i].x) * (1.0 / it->texture_sheet_size), quadTexCoords[i].y);
-	}
-
-	glBindVertexArray(it->VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, it->VBO);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * it->num_vertices, sizeof(glm::vec2) * it->num_vertices, it->texture_array);
-	vTexCoords = glGetAttribLocation(ResourceManager::getShader("simple_texture_shader").Program, "vTexCoords");
-	glEnableVertexAttribArray(vTexCoords);
-	glVertexAttribPointer(vTexCoords, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (GLvoid*)(sizeof(glm::vec4) * it->num_vertices));
-}
-
-void Graphics::animateMotion(std::list<GraphicsObject>::iterator it)
-{
-	if (it->animation_frame >= it->animation_frame_max) {
-		it->animation_frame = 0;
-		it->animation_type = 0;
-		it->animation_motion = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
-	}
-	else {
-		it->animation_frame++;
-		it->ctm = it->ctm * it->animation_motion;
-	}
-}
-
-void Graphics::animateMotionConsume(std::list<GraphicsObject>::iterator it)
-{
-	if (it->animation_frame >= it->animation_frame_max) {
-		eraseBuffer.push_back(it->ID);
-	}
-	else {
-		it->animation_frame++;
-		it->ctm = it->ctm * it->animation_motion;
-	}
-}
-
 glm::vec3 Graphics::rotateRandom(void)
 {
 	GLfloat x, y, z;
@@ -717,6 +680,25 @@ int Graphics::setIdleAnimationType(int ID, int type)
 	}
 }
 
+void Graphics::iterateSpriteAnimation(std::list<GraphicsObject>::iterator it)
+{
+	int i;
+	if (++it->texture_sheet_it >= it->texture_sheet_size) {
+		it->texture_sheet_it = 0;
+	}
+
+	for (i = 0; i < it->num_vertices; i++) {
+		it->texture_array[i] = glm::vec2((GLfloat)(it->texture_sheet_it + quadTexCoords[i].x) * (1.0 / it->texture_sheet_size), quadTexCoords[i].y);
+	}
+
+	glBindVertexArray(it->VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, it->VBO);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * it->num_vertices, sizeof(glm::vec2) * it->num_vertices, it->texture_array);
+	vTexCoords = glGetAttribLocation(ResourceManager::getShader("simple_texture_shader").Program, "vTexCoords");
+	glEnableVertexAttribArray(vTexCoords);
+	glVertexAttribPointer(vTexCoords, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (GLvoid*)(sizeof(glm::vec4) * it->num_vertices));
+}
+
 int Graphics::setIdleAnimationMotion(int ID, glm::mat4 motion)
 {
 	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
@@ -763,6 +745,84 @@ int Graphics::setAnimationFrameMax(int ID, int frame_max)
 	else {
 		return 0;
 	}
+}
+
+int Graphics::setAnimationMultiStep(int ID, int animation_size, glm::mat4* animation_motion_array, int* animation_frame_max_array)
+{
+	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
+	if (it != objectList.end()) {
+		it->animation_size = animation_size;
+		it->animation_motion_array = animation_motion_array;
+		it->animation_frame_max_array = animation_frame_max_array;
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+void Graphics::animateMotion(std::list<GraphicsObject>::iterator it)
+{
+	if (it->animation_frame >= it->animation_frame_max) {
+		it->animation_type = 0;
+		it->animation_frame = 0;
+		it->animation_motion = { { 1.0, 0.0, 0.0, 0.0 },{ 0.0, 1.0, 0.0, 0.0 },{ 0.0, 0.0, 1.0, 0.0 },{ 0.0, 0.0, 0.0, 1.0 } };
+	}
+	else {
+		it->animation_frame++;
+		it->ctm = it->ctm * it->animation_motion;
+	}
+}
+
+void Graphics::animateMotionConsume(std::list<GraphicsObject>::iterator it)
+{
+	if (it->animation_frame >= it->animation_frame_max) {
+		eraseBuffer.push_back(it->ID);
+	}
+	else {
+		it->animation_frame++;
+		it->ctm = it->ctm * it->animation_motion;
+	}
+}
+
+void Graphics::animateMultiStep(std::list<GraphicsObject>::iterator it)
+{
+	if (it->animation_frame >= it->animation_frame_max_array[it->animation_it]) {
+		if (it->animation_it >= it->animation_size) {
+			eraseBuffer.push_back(it->ID);
+			return;
+		}
+		else {
+			it->animation_frame = 0;
+			it->animation_it++;
+		}
+	}
+	else {
+		it->animation_frame++;
+	}
+	it->ctm = it->ctm * it->animation_motion_array[it->animation_it];
+}
+
+void Graphics::animateMultiStepConsume(std::list<GraphicsObject>::iterator it)
+{
+	if (it->animation_frame >= it->animation_frame_max_array[it->animation_it]) {
+		if (it->animation_it >= it->animation_size) {
+			it->animation_type = 0;
+			it->animation_frame = 0;
+			it->animation_it = 0;
+			free(it->animation_frame_max_array);
+			free(it->animation_motion_array);
+			return;
+		}
+		else {
+			it->animation_frame = 0;
+			it->animation_it++;
+		}
+	}
+	else {
+		it->animation_frame++;
+	}
+	it->ctm = it->ctm * it->animation_motion_array[it->animation_it];
 }
 
 void Graphics::addTextToRender(RenderableText text)
