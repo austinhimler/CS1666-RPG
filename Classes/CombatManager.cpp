@@ -873,7 +873,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 						break;
 					default:
 						stringstream ss;
-						ss << "YOU LOST!";
+						ss << "YOU ESCAPED!";
 						m_combatDialogManager.AddMessage(ss.str());
 						for (int i = 0; i < 60; i++) {
 							SDL_Delay(60);

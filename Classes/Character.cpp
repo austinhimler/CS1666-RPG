@@ -74,7 +74,7 @@
 		if (energyCurrent < 0) energyCurrent = 0;
 		else if (energyCurrent > energyMax) energyCurrent = energyMax;
 	}
-
+	int Character::isAlive() { return hpCurrent>0; }
 	void Character::ailmAffect() {
 		if (ailments.size() == 0) return;
 		Ailment ailm;

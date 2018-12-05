@@ -1511,21 +1511,20 @@ void playGame() {
 				cout << "Enemy " << num_enemy + 1 << " Cluster Size: " << enemy->clusterSize << endl;
 				allEnemies.push_back(enemy);
 			}
-
 			for (auto i : allEnemies)
 			{
-				i->setTextureActive(i->getTextureIdle());
-				i->currentMaxFrame = i->getNumIdleAnimationFrames();
-				// Randomly spawn the enemy
-				for (;;)
-				{
-					i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
-					i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
-					int t_tile = (int)(i->xPosition + (i->rectangle.w / 2)) / TILE_WIDTH;
-					t_tile += (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) * 30;
-					if (tiles[t_tile]->mType == 0)
-						break;
-				}
+					i->setTextureActive(i->getTextureIdle());
+					i->currentMaxFrame = i->getNumIdleAnimationFrames();
+					// Randomly spawn the enemy
+					for (;;)
+					{
+						i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
+						i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
+						int t_tile = (int)(i->xPosition + (i->rectangle.w / 2)) / TILE_WIDTH;
+						t_tile += (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) * 30;
+						if (tiles[t_tile]->mType == 0)
+							break;
+					}
 			}
 
 			for (auto i : allEnemies)
@@ -1845,10 +1844,10 @@ void playGame() {
 					inPauseMenu = true;
 				}
 
-				int enemyToRemove = -1;
+				int enemyToRemove = 0;
 				for (auto z : allEnemies)
 				{
-					enemyToRemove++;
+					
 					if (check_collision(player1->rectangle, z->rectangle) && z->combatReady) {
 						z->combatReady = false;
 						z->readyTimeLeft = 3000;
@@ -1861,7 +1860,7 @@ void playGame() {
 							combatants.push_back(i);
 						}
 						allEnemies.erase(allEnemies.begin() + enemyToRemove);
-						charactersOnScreen.erase(charactersOnScreen.begin() + enemyToRemove + 1);
+						charactersOnScreen.erase(charactersOnScreen.begin() + enemyToRemove);
 						inOverworld = false;
 						combatStarted = true;
 						break;
@@ -1872,6 +1871,7 @@ void playGame() {
 						z->combatReady = true;
 						z->setTextureActive(z->getTextureIdle());
 					}
+					enemyToRemove++;
 				}
 				if (doNetworking&&(SDL_GetTicks()-lastSync>25)) {
 					int length;
@@ -2070,6 +2070,10 @@ void playGame() {
 				else if (combatResult == PLAYER_WINS) {
 					if (allEnemies.size() == 0)
 					{
+						for (auto en : charactersOnScreen)
+						{
+							charactersOnScreen.erase(charactersOnScreen.begin());
+						}
 						keepPlaying = false;
 						if (MAP_INDEX + 1 == ALL_MAPS.size())
 						{

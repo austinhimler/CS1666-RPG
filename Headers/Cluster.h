@@ -18,6 +18,7 @@ public:
 	Cluster(Enemy e, int q);
 	*/
 	vector<Character*> characterGroup;
+	int isAlive();
 	int clusterSize;
 	bool combatReady;
 	int readyTimeLeft;
