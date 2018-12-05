@@ -4,9 +4,9 @@ void MPS_TaskAssignment::createAction(Ability* abil, std::vector<Character*> tar
 	Act = Action(*abil, tar);
 }
 //*/
-/*
+
 void MPS_TaskAssignment::createModifiers() {
-	AssignmentLevelModifiers = std::vector<MPS_Modifier*>();
+	
 }
 //*/
 /*

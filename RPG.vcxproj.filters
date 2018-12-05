@@ -205,6 +205,12 @@
     <ClCompile Include="Classes\AI\CombatAI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\AI\MPS_CSModifier.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\AI\MPS_EAModifier.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Attribute.h">
@@ -388,6 +394,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OverworldPathing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\AI\MPS_CSModifier.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\AI\MPS_EAModifier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
