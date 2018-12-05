@@ -56,7 +56,9 @@ namespace AbilityResource {
 			3,
 			60,
 			8,
-			0
+			10,
+			10,
+			6
 		};
 		return base_value[n];
 	}
@@ -100,9 +102,9 @@ namespace AbilityResource {
 	const int abilityType[] = {
 		tDAMAGE, // attack
 		tDAMAGE, // fireball
-		tESCAPE, // escape
+		tDAMAGE, // arrow shot
 		tDEFENSE, // defend
-		tSUMMON, // summon
+		tDAMAGE, // smite
 		tHEALING, // heal
 		tHEALING // mass heal
 				//etc.

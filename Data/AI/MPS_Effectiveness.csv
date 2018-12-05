@@ -1,17 +1,2 @@
-,"	Attack",Fireball,Escape,Defend,Summon,Heal,Mass Heal
-Deal Damage,10,3,0,0,0,0,0
-Increase O Stats,0,0,0,0,0,0,0
-Increase F O Stats,0,0,0,0,0,0,0
-Decrease P D Stats,0,0,0,0,0,0,0
-Increase F Resource,0,0,0,0,0,0,0
-Dispel P HP Buff,0,0,0,0,0,0,0
-Recover HP,0,0,0,0,0,10,6
-Increase D Stats,0,0,0,8,0,0,0
-Decrease P O Stats,0,0,0,0,0,0,0
-Recover F,0,0,0,0,0,0,0
-Increase F D Stats,0,0,0,0,0,0,0
-Decrease P Resource,0,0,0,0,0,0,0
-Prevent P From Action,0,0,0,0,0,0,0
-Increase Resource,0,0,0,0,0,0,0
-Increase F Number,0,0,0,0,10,0,0
-Escape,0,0,60,0,0,0,0
+,"	Attack",Fireball,Arrow Shot,Defend,Smite,Heal,Mass Heal
+Effectiveness,10,3,60,8,10,10,6
