@@ -1812,7 +1812,7 @@ void playGame() {
 						}
 						
 						std::stringstream notyoStream;
-						notyoStream << "#";
+						
 						char temp[100];
 						std::cout << "Host Recieving PLAYER\n" << notyoStream.str().back() << std::endl;
 
@@ -1833,7 +1833,7 @@ void playGame() {
 					{
 						//recieve character and push back
 						std::stringstream receiveStream;
-						receiveStream << "#";
+						
 						char buffer[100];
 						std::cout << "Client Recieving PLAYER\n" << receiveStream.str().back()<< std::endl;
 		
