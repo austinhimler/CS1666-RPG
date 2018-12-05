@@ -62,7 +62,7 @@ std::string Cluster::ptoString()
 	//std::string pString = name + " " + std::to_string(currentFrame) + " " + std::to_string(xPosition) + " " +
 	//	std::to_string(yPosition) + " " + std::to_string(xVelocity) + " " + std::to_string(yVelocity);
 	std::stringstream st;
-	st << xPosition << " " << yPosition << " " << clusterSize << " Z" << std::ends;
+	st << xPosition << " " << yPosition << " " <<xVelocity << " " <<yVelocity << " " << clusterSize << " Z" << std::ends;
 	std::cout << st.str() << std::endl;
 	return st.str();
 }
@@ -77,12 +77,14 @@ void Cluster::fromString(std::string in)
 		vars.push_back(token);
 		in.erase(0, pos + 1);
 	}
-	if (vars.size() > 2)
+	if (vars.size() > 4)
 	{
 		//name = vars[0];
 		xPosition = atof(vars[0].c_str());
 		yPosition = atof(vars[1].c_str());
-		clusterSize = atof(vars[2].c_str());
+		xVelocity = atof(vars[2].c_str());
+		yVelocity = atof(vars[3].c_str());
+		clusterSize = atof(vars[4].c_str());
 
 		return;
 	}
