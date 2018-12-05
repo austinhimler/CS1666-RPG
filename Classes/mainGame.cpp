@@ -1293,7 +1293,17 @@ void playGame() {
 			
 				for (int num_enemy = 0; num_enemy < numEnemies; num_enemy++)
 				{
-					Cluster* enemy = new Cluster((rand() % (ENEMIES_PER_CLUSTER + MAP_INDEX)) + 1);
+					int result;
+					int length = sizeof(int);
+					int param = (rand() % (ENEMIES_PER_CLUSTER + MAP_INDEX)) + 1;
+					Cluster* enemy = new Cluster(param);
+					//printf("Host Sending %d\n", param);
+					//result = SDLNet_TCP_Send(clientSocket, &param, sizeof(int));
+					//if (result < length) {
+					//	printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+					//}
+					//std::cout << "Host Done Sending\n" << std::endl;
+
 					cout << "Enemy " << num_enemy + 1 << " Cluster Size: " << enemy->clusterSize << endl;
 					allEnemies.push_back(enemy);
 				}
@@ -1319,14 +1329,54 @@ void playGame() {
 					cout << "Enemy Coordinates: (" << i->xPosition << "," << i->yPosition << ")" << endl;
 					i->timeSinceLastAnimation = timeSinceLastAnimation;
 					charactersOnScreen.push_back(i);
+
+					////std::string cppString = player1->ptoString();
+					////const char* myString = cppString.c_str();
+					////length = strlen(myString) + 1;
+					////printf("Host Sending %s\n", myString);
+					////result = SDLNet_TCP_Send(clientSocket, myString, length);
+					////if (result < length) {
+					////	printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+					////}
+					////std::cout << "Host Done Sending\n" << std::endl;
 				}
 
 			}
 			else if (isClient) {
-				//recieve character and push back
-				for (int i = 0; i < numEnemies; i++) {
-
+			/*	std::vector<int> params;
+				char temp[100];
+				for (int i = 0; i < numEnemies; i++) {					
+					SDLNet_TCP_Recv(clientSocket, temp, sizeof(int));
 				}
+
+				int j = 0;
+				while (temp[j] != 0) {
+					params.push_back(temp[j] - '0');
+					j++;
+				}
+
+				for (int i = 0; i < params.size(); i++) {
+					std::cout << params[i] << std::endl;
+					Cluster* enemy = new Cluster(params[i]);
+					cout << "Enemy " << i + 1 << " Cluster Size: " << enemy->clusterSize << endl;
+					allEnemies.push_back(enemy);
+				}*/
+				for (int i = 0; i < numEnemies; i++) {
+					Cluster* enemy = new Cluster(1);
+					cout << "Enemy " << i + 1 << " Cluster Size: " << enemy->clusterSize << endl;
+					allEnemies.push_back(enemy);
+				}
+
+
+				for (auto i : allEnemies)
+				{
+					cout << "Enemy Coordinates: (" << i->xPosition << "," << i->yPosition << ")" << endl;
+					i->timeSinceLastAnimation = timeSinceLastAnimation;
+					i->setTextureActive(i->getTextureIdle());
+					i->currentMaxFrame = i->getNumIdleAnimationFrames();
+					charactersOnScreen.push_back(i);
+				}
+
 			}
 		}
 		else {
@@ -1733,17 +1783,17 @@ void playGame() {
 						std::string cppString = player1->ptoString();
 						const char* myString = cppString.c_str();
 						length = strlen(myString) + 1;
-						printf("Host Sending %s\n", myString);
+						printf("Host Sending PLAYER %s\n", myString);
 						result = SDLNet_TCP_Send(clientSocket, myString, length);
 						if (result < length) {
 							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 						}
-						std::cout << "Host Done Sending\n" << std::endl;
+						std::cout << "Host Done Sending PLAYER\n" << std::endl;
 						
 						std::stringstream notyoStream;
 						notyoStream << "#";
 						char temp[100];
-						std::cout << "Host Recieving\n" << notyoStream.str().back() << std::endl;
+						std::cout << "Host Recieving PLAYER\n" << notyoStream.str().back() << std::endl;
 
 						while (notyoStream.str().back() != '*')
 						{
@@ -1753,8 +1803,20 @@ void playGame() {
 						}
 						std::string notYourSTD(notyoStream.str());
 						notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
-						std::cout << "Recieved " << notYourSTD << std::endl;
+						std::cout << "Recieved PLAYER" << notYourSTD << std::endl;
 						notYou->fromString(notYourSTD);
+
+						for (auto i : allEnemies) {
+							std::string cppString = i->ptoString();
+							const char* myString = cppString.c_str();
+							length = strlen(myString) + 1;
+							printf("Host Sending ENEMY %s\n", myString);
+							result = SDLNet_TCP_Send(clientSocket, myString, length);
+							if (result < length) {
+								printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+							}
+							std::cout << "Host Done Sending ENEMY\n" << std::endl;
+						}
 						
 					}
 					else
@@ -1763,7 +1825,7 @@ void playGame() {
 						std::stringstream notyoStream;
 						notyoStream << "#";
 						char temp[100];
-						std::cout << "Client Recieving\n" << notyoStream.str().back()<< std::endl;
+						std::cout << "Client Recieving PLAYER\n" << notyoStream.str().back()<< std::endl;
 		
 						while (notyoStream.str().back()!='*')
 						{
@@ -1773,19 +1835,37 @@ void playGame() {
 						}
 						std::string notYourSTD(notyoStream.str());
 						notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
-						std::cout << "Recieved " << notYourSTD << std::endl;
+						std::cout << "Recieved PLAYER " << notYourSTD << std::endl;
 						notYou->fromString(notYourSTD);
 						
 						//Send Character
 						std::string cppString = player1->ptoString();
 						const char* myString = cppString.c_str();
 						length = strlen(myString) + 1;
-						printf("Client Sending %s\n", myString);
+						printf("Client Sending PLAYER%s\n", myString);
 						result = SDLNet_TCP_Send(clientSocket, myString, length);
 						if (result < length) {
 							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 						}
-						std::cout << "Client Done Sending\n" << std::endl;
+						std::cout << "Client Done Sending PLAYER\n" << std::endl;
+
+						for (auto i : allEnemies) {
+							std::stringstream notyoStream;
+							notyoStream << "#";
+							char temp[100];
+							std::cout << "Client Recieving ENEMY\n" << notyoStream.str().back() << std::endl;
+
+							while (notyoStream.str().back() != '*')
+							{
+								SDLNet_TCP_Recv(clientSocket, temp, 100);
+								notyoStream << temp;
+								std::cout << notyoStream.str() << endl;
+							}
+							std::string notYourSTD(notyoStream.str());
+							notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
+							std::cout << "Recieved ENEMY" << notYourSTD << std::endl;
+							i->fromString(notYourSTD);
+						}
 
 						
 					}
