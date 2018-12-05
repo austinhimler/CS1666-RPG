@@ -5,8 +5,7 @@ MPS_CSModifier::MPS_CSModifier() {
 	Type = MPS_Resource::tASM;
 }
 MPS_CSModifier::MPS_CSModifier(Character* c, int t) {
-	if (c->getHPCurrent() == 0) Val = 1;
-	else if (c->getHPCurrent() == c->getHPMax()) Val = 0;
+	if (c->getHPCurrent() == 0) Val = 0;
 	else Val = c->getHPMax() / c->getHPCurrent();
 	Type = t;
 }

@@ -3,6 +3,11 @@
 MPS_EAModifier::MPS_EAModifier(std::vector<Character*> tar, Ability* abil, int baseEA) {
 	Val = baseEA;
 	if (abil->isAOE()) Val *= 2;
+	if (abil->getType() == AbilityResource::tHEALING) {
+		for (auto& c : tar) {
+			if (c->getHPCurrent() == c->getHPMax()) Val = 0;
+		}
+	}
 	Type = MPS_Resource::tEAM;
 }
 

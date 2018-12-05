@@ -17,7 +17,7 @@ void MPS_Main::readTBP() {
 void MPS_Main::readBEA() {
 	if (BaseEffectiveness.size() != 0) return;
 	std::string Path = "Data/AI/MPS_Effectiveness.csv";
-	MPS_Data BEA_Data = MPS_Data(Path, AbilityResource::abilityNames->size());
+	MPS_Data BEA_Data = MPS_Data(Path, ABILCOUNT);
 	BaseEffectiveness = BEA_Data.getIntData();
 	/*
 	for (int i = 0; i < BaseEffectiveness.size(); i++) {
