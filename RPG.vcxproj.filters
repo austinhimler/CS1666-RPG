@@ -163,7 +163,7 @@
     <ClCompile Include="Classes\CombatManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-	<ClCompile Include="Classes\ResourceManager\ResourceManager.cpp">
+    <ClCompile Include="Classes\ResourceManager\ResourceManager.cpp">
       <Filter>Source Files\ResourceManager</Filter>
     </ClCompile>
     <ClCompile Include="Classes\ResourceManager\Shader.cpp">
@@ -387,6 +387,9 @@
     <ClInclude Include="Headers\AI\MPS_ASModifier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OverworldPathing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="map1.txt">
@@ -420,6 +423,12 @@
     </None>
     <None Include="Data\AI\MPS_Effectiveness.csv">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Shaders\NO_SHADER.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\NO_SHADER.vs">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

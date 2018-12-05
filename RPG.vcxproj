@@ -275,7 +275,7 @@
     <ClInclude Include="Headers\UI\DialogMessage.h" />
     <ClInclude Include="Headers\UI\TextRenderer.h" />
     <ClInclude Include="OverworldPathing.h" />
-	<ClInclude Include="SOIL2\etc1_utils.h" />
+    <ClInclude Include="SOIL2\etc1_utils.h" />
     <ClInclude Include="SOIL2\image_DXT.h" />
     <ClInclude Include="SOIL2\image_helper.h" />
     <ClInclude Include="SOIL2\jo_jpeg.h" />
@@ -299,7 +299,9 @@
     <Text Include="map3.txt" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="Data\AI\MPS_Effectiveness.csv" />
+    <None Include="Data\AI\MPS_Effectiveness.csv" />
+    <None Include="Shaders\NO_SHADER.frag" />
+    <None Include="Shaders\NO_SHADER.vs" />
     <None Include="Shaders\simpleTextureShader.frag" />
     <None Include="Shaders\simpleTextureShader.vs" />
     <None Include="Shaders\textShader.frag" />
