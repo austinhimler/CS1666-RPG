@@ -27,6 +27,7 @@
 #include "../Headers/CombatManager.h"
 #include "../Headers/Cluster.h"
 #include "../Headers/LoadTexture.h"
+#include "../Headers/aStar.h"
 #include "../Headers/Globals.h"
 
 #include "../Headers/ResourceManager/ResourceManager.h"
@@ -70,6 +71,8 @@ int MAP_INDEX = 0;
 Mix_Music *gMusic = NULL;
 Mix_Chunk *gBSound = NULL;
 TTF_Font* font;
+
+aStar pathing;
 
 //Player ONE
 Player* player1 = new Player("nlf4",1,1,1,1,1);
@@ -988,6 +991,34 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Character*> charactersOnScreen
 		SDL_Delay(16);
 	}
 }
+
+/*
+	if dest-x is greater and dest-y is greater:	right or down (random)
+					 ... and dest-y is less: up or right (random)
+.				     ... and dest-y is equal: right
+	if dest-x is equal and dest-y is greater: down
+				   ... and dest-y is less: up
+				   ... and dest-y is equal: (@ destination Node) error with pathing algo
+	if dest-x is less and dest-y is greater: down or left (random)
+				  ... and dest-y is less: left or up (random)
+				  ... and dest-y is equal: left
+*/
+
+int getDirection(Cluster* c) {
+	double dx, dy;
+	int out;
+	dx = c->seqX.front()- (int)c->xPosition / TILE_WIDTH;
+	dy = c->seqY.front() - (int)c->yPosition / TILE_HEIGHT;
+	out = std::atan2(dy, dx) * 180 / -3.14;
+	
+	if (out >= -181 && out < -135) return 1;
+	else if (out >= -135 && out < -45) return 2;
+	else if (out >= -45 && out < 45) return 3;
+	else if (out >= 45 && out < 135) return 0;
+	else if (out >= 135 && out <= 181) return 1;
+}
+
+
 /*
 move location of Cluster cl
 
@@ -999,29 +1030,87 @@ void moveCluster(std::vector<Cluster*> c, std::string move, double time, Tile* m
 	for (auto cl : c) {
 		if (cl->getTextureActive() != cl->getTextureIdleNotReady()) {
 			int a = -1;
-			if (move == "up") a = 0;
-			else if (move == "left") a = 1;
-			else if (move == "down") a = 2;
-			else if (move == "right") a = 3;
-			else if (move == "random" && cycle == 0) {
-				a = rand() % 4;
+			if (move == "pursuit") {
+				if ((std::sqrt((cl->xPosition - player1->xPosition) * (cl->xPosition - player1->xPosition)
+					+ (cl->yPosition - player1->yPosition) * (cl->yPosition - player1->yPosition)) < cl->aRange)) {
+
+					int currentP = (int)(player1->xPosition + player1->rectangle.w / 2) / TILE_WIDTH;
+					currentP += (int)((player1->yPosition + player1->rectangle.h) / TILE_HEIGHT) * 30;
+
+					if (cl->seqX.empty() && cl->seqY.empty()) {
+						/*
+						std::cout << "x0: " << cl->xPosition / TILE_WIDTH << std::endl;
+						std::cout << "y0: " << cl->yPosition / TILE_HEIGHT << std::endl;
+						std::cout << "px0: " << player1->xPosition / TILE_WIDTH << std::endl;
+						std::cout << "py0: " << player1->yPosition / TILE_HEIGHT << std::endl;
+						*/
+						aStar::map m;
+						aStar::point s(cl->xPosition / TILE_WIDTH, cl->yPosition / TILE_HEIGHT);
+						aStar::point e(player1->xPosition / TILE_WIDTH, player1->yPosition / TILE_HEIGHT);
+						std::list<aStar::point> path;
+
+						pathing.search(s, e, m);
+						pathing.path(path);
+						for (std::list<aStar::point>::iterator i = path.begin(); i != path.end(); i++) {
+							if ((*i).x != (int)cl->xPosition / TILE_WIDTH && (*i).y != (int)cl->yPosition) {
+								cl->seqX.push((*i).x);
+								cl->seqY.push((*i).y);
+							}
+
+							//std::cout << "NOTE" << std::endl;
+							//std::cout << "X: " << (*i).x << std::endl;
+							//std::cout << "Y: " << (*i).y << std::endl;
+
+						}
+						
+					}
+					else if (currentP != pathing.lastPlayerLocation) {
+						while (!cl->seqX.empty()) cl->seqX.pop();
+						while (!cl->seqY.empty()) cl->seqY.pop();
+
+						aStar::map m;
+						aStar::point s(cl->xPosition / TILE_WIDTH, cl->yPosition / TILE_HEIGHT);
+						aStar::point e(player1->xPosition / TILE_WIDTH, player1->yPosition / TILE_HEIGHT);
+						std::list<aStar::point> path;
+
+						//std::cout << pathing.search(s, e, m) << std::endl;
+
+						pathing.path(path);
+						for (std::list<aStar::point>::iterator i = path.begin(); i != path.end(); i++) {
+							if ((*i).x != (int)cl->xPosition / TILE_WIDTH && (*i).y != (int)cl->yPosition) {
+								cl->seqX.push((*i).x);
+								cl->seqY.push((*i).y);
+							}
+
+							//std::cout << "BOTE" << std::endl;
+							//std::cout << "X: " << (*i).x << std::endl;
+							//std::cout << "Y: " << (*i).y << std::endl;
+						}
+						
+
+					}
+
+					a = getDirection(cl);
+					//std::cout << a << std::endl;
+					//std::cout << "NOTE" << std::endl;
+					//std::cout << a << std::endl;
+					pathing.lastPlayerLocation = currentP;
+					//std::cout << "NOTE" << std::endl;
+				}
+				else {
+					//random
+					//std::cout << "Boat" << std::endl;
+					while (!cl->seqX.empty()) cl->seqX.pop();
+					while (!cl->seqY.empty()) cl->seqY.pop();
+					if (cycle % 100 == 0) a = rand() % 4;
+					else
+						a = cl->lastDirection;
+					cl->lastDirection = a;
+				}
 			}
-			else if (move == "random" && cycle % 100 == 0) {
-				a = rand() % 4;
-			}
-			else if (move == "random" && cycle % 100 != 0) {
-				a = cl->lastDirection;
-			}
-			cl->lastDirection = a;
+			//std::cout << a << std::endl;
 			cl->xDeltaVelocity = 0;
 			cl->yDeltaVelocity = 0;
-			//std::cout << move << std::endl;
-			/*
-			std::cout << "CLuster" << std::endl;
-			std::cout << cl->xPosition << std::endl;
-			std::cout << cl->yPosition << std::endl;
-			//std::cout << a << std::endl;
-			*/
 
 			if (a == 0) {
 				cl->yDeltaVelocity -= (cl->getAcceleration() * time);
@@ -1146,6 +1235,13 @@ void moveCluster(std::vector<Cluster*> c, std::string move, double time, Tile* m
 			if (cl->xPosition < 0 || (cl->xPosition + cl->getImageWidth() > LEVEL_WIDTH)) {
 				cl->xPosition -= (cl->xVelocity * time);
 			}
+			if (beforeMoveX / TILE_WIDTH <= cl->seqX.front() && cl->seqX.front() <= (int)cl->xPosition / TILE_WIDTH) {
+				if (beforeMoveY / TILE_HEIGHT <= cl->seqY.front() && cl->seqY.front() <= (int)cl->yPosition / TILE_HEIGHT) {
+					cl->seqX.pop();
+					cl->seqY.pop();
+				}
+			}
+			
 			int current = (int)(cl->xPosition + cl->rectangle.w / 2) / TILE_WIDTH;
 			current += (int)((cl->yPosition + cl->rectangle.h) / TILE_HEIGHT) * 30;
 
@@ -1270,7 +1366,7 @@ void playGame() {
 	std::vector<Character*> combatants;
 	player1->refillEnergy();
 
-
+	pathing = aStar();
 	Uint32 timeSinceLastMovement = SDL_GetTicks();
 	Uint32 timeSinceLastAnimation = SDL_GetTicks();
 	Uint32 lastSync = SDL_GetTicks();
@@ -1696,12 +1792,12 @@ void playGame() {
 
 				if (doNetworking) {
 					if (isHost) {
-						moveCluster(allEnemies, "random", timePassed, tiles, cycle);
+						moveCluster(allEnemies, "pursuit", timePassed, tiles, cycle);
 						cycle++;
 					}
 				}
 				else {
-					moveCluster(allEnemies, "random", timePassed, tiles, cycle);
+					moveCluster(allEnemies, "pursuit", timePassed, tiles, cycle);
 					cycle++;
 				}
 
