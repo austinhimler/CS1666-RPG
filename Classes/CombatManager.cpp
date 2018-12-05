@@ -789,6 +789,8 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		// Update the combat dialog manager
 		// We need to know the time between frames so we can update things accordingly. We'll just pass in a set number for now. 
 		// In the future you should pass in the update delta time.
+		
+		
 		m_combatDialogManager.Update(1.0f / 60.0f);
 
 		// Add the renderable texts generated from the combat dialog manager to the renderer
@@ -799,6 +801,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		// You can keep this for now but it will probably have to change down the road
 		m_combatGraphics.idle();
 		while (SDL_PollEvent(&e)) {
+			
 			if (e.type == SDL_QUIT) {
 				Mix_FreeChunk(gBSound);
 				m_combatGraphics.clean();
@@ -862,6 +865,15 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 					case IN_COMBAT:
 						break;
 					default:
+						stringstream ss;
+						ss << "YOU LOST!";
+						m_combatDialogManager.AddMessage(ss.str());
+						for (int i = 0; i < 60; i++) {
+							SDL_Delay(60);
+							m_combatDialogManager.Update(1.0f / 60.0f);
+							m_combatGraphics.addTextsToRender(m_combatDialogManager.GetTextToRender());
+							m_combatGraphics.idle();
+						}
 						Mix_FreeChunk(gBSound);
 						m_combatGraphics.clean();
 						return result_temp;
@@ -870,6 +882,15 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 					case IN_COMBAT:
 						break;
 					default:
+						stringstream ss;
+						ss << "YOU LOST!";
+						m_combatDialogManager.AddMessage(ss.str());
+						for (int i = 0; i < 60; i++) {
+							SDL_Delay(60);
+							m_combatDialogManager.Update(1.0f / 60.0f);
+							m_combatGraphics.addTextsToRender(m_combatDialogManager.GetTextToRender());
+							m_combatGraphics.idle();
+						}
 						Mix_FreeChunk(gBSound);
 						m_combatGraphics.clean();
 						return result_temp;
@@ -928,14 +949,12 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			if (participants[enemy_index[target]]->getHPCurrent() == 0) {
 				livingCount[ENEMY]--;
 			}
-			ss << "You damage " << participants[enemy_index[target]]->getName() << " by " << result << " HP!" << " " << participants[enemy_index[target]]->getName() << " now has only " << participants[enemy_index[target]]->getHPCurrent() << " HP left.";
-			m_combatDialogManager.AddMessage(ss.str());
+			
 			//PLACE THE ATTACK ANIMATIONS HERE USING THE atk VARIABLE
-			std::cout << atk;
+			//std::cout << atk;
 			if (atk == "Fireball") {
 				//std::cout << "Fireball Reached";
-				//int attack = m_combatGraphics.genSphere(0.1, 36, 2, glm::vec4(1.0, 0.0, 0.0, 0.5));
-				int attack = m_combatGraphics.genQuadTexture(144, 144, "Images/Items/fireball.png", "fireball", 0, 1);
+				int attack = m_combatGraphics.genSphere(0.1, 36, 2, glm::vec4(1.0, 0.345, 0.133, 0.4));
 				m_combatGraphics.translateObjectByPixel(attack, SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
 				glm::vec3 playerToEnemyVector = m_combatGraphics.getVectorFromTo(player, enemy[target]);
 				glm::mat4 motion;
@@ -943,6 +962,12 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				m_combatGraphics.setAnimation(attack, 2);
 				m_combatGraphics.setAnimationFrameMax(attack, 15);
 				m_combatGraphics.setAnimationMotion(attack, motion);
+				for (int i = 0; i < 15; i++) {
+					SDL_Delay(60);
+					m_combatDialogManager.Update(1.0f / 60.0f);
+					m_combatGraphics.addTextsToRender(m_combatDialogManager.GetTextToRender());
+					m_combatGraphics.idle();
+				}
 			}
 			else if (atk == "Smite") {
 				//std::cout << "Smite Reached";
@@ -956,6 +981,13 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				m_combatGraphics.setAnimation(attack, 2);
 				m_combatGraphics.setAnimationFrameMax(attack, 90);
 				m_combatGraphics.setAnimationMotion(attack, motion);
+				for (int i = 0; i < 90; i++) {
+					SDL_Delay(60);
+					m_combatDialogManager.Update(1.0f / 60.0f);
+					m_combatGraphics.addTextsToRender(m_combatDialogManager.GetTextToRender());
+					m_combatGraphics.idle();
+				}
+				
 			}
 			else if (atk == "Arrow Shot") {
 				//std::cout << "Arrow Reached";
@@ -963,12 +995,19 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				m_combatGraphics.translateObjectByPixel(attack, SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
 				glm::vec3 playerToEnemyVector = m_combatGraphics.getVectorFromTo(player, enemy[target]);
 				glm::mat4 motion;
-				motion = glm::translate(motion, (1.0f / 10.0f)*playerToEnemyVector);
+				motion = glm::translate(motion, (1.0f / 8.0f)*playerToEnemyVector);
 				m_combatGraphics.setAnimation(attack, 2);
-				m_combatGraphics.setAnimationFrameMax(attack, 10);
+				m_combatGraphics.setAnimationFrameMax(attack, 8);
 				m_combatGraphics.setAnimationMotion(attack, motion);
+				for (int i = 0; i < 8; i++) {
+					SDL_Delay(60);
+					m_combatDialogManager.Update(1.0f / 60.0f);
+					m_combatGraphics.addTextsToRender(m_combatDialogManager.GetTextToRender());
+					m_combatGraphics.idle();
+				}
 			}
-
+			ss << "You damage " << participants[enemy_index[target]]->getName() << " by " << result << " HP!" << " " << participants[enemy_index[target]]->getName() << " now has only " << participants[enemy_index[target]]->getHPCurrent() << " HP left.";
+			m_combatDialogManager.AddMessage(ss.str());
 			//m_combatGraphics.setAnimation(attack, 2);
 			//m_combatGraphics.setAnimationMotion(attack, motion);
 			//m_combatGraphics.setAnimationFrameMax(attack, 120);
@@ -996,6 +1035,15 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 					case IN_COMBAT:
 						break;
 					default:
+						stringstream ss;
+						ss << "YOU WON!!!!";
+						m_combatDialogManager.AddMessage(ss.str());
+						for (int i = 0; i < 60; i++) {
+							SDL_Delay(60);
+							m_combatDialogManager.Update(1.0f / 60.0f);
+							m_combatGraphics.addTextsToRender(m_combatDialogManager.GetTextToRender());
+							m_combatGraphics.idle();
+						}
 						m_combatGraphics.clean();
 						Mix_FreeChunk(gBSound);
 						return result_temp;
@@ -1004,6 +1052,15 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				case IN_COMBAT:
 					break;
 				default:
+					stringstream ss;
+					ss << "YOU WON!!!!";
+					m_combatDialogManager.AddMessage(ss.str());
+					for (int i = 0; i < 60; i++) {
+						SDL_Delay(60);
+						m_combatDialogManager.Update(1.0f / 60.0f);
+						m_combatGraphics.addTextsToRender(m_combatDialogManager.GetTextToRender());
+						m_combatGraphics.idle();
+					}
 					m_combatGraphics.clean();
 					Mix_FreeChunk(gBSound);
 					return result_temp;
