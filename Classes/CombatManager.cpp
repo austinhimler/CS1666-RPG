@@ -620,7 +620,7 @@ void CombatManager::outputEnemy() {
 
 	std::vector<std::string> options;
 	for (int j = 0; j < participants.size(); j++) {
-		if ((Enemy*)participants[j]->is_Enemy())
+		if ((Enemy*)participants[j]->is_Enemy() && participants[j]->getHPCurrent() > 0)
 			options.push_back(participants[j]->getName());
 	}
 	m_combatDialogManager.AddSelectableOption("Choose your target", options);
