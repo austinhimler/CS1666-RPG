@@ -18,6 +18,7 @@
 #include "LoadTexture.h"
 #include "AI/CombatAI.h"
 #include "AI/Action.h"
+#include "ctype.h"
 
 class CombatManager
 {
@@ -73,6 +74,7 @@ private:
 class QueueManager
 {
 public:
+	
 	std::vector<Character*> currTurn;
 	std::vector<Character*> nextTurn;
 	QueueManager(vector<Character*> c);
