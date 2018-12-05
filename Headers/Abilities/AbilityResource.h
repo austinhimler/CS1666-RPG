@@ -56,7 +56,9 @@ namespace AbilityResource {
 			3,
 			60,
 			8,
-			0
+			10,
+			10,
+			6
 		};
 		return base_value[n];
 	}

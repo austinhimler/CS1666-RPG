@@ -635,6 +635,7 @@ void CombatManager::textAttributes(Character *c, int optNum)
 			helper.push_back(i); // stores index to helper vector
 		}
 	}
+	options.push_back("Back");
 	m_combatDialogManager.AddSelectableOption("Choose your attack", options);
 
 }
@@ -877,7 +878,12 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				// Pop the event 
 				events.pop();
 				atk = event.options[event.selectedOption];
-				turnOrder = 3;
+				if (atk == "Back")
+				{
+					turnOrder = 0;
+					printed = false;
+				}
+				else turnOrder = 3;
 			}
 		}
 		else if (turnOrder == 3)
