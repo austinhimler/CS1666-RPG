@@ -29,12 +29,13 @@
 #include "../Headers/LoadTexture.h"
 #include "../Headers/Globals.h"
 
+#include "../Headers/ResourceManager/ResourceManager.h"
+
 // Function declarations
 
 bool init();//Starts up SDL, creates window, and initializes OpenGL
 
 void close();//Frees media and shuts down SDL
-
 
 SDL_Texture* loadImage(std::string fname);
 
@@ -79,33 +80,31 @@ bool init() {
 	// Flag what subsystems to initialize
 	// For now, just video
 	//added audio init
-
     
 	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 		std::cout << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
 		return false;
 	}
-
 	
 	// Set texture filtering to linear
 	if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
 		std::cout << "Warning: Linear texture filtering not enabled!" << std::endl;
 	}
 
+	//set all the required Options for GLFW, Use OpenGL 2.1 core
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);//Double-buffering
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
 	//Create window
-	gWindow = SDL_CreateWindow("CS1666-RPG", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL| SDL_WINDOW_SHOWN);
+	gWindow = SDL_CreateWindow("CS1666-RPG", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 	if (gWindow == nullptr) {
 		std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
 		return false;
 	}
-	
-	//set all the required Options for GLFW, Use OpenGL 3.2 core
-	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-	//SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);//Double-buffering
-	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
 
 	//Create rendering context for OpenGL
 	gContext = SDL_GL_CreateContext(gWindow);
@@ -285,7 +284,6 @@ SDL_Texture* loadImage(std::string fname) {
 }
 
 void close() {
-
 	for (auto i : gTex) {
 		SDL_DestroyTexture(i);
 		i = nullptr;
@@ -313,22 +311,22 @@ void close() {
 
 void playCredits() {
 	//Load the music
-	gMusic = Mix_LoadMUS("CREDIT_IMG/BGM.wav");
+	gMusic = Mix_LoadMUS("Audio/BGM.wav");
 	if (gMusic == NULL)
 		std::cout << "Failed to load music" << std::endl;
 	//Play the music
 	Mix_PlayMusic(gMusic, -1);
 
-	gTex.push_back(loadImage("CREDIT_IMG/dsgCredits.png"));
-	gTex.push_back(loadImage("CREDIT_IMG/RyanKillenCreditImage.jpg")); //Ryan Killen - rek77
-	gTex.push_back(loadImage("CREDIT_IMG/bmbCredits.jpg"));
-	gTex.push_back(loadImage("CREDIT_IMG/dank_farnan_meme.jpg")); //Austin Himler - arh121
-	gTex.push_back(loadImage("CREDIT_IMG/Kexin Wang.jpg"));
-	gTex.push_back(loadImage("CREDIT_IMG/justin.jpg"));
-	gTex.push_back(loadImage("CREDIT_IMG/my_greatest_creation.png")); // jake
-	gTex.push_back(loadImage("CREDIT_IMG/ilum.jpg")); // James Finkel
-	gTex.push_back(loadImage("CREDIT_IMG/SankethKolliCredit.jpg")); //Sanketh Kolli - ssk38
-	gTex.push_back(loadImage("CREDIT_IMG/mjl159Credits.png")); //Mitchell Leng - mjl159
+	gTex.push_back(loadImage("Images/Credits/dsgCredits.png"));
+	gTex.push_back(loadImage("Images/Credits/RyanKillenCreditImage.jpg")); //Ryan Killen - rek77
+	gTex.push_back(loadImage("Images/Credits/bmbCredits.jpg"));
+	gTex.push_back(loadImage("Images/Credits/dank_farnan_meme.jpg")); //Austin Himler - arh121
+	gTex.push_back(loadImage("Images/Credits/Kexin Wang.jpg"));
+	gTex.push_back(loadImage("Images/Credits/justin.jpg"));
+	gTex.push_back(loadImage("Images/Credits/my_greatest_creation.png")); // jake
+	gTex.push_back(loadImage("Images/Credits/ilum.jpg")); // James Finkel
+	gTex.push_back(loadImage("Images/Credits/SankethKolliCredit.jpg")); //Sanketh Kolli - ssk38
+	gTex.push_back(loadImage("Images/Credits/mjl159Credits.png")); //Mitchell Leng - mjl159
 
 
 //This is for the actual credits
@@ -439,10 +437,10 @@ void EndTransition() {
 
 bool characterCreateScreen() {
 	//loads music and starts it
-	gMusic = Mix_LoadMUS("CREDIT_IMG/charactercreate.wav");
+	gMusic = Mix_LoadMUS("Audio/charactercreate.wav");
 	if (gMusic == NULL)
 		std::cout << "Failed to load music" << std::endl;
-	gBSound = Mix_LoadWAV("CREDIT_IMG/BSound.wav");
+	gBSound = Mix_LoadWAV("Audio/BSound.wav");
 	if (gBSound == NULL)
 	{
 		printf("Failed to load Button sound effect! SDL_mixer Error: %s\n", Mix_GetError());
@@ -512,6 +510,7 @@ bool characterCreateScreen() {
 	LoadTexture background; 
 	background.loadFromFile("Images/UI/CreateScreen/characterCreateV2NoButtons.png",gRenderer);
 	SDL_Event e;
+	//onCharacterCreate = false;
 	while (onCharacterCreate) {
 		while (SDL_PollEvent(&e)) {
 
@@ -1244,6 +1243,8 @@ void playGame() {
 	std::vector<Character*> playersOnScreen;
 	playersOnScreen.push_back(player1);
 	std::vector<Character*> combatants;
+  player1->refillEnergy();
+
 
 	Uint32 timeSinceLastMovement = SDL_GetTicks();
 	Uint32 timeSinceLastAnimation = SDL_GetTicks();
@@ -1443,7 +1444,6 @@ void playGame() {
 		int response = 0;
 
 		charactersOnScreen.push_back(player1);
-
 
 		std::cout << player1->xPosition;
 		std::cout << "\n";
@@ -1937,6 +1937,11 @@ void playGame() {
 				std::cout << combatResult << std::endl;
 				if (combatResult == ENEMY_WINS) {
 					cout << "\nYOU HAVE DIED\nGAME OVER MAN, GAME OVER" << endl;
+					exit(1);
+				}
+				//Random integer for Quitting the game
+				else if (combatResult == -69)
+				{
 					exit(1);
 				}
 				else if (combatResult == PLAYER_WINS) {

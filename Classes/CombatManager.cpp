@@ -1,8 +1,6 @@
 #include "../Headers/CombatManager.h"
 #include <stdio.h>
 
-
-
 QueueManager::QueueManager(vector<Character *> c)
 {
 	for (auto C : c) {
@@ -63,10 +61,15 @@ void QueueManager::vectorCopy(vector<Character*>& cT, vector<Character*>& nT)
 	}
 }
 
-//CombatManager::CombatManager(){}
+CombatManager::CombatManager()
+{
 
+}
 
-//CombatManager::~CombatManager(){}
+CombatManager::~CombatManager()
+{
+
+}
 
 int CombatManager::checkCombatStatus() {
 	if (livingCount[PLAYER] == 0) return ENEMY_WINS;
@@ -93,9 +96,8 @@ int CombatManager::updateStatus() {
 	}
 	return checkCombatStatus();
 }
-//*/
 
-Action CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
+Action CombatManager::ActionByAI(Character* c, int EnemyActionOrderCount) {
 	std::vector<Player*> Players;
 	std::vector<Enemy*> Friends;
 	for (int i = 0; i < participants.size(); i++) {
@@ -107,23 +109,147 @@ Action CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
 	AI = CombatAI((Enemy*)c, Players, Friends);
 	return AI.getBestAction();
 }
-int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
-	//vector<int> ailments;
+enum BattleState
+{
+	BATTLE,			// When normal battle messages are occuring
+	MOVE_SELECTION,	// When we are awaiting the move selection
+	TARGET_SELECTION, // When we are awaiting a target selection
+};
+
+BattleState m_currentState = BATTLE;
+
+int CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
+	while (c->getEnergyCurrent() != 0 && ParticipantsStatus[enemy_index[EnemyActionOrderCount]] == IN_COMBAT) {
+		// AI decides which action to take
+		Action ActionToTake = ActionByAI(c, EnemyActionOrderCount);
+		// Carry out action and out put result for every target
+		std::vector<Character*> tars = ActionToTake.getTar();
+		int TarNum = tars.size();
+		Ability* abil = ActionToTake.getAbil();
+		//std::cout << c->getEnergyCurrent() << " " << abil->getEnergyCost() << std::endl;
+		if (c->getEnergyCurrent() < abil->getEnergyCost()) {
+			break;
+		}
+		else {
+			for (int i = 0; i < TarNum; i++) { // act on every target and output result
+				int result = tars[i]->beingTarget(abil);
+				c->updateEnergy(abil);
+				// output ability name
+				m_combatDialogManager.AddMessage(c->getName() + " uses " + AbilityResource::abilityNames[abil->getName()]);
+				//output target
+				switch (abil->getType()) {
+					using namespace AbilityResource;
+				case tSUMMON:
+				case tDEFENSE:
+				case tESCAPE:
+					m_combatDialogManager.AddMessage(c->getName() + " uses " + AbilityResource::abilityNames[abil->getName()]);
+					break;
+				default:
+					m_combatDialogManager.AddMessage(c->getName() + " uses " + AbilityResource::abilityNames[abil->getName()] + " to " + tars[i]->getName());
+					break;
+				}
+				// output impact
+				std::string stmp;
+				switch (abil->getType()) {
+				case AbilityResource::tDAMAGE:
+					stmp = tars[i]->getName() + "'s HP is decreased by " + std::to_string(result) + "!\n";
+					stmp += tars[i]->getName() + " now has " + std::to_string(participants[0]->getHPCurrent()) + " HP left.";
+					m_combatDialogManager.AddMessage(stmp);
+					break;
+				case AbilityResource::tSUMMON:
+					stmp = "NLF4 is lecturing, can't make it.";
+					m_combatDialogManager.AddMessage(stmp);
+					break;
+				case AbilityResource::tESCAPE:
+					if (result == -2) {
+						stmp = c->getName() + " has escaped from combat!";
+						m_combatDialogManager.AddMessage(stmp);
+						ParticipantsStatus[enemy_index[EnemyActionOrderCount]] = ESCAPED;
+						livingCount[ENEMY]--;
+						if (livingCount[ENEMY] <= 0) {
+							return PLAYER_WINS;
+						}
+					}
+					else {
+						stmp = c->getName() + " tried to escape but failed.";
+						m_combatDialogManager.AddMessage(stmp);
+					}
+					break;
+				case AbilityResource::tDEFENSE:
+					stmp = c->getName() + "'s Energy Regeneration for next round will be increased.";
+					m_combatDialogManager.AddMessage(stmp);
+					return IN_COMBAT;
+					break;
+				default:
+					break;
+				}
+				// check if the target is dead
+				if (tars[i]->getHPCurrent() == 0) {
+					stmp = tars[i]->getName() + " is dead!";
+					m_combatDialogManager.AddMessage(stmp);
+					if (!tars[i]->is_Enemy()) {
+						livingCount[PLAYER]--;
+						for (auto& pi : player_index) {
+							if (participants[pi] == tars[i]) {
+								ParticipantsStatus[pi] = DEAD;
+								break;
+							}
+						}
+					}
+					else {
+						livingCount[ENEMY]--;
+						for (auto& pi : enemy_index) {
+							if (participants[pi] == tars[i]) {
+								ParticipantsStatus[pi] = DEAD;
+								break;
+							}
+						}
+					}
+					int temp_status = checkCombatStatus();
+					if (temp_status != IN_COMBAT) return temp_status;
+				}
+			}
+		}
+		//*/
+			/*
+			//Enemy attack player
+			std::vector<Ability> temp = c->getAbilities();
+			int target = rand() % player_index.size();
+			int result = participants[player_index[target]]->beingTarget(&temp[0]);
+			stringstream ss;
+			ss << c->getName() << " damages you by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left.";
+			m_combatDialogManager.AddMessage(ss.str());
+			//*/
+			/*if (ailments.size() == 0)
+			{
+				//std::cout << "Their attack did not have any status effect on you." << std::endl;
+				m_combatDialogManager.AddMessage("Their attack did not have any status effect on you.");
+			}
+			else {
+
+			}*/
+	}
+	m_combatDialogManager.ClearEvents();
+}
+
+int CombatManager::textAction(Character* c) {
+
+	vector<int> ailments;
 	if (c->is_Enemy() == true)
 	{
-		while (c->getEnergyCurrent() != 0 && ParticipantsStatus[enemy_index[EnemyActionOrderCount]] == IN_COMBAT) {
+		/*while (c->getEnergyCurrent() != 0 && ParticipantsStatus[enemy_index[EnemyActionOrderCount]] == IN_COMBAT) {
 			//Enemy takes action
 
 			// AI decides which action to take 
-			Action ActionToTake = takeActionByAI(c, EnemyActionOrderCount);
-			/** Carry out action and out put result for every target **/
+			Action ActionToTake = ActionByAI(c, EnemyActionOrderCount);
+			// Carry out action and out put result for every target 
 			std::vector<Character*> tars = ActionToTake.getTar();
 			int TarNum = tars.size();
 			Ability* abil = ActionToTake.getAbil();
 			for (int i = 0; i < TarNum; i++) { // act on every target and output result
 				int result = tars[i]->beingTarget(abil);
 				c->updateEnergy(abil);
-				/** output to console **/
+				// output to console 
 				// output ability name
 				std::cout << c->getName() << " uses " << AbilityResource::abilityNames[abil->getName()] << std::endl;
 				//output target
@@ -190,45 +316,83 @@ int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
 					int temp_status = checkCombatStatus();
 					if (temp_status != IN_COMBAT) return temp_status;
 				}
-			}
-			/* for attack random player
-			//std::vector<Ability> temp = c->getAbilities();
-			//int target = rand() % player_index.size();
-			//int result = participants[player_index[target]]->beingTarget(&temp[0]);
-			//std::cout << c->getName() << " damages you slightly by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left." << std::endl;
-			//*/
-			/* for attack randome player - with ailments
-			if (ailments.size() == 0)
-			{
-				std::cout << "Their attack did not have any status effect on you." << std::endl;
-			}
-			else {
-
-			}//*/
-
-			/* for attack random player
-			if (participants[player_index[target]]->getHPCurrent() == 0) {
-				std::cout << "Why are your so weak? You are dead, dude!" << std::endl;
-				inCombat = false;
-				return ENEMY_WINS;
-			}//*/
+			}*/
+		//Enemy attack player
+		std::vector<Ability> temp = c->getAbilities();
+		int target = rand() % player_index.size();
+		int result = participants[player_index[target]]->beingTarget(&temp[0]);
+		stringstream ss;
+		ss << c->getName() << " damages you by " << result << " HP!" << " You now still have " << participants[0]->getHPCurrent() << " HP left.";
+		m_combatDialogManager.AddMessage(ss.str());
+		
+		/*if (ailments.size() == 0) 
+		{ 
+			//std::cout << "Their attack did not have any status effect on you." << std::endl;
+			m_combatDialogManager.AddMessage("Their attack did not have any status effect on you.");
 		}
+		else {
+
+		}*/
+		if (participants[player_index[target]]->getHPCurrent() == 0) {
+			//std::cout << "Why are your so weak? You are dead, dude!" << std::endl;
+			m_combatDialogManager.AddMessage("Why are your so weak? You are dead, dude!");
+			inCombat = false;
+			return ENEMY_WINS;
+		}
+		m_combatDialogManager.ClearEvents();
 	}
 	else
 	{
+		// Get the recent events from the combat dialog manager
+		
+		std::queue<CombatDialogManager::SelectionEvent> events = m_combatDialogManager.GetEvents();
+		if (events.size() > 0)
+		{
+			// A selection has been made
+			while(events.size() > 0)
+			{
+				// Get the first event
+				auto event = events.front();
+				// Pop the event 
+				events.pop();
+				if (event.options[event.selectedOption].length() > 10 || event.options[event.selectedOption] == "Escape")
+				{
+					int status = performEvent(c, event.options[event.selectedOption], event.selectedOption);
+					if (status != 1)
+						return status;
+				}
+				
+			}
+		}
+		// Clear the events
+		m_combatDialogManager.ClearEvents();
+
+		/*
 		bool takingAction = true;
 		bool ReturningToMainMenu;
 		while (takingAction) {
 			ReturningToMainMenu = false;
 			int action = -1;
 			std::vector<int> index_helper = enemy_index;
+
+			// Originally you had a while loop here that waited for user input.
+			// You cannot idle like this. We need to keep rendering while we wait for input, otherwise
+			// the OS will think that the application has become unresponsive.
+			// Potential solutions would be to have some sort of battle state machine
+			// You will need to rewrite the following battle code in this function to do this.
+			// I started and realised you'd be better off doing it yourself, you understand it more :)
+
 			while (action <= 0 || action > 8) {
 				std::cin >> action;
 			}
+		if (movementAction == -1 && input received)
+		{
+			//m_combatDialog.AddMessage("Which one? Select by option number NUM 2");
 			std::cout << "Which one? Select by option number" << std::endl;
 			int char_selection;
 			switch (action) {
 			case 6:
+				m_combatDialogManager.AddMessage("Just kidding. You don't have SHEETz coffee here");
 				std::cout << "Just kidding. You don't have SHEETz coffee here\n" << std::endl;
 				break;
 			case 7:
@@ -264,7 +428,8 @@ int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
 					std::cin >> abil_selection;
 					abil_selection--;
 
-					
+					std::cout << AbilityResource::abilityNames[action].size() << std::endl;
+
 					if (abil_selection >= 0 && abil_selection < helper.size()) { // if a valid selection
 						if (abil_selection == helper.size() - 1) {
 							ReturningToMainMenu = true;
@@ -324,7 +489,6 @@ int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
 					// get target selection
 					int target = -1;
 					while (target < 0) {
-
 						while (target < 0 || target >= enemy_index.size())
 						{
 							std::cin >> target;
@@ -332,16 +496,15 @@ int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
 							if (target >= enemy_index.size() - 1)
 								cout << "Enter a valid enemy number\n";
 						}
-						if (participants[enemy_index[target]]->getHPCurrent() <= 0) {
-							std::cout << "That enemy is dead." << std::endl;
+						if (participants[enemy_index[target]]->getHPCurrent() == 0) {
+							std::cout << "That eneny is dead." << std::endl;
 							target = -1;
 						}
 					}
-					//target--;
+					target--;
 					int result = participants[enemy_index[target]]->beingTarget(&abil_temp[helper[abil_selection]]);
 					if (participants[enemy_index[target]]->getHPCurrent() == 0) {
 						livingCount[ENEMY]--;
-						ParticipantsStatus[enemy_index[target]] = DEAD;
 					}
 					std::cout << "You damage " << participants[enemy_index[target]]->getName() << " amazingly by " << result << " HP!" << " " << participants[enemy_index[target]]->getName() << " now has only " << participants[enemy_index[target]]->getHPCurrent() << " HP left." << std::endl;
 					break;
@@ -368,10 +531,10 @@ int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
 				}
 			}
 			if (takingAction) {
-				std::cout << "What else do you want to do? Select by option number." << std::endl;
+				std::cout << "MENU 2: What else do you want to do? Select by option number." << std::endl;
 				std::cout << "What do you want to do? Select by option number" << std::endl;
 				std::cout << "1. Strength Abilities" << std::endl;
-				std::cout << "2. Intelligence Abilities" << std::endl;
+				std::cout << "2. Intelligent Abilities" << std::endl;
 				std::cout << "3. Dexerity Abilities" << std::endl;
 				std::cout << "4. Constitution Abilities" << std::endl;
 				std::cout << "5. Faith Abilities" << std::endl;
@@ -380,146 +543,90 @@ int CombatManager::textAction(Character* c, int EnemyActionOrderCount) {
 				std::cout << "8. Enemy Stats" << std::endl;
 			}
 		}
+		*/
 	}
 
 	return IN_COMBAT;
+}
+
+int CombatManager::performEvent(Character *c, string option, int optNum)
+{
+	m_combatDialogManager.ClearEvents();
+	int returnVal = 1;
+	// Simple output message
+	stringstream ss;
+	ss << "You selected " << option;
+	m_combatDialogManager.AddMessage(ss.str());
+	switch (optNum) {
+	case 5:
+		returnVal = PLAYER_ESCAPES;
+		break;
+	case 3:
+		//Do defense buff
+		returnVal = 1;
+		turnOrder = 6;
+		break;
+	default:
+		textAttributes(c, optNum);
+		turnOrder = 2;
+		//outputEnemy();
+		break;
+	}
+	return returnVal;
 }
 
 void CombatManager::outputEnemy() {
-	int i = 1;
+	m_combatDialogManager.ClearEvents();
+
+	std::vector<std::string> options;
 	for (int j = 0; j < participants.size(); j++) {
 		if ((Enemy*)participants[j]->is_Enemy())
-			std::cout << i++ << ". " << participants[j]->getName() << std::endl;
+			options.push_back(participants[j]->getName());
 	}
+	m_combatDialogManager.AddSelectableOption("Choose your target", options);
+	turnOrder = 4;
 }
 
-int CombatManager::takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e) {
-	/*
-		If c is an emeny, do enemy attack
-		Else, wait for user input
-		If mouse hovers over player or enemy, display stats in info screen
-		If attribute/inventory buttons are clicked, display options in info screen
-		If a skill is clicked wait for user to click on character to use the skill on
-		If energy = 0 or player clicks End Turn, return
-	*/
-
-	int charImageX = 0;
-	int charImageY = 0;
-	int charImageW = 200;
-	int charImageH = 148;
-
-	if (c->is_Enemy() == true)
-	{
-		//Enemy attack player
-	}
-	else
-	{
-		bool takingAction = true;
-		while (takingAction) {
-			
-
-			while (SDL_PollEvent(&e))
-			{
-				int mouseX, mouseY;
-				SDL_GetMouseState(&mouseX, &mouseY);
-				
-				for (auto i : buttons)
-				{
-					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
-						((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
-					{
-						if (i->type == "character")
-						{
-							//Display character info in info sheet
-						}
-						else if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN)
-						{
-							bool abil_button = true;
-							
-							/*
-							while (abil_button) {
-								std::vector<Button*> Abil_Buttons;
-								setNewButtons(Abil_Buttons, i->attribute);
-								
-								
-								if(Escape button is clicked) {
-								Ability* a = c->abilities[c->getHelp(ESCAPE)];
-									if(c->beingTarget(a) == -1) {
-										// escape successfully
-										// play animation
-										// end combat
-									}
-									else {
-										//escape failed
-										//play animation
-									}
-								}
-								if(Ability buttons are clicked) {
-									Ability* a = c->abilities[c->getHelp(the abilities whose button is clicked)];
-									// create/activate character buttons
-									while(Character buttons are clicked) {
-										Character* target = the character whose button is clicked
-										int result = target->beingTarget(a); // result gives the how many hp increased or decresed
-									}
-								}
-							
-							}//*/
-						}
-					}
-				}
-			}//*/
-
-			if (c->getEnergyCurrent() == 0) {
-				takingAction = false;
-				break;
-			}
-			bool temp = false;
-			for (auto& i : enemy_index) { // check whether at least 1 enemy survives
-				if (participants[i]->getHPCurrent() != 0) temp = true;
-			}
-			if (!temp) {
-				takingAction = false;
-				inCombat = false;
-				break;
-			}
+void CombatManager::textAttributes(Character *c, int optNum)
+{
+	//m_combatDialogManager.ClearEvents();
+	std::vector<std::string> options;
+	std::vector<Ability> abil_temp = c->getAbilities(); // get ability lists of the character
+	std::vector<int> helper; // stores relative index of the abilites within the same attribute category
+	int k = 1;
+	for (int i = 0; i < abil_temp.size(); i++) {
+		if (optNum == AbilityResource::abilityAttr[abil_temp[i].getName()][0]) { //if the ability is of current attribute
+			abil = abil_temp[i];
+			//std::cout << k << ". " << AbilityResource::abilityNames[abil_temp[i].getName()] << std::endl; // print as an option
+			options.push_back(AbilityResource::abilityNames[abil_temp[i].getName()]);
+			helper.push_back(i); // stores index to helper vector
 		}
 	}
-
-	return IN_COMBAT;
+	m_combatDialogManager.AddSelectableOption("Choose your attack", options);
 
 }
 
-/*
-// t gives which of the intial 6 buttons are pressed
-void CombatManager::setNewButtons(std::vector<Button*>& buttons, int t) {
-	int bw = 100, bh = 50;
-	int num_per_row = 1, num_per_col = 1;
-	if (t >= STR && t <= FAI) { // if the button pressed is an attribute button
-		for (int i = 0; i < AbilityResource::abilityNames[t].size(); i++) {
-			buttons.push_back(new Button("Abilty", info_box.x + 5 * (i%num_per_row * 50), info_box.y + 10 * ((i / num_per_row) % num_per_col * 50), bw, bh, "Images/UI/CombatScene/Button.png", AbilityResource::abilityNames[t][i], gRenderer));
-		}
-	}
-	else { // if the button is the inventory button
-		// create button for every item in inveotry
-	}
-}	//*/
-
-void CombatManager::textMain(bool& printed) {
+void CombatManager::textMain(bool& printed, bool initialText) {
 	if (printed) return;
-	std::cout << "What do you want to do? Select by option number" << std::endl;
-	std::cout << "1. Strength Abilities" << std::endl;
-	std::cout << "2. Intelligence Abilities" << std::endl;
-	std::cout << "3. Dexerity Abilities" << std::endl;
-	std::cout << "4. Constitution Abilities" << std::endl;
-	std::cout << "5. Faith Abilities" << std::endl;
-	std::cout << "6. Inventory" << std::endl;
-	std::cout << "7. Player Stats" << std::endl;
-	std::cout << "8. Enemy Stats" << std::endl;
+	if (initialText)
+	{
+		m_combatDialogManager.AddMessage("You've encountered the Owls!"); 
+	}
+	std::vector<std::string> options;
+	options.push_back("Strength Abilities");
+	options.push_back("Intelligence Abilities");
+	options.push_back("Dexerity Abilities");
+	options.push_back("Constitution Abilities");
+	options.push_back("Faith Abilities");	
+	options.push_back("Escape");
+	
+	m_combatDialogManager.AddSelectableOption("What do you want to do?", options);
 	printed = true;
 }
 
 int CombatManager::combatMain(std::vector<Character*>& p) 
 {
+	initialText = true;
 	participants = p;
 
 	std::cerr << participants.size() << std::endl;
@@ -575,156 +682,231 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 	SDL_Event e;
 	//background.loadFromFile("Images/UI/CombatScene/combatScene.png");
 	
-	//TTF_Font* font = Helper::setFont("Fonts/Stacked pixel.ttf", 25);
-	//SDL_Color txt_color = {0,0,0,0};
-	/*
+	TTF_Font* font = Helper::setFont("Fonts/Stacked pixel.ttf", 25);
+	SDL_Color txt_color = {0,0,0,0};
+	
 	int bw = 100;
-	int bh = 50;
-	std::vector<Button*> buttons;
-	buttons.push_back(new Button("character", scene_box.x + 10, scene_box.y + 200, bw, bh, "Images/Player/Player_Idle.png", "", gRenderer));
-	buttons.push_back(new Button("character", scene_box.x + 500, scene_box.y + 200, bw, bh, "Images/Enemies/shadow_cluster/owl.png", "", gRenderer));
-	buttons.push_back(new Button("button", ui_box.x , ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[STR], gRenderer));
-	buttons.push_back(new Button("button", ui_box.x, ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[INT], gRenderer));
-	buttons.push_back(new Button("button", ui_box.x, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[DEX], gRenderer));
-	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 10, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[CON], gRenderer));
-	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 60, bw, bh, "Images/UI/CombatScene/Button.png", ATTR_NAMES[FAI], gRenderer));
-	buttons.push_back(new Button("button", ui_box.x + 200, ui_box.y + 110, bw, bh, "Images/UI/CombatScene/Button.png", "Inventory", gRenderer));
-	*/
+	int bh = 50;	
 
 	bool printed = false; // for text combat ui
 
-	SDL_GLContext glcontext = SDL_GL_CreateContext(gWindow);
-	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	//glMatrixMode(GL_PROJECTION);
-	//glLoadIdentity();
-	//glOrtho(0.0f, 720, 720, 0.0f, 0.0f, 1.0f);
-	glewInit();
-	Graphics combatGraphics;
-	combatGraphics.init();
-	combatGraphics.display();
-	combatGraphics.rotateRandom();
-	//glMatrixMode(GL_PROJECTION);
-	//glLoadIdentity();
-	//glOrtho(0.0f, 720, 720, 0.0f, 0.0f, 1.0f);
+	//OpenGL Setup
+	//glewInit();
+
+	// We shouldn't initialize the graphics class every time we run into a battle. Id recommend initializing it once, then using it
+	// Same goes for the dialog manager.
+	// I'll leave this up to you to do
+	m_combatGraphics.init();
+
+	//Create Player with Player Texture, translate it, then set it to animate the sprite
+	int player = m_combatGraphics.genQuadTexture(144, 144, "Images/Player/Idle_Down.png", "player", 0, 6);
+	m_combatGraphics.translateObjectByPixel(player, SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
+	m_combatGraphics.setIdleAnimationType(player, 1);
+	//Create Enemy with Player Texture, translate it, retexture it to owl, then set it to animate the sprite
+	int enemy = m_combatGraphics.genQuadTexture(144, 144, "Images/Player/Idle_Down.png", "player", 0, 6);
+	m_combatGraphics.translateObjectByPixel(enemy, 4 * SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
+	m_combatGraphics.retextureQuad(enemy, "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png", "owl");
+	m_combatGraphics.setIdleAnimationType(enemy, 1);
+	//Create cone with similar colors, then remove it
+	int cone = m_combatGraphics.genCone(0.5, 1.0, 36, 2, glm::vec4(1.0, 1.0, 0.0, 0.3));
+	m_combatGraphics.setIdleAnimationType(cone, 2);
+	m_combatGraphics.setIdleAnimationMotion(cone, glm::rotate(0.01f, m_combatGraphics.rotateRandom()));
+	m_combatGraphics.removeObject(cone);
+	//Create sphere with similar colorsm then set to animate with motion
+	int sphere = m_combatGraphics.genSphere(0.5, 36, 1, glm::vec4());
+	m_combatGraphics.setIdleAnimationType(sphere, 2);
+	m_combatGraphics.setIdleAnimationMotion(sphere, glm::rotate(0.01f, m_combatGraphics.rotateRandom()));
+	//m_combatGraphics.removeObject(sphere);
+	//Create a cube with random colors
+	int cube = m_combatGraphics.genCube(0, glm::vec4());
+	m_combatGraphics.setIdleAnimationType(cube, 2);
+	m_combatGraphics.setIdleAnimationMotion(cube, glm::rotate(0.01f, m_combatGraphics.rotateRandom()));
+	m_combatGraphics.removeObject(cube);
+
+
+
+	// Set up the combat dialog manager
+	m_combatDialogManager = CombatDialogManager();
+	m_combatDialogManager.SetTimePerCharacter(0.005f);
+	m_combatDialogManager.SetWaitTime(.2);
+	m_combatDialogManager.SetColor(glm::vec4(0.0, 0.0, 0.0, 1.0));
+	m_combatDialogManager.SetSelectionColor(glm::vec4(0.0, 1.0, 0.0, 1.0));
+	m_combatDialogManager.SetFont(ResourceManager::getFontData("stacked_pixel"));
+
+	m_combatGraphics.display();
+	m_combatGraphics.rotateRandom();
+	
 
 	int width, height;
-	
+	int allPlayers = 0;
 	while (inCombat) {
-		
-		//combatGraphics.idle();
+		//printf("%d", turnOrder);
+		// Update the combat dialog manager
+		// We need to know the time between frames so we can update things accordingly. We'll just pass in a set number for now. 
+		// In the future you should pass in the update delta time.
+		m_combatDialogManager.Update(1.0f / 60.0f);
+
+		// Add the renderable texts generated from the combat dialog manager to the renderer
+		m_combatGraphics.addTextsToRender(m_combatDialogManager.GetTextToRender());
+
+		// This isnt a great way to idle with 3d graphics, you'll run into a host of issues.
+		// You should only be updating the screen every 1/60 of a second (for a 60fps game)
+		// and updating and interpolating based on the delta time
+		// You can keep this for now but it will probably have to change down the road
+		m_combatGraphics.idle();
 		while (SDL_PollEvent(&e)) {
-			int mouseX, mouseY;
-			SDL_GetMouseState(&mouseX, &mouseY);
-			//buttons 45 width, 45 height starts at 66x 518 y
-			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN)
-			{
-				for (int i = 0; i < 6; i++) {
-					if (mouseX > (66 + i%3 * 90) && mouseX < 111 + i%3 * 90) {
-						if (mouseY > (518 + i / 3 * 90) && mouseY < (573 + i / 3 * 90)) {
-							switch (i) {
-							case 0:
-								std::cout << "Strength";
-								//Strength Ability
-							case 1:
-								//Intelligence Ability
-								std::cout << "Intelligence";
-							case 2:
-								//Dexterity Ability
-								std::cout << "Dexterity";
-							case 3:
-								//Constitution Ability
-								std::cout << "Constitution";
-							case 4:
-								//Faith Ability
-								std::cout << "Faith";
-							case 5:
-								std::cout << "Miscellaneous";
-							}
+			if (e.type == SDL_QUIT) {
+				Mix_FreeChunk(gBSound);
+				//Random integer for quitting the game
+				return -69; 
+			}
+			gBSound = Mix_LoadWAV("Audio/BSound.wav");
 
-							//Handle events based on 
-						}
-					}
+			// Sent inputs to the combat dialog manager
+			if (e.type == SDL_KEYDOWN)
+			{
+				if (e.key.keysym.sym == SDLK_RIGHT || e.key.keysym.sym == SDLK_d)
+				{
+					m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::RIGHT);
+					Mix_PlayChannel(-1, gBSound, 0);
 				}
-				std::cout << "X: ";
-				std::cout << mouseX;
-				std::cout << "     Y: ";
-				std::cout << mouseY;
-				std::cout << std::endl;
-			}
-			//for(int i = 6;)
-			
-		if (e.type == SDL_QUIT) {
-			SDL_GL_DeleteContext(glcontext);
-			return false; 
-		}
-		//*/
-		/*
-		background.renderBackground(gRenderer);
-		delaysPerFrame++;
-		if (delaysPerFrame >= 6) {
-			frame++;
-			delaysPerFrame = 0;
-		}
-		if (frame == 4) {
-			frame = 0;
-		}
-		charImageX = frame * charAnimationPixelShift;
-		for (auto i : buttons) {
-			if (i->type == "character")	// render participants
-			{
-				SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };
-				SDL_RenderCopy(gRenderer, i->texture, &charactersRectangle, &(i->rect));
-			}
-			else // render UI in initial state
-			{
-				// render buttons on the buttom
-				SDL_RenderCopy(gRenderer, i->texture, NULL, &(i->rect));
-				Helper::renderText(i->type.c_str(), &(i->rect), &txt_color, font);
+				
+				if (e.key.keysym.sym == SDLK_LEFT || e.key.keysym.sym == SDLK_a)
+				{
+					m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::LEFT);
+					Mix_PlayChannel(-1, gBSound, 0);
+				}
+				
+				if (e.key.keysym.sym == SDLK_UP || e.key.keysym.sym == SDLK_w)
+				{
+					m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::UP);
+					Mix_PlayChannel(-1, gBSound, 0);
+				}
+				
+				if (e.key.keysym.sym == SDLK_DOWN || e.key.keysym.sym == SDLK_s)
+				{
+					m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::DOWN);
+					Mix_PlayChannel(-1, gBSound, 0);
+				}
+				
+				if (e.key.keysym.sym == SDLK_RETURN)
+				{
+					m_combatDialogManager.RegisterKeyInput(CombatDialogManager::DialogInput::SELECT);
+					Mix_PlayChannel(-1, gBSound, 0);
+				}
+				
 			}
 		}
-		//SDL_RenderPresent(gRenderer);
 		
-		SDL_Delay(16);*/
-		}
-
-		/** doesn't handle multiplayer **/
-		// text combat ui initialization
-		textMain(printed);
-		/** doesn't handle multiplayer **/
-
-		int EnemyActionOrderCount = 0; // record which enemy is taking action
-		for (int i = 0; i < participants.size(); i++)
+		if (turnOrder == 0)
 		{
-			if (ParticipantsStatus[i] == IN_COMBAT && participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0) {
-				int result_temp = textAction(participants[i], EnemyActionOrderCount);
-				// for testing
-				//std::cout << "Result: " << result_temp << std::endl;
-				//std::cout << "TLMs Size CM: " << AI.getTLMs().size() << std::endl;
-
-				switch (result_temp) {
-				case IN_COMBAT:
-					break;
-				default:
-					//std::cout << "default: " << result_temp << std::endl;
-					return result_temp;
-					break;
-					////	takeAction(participants[i], buttons, e)
-				}
-			}
-			if (participants[i]->is_Enemy())EnemyActionOrderCount++;
-			if (EnemyActionOrderCount >= enemy_index.size()) EnemyActionOrderCount = 0;
+			textMain(printed, initialText); // text combat ui initialization
+			turnOrder = 1;
 		}
-		printed = false; // for text combat ui
+		
+		initialText = false;
+		// We need to fix the idle for the following part
+		// You will need to rewrite to not have an while loops
+		// We need to constantly render to the screen
+		
+		if (turnOrder == 1)
+		{
+			if (e.key.keysym.sym == SDLK_RETURN)
+			{
+					switch (int result_temp = textAction(participants[allPlayers])) {
+					case IN_COMBAT:
+						break;
+					default:
+						Mix_FreeChunk(gBSound);
+							return result_temp;
+					}
+					updateStatus();
+				
+			}
+		}
+		else if (turnOrder == 2)
+		{
+			std::queue<CombatDialogManager::SelectionEvent> events = m_combatDialogManager.GetEvents();
+			if (events.size() > 0)
+			{
+				// Get the first event
+				auto event = events.front();
+				// Pop the event 
+				events.pop();
+				atk = event.options[event.selectedOption];
+				turnOrder = 3;
+			}
+		}
+		else if (turnOrder == 3)
+		{
+			stringstream ss;
+			ss << "You selected " << atk;
+			m_combatDialogManager.AddMessage(ss.str());
+			outputEnemy();
+			turnOrder = 4;
+		}
+		else if (turnOrder == 4)
+		{
+			std::queue<CombatDialogManager::SelectionEvent> events = m_combatDialogManager.GetEvents();
+			if (events.size() > 0)
+			{
+				// Get the first event
+				auto event = events.front();
+				// Pop the event 
+				events.pop();
+				target = event.selectedOption;
+				turnOrder = 5;
+			}
+		}
+		else if (turnOrder == 5)
+		{
+			stringstream ss;
+			//ss << "You selected " << target;
+			//m_combatDialogManager.AddMessage(ss.str());
 
-		//update status between rounds
-		int temp_status = updateStatus();
-		if (temp_status != IN_COMBAT) return temp_status;
-
-		//change rounds
-		qm.changeRounds();
-		//*/
+			int result = participants[enemy_index[target]]->beingTarget(&abil);
+		
+			if (participants[enemy_index[target]]->getHPCurrent() == 0) {
+				livingCount[ENEMY]--;
+			}
+			ss << "You damage " << participants[enemy_index[target]]->getName() << " amazingly by " << result << " HP!" << " " << participants[enemy_index[target]]->getName() << " now has only " << participants[enemy_index[target]]->getHPCurrent() << " HP left.";
+			m_combatDialogManager.AddMessage(ss.str());
+			//PLACE THE ATTACK ANIMATIONS HERE USING THE atk VARIABLE
+			if (allPlayers == player_index.size() - 1)
+			{
+				turnOrder = 6;
+				allPlayers = 0;
+			}
+				
+			else
+			{
+				turnOrder = 1;
+				allPlayers++;
+			}
+		
+		}
+		else if (turnOrder == 6)
+		{
+			for (int i = player_index.size(); i < participants.size(); i++)
+			{
+				//updateStatus(participants[i]);
+				if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0 )
+					switch (int result_temp = takeActionByAI(participants[i], i-player_index.size())) {
+					case IN_COMBAT:
+						break;
+					default:
+						Mix_FreeChunk(gBSound);
+						return result_temp;
+					}
+				updateStatus();
+			}
+			printed = false;
+			turnOrder = 0;
+			qm.changeRounds();
+		}
+		SDL_Delay(60);
 	}
-	SDL_GL_DeleteContext(glcontext);
+	Mix_FreeChunk(gBSound);
 	return -100;
 
 }

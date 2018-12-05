@@ -14,9 +14,9 @@ namespace AbilityResource {
 	const std::string abilityNames[] = {
 		"Attack",
 		"Fireball",
-		"Escape",
+		"Arrow Shot",
 		"Defend",
-		"Summon",
+		"Smite",
 		"Heal",
 		"Mass Heal"
 	};
@@ -26,9 +26,9 @@ namespace AbilityResource {
 		static std::string ability_description[] = {
 			"Basic attack",
 			"Cast a Fireball, potentially causing some burnt on target",
-			"Try to escape from battle",
+			"Shoot a arrow at blinding speed",
 			"Take the defending stance and increase energy regeneration for next turn",
-			"Try to summon an unknonw...emmmmmm...thing, to \"help\" your fight",
+			"Smite your enemy to oblivion",
 			"Restore HP of one target",
 			"Restore HP across whole team"
 		};

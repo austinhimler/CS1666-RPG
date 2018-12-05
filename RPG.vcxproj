@@ -84,11 +84,13 @@
     <IncludePath>dev_lib\includes;$(IncludePath)</IncludePath>
     <LibraryPath>dev_lib\bin\x64\SDL_net;dev_lib\bin\x86\SDL_net;dev_lib\libs\x64\GL;dev_lib\libs\x64\SDL2;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;dev_lib\libs\x64\SDL_net;$(LibraryPath);</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>dev_lib\includes;$(IncludePath)</IncludePath>
     <LibraryPath>dev_lib\bin\x64\SDL_net;dev_lib\bin\x86\SDL_net;dev_lib\libs\x64\GL;dev_lib\libs\x64\SDL2;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;dev_lib\libs\x64\SDL_net;$(LibraryPath);</LibraryPath>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -100,9 +102,9 @@
       <AdditionalIncludeDirectories>dev_lib\includes;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;glew32d.lib;SDL2_net.lib;glew32sd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>soil2.lib;freetype.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;glew32d.lib;SDL2_net.lib;glew32sd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>dev_lib\libs\x86\GL;dev_lib\libs\x86\SDL2;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;dev_lib\libs\x86\SDL_net</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>dev_lib\libs\x86\SOIL2;dev_lib\libs\x86\freetype;dev_lib\libs\x86\GL;dev_lib\libs\x86\SDL2;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;dev_lib\libs\x86\SDL_net</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -115,10 +117,14 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;glew32d.lib;SDL2_net.lib;opengl32.lib</AdditionalDependencies>
+      <AdditionalDependencies>soil2.lib;freetype.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;glew32d.lib;SDL2_net.lib;opengl32.lib</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>dev_lib\libs\x64\GL;dev_lib\libs\x64\SDL2;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;dev_lib\libs\x64\SDL_net</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>dev_lib\libs\x64\SOIL2;dev_lib\libs\x64\GL;dev_lib\libs\x64\SDL2;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;dev_lib\libs\x64\SDL_net;dev_lib\libs\x64\freetype</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -134,9 +140,9 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;glew32d.lib;SDL2_net.lib;glew32sd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>soil2.lib;freetype.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;glew32d.lib;SDL2_net.lib;glew32sd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>dev_lib\libs\x86\GL;dev_lib\libs\x86\SDL2;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;dev_lib\libs\x86\SDL_net</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>dev_lib\libs\x86\SOIL2;dev_lib\libs\x86\freetype;dev_lib\libs\x86\GL;dev_lib\libs\x86\SDL2;dev_lib\libs\x86\SDL_image;dev_lib\libs\x86\SDL_mixer;dev_lib\libs\x86\SDL_ttf;dev_lib\libs\x86\SDL_net</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -153,10 +159,14 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;glew32d.lib;SDL2_net.lib;opengl32.lib</AdditionalDependencies>
+      <AdditionalDependencies>soil2.lib;freetype.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;glew32d.lib;SDL2_net.lib;opengl32.lib</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>dev_lib\libs\x64\GL;dev_lib\libs\x64\SDL2;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;dev_lib\libs\x64\SDL_net</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>dev_lib\libs\x64\SOIL2;dev_lib\libs\x64\GL;dev_lib\libs\x64\SDL2;dev_lib\libs\x64\SDL_image;dev_lib\libs\x64\SDL_mixer;dev_lib\libs\x64\SDL_ttf;dev_lib\libs\x64\SDL_net;dev_lib\libs\x64\freetype</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Classes\Ability.cpp" />
@@ -187,8 +197,14 @@
     <ClCompile Include="Classes\mainGame.cpp" />
     <ClCompile Include="Classes\Player.cpp" />
     <ClCompile Include="Classes\Resistance.cpp" />
-    <ClCompile Include="Classes\Shader.cpp" />
+    <ClCompile Include="Classes\ResourceManager\FontData.cpp" />
+    <ClCompile Include="Classes\ResourceManager\ResourceManager.cpp" />
+    <ClCompile Include="Classes\ResourceManager\Shader.cpp" />
+    <ClCompile Include="Classes\ResourceManager\Texture2D.cpp" />
     <ClCompile Include="Classes\Tile.cpp" />
+    <ClCompile Include="Classes\UI\CombatDialogManager.cpp" />
+    <ClCompile Include="Classes\UI\DialogMessage.cpp" />
+    <ClCompile Include="Classes\UI\TextRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="CREDIT_IMG\BGM.wav" />
@@ -250,8 +266,14 @@
     <ClInclude Include="Headers\Player.h" />
     <ClInclude Include="Headers\QueueManager.h" />
     <ClInclude Include="Headers\Resistance.h" />
-    <ClInclude Include="Headers\Shader.h" />
+    <ClInclude Include="Headers\ResourceManager\FontData.h" />
+    <ClInclude Include="Headers\ResourceManager\ResourceManager.h" />
+    <ClInclude Include="Headers\ResourceManager\Shader.h" />
+    <ClInclude Include="Headers\ResourceManager\Texture2D.h" />
     <ClInclude Include="Headers\Tile.h" />
+    <ClInclude Include="Headers\UI\CombatDialogManager.h" />
+    <ClInclude Include="Headers\UI\DialogMessage.h" />
+    <ClInclude Include="Headers\UI\TextRenderer.h" />
     <ClInclude Include="OverworldPathing.h" />
     <ClInclude Include="SOIL2\etc1_utils.h" />
     <ClInclude Include="SOIL2\image_DXT.h" />
@@ -278,8 +300,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\AI\MPS_Effectiveness.csv" />
-    <None Include="fshader.glsl" />
-    <None Include="vshader.glsl" />
+    <None Include="Shaders\NO_SHADER.frag" />
+    <None Include="Shaders\NO_SHADER.vs" />
+    <None Include="Shaders\simpleTextureShader.frag" />
+    <None Include="Shaders\simpleTextureShader.vs" />
+    <None Include="Shaders\textShader.frag" />
+    <None Include="Shaders\textShader.vs" />
+    <None Include="Shaders\simpleColorShader.frag" />
+    <None Include="Shaders\simpleColorShader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

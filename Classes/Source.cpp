@@ -31,6 +31,7 @@ class Source {
 				}
 			}
 		}
-	}
 	return BestPos;
+	}
+	
 };

@@ -10,8 +10,8 @@
 #include <iostream>
 #include "Helper.h"
 #include "Globals.h"
-#include "Shader.h"
 #include "Graphics.h"
+#include "UI/CombatDialogManager.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "Button.h"
@@ -22,26 +22,34 @@
 class CombatManager
 {
 public:
-	//CombatManager();
-	//~CombatManager();
+	CombatManager();
+	~CombatManager();
+
 	int checkCombatStatus();
 	int updateStatus();
 	
 	/*
 	*	the folloiwng 3 fucntions return true if player wins the combat, return false if player dies and thus lose the combat
 	*/
+	int performEvent(Character *c, string option, int optNum);
 	int takeAction(Character* c, std::vector<Button *> buttons, SDL_Event e);
-	int textAction(Character* c, int EnemyOrderCount);
+	int textAction(Character* c);
 	int combatMain(std::vector<Character*>& c);
-
-	void textMain(bool& printed);
-	void setNewButtons(std::vector<Button*>& buttons, int t);
+	void textAttributes(Character *c, int optNum);
+	void textMain(bool& printed, bool initialText);
+	//void setNewButtons(std::vector<Button*>& buttons, int t);
 	void outputEnemy();
 
-	Action takeActionByAI(Character* c, int EnemyActionOrderCount);
+	int takeActionByAI(Character* c, int EnemyActionOrderCount); //Enemy takes action
+	Action ActionByAI(Character* c, int EnemyActionOrderCount);
 
 private:
+	string atk;
+	Ability abil;
+	int target;
 	bool inCombat;
+	bool allPlayersMoved;
+	int turnOrder;
 	int livingCount[2];
 	std::vector<Character*> participants;
 	std::vector<int> ParticipantsStatus;
@@ -49,10 +57,16 @@ private:
 	//std::vector<Enemy*> Enemies;
 	std::vector<int> player_index;
 	//std::vector<Player*> Players;
-	SDL_Texture* loadImage(std::string fname);
+	//SDL_Texture* loadImage(std::string fname);
 	SDL_Rect scene_box = { 0,0,720,540 };
 	SDL_Rect ui_box = { 17,529,685,167 };
 	SDL_Rect info_box = { 240,529,480, 167 };
+	
+	Graphics m_combatGraphics;
+	CombatDialogManager m_combatDialogManager;
+
+	bool initialText;
+	Mix_Chunk *gBSound = NULL;
 
 	CombatAI AI;
 };

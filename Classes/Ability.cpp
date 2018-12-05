@@ -55,9 +55,7 @@
 		MPSTaskType = AbilityResource::MPS_TASKTYPE[n];
 	}
 
-
 	Ability::Ability() {}
-
 
 	bool Ability::cmp(Ability a) {
 		if (a.name == name) return true;
