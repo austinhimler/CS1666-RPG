@@ -1287,7 +1287,7 @@ void playGame() {
 		}
 
 		if (doNetworking) {
-			int numEnemies = STARTING_ENEMIES * (MAP_INDEX + 1);
+			int numEnemies = 2;//STARTING_ENEMIES * (MAP_INDEX + 1);
 			allEnemies = vector<Cluster*>();
 			if (isHost) {
 			
