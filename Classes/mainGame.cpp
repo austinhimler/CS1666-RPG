@@ -1850,20 +1850,20 @@ void playGame() {
 						std::cout << "Client Done Sending PLAYER\n" << std::endl;
 
 						for (auto i : allEnemies) {
-							std::stringstream notyoStream;
+							std::stringstream enemyStream;
 							notyoStream << "#";
 							char temp[100];
-							std::cout << "Client Recieving ENEMY\n" << notyoStream.str().back() << std::endl;
+							std::cout << "Client Recieving ENEMY\n" << enemyStream.str().back() << std::endl;
 
-							while (notyoStream.str().back() != '*')
+							while (enemyStream.str().back() != '*')
 							{
 								SDLNet_TCP_Recv(clientSocket, temp, 100);
-								notyoStream << temp;
-								std::cout << notyoStream.str() << endl;
+								enemyStream << temp;
+								std::cout << enemyStream.str() << endl;
 							}
-							std::string notYourSTD(notyoStream.str());
-							notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
-							std::cout << "Recieved ENEMY" << notYourSTD << std::endl;
+							std::string enemySTD(enemyStream.str());
+							enemySTD = enemySTD.substr(1, enemySTD.find("*"));
+							std::cout << "Recieved ENEMY" << enemySTD << std::endl;
 							i->fromString(notYourSTD);
 						}
 
