@@ -1789,6 +1789,18 @@ void playGame() {
 							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 						}
 						std::cout << "Host Done Sending PLAYER\n" << std::endl;
+
+						for (auto i : allEnemies) {
+							std::string enemyString = i->ptoString();
+							const char* enemyStringChar = enemyString.c_str();
+							length = strlen(enemyStringChar) + 1;
+							printf("Host Sending ENEMY %s\n", enemyStringChar);
+							result = SDLNet_TCP_Send(clientSocket, enemyStringChar, length);
+							if (result < length) {
+								printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+							}
+							std::cout << "Host Done Sending ENEMY\n" << std::endl;
+						}
 						
 						std::stringstream notyoStream;
 						notyoStream << "#";
@@ -1805,18 +1817,6 @@ void playGame() {
 						notYourSTD = notYourSTD.substr(1, notYourSTD.find("*"));
 						std::cout << "Recieved PLAYER" << notYourSTD << std::endl;
 						notYou->fromString(notYourSTD);
-
-						for (auto i : allEnemies) {
-							std::string enemyString = i->ptoString();
-							const char* enemyStringChar = enemyString.c_str();
-							length = strlen(enemyStringChar) + 1;
-							printf("Host Sending ENEMY %s\n", enemyStringChar);
-							result = SDLNet_TCP_Send(clientSocket, enemyStringChar, length);
-							if (result < length) {
-								printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-							}
-							std::cout << "Host Done Sending ENEMY\n" << std::endl;
-						}
 						
 					}
 					else
@@ -1827,7 +1827,7 @@ void playGame() {
 						char buffer[400];
 						std::cout << "Client Recieving PLAYER\n" << receiveStream.str().back()<< std::endl;
 		
-						while (receiveStream.str().back()!='&')
+						while (receiveStream.str().back()!='Z')
 						{
 							SDLNet_TCP_Recv(clientSocket, buffer, 400);
 							receiveStream << buffer;
@@ -1835,13 +1835,15 @@ void playGame() {
 						}
 						std::string streamSTD(receiveStream.str());
 						std::string notYourSTD =  streamSTD.substr(1, streamSTD.find("*"));
-						std::string enemySTD = streamSTD.substr(streamSTD.find("*"), streamSTD.find("&"));
+						std::string enemySTD = streamSTD.substr(streamSTD.find("*"), streamSTD.find("Z"));
 
-						std::cout << "Recieved PLAYER " << notYourSTD << std::endl;
+						std::cout << "client Recieved PLAYER " << notYourSTD << std::endl;
 						notYou->fromString(notYourSTD);
 
-						std::cout << "Recieved ENEMY" << enemySTD << std::endl;
+						std::cout << "client Recieved ENEMY" << enemySTD << std::endl;
 						allEnemies[0]->fromString(enemySTD);
+
+						std::cout << "enemy x" << allEnemies[0]->xPosition << std::endl;
 						
 						
 						//Send Character
