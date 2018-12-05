@@ -134,8 +134,8 @@ int CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
 		}
 		else {
 			for (int i = 0; i < TarNum; i++) { // act on every target and output result
-				int result = tars[i]->beingTarget(abil);
 				c->updateEnergy(abil);
+				int result = tars[i]->beingTarget(abil);
 				// output ability name
 				//output target
 				switch (abil->getType()) {
@@ -197,6 +197,12 @@ int CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
 					SDL_Delay(60);
 					m_combatDialogManager.ClearEvents();
 					return IN_COMBAT;
+					break;
+				case AbilityResource::tHEALING:
+					stmp << tars[i]->getName() + "'s HP is increased by " + std::to_string(result) + "! ";
+					stmp << tars[i]->getName() + " now has " + std::to_string(tars[i]->getHPCurrent()) + " HP left.";
+					m_combatDialogManager.AddMessage(stmp.str());
+					SDL_Delay(60);
 					break;
 				default:
 					break;
@@ -974,6 +980,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			//m_combatGraphics.setAnimationMotion(attack, motion);
 			//m_combatGraphics.setAnimationFrameMax(attack, 120);
 
+			
 			if (allPlayers == player_index.size() - 1)
 			{
 				turnOrder = 6;
@@ -992,8 +999,8 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			for (int i = player_index.size(); i < participants.size(); i++)
 			{
 				//updateStatus(participants[i]);
-				if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0 )
-					switch (int result_temp = takeActionByAI(participants[i], i-player_index.size())) {
+				if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0) {
+					switch (int result_temp = takeActionByAI(participants[i], i - player_index.size())) {
 					case IN_COMBAT:
 						break;
 					default:
@@ -1001,13 +1008,14 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 						Mix_FreeChunk(gBSound);
 						return result_temp;
 					}
-				switch (int result_temp = updateStatus()) {
-				case IN_COMBAT:
-					break;
-				default:
-					m_combatGraphics.clean();
-					Mix_FreeChunk(gBSound);
-					return result_temp;
+					switch (int result_temp = updateStatus()) {
+					case IN_COMBAT:
+						break;
+					default:
+						m_combatGraphics.clean();
+						Mix_FreeChunk(gBSound);
+						return result_temp;
+					}
 				}
 			}
 			printed = false;

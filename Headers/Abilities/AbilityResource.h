@@ -43,7 +43,7 @@ namespace AbilityResource {
 			10,
 			25,
 			30,
-			0,
+			1,
 			50,
 			30,
 			60,

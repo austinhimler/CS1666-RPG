@@ -27,7 +27,7 @@ void MPS_Task::computePriority(int TaskBasePriority, std::vector<MPS_Modifier*> 
 	Priority = (float)TaskBasePriority;
 	for (auto& tlm : TLM) {
 		Priority *= tlm->getVal();
-		std::cout << "Priority: " << Priority << " tlm: " << tlm->getVal();
+		//std::cout << "Priority: " << Priority << " tlm: " << tlm->getVal() << std::endl;
 	}
 }
 

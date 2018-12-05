@@ -11,7 +11,10 @@
 		mpCurrent = mpMax;
 		flip = SDL_FLIP_NONE;
 		energyCurrent = energyMax;
-		energyRegen = 20 + (energyMax < 10)?1:0.1 * energyMax*attr[DEX].current;
+		energyRegen = 10;
+		energyRegen += (energyMax < 10) ? 1 : 0.1 * energyMax;
+		energyRegen += (attr[DEX].current < 10) ? 1 : 0.1 * attr[DEX].current;
+		std::cout << "regen: " << energyRegen << std::endl;
 		name = n;
 		buff = std::vector<int>(BUFFCOUNT, 0);
 		level = 1;
@@ -36,10 +39,12 @@
 			else result = a->getVal();
 			break;
 		case AbilityResource::tHEALING:
+			std::cout << "Prev HP: " << hpCurrent << std::endl;
 			result = hpMax - hpCurrent;
 			hpCurrent += a->getVal();
 			if (hpCurrent > hpMax) hpCurrent = hpMax;
 			else result = a->getVal();
+			std::cout << "Cur HP: " << hpCurrent << std::endl;
 			break;
 		case AbilityResource::tESCAPE:
 			i = rand() % 100;
@@ -123,6 +128,7 @@
 			energyCurrent += (temp >= 0) ? temp : 0;
 			if (energyCurrent > energyMax) energyCurrent = energyMax;
 			buff[ENERGYREGEN] = 0;
+
 		}
 		else {
 			if (energyCurrent < a->getEnergyCost())

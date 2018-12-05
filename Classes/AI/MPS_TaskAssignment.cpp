@@ -12,7 +12,7 @@ void MPS_TaskAssignment::createModifiers(Enemy* Self, Ability* abil, std::vector
 //*/
 
 void MPS_TaskAssignment::computeScore(float TaskPriority) {
-	std::cout << "EAM: " << ALMS.EAM->getVal() << " RM: " << ALMS.RM->getVal() << std::endl;
+	//std::cout << "EAM: " << ALMS.EAM->getVal() << " RM: " << ALMS.RM->getVal() << std::endl;
 	Score = TaskPriority * ALMS.EAM->getVal() * ALMS.RM->getVal();
 }
 //*/

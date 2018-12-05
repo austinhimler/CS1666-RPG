@@ -19,9 +19,11 @@ void MPS_Main::readBEA() {
 	std::string Path = "Data/AI/MPS_Effectiveness.csv";
 	MPS_Data BEA_Data = MPS_Data(Path, AbilityResource::abilityNames->size());
 	BaseEffectiveness = BEA_Data.getIntData();
+	/*
 	for (int i = 0; i < BaseEffectiveness.size(); i++) {
 		std::cout << AbilityResource::abilityNames[i] << ": " << BaseEffectiveness[i] << std::endl;
 	}
+	//*/
 }
 
 void MPS_Main::createTLMs(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*> Friends) {

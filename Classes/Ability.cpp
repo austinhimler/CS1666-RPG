@@ -29,20 +29,29 @@
 		{
 			switch (name)
 			{
-			case 0:
+			case ATTACK:
 				value = baseValue + attr[re[0]].getCur() + ((attr[re[1]].getCur()+baseValue) / 2);
 				break;
-			case 1:
+			case FIREBALL:
 				value = 2 * baseValue * attr[re[0]].getCur() + 1.5 * baseValue * attr[re[1]].getCur();
 				break;
-			case 2:
+			case ARROWSHOT:
 				value = baseValue + 2 * attr[re[0]].getCur();
 				break;
-			case 3:
+			case DEFEND:
 				value = baseValue + 2 * attr[re[0]].getCur();
 				break;
-			case 4:
-				value = baseValue;
+			case SMITE:
+				value = baseValue + 2 * attr[re[0]].getCur();
+				break;
+			case HEAL:
+				value = baseValue + attr[re[0]].getCur();
+				break;
+			case MASSHEAL:
+				value = baseValue + attr[re[0]].getCur();
+				break;
+			case ESCAPE:
+				value = value = baseValue + attr[re[0]].getCur() / 10;
 				break;
 			default:
 				value = 1;
