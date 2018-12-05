@@ -79,6 +79,8 @@ public:
 	int removeObject(int ID);
 
 	int translateObjectByPixel(int ID, int x, int y, GLfloat z);
+	int transformCtm(int ID, glm::mat4 transform);
+
 	void iterateSpriteAnimation(std::list<GraphicsObject>::iterator it);
 	void animateMotion(std::list<GraphicsObject>::iterator it);
 	void animateMotionConsume(std::list<GraphicsObject>::iterator it);

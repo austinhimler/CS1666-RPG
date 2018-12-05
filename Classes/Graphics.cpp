@@ -592,6 +592,18 @@ int Graphics::translateObjectByPixel(int ID, int x, int y, GLfloat z)
 	}
 }
 
+int Graphics::transformCtm(int ID, glm::mat4 transform)
+{
+	std::list<GraphicsObject>::iterator it = std::find_if(objectList.begin(), objectList.end(), [&ID](GraphicsObject const& gObj) { return gObj.ID == ID; });
+	if (it != objectList.end()) {
+		it->ctm = it->ctm * transform;
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
 void Graphics::iterateSpriteAnimation(std::list<GraphicsObject>::iterator it) 
 {
 	int i;
