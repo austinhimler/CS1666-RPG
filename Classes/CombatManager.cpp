@@ -720,7 +720,6 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 	
 	int bw = 100;
 	int bh = 50;	
-
 	bool printed = false; // for text combat ui
 
 	//OpenGL Setup
@@ -736,10 +735,16 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 	m_combatGraphics.translateObjectByPixel(player, SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
 	m_combatGraphics.setIdleAnimationType(player, 1);
 	//Create Enemy with Player Texture, translate it, retexture it to owl, then set it to animate the sprite
-	int enemy = m_combatGraphics.genQuadTexture(144, 144, "Images/Player/Idle_Down.png", "player", 0, 6);
-	m_combatGraphics.translateObjectByPixel(enemy, 4 * SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
-	m_combatGraphics.retextureQuad(enemy, "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png", "owl");
-	m_combatGraphics.setIdleAnimationType(enemy, 1);
+	int enemy[2];
+	for (int i = 0; i < enemy_index.size(); i++)
+	{
+		enemy[i] = m_combatGraphics.genQuadTexture(144, 144, "Images/Player/Idle_Down.png", "player", 0, 6);
+		m_combatGraphics.translateObjectByPixel(enemy[i], ((i/2) + 4) * SCREEN_WIDTH / 5, SCREEN_HEIGHT / (3 - (i)), 0.0);
+		m_combatGraphics.retextureQuad(enemy[i], "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png", "owl");
+		m_combatGraphics.setIdleAnimationType(enemy[i], 1);
+	}
+
+	
 	//Create cone with similar colors, then remove it
 	int cone = m_combatGraphics.genCone(0.5, 1.0, 36, 2, glm::vec4(1.0, 1.0, 0.0, 0.3));
 	m_combatGraphics.setIdleAnimationType(cone, 2);
