@@ -1860,7 +1860,7 @@ void playGame() {
 							char tempEnemy[100];
 							std::cout << "Client Recieving ENEMY\n" << enemyStream.str().back() << std::endl;
 
-							while (enemyStream.str().back() != '*')
+							while (enemyStream.str().back() != 'Z')
 							{
 								std::cout << "ENEMY STREAM IN LOOP before << temp: " << enemyStream.str() << std::endl;
 								SDLNet_TCP_Recv(clientSocket, tempEnemy, 100);
@@ -1868,7 +1868,7 @@ void playGame() {
 								std::cout << "AFTER << temp " << enemyStream.str() << endl;
 							}
 							std::string enemySTD(enemyStream.str());
-							enemySTD = enemySTD.substr(1, enemySTD.find("*"));
+							enemySTD = enemySTD.substr(1, enemySTD.find("Z"));
 							std::cout << "Recieved ENEMY" << enemySTD << std::endl;
 							i->fromString(enemySTD);
 						}
