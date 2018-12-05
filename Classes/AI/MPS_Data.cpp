@@ -10,8 +10,7 @@ void readAISelfModifierBaseValue(std::string path) {
 
 //*/
 
-void MPS_Data::readTaskBasePriority(std::string path) {
-	int Length = MPS_Resource::tMPS_TASK_TYPE_NUM;
+void MPS_Data::readData(std::string path) {
 	std::ifstream data(path, std::ifstream::in);
 	if (!data.is_open()) {
 		std::cerr << "Failed to open data!" << std::endl;
@@ -35,17 +34,18 @@ void MPS_Data::readTaskBasePriority(std::string path) {
 			i++;
 		}
 		if (i != Length) {
-			std::cerr << "Only " << i << " TaskBasePrioritiy data are read, but the right number should be " << Length << std::endl;
+			std::cerr << "Only " << i << " rows of data are read, but the right number should be " << Length << std::endl;
 		}
 		data.close();
 	}
 }
 
-MPS_Data::MPS_Data(std::string path) {
-	readTaskBasePriority(path);
+MPS_Data::MPS_Data(std::string path, int i) {
+	Length = i;
+	readData(path);
 }
 
-std::vector<int> MPS_Data::getTBP() {
+std::vector<int> MPS_Data::getIntData() {
 	std::vector<int> TBP;
 	for (auto& d : Data) {
 		TBP.push_back((int)d);

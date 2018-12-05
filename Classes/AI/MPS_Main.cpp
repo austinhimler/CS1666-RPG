@@ -1,6 +1,7 @@
 #include "../../Headers/AI/MPS_Main.h"
 
 std::vector<int> MPS_Main::TaskBasePriority = std::vector<int>();
+std::vector<int> MPS_Main::BaseEffectiveness = std::vector<int>();
 
 void MPS_Main::createAbilities(Enemy* Self) {
 	Abilities = Self->getAbilityPointers();
@@ -9,8 +10,18 @@ void MPS_Main::createAbilities(Enemy* Self) {
 void MPS_Main::readTBP() {
 	if (TaskBasePriority.size() != 0) return;
 	std::string Path = "Data/AI/MPS_TBP.csv";
-	MPS_Data TBP = MPS_Data(Path);
-	TaskBasePriority = TBP.getTBP();
+	MPS_Data TBP = MPS_Data(Path, MPS_Resource::tMPS_TASK_TYPE_NUM);
+	TaskBasePriority = TBP.getIntData();
+}
+
+void MPS_Main::readBEA() {
+	if (BaseEffectiveness.size() != 0) return;
+	std::string Path = "Data/AI/MPS_Effectiveness.csv";
+	MPS_Data BEA_Data = MPS_Data(Path, AbilityResource::abilityNames->size());
+	BaseEffectiveness = BEA_Data.getIntData();
+	for (int i = 0; i < BaseEffectiveness.size(); i++) {
+		std::cout << AbilityResource::abilityNames[i] << ": " << BaseEffectiveness[i] << std::endl;
+	}
 }
 
 void MPS_Main::createTLMs(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*> Friends) {
@@ -70,7 +81,7 @@ void MPS_Main::createTasks(Enemy* Self, std::vector<Player*> Players, std::vecto
 			}
 			break;
 		}
-		Tasks.push_back(MPS_Task(i, UsableAbilities, tar, TaskBasePriority[i], ms));
+		Tasks.push_back(MPS_Task(Self, i, UsableAbilities, tar, TaskBasePriority[i], ms, BaseEffectiveness));
 	}
 }
 
@@ -99,6 +110,7 @@ MPS_Main::MPS_Main() {}
 MPS_Main::MPS_Main(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*> Friends) {
 	createAbilities(Self);
 	readTBP();
+	readBEA();
 	createTLMs(Self, Players, Friends);
 	createTasks(Self, Players, Friends);
 	findBestAction();

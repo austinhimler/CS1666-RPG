@@ -4,22 +4,29 @@
 #include "MPS_Modifier.h"
 #include "../Character.h"
 #include "../Ability.h"
+#include "MPS_EAModifier.h"
+#include "MPS_RModifier.h"
 
 class MPS_TaskAssignment {
 protected:
 	Action Act;
-	std::vector<MPS_Modifier*> AssignmentLevelModifiers;
+	struct AssignmentLevelModifiers {
+		MPS_EAModifier* EAM;
+		MPS_RModifier* RM;
+	} ALMS;
+
 	float Score;
 
 public:
 	//void createAction(Ability* abil, std::vector<Character*> tar);
-	void createModifiers();
-	//void computeScore(float TaskPriority);
+	void createModifiers(Enemy* Self, Ability* abil, std::vector<Character*> tar, int bea);
+	void computeScore(float TaskPriority);
 
-	/** Constructors **/
-	MPS_TaskAssignment(Ability* abil, std::vector<Character*> tar, float TaskPriority);
+	/** Constructors and destructor **/
+	MPS_TaskAssignment(Enemy* Self, Ability* abil, std::vector<Character*> tar, float TaskPriority, int bea);
 	MPS_TaskAssignment(const MPS_TaskAssignment& ta);
 	MPS_TaskAssignment();
+	~MPS_TaskAssignment();
 
 	/** getters **/
 	Action getAction();

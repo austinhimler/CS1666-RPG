@@ -21,9 +21,11 @@ protected:
 	Action BestAction;
 	std::vector<MPS_Modifier*> TaskLevelModifiers;
 	static std::vector<int> TaskBasePriority;
+	static std::vector<int> BaseEffectiveness;
 public:
 	void createAbilities(Enemy* Self);
 	void readTBP();
+	void readBEA();
 	void createTLMs(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*> Friends);
 	void createTasks(Enemy* Self, std::vector<Player*> Players, std::vector<Enemy*> Friends);
 	void findBestAction();

@@ -178,6 +178,7 @@
     <ClCompile Include="Classes\AI\MPS_Data.cpp" />
     <ClCompile Include="Classes\AI\MPS_EAModifier.cpp" />
     <ClCompile Include="Classes\AI\MPS_Main.cpp" />
+    <ClCompile Include="Classes\AI\MPS_RModifier.cpp" />
     <ClCompile Include="Classes\AI\MPS_Task.cpp" />
     <ClCompile Include="Classes\AI\MPS_TaskAssignment.cpp" />
     <ClCompile Include="Classes\Attribute.cpp" />
@@ -247,6 +248,7 @@
     <ClInclude Include="Headers\AI\MPS_Main.h" />
     <ClInclude Include="Headers\AI\MPS_Modifier.h" />
     <ClInclude Include="Headers\AI\MPS_CSModifier.h" />
+    <ClInclude Include="Headers\AI\MPS_RModifier.h" />
     <ClInclude Include="Headers\AI\MPS_Task.h" />
     <ClInclude Include="Headers\AI\MPS_TaskAssignment.h" />
     <ClInclude Include="Headers\Attribute.h" />

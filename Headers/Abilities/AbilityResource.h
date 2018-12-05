@@ -18,7 +18,8 @@ namespace AbilityResource {
 		"Defend",
 		"Smite",
 		"Heal",
-		"Mass Heal"
+		"Mass Heal",
+		"Escape"
 	};
 
 	//ability descriptions
@@ -30,7 +31,8 @@ namespace AbilityResource {
 			"Take the defending stance and increase energy regeneration for next turn",
 			"Smite your enemy to oblivion",
 			"Restore HP of one target",
-			"Restore HP across whole team"
+			"Restore HP across whole team",
+			"Try to escape from combat"
 		};
 		return ability_description[n];
 	}
@@ -38,12 +40,13 @@ namespace AbilityResource {
 	//abiilty base stats
 	inline int const &baseEnergyCost(int n) {
 		static int base_energy_cost[] = {
-			20,
-			25,
 			10,
+			25,
+			30,
 			0,
 			50,
-			50,
+			30,
+			60,
 			50
 		};
 		return base_energy_cost[n];
@@ -53,12 +56,13 @@ namespace AbilityResource {
 	inline int const &baseValue(int n) {
 		static int base_value[] = {
 			10,
-			3,
-			60,
+			25,
+			30,
 			8,
-			10,
-			10,
-			6
+			100,
+			100,
+			60,
+			50
 		};
 		return base_value[n];
 	}
@@ -69,13 +73,15 @@ namespace AbilityResource {
 		10,
 		0,
 		0,
-		10000,
-		10000,
-		10000
+		100,
+		100,
+		100,
+		0
 	};
 
 	//ability base CD
 	const int abilityCD[] = {
+		0,
 		0,
 		0,
 		0,
@@ -95,7 +101,7 @@ namespace AbilityResource {
 		tBUFF,
 		tESCAPE,
 		tSUMMON,
-		tABILITY_TYPE_NUM
+		tABILITY_TYPE_NUM,
 	};
 
 	// types of the respective abilities
@@ -106,7 +112,8 @@ namespace AbilityResource {
 		tDEFENSE, // defend
 		tDAMAGE, // smite
 		tHEALING, // heal
-		tHEALING // mass heal
+		tHEALING, // mass heal
+		tESCAPE // escape
 				//etc.
 	};
 
@@ -118,18 +125,20 @@ namespace AbilityResource {
 		false,
 		false,
 		false,
-		true
+		true,
+		false
 	};
 
 	// related attributes of each abiility in the order of influence
-	const std::vector<int> abilityAttr[7] = {
+	const std::vector<int> abilityAttr[] = {
 		{STR, DEX, CON},
 		{INT, DEX, FAI},
 		{DEX, CON, STR},
 		{CON, STR, DEX},
 		{FAI, INT, DEX},
 		{FAI, INT, CON},
-		{FAI, INT, CON}
+		{FAI, INT, CON},
+		{DEX, FAI, INT}
 	};
 
 	//ability related attributes
@@ -140,11 +149,12 @@ namespace AbilityResource {
 	const int MPS_TASKTYPE[] = {
 		tMPS_TASK_DAMAGE,
 		tMPS_TASK_DAMAGE,
-		tMPS_TASK_ESCAPE,
+		tMPS_TASK_DAMAGE,
 		tADD_SELF_RE,
-		tADD_FRIEND_NUM,
+		tMPS_TASK_DAMAGE,
 		tRECOVER_SELF_HP,
-		tRECOVER_SELF_HP
+		tRECOVER_FRIEND_HP,
+		tMPS_TASK_ESCAPE,
 	};
 	using namespace std;
 }
