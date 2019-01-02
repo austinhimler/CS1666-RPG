@@ -14,7 +14,6 @@
 		energyRegen = 10;
 		energyRegen += (energyMax < 10) ? 1 : 0.1 * energyMax;
 		energyRegen += (attr[DEX].current < 10) ? 1 : 0.1 * attr[DEX].current;
-		std::cout << "regen: " << energyRegen << std::endl;
 		name = n;
 		buff = std::vector<int>(BUFFCOUNT, 0);
 		level = 1;

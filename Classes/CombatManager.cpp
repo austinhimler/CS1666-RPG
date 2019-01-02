@@ -813,7 +813,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				Mix_FreeChunk(gBSound);
 				m_combatGraphics.clean();
 				//Random integer for quitting the game
-				return -69; 
+				return PLAYER_EXIT; 
 			}
 			gBSound = Mix_LoadWAV("Audio/BSound.wav");
 
