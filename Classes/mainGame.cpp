@@ -65,6 +65,8 @@ const int SCREEN_HEIGHT = 720;
 const int ENEMIES_PER_CLUSTER = 1;
 const int STARTING_ENEMIES = 1;
 const vector<string> ALL_MAPS = { "map1.txt", "map2.txt", "map3.txt" };
+const int MAX_HORIZONTAL_TILES = 30;
+const int MAX_VERTICAL_TILES = 30;
 int MAP_INDEX = 0;
 //std::vector<SDL_Texture*> gTex;
 // Music var
@@ -201,6 +203,12 @@ bool check_collision(SDL_Rect a, SDL_Rect b) {
 	// Must overlap in both
 	return true;
 }
+int getTilePosition(Character* c)
+{
+	int currentTile = (int)(c->xPosition + (c->rectangle.w / 2)) / TILE_WIDTH;
+	currentTile += (int)((c->yPosition + c->rectangle.h) / TILE_HEIGHT) * 30;
+	return currentTile;
+}
 
 
 SDL_Rect * loadMap(Tile* tiles[],string mapToLoad) {
@@ -208,7 +216,7 @@ SDL_Rect * loadMap(Tile* tiles[],string mapToLoad) {
 	bool tilesLoaded = true;
 	int x = 0, y = 0;
 	std::vector<SDL_Rect> blockedTiles;
-	std::ifstream map(mapToLoad);
+	std::ifstream map("Maps/"+mapToLoad);
 	if (!map.is_open())
 	{
 		printf("Unable to load map file!\n");
@@ -835,7 +843,7 @@ int characterCreateScreen() {
 				}
 			}
 			if (!i->locked) {
-				if (!i->pressed > 0 || i->attribute == "")
+				if (i->pressed <= 0 || i->attribute == "")
 					SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
 				else
 				{
@@ -958,20 +966,25 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Character*> charactersOnScreen
 			tiles[i]->render(&camera);
 		}
 
-		for (auto &i : charactersOnScreen) {
+		for (auto &i : charactersOnScreen)
+		{
 			if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
 				i->flip = SDL_FLIP_NONE;
 			else if (i->xVelocity < 0 && i->flip == SDL_FLIP_NONE)
 				i->flip = SDL_FLIP_HORIZONTAL;
 
-			if (i->getTextureActive() == i->getTextureIdle()) {
-				if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
+			if (i->getTextureActive() == i->getTextureIdle())
+			{
+				if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations())
+				{
 					i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
 					i->timeSinceLastAnimation = SDL_GetTicks();
 				}
 			}
-			else {
-				if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenRunAnimations()) {
+			else 
+			{
+				if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenRunAnimations())
+				{
 					i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
 					i->timeSinceLastAnimation = SDL_GetTicks();
 				}
@@ -1009,9 +1022,9 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Character*> charactersOnScreen
 int getDirection(Cluster* c) {
 	double dx, dy;
 	int out;
-	dx = c->seqX.front()- (int)c->xPosition / TILE_WIDTH;
-	dy = c->seqY.front() - (int)c->yPosition / TILE_HEIGHT;
-	out = std::atan2(dy, dx) * 180 / -3.14;
+	dx =  c->seqX.front()- (int)c->xPosition / TILE_WIDTH;
+	dy =  c->seqY.front() - (int)c->yPosition / TILE_HEIGHT;
+	out = (int) (std::atan2(dy, dx) * 180 / -3.14);
 	
 	if (out >= -181 && out < -135) return 1;
 	else if (out >= -135 && out < -45) return 2;
@@ -1028,12 +1041,18 @@ move location of Cluster cl
 a indicates movement type
 up/down/left/right/random
 */
-int moveCluster(std::vector<Cluster*> c, std::string move, double time, Tile* map[900], int cycle) {
+int moveCluster(std::vector<Cluster*> c, std::string move, double time, Tile* map[900]) {
 
-	for (auto cl : c) {
-		if (cl->getTextureActive() != cl->getTextureIdleNotReady()) {
+	for (auto cl : c)
+	{
+		if (cl->combatReady)
+		{
+  			cout << "Cluster Tile = " <<getTilePosition(cl)<<endl;
+			cout << "Player Tile = " <<getTilePosition(player1) << endl;
 			int a = -1;
-			if (move == "pursuit") {
+			if (move == "pursuit")
+			{
+
 				if ((std::sqrt((cl->xPosition - player1->xPosition) * (cl->xPosition - player1->xPosition)
 					+ (cl->yPosition - player1->yPosition) * (cl->yPosition - player1->yPosition)) < cl->aRange)) {
 
@@ -1048,8 +1067,8 @@ int moveCluster(std::vector<Cluster*> c, std::string move, double time, Tile* ma
 						std::cout << "py0: " << player1->yPosition / TILE_HEIGHT << std::endl;
 						*/
 						aStar::map m;
-						aStar::point s(cl->xPosition / TILE_WIDTH, cl->yPosition / TILE_HEIGHT);
-						aStar::point e(player1->xPosition / TILE_WIDTH, player1->yPosition / TILE_HEIGHT);
+						aStar::point s((int)(cl->xPosition / TILE_WIDTH), (int)(cl->yPosition / TILE_HEIGHT));
+						aStar::point e((int)(player1->xPosition / TILE_WIDTH), (int)(player1->yPosition / TILE_HEIGHT));
 						std::list<aStar::point> path;
 
 						pathing.search(s, e, m);
@@ -1072,8 +1091,8 @@ int moveCluster(std::vector<Cluster*> c, std::string move, double time, Tile* ma
 						while (!cl->seqY.empty()) cl->seqY.pop();
 
 						aStar::map m;
-						aStar::point s(cl->xPosition / TILE_WIDTH, cl->yPosition / TILE_HEIGHT);
-						aStar::point e(player1->xPosition / TILE_WIDTH, player1->yPosition / TILE_HEIGHT);
+						aStar::point s((int)(cl->xPosition / TILE_WIDTH), (int)(cl->yPosition / TILE_HEIGHT));
+						aStar::point e((int)(player1->xPosition / TILE_WIDTH), (int)(player1->yPosition / TILE_HEIGHT));
 						std::list<aStar::point> path;
 
 						//std::cout << pathing.search(s, e, m) << std::endl;
@@ -1107,10 +1126,6 @@ int moveCluster(std::vector<Cluster*> c, std::string move, double time, Tile* ma
 					//std::cout << "Boat" << std::endl;
 					while (!cl->seqX.empty()) cl->seqX.pop();
 					while (!cl->seqY.empty()) cl->seqY.pop();
-					if (cycle % 100 == 0) a = rand() % 4;
-					else
-						a = cl->lastDirection;
-					cl->lastDirection = a;
 				}
 			}
 			//std::cout << a << std::endl;
@@ -1561,8 +1576,8 @@ int playGame() {
 
 		std::string hudHealthString = "Health: " + to_string(player1->getHPCurrent());
 		std::string hudLevelString = "Level: " + to_string(player1->getLevel());
-		SDL_Rect hudHealthTextRectangle = { 10, 10, 0, 0 };
-		SDL_Rect hudLevelTextRectangle = { 10, 35, 0, 0 };
+		SDL_Rect hudHealthTextRectangle = { 10, 35, 0, 0 };
+		SDL_Rect hudLevelTextRectangle = { 10, 10, 0, 0 };
 		SDL_Color hudTextColor = { 0, 0, 0, 0 };
 
 		double timePassed = 0;
@@ -1574,7 +1589,6 @@ int playGame() {
 		std::cout << "\n";
 		std::cout << player1->yPosition;
 
-		int cycle = 0;
 
 		SDL_Event e;
 		SDL_Rect camera = { 0,0,SCREEN_WIDTH, SCREEN_HEIGHT };
@@ -1654,8 +1668,8 @@ int playGame() {
 					player1->yVelocity = (player1->getSpeedMax() + runningAddSpeed);
 
 				//Change sprite if character is in motion
-				int beforeMoveX = player1->xPosition;
-				int beforeMoveY = player1->yPosition;
+				int beforeMoveX = (int)player1->xPosition;
+				int beforeMoveY = (int)player1->yPosition;
 				for (auto &i : playersOnScreen)
 				{
 					if (i->xVelocity != 0 || i->yVelocity != 0) {
@@ -1767,8 +1781,8 @@ int playGame() {
 					*/
 				}
 
-				camera.x = (player1->xPosition + player1->rectangle.w / 2) - SCREEN_WIDTH / 2;
-				camera.y = (player1->yPosition + player1->rectangle.h / 2) - SCREEN_HEIGHT / 2;
+				camera.x = (int)((player1->xPosition + player1->rectangle.w / 2) - SCREEN_WIDTH / 2);
+				camera.y = (int)((player1->yPosition + player1->rectangle.h / 2) - SCREEN_HEIGHT / 2);
 				if (camera.x < 0) {
 					camera.x = 0;
 				}
@@ -1796,17 +1810,15 @@ int playGame() {
 
 				if (doNetworking) {
 					if (isHost) {
-						int moveResult = moveCluster(allEnemies, "pursuit", timePassed, tiles, cycle);
+						int moveResult = moveCluster(allEnemies, "pursuit", timePassed, tiles);
 						if (moveResult == -1)
 							return 4;
-						cycle++;
 					}
 				}
 				else {
-					int moveResult = moveCluster(allEnemies, "pursuit", timePassed, tiles, cycle);
+					int moveResult = moveCluster(allEnemies, "pursuit", timePassed, tiles);
 					if (moveResult == -1)
 						return 4;
-					cycle++;
 				}
 
 
@@ -1924,7 +1936,7 @@ int playGame() {
 						ssfull << "+";
 						std::string ctemp=ssfull.str();
 						const char* myString = ctemp.c_str();
-						length = strlen(myString) + 1;
+						length = (int)strlen(myString) + 1;
 						printf("Host Sending PLAYER and ENEMIES %s\n", myString);
 						result = SDLNet_TCP_Send(clientSocket, myString, length);
 						if (result < length) {
@@ -1998,7 +2010,7 @@ int playGame() {
 						//Send Character
 						std::string cppString = player1->ptoString();
 						const char* myString = cppString.c_str();
-						length = strlen(myString) + 1;
+						length = (int)strlen(myString) + 1;
 						printf("Client Sending PLAYER%s\n", myString);
 						result = SDLNet_TCP_Send(clientSocket, myString, length);
 						if (result < length) {
@@ -2268,7 +2280,7 @@ int mainMenu() {
 }
 
 int main(int argc, char *argv[]) {
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 	if (!init()) {
 		std::cout << "Failed to initialize!" << std::endl;
 		close();

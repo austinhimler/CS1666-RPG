@@ -141,7 +141,7 @@ int DialogMessage::GetSelectedOption()
 
 int DialogMessage::GetLastOption()
 {
-	return m_options.size() - 1;
+	return (int)m_options.size() - 1;
 }
 
 void DialogMessage::SetSelectedOption(int option)

@@ -33,7 +33,7 @@
 				value = baseValue + attr[re[0]].getCur() + ((attr[re[1]].getCur()+baseValue) / 2);
 				break;
 			case FIREBALL:
-				value = 2 * baseValue * attr[re[0]].getCur() + 1.5 * baseValue * attr[re[1]].getCur();
+				value = (int)(2 * baseValue * attr[re[0]].getCur() + 1.5 * baseValue * attr[re[1]].getCur());
 				break;
 			case ARROWSHOT:
 				value = baseValue + 2 * attr[re[0]].getCur();

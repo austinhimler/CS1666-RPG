@@ -30,7 +30,7 @@ void MPS_Data::readData(std::string path) {
 			if (tempPos != std::string::npos) {
 				tempString.erase(tempPos);
 			}
-			Data.push_back(std::stoi(tempString.substr(Pos + 1)));
+			Data.push_back((float)(std::stoi(tempString.substr(Pos + 1))));
 			i++;
 		}
 		if (i != Length) {

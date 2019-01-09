@@ -29,6 +29,7 @@ public:
 	Character(std::string n, int s, int i, int d, int c, int f);
 	Character(std::string n, std::vector<Attribute> attr);
 	
+	int getTilePosition();
 	int getLevel();
 	int getHPMax();
 	int getHPCurrent();
@@ -42,8 +43,8 @@ public:
 	int currentMaxFrame;
 	int getNumIdleAnimationFrames();
 	int getNumRunAnimationFrames();
-	int getTimeBetweenIdleAnimations();
-	int getTimeBetweenRunAnimations();
+	unsigned int getTimeBetweenIdleAnimations();
+	unsigned int getTimeBetweenRunAnimations();
 	int getImageWidth();
 	int getImageHeight();
 	double getSpeedMax();

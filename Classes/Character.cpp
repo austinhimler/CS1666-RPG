@@ -12,8 +12,8 @@
 		flip = SDL_FLIP_NONE;
 		energyCurrent = energyMax;
 		energyRegen = 10;
-		energyRegen += (energyMax < 10) ? 1 : 0.1 * energyMax;
-		energyRegen += (attr[DEX].current < 10) ? 1 : 0.1 * attr[DEX].current;
+		energyRegen += (int)((energyMax < 10) ? 1 : 0.1 * energyMax);
+		energyRegen += (int)((attr[DEX].current < 10) ? 1 : 0.1 * attr[DEX].current);
 		name = n;
 		buff = std::vector<int>(BUFFCOUNT, 0);
 		level = 1;
@@ -174,6 +174,7 @@
 		return s;
 	}
 
+	
 	int Character::getHelp(int n) { return abil_helper[n]; }
 	int Character::getDex() { return attributes[DEX].current;}
 	int Character::getHPMax() { return hpMax; }
@@ -191,8 +192,8 @@
 	int Character::getPixelShiftAmountForAnimationInSpriteSheet() { return pixelShiftAmountForAnimationInSpriteSheet; }
 	int Character::getNumIdleAnimationFrames() { return numIdleAnimationFrames; }
 	int Character::getNumRunAnimationFrames() { return numRunAnimatonFrames; }
-	int Character::getTimeBetweenIdleAnimations() { return timeBetweenIdleAnimations; }
-	int Character::getTimeBetweenRunAnimations() { return timeBetweenRunAnimations;  }
+	unsigned int Character::getTimeBetweenIdleAnimations() { return timeBetweenIdleAnimations; }
+	unsigned int Character::getTimeBetweenRunAnimations() { return timeBetweenRunAnimations;  }
 	int Character::getImageWidth() { return imageWidth; }
 	int Character::getImageHeight() { return imageHeight; }
 	std::string Character::getImageIdleResource() { return imageIdleResource; }

@@ -21,7 +21,7 @@
 		learnAbility(FIREBALL);
 		learnAbility(SMITE);
 		isEnemy = false;
-		level = 10;
+		level = 1;
 		pixelShiftAmountForAnimationInSpriteSheet = 144;
 		numIdleAnimationFrames = 6;
 		numRunAnimatonFrames = 6;
