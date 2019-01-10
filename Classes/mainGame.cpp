@@ -177,7 +177,7 @@ bool init() {
 		std::cout << "TTF could not initialize. Error: %s\n", TTF_GetError();
 		return false;
 	}
-	font = TTF_OpenFont("Fonts/ka1.ttf", 20);
+	font = TTF_OpenFont("Fonts/Gameplay.ttf", 20);
 	if (font == NULL) {
 		std::cout << "font was null";
 	}
@@ -666,7 +666,7 @@ int characterCreateScreen()
 	SDL_Rect dexterityTextRectangle = { attributeX, 302, 0, 0 };
 	SDL_Rect constitutionTextRectangle = { attributeX, 395, 0, 0 };
 	SDL_Rect faithTextRectangle = { attributeX, 490, 0, 0 };
-	SDL_Rect nameTextRectangle = { 143, 640, 0,0 };
+	SDL_Rect nameTextRectangle = { 150, 640, 0,0 };
 	SDL_Rect errorTextRectangle = { 115, 580, 0, 0 };
 	SDL_Rect errorTextRectangleLong = { 25, 580, 0, 0 };
 	SDL_Color textColor = { 112, 96, 80, 0 };
