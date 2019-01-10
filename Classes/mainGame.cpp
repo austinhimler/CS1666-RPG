@@ -15,11 +15,7 @@
 #include <cmath>
 #include <fstream>
 #include "../Headers/Globals.h"
-
-
 #include <SDL2/SDL_net.h>
-
-//CHCHCHCHCHANGES
 #include "../Headers/mainGame.h"
 #include "../Headers/Player.h"
 #include "../Headers/Button.h"
@@ -29,7 +25,6 @@
 #include "../Headers/LoadTexture.h"
 #include "../Headers/aStar.h"
 #include "../Headers/Globals.h"
-
 #include "../Headers/ResourceManager/ResourceManager.h"
 
 // Function declarations
@@ -45,10 +40,7 @@ SDL_Renderer* gRenderer = nullptr;
 
 SDL_Window* gWindow = nullptr;//The window rendering to
 
-//SDL_Renderer* gRenderer = nullptr;
-
 SDL_GLContext gContext;//OpenGL context
-
 
 std::vector<SDL_Texture*> gTex;
 void handleMain();
@@ -63,13 +55,22 @@ TCPsocket clientSocket;
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
 const int ENEMIES_PER_CLUSTER = 1;
-const int STARTING_ENEMIES = 1;
+const int STARTING_ENEMIES = 15;
+//const int STARTING_ENEMIES = 1;
 const vector<string> ALL_MAPS = { "map1.txt", "map2.txt", "map3.txt" };
 const int MAX_HORIZONTAL_TILES = 30;
 const int MAX_VERTICAL_TILES = 30;
 int MAP_INDEX = 0;
-//std::vector<SDL_Texture*> gTex;
-// Music var
+
+enum SCENE_CHANGE {
+	GOTO_MAIN,
+	GOTO_SOLO,
+	GOTO_COOP,
+	GOTO_CREDITS,
+	GOTO_EXIT,
+	GOTO_INGAME,
+};
+
 Mix_Music *gMusic = NULL;
 Mix_Chunk *gBSound = NULL;
 TTF_Font* font;
@@ -78,7 +79,7 @@ aStar pathing;
 
 //Player ONE
 Player* player1;
-Player* notYou;
+Player* player2;
 std::vector<int> attr;
 
 bool init() {
@@ -200,18 +201,18 @@ bool check_collision(SDL_Rect a, SDL_Rect b) {
 	if (a.x + a.w <= b.x)
 		return false;
 
-	// Must overlap in both
 	return true;
 }
-int getTilePosition(Character* c)
+void getTilePosition(Character* c)
 {
-	int currentTile = (int)(c->xPosition + (c->rectangle.w / 2)) / TILE_WIDTH;
-	currentTile += (int)((c->yPosition + c->rectangle.h) / TILE_HEIGHT) * 30;
-	return currentTile;
+	int x_to_tile = (int)(c->xPosition + (c->rectangle.w / 2)) / TILE_WIDTH;
+	int y_to_tile = (int)((c->yPosition + c->rectangle.h) / TILE_HEIGHT);
+	cout << c->getName() << "(" << x_to_tile << "," << y_to_tile << ")" << endl;
 }
 
 
-SDL_Rect * loadMap(Tile* tiles[],string mapToLoad) {
+SDL_Rect * loadMap(Tile* tiles[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES],string mapToLoad)
+{
 	Tile::loadTiles();
 	bool tilesLoaded = true;
 	int x = 0, y = 0;
@@ -222,49 +223,53 @@ SDL_Rect * loadMap(Tile* tiles[],string mapToLoad) {
 		printf("Unable to load map file!\n");
 		tilesLoaded = false;
 	}
-	else {
-		for (int i = 0; i < TOTAL_TILES; ++i)
+	else
+	{
+		for (int tempy = 0; tempy < MAX_VERTICAL_TILES; tempy++)
 		{
-			//Determines what kind of tile will be made
-			int tileType = -1;
-
-			//Read tile from map file
-			map >> tileType;
-
-			//If the was a problem in reading the map
-			if (map.fail())
+			for (int tempx = 0; tempx < MAX_HORIZONTAL_TILES; tempx++)
 			{
-				//Stop loading map
-				printf("Error loading map: Unexpected end of file!\n");
-				tilesLoaded = false;
-				break;
-			}
+				//Determines what kind of tile will be made
+				int tileType = -1;
 
-			//If the number is a valid tile number
-			if ((tileType >= 0) && (tileType != 0 || tileType != 1))
-			{
-				tiles[i] = new Tile(x, y, tileType);
-				if (tiles[i]->solid = true)
-					blockedTiles.push_back(tiles[i]->getBox());
-			}
-			//If we don't recognize the tile type
-			else
-			{
-				//Stop loading map
-				printf("Error loading map: Invalid tile type at %d!\n", i);
-				tilesLoaded = false;
-				break;
-			}
-			x += TILE_WIDTH;
+				//Read tile from map file
+				map >> tileType;
 
-			//If we've gone too far
-			if (x >= LEVEL_WIDTH)
-			{
-				//Move back
-				x = 0;
+				//If the was a problem in reading the map
+				if (map.fail())
+				{
+					//Stop loading map
+					printf("Error loading map: Unexpected end of file!\n");
+					tilesLoaded = false;
+					break;
+				}
 
-				//Move to the next row
-				y += TILE_HEIGHT;
+				//If the number is a valid tile number
+				if ((tileType >= 0) && (tileType != 0 || tileType != 1))
+				{
+					tiles[tempx][tempy] = new Tile(x, y, tileType);
+					if (tiles[tempx][tempy]->solid = true)
+						blockedTiles.push_back(tiles[tempx][tempy]->getBox());
+				}
+				//If we don't recognize the tile type
+				else
+				{
+					//Stop loading map
+					printf("Error loading map: Invalid tile type at (%d,%d)!\n", tempx,tempy);
+					tilesLoaded = false;
+					break;
+				}
+				x += TILE_WIDTH;
+
+				//If we've gone too far
+				if (x >= LEVEL_WIDTH)
+				{
+					//Move back
+					x = 0;
+
+					//Move to the next row
+					y += TILE_HEIGHT;
+				}
 			}
 		}
 	}
@@ -321,16 +326,11 @@ void close() {
 }
 
 int playCredits() {
-	//Load the music
-	gMusic = Mix_LoadMUS("Audio/BGM.wav");
-	if (gMusic == NULL)
-		std::cout << "Failed to load music" << std::endl;
-	//Play the music
-	Mix_PlayMusic(gMusic, -1);
+	
 
-	gTex.push_back(loadImage("Images/Credits/dsgCredits.png"));
+	gTex.push_back(loadImage("Images/Credits/dsgCredits.jpg"));
 	gTex.push_back(loadImage("Images/Credits/RyanKillenCreditImage.jpg")); //Ryan Killen - rek77
-	gTex.push_back(loadImage("Images/Credits/bmbCredits.jpg"));
+ 	gTex.push_back(loadImage("Images/Credits/bmbCredits.jpg"));
 	gTex.push_back(loadImage("Images/Credits/dank_farnan_meme.jpg")); //Austin Himler - arh121
 	gTex.push_back(loadImage("Images/Credits/Kexin Wang.jpg"));
 	gTex.push_back(loadImage("Images/Credits/justin.jpg"));
@@ -339,6 +339,12 @@ int playCredits() {
 	gTex.push_back(loadImage("Images/Credits/SankethKolliCredit.jpg")); //Sanketh Kolli - ssk38
 	gTex.push_back(loadImage("Images/Credits/mjl159Credits.png")); //Mitchell Leng - mjl159
 
+	//Load the music
+	gMusic = Mix_LoadMUS("Audio/BGM.wav");
+	if (gMusic == NULL)
+		std::cout << "Failed to load music" << std::endl;
+	//Play the music
+	Mix_PlayMusic(gMusic, -1);
 
 //This is for the actual credits
 	SDL_Event e;
@@ -350,7 +356,7 @@ int playCredits() {
 			SDL_PollEvent(&e);
 			if (e.type == SDL_QUIT) {
 				Mix_HaltMusic();
-				return 4;
+				return GOTO_EXIT;
 			}
 			if (j == 0)
 			{
@@ -365,11 +371,12 @@ int playCredits() {
 	}
 	//Stop the music
 	Mix_HaltMusic();
-	return 4;
+	return GOTO_EXIT;
 }
 
 
-void renderText(const char* text, SDL_Rect* rect, SDL_Color* color) {
+void renderText(const char* text, SDL_Rect* rect, SDL_Color* color)
+{
 	SDL_Surface* surface;
 	SDL_Texture* texture;
 
@@ -471,9 +478,38 @@ void GameOverTransition() {
 	SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);
 	SDL_Delay(200);
 }
+int networkingScreen()
+{
+	// Initialize Variables
+	bool onNetworking = true;
+	bool startReady = false;
+	int currentState = -1;
 
-int characterCreateScreen() {
-	//loads music and starts it
+	SDL_Rect IPTextRectangle = { 255, 195, 0,0 };
+	SDL_Color textColor = { 112, 96, 80, 0 };
+	std::string IPInputText;
+
+	std::vector<Button*> buttons;
+	SDL_Texture* host_false = loadImage("Images/UI/NetworkingScreen/Host_False.png");
+	SDL_Texture* host_true = loadImage("Images/UI/NetworkingScreen/Host_True.png");
+	SDL_Texture* join_false = loadImage("Images/UI/NetworkingScreen/Join_False.png");
+	SDL_Texture* join_true = loadImage("Images/UI/NetworkingScreen/Join_True.png");
+	SDL_Texture* startlocked = loadImage("Images/UI/NetworkingScreen/StartButton_Locked.png");
+	SDL_Texture* startunlocked = loadImage("Images/UI/NetworkingScreen/StartButton_Unlocked.png");
+	SDL_Texture* back = loadImage("Images/UI/NetworkingScreen/BackButton.png");
+
+	//Establish Visuals
+	buttons.push_back(new Button("start", 450, 425, 230, 56, "Images/UI/NetworkingScreen/StartButton_Locked.png", "", gRenderer));
+	buttons.push_back(new Button("host", 450, 500, 230, 56, "Images/UI/NetworkingScreen/Host_False.png", "", gRenderer));
+	buttons.push_back(new Button("join", 450, 575, 230, 56, "Images/UI/NetworkingScreen/Join_False.png", "", gRenderer));
+	buttons.push_back(new Button("back", 450, 650, 230, 56, "Images/UI/NetworkingScreen/BackButton.png", "", gRenderer));
+
+	// Load Background
+	LoadTexture background;
+	background.loadFromFile("Images/UI/NetworkingScreen/NetworkingNoButtons.png", gRenderer);
+	background.renderBackground(gRenderer);
+
+	//Start Music
 	gMusic = Mix_LoadMUS("Audio/charactercreate.wav");
 	if (gMusic == NULL)
 		std::cout << "Failed to load music" << std::endl;
@@ -486,7 +522,126 @@ int characterCreateScreen() {
 	Mix_PlayMusic(gMusic, -1);
 
 
+
+	SDL_Event e;
+	while (onNetworking)
+	{
+		while (SDL_PollEvent(&e))
+		{
+
+			if (e.type == SDL_QUIT)
+			{
+				Mix_HaltMusic();
+				return GOTO_EXIT; //end game
+			}
+
+			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN)
+			{
+				int mouseX, mouseY;
+				SDL_GetMouseState(&mouseX, &mouseY);
+				for (auto i : buttons)
+				{
+					//if mouse is clicked inside a button
+					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
+						((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
+					{
+						if (i->type == "back")
+						{
+							for (auto i : buttons)
+							{
+								delete(i);
+							}
+							background.free();
+							Mix_HaltMusic();
+							return GOTO_MAIN;
+						}
+						else if (i->type == "start")
+						{
+							if (startReady)
+							{
+								cout << "Beep";
+							}
+						}
+						else if (i->type == "host")
+						{
+							currentState = 0;
+						}
+						else if (i->type == "join")
+						{
+							currentState = 1;
+						}
+					}
+					
+				}
+			}
+			else if (e.type == SDL_KEYDOWN)
+			{
+				//remove char if backspace
+				if (e.key.keysym.sym == SDLK_BACKSPACE && IPInputText.length() > 0)
+				{
+					Mix_PlayChannel(-1, gBSound, 0);
+					IPInputText.pop_back();
+				}
+				//Move on by pressing enter
+				else if (e.key.keysym.sym == SDLK_RETURN)
+				{
+				}
+			}
+			else if (e.type == SDL_TEXTINPUT) {
+				//add char
+				//set length limit to arbitrariy be 11 (fits textbox about right, depends on what user enters)
+				if (IPInputText.length() < 15) {
+					Mix_PlayChannel(-1, gBSound, 0);
+					IPInputText += e.text.text;
+				}
+			}
+
+
+		}
+		if (currentState == 0)
+			startReady = true;
+		else if (currentState == 1 && IPInputText.length() >= 9)
+			startReady = true;
+		else startReady = false;
+		background.renderBackground(gRenderer);
+		//Renders buttons and shows pressed image if pressed
+		for (auto i : buttons)
+		{
+			if (i->type == "start")
+			{
+				if(startReady)
+					SDL_RenderCopy(gRenderer, startunlocked, NULL, &i->rect);
+				else SDL_RenderCopy(gRenderer, startlocked, NULL, &i->rect);
+			}
+			else if (i->type == "host")
+			{
+				if(currentState == 0)
+					SDL_RenderCopy(gRenderer, host_true, NULL, &i->rect);
+				else SDL_RenderCopy(gRenderer, host_false, NULL, &i->rect);
+			}
+			else if (i->type == "join")
+			{
+				if(currentState == 1)
+					SDL_RenderCopy(gRenderer, join_true, NULL, &i->rect);
+				else SDL_RenderCopy(gRenderer, join_false, NULL, &i->rect);
+			}
+			else if (i->type == "back")
+				SDL_RenderCopy(gRenderer, back, NULL, &i->rect);
+		}
+		if (IPInputText.length() > 0)
+		{
+			renderText(IPInputText.c_str(), &IPTextRectangle, &textColor);
+		}
+		SDL_RenderPresent(gRenderer);
+		SDL_Delay(16);
+	}
+	return GOTO_CREDITS;
+}
+int characterCreateScreen()
+{
+	// Initialize Variables
 	bool onCharacterCreate = true;
+	bool backToMain = false;
 	int pointsToAllocate = 25;
 	int maxStat = 10;
 	int minStat = 1;
@@ -502,7 +657,6 @@ int characterCreateScreen() {
 	int charAnimationPixelShift = 144;
 	int delaysPerFrame = 0;
 	int frame = 0;
-	
 	int attributeX = 245;
 
 	SDL_Rect characterBox = { 470, 225, 144, 144 };
@@ -531,7 +685,7 @@ int characterCreateScreen() {
 	SDL_Texture* character = loadImage("Images/Player/Idle_Down.png");
 
 
-	//need attr objects
+	//Establish Visuals
 	buttons.push_back(new Button("up", 340, 80, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "strength", gRenderer));
 	buttons.push_back(new Button("down", 340, 130, 35, 42, "Images/UI/CreateScreen/pointDownArrow.png", "strength", gRenderer));
 	buttons.push_back(new Button("up", 340, 175, 35, 45, "Images/UI/CreateScreen/pointUpArrow.png", "intelligence", gRenderer));
@@ -545,20 +699,39 @@ int characterCreateScreen() {
 	buttons.push_back(new Button("start", 450, 575, 230, 56, "Images/UI/CreateScreen/StartButton.png", "", gRenderer));
 	buttons.push_back(new Button("back", 450, 650, 230, 56, "Images/UI/CreateScreen/BackButton.png", "", gRenderer));
 
+	// Load Background
+	LoadTexture background;
+	background.loadFromFile("Images/UI/CreateScreen/characterCreateV2NoButtons.png", gRenderer);
+	background.renderBackground(gRenderer);
 
-	LoadTexture background; 
-	background.loadFromFile("Images/UI/CreateScreen/characterCreateV2NoButtons.png",gRenderer);
+	//Start Music
+	gMusic = Mix_LoadMUS("Audio/charactercreate.wav");
+	if (gMusic == NULL)
+		std::cout << "Failed to load music" << std::endl;
+	gBSound = Mix_LoadWAV("Audio/BSound.wav");
+	if (gBSound == NULL)
+	{
+		printf("Failed to load Button sound effect! SDL_mixer Error: %s\n", Mix_GetError());
+	}
+	//Play the music
+	Mix_PlayMusic(gMusic, -1);
+
+
+	
 	SDL_Event e;
-	bool backToMain = false;
-	while (onCharacterCreate) {
-		while (SDL_PollEvent(&e)) {
+	while (onCharacterCreate)
+	{
+		while (SDL_PollEvent(&e))
+		{
 
-			if (e.type == SDL_QUIT) {
+			if (e.type == SDL_QUIT)
+			{
 				Mix_HaltMusic();
-				return 4; //end game
+				return GOTO_EXIT; //end game
 			}
 
-			if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_KEYDOWN) {
+			if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_KEYDOWN)
+			{
 				errorInputText = "";
 			}
 			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN)
@@ -581,7 +754,7 @@ int characterCreateScreen() {
 							}
 							background.free();
 							Mix_HaltMusic();
-							return 0;
+							return GOTO_MAIN;
 						}
 						else
 						{
@@ -607,7 +780,7 @@ int characterCreateScreen() {
 									}
 									background.free();
 									Mix_HaltMusic();
-									return 2;
+									return GOTO_INGAME;
 								}
 								else {
 									errorInputText = "Enter Your Name!";
@@ -745,7 +918,7 @@ int characterCreateScreen() {
 								}
 								background.free();
 								Mix_HaltMusic();
-								return 2;
+								return GOTO_INGAME;
 							}
 							else {
 								errorInputText = "Enter Your Name!";
@@ -909,10 +1082,10 @@ int characterCreateScreen() {
 		SDL_RenderPresent(gRenderer);
 		SDL_Delay(16);
 	}
-	return 3;
+	return GOTO_CREDITS;
 }
 
-int handlePauseMenu(bool inPauseMenu, std::vector<Character*> charactersOnScreen, Tile *tiles[900], SDL_Rect camera) {
+int handlePauseMenu(bool inPauseMenu, std::vector<Character*> charactersOnScreen, Tile *tiles[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES], SDL_Rect camera) {
 	std::vector<Button*> buttons;
 	buttons.push_back(new Button("continue", 240, 200, 260, 64, "Images/UI/PauseMenu/ContinueButton.png", "", gRenderer));
 	buttons.push_back(new Button("exit", 240, 300, 260, 64, "Images/UI/PauseMenu/ExitButton.png", "", gRenderer));
@@ -924,7 +1097,7 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Character*> charactersOnScreen
 			const Uint8* key = SDL_GetKeyboardState(nullptr);
 			if (e.type == SDL_QUIT) {
 				inPauseMenu = false;
-				return 4;
+				return GOTO_EXIT;
 			}
 			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN) {
 				int mouseX, mouseY;
@@ -940,7 +1113,7 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Character*> charactersOnScreen
 							}
 							SDL_DestroyTexture(background);
 							inPauseMenu = false;
-							return 2;
+							return GOTO_INGAME;
 						}
 						else if (i->type == "exit") {
 							for (auto i : buttons) {
@@ -948,7 +1121,7 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Character*> charactersOnScreen
 							}
 							SDL_DestroyTexture(background);
 							inPauseMenu = false;
-							return 4;
+							return GOTO_EXIT;
 						}
 
 					}
@@ -961,10 +1134,15 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Character*> charactersOnScreen
 		//Set Black
 		SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 		SDL_RenderClear(gRenderer);
-
-		for (int i = 0; i < 900; i++) {
-			tiles[i]->render(&camera);
+		
+		for (int tempx = 0; tempx < MAX_HORIZONTAL_TILES; tempx++)
+		{
+			for (int tempy = 0; tempy < MAX_VERTICAL_TILES; tempy++)
+			{
+				tiles[tempx][tempy]->render(&camera);
+			}
 		}
+		
 
 		for (auto &i : charactersOnScreen)
 		{
@@ -1004,7 +1182,7 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Character*> charactersOnScreen
 		SDL_RenderPresent(gRenderer);
 		SDL_Delay(16);
 	}
-	return 4;
+	return GOTO_EXIT;
 }
 
 /*
@@ -1041,14 +1219,14 @@ move location of Cluster cl
 a indicates movement type
 up/down/left/right/random
 */
-int moveCluster(std::vector<Cluster*> c, std::string move, double time, Tile* map[900]) {
+int moveCluster(std::vector<Cluster*> c, std::string move, double time, Tile* map[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES]) {
 
 	for (auto cl : c)
 	{
 		if (cl->combatReady)
 		{
-  			cout << "Cluster Tile = " <<getTilePosition(cl)<<endl;
-			cout << "Player Tile = " <<getTilePosition(player1) << endl;
+  			getTilePosition(cl);
+			getTilePosition(player1);
 			int a = -1;
 			if (move == "pursuit")
 			{
@@ -1261,25 +1439,25 @@ int moveCluster(std::vector<Cluster*> c, std::string move, double time, Tile* ma
 					cl->seqY.pop();
 				}
 			}
-			
-			int current = (int)(cl->xPosition + cl->rectangle.w / 2) / TILE_WIDTH;
-			current += (int)((cl->yPosition + cl->rectangle.h) / TILE_HEIGHT) * 30;
+			int x_to_tile = (int)(cl->xPosition + cl->rectangle.w / 2) / TILE_WIDTH;
+			int y_to_tile = (int)((cl->yPosition + cl->rectangle.h) / TILE_HEIGHT) ;
 
 
 			//std::cout << cl->xPosition << std::endl;
 			//std::cout << cl->yPosition << std::endl;
 
 
-			if (map[current]->mType != 0) {
+			if (map[x_to_tile][y_to_tile]->mType != 0) {
 				cl->xPosition = beforeMoveX;
 				cl->yPosition = beforeMoveY;
 			}
 
 			for (auto i : c) {
 				if (i != cl) {
-					int other = (int)(i->xPosition + i->rectangle.w / 2) / TILE_WIDTH;
-					other += (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) * 30;
-					if (other == current) {
+					int other_x = (int)(i->xPosition + i->rectangle.w / 2) / TILE_WIDTH;
+					int other_y = (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) ;
+					if (other_x == x_to_tile && other_y == y_to_tile)
+					{
 						cl->xPosition = beforeMoveX;
 						cl->yPosition = beforeMoveY;
 					}
@@ -1399,10 +1577,10 @@ int playGame() {
 	bool doNetworking = handleNetworkingSetup();
 	if (doNetworking)
 	{
-		notYou = new Player("meme", 10, 10, 10, 10, 10);
+		player2 = new Player("meme", 10, 10, 10, 10, 10);
 		
-		charactersOnScreen.push_back(notYou);
-		playersOnScreen.push_back(notYou);
+		charactersOnScreen.push_back(player2);
+		playersOnScreen.push_back(player2);
 	}
 
 	//Load the music
@@ -1414,16 +1592,16 @@ int playGame() {
 	Mix_VolumeMusic(MIX_MAX_VOLUME / 8);
 	for (MAP_INDEX = 0; MAP_INDEX < ALL_MAPS.size(); MAP_INDEX++)
 	{
-		Tile*  tiles[TOTAL_TILES];
+		Tile*  tiles[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES];
 
 		//tiles
 		//Need to delete this to stop memory leak if we load more than one map
 		SDL_Rect* BlockedTiles = loadMap(tiles, ALL_MAPS.at(MAP_INDEX));
 		for (;;)
 		{
-			int t_tile = (int)(player1->xPosition + (player1->rectangle.w / 2)) / TILE_WIDTH;
-			t_tile += (int)((player1->yPosition + player1->rectangle.h) / TILE_HEIGHT) * 30;
-			if (tiles[t_tile]->mType == 0)
+			int x_to_tile = (int)(player1->xPosition + (player1->rectangle.w / 2)) / TILE_WIDTH;
+			int y_to_tile = (int)((player1->yPosition + player1->rectangle.h) / TILE_HEIGHT) ;
+			if (tiles[x_to_tile][y_to_tile]->mType == 0)
 				break;
 			player1->xPosition = rand() % (LEVEL_WIDTH - player1->getImageWidth());
 			player1->yPosition = rand() % (LEVEL_HEIGHT - player1->getImageHeight());
@@ -1459,9 +1637,9 @@ int playGame() {
 					{
 						i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
 						i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
-						int t_tile = (int)(i->xPosition + (i->rectangle.w / 2)) / TILE_WIDTH;
-						t_tile += (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) * 30;
-						if (tiles[t_tile]->mType == 0)
+						int x_to_tile = (int)(player1->xPosition + (player1->rectangle.w / 2)) / TILE_WIDTH;
+						int y_to_tile = (int)((player1->yPosition + player1->rectangle.h) / TILE_HEIGHT) ;
+						if (tiles[x_to_tile][y_to_tile]->mType == 0)
 							break;
 					}
 				}
@@ -1540,9 +1718,9 @@ int playGame() {
 					{
 						i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
 						i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
-						int t_tile = (int)(i->xPosition + (i->rectangle.w / 2)) / TILE_WIDTH;
-						t_tile += (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) * 30;
-						if (tiles[t_tile]->mType == 0)
+						int x_to_tile = (int)(player1->xPosition + (player1->rectangle.w / 2)) / TILE_WIDTH;
+						int y_to_tile = (int)((player1->yPosition + player1->rectangle.h) / TILE_HEIGHT) ;
+						if (tiles[x_to_tile][y_to_tile]->mType == 0)
 							break;
 					}
 			}
@@ -1568,10 +1746,10 @@ int playGame() {
 		
 		if (doNetworking)
 		{
-			notYou->setTextureActive(notYou->getTextureIdle());
-			notYou->currentMaxFrame = notYou->getNumIdleAnimationFrames();
-			notYou->timeSinceLastMovement = timeSinceLastMovement;
-			notYou->timeSinceLastAnimation = timeSinceLastAnimation;
+			player2->setTextureActive(player2->getTextureIdle());
+			player2->currentMaxFrame = player2->getNumIdleAnimationFrames();
+			player2->timeSinceLastMovement = timeSinceLastMovement;
+			player2->timeSinceLastAnimation = timeSinceLastAnimation;
 		}
 
 		std::string hudHealthString = "Health: " + to_string(player1->getHPCurrent());
@@ -1602,7 +1780,7 @@ int playGame() {
 				while (SDL_PollEvent(&e)) {
 					if (e.type == SDL_QUIT) {
 						inOverworld = false;
-						return 4;
+						return GOTO_EXIT;
 					}
 				}
 				// figure out how much of a second has passed
@@ -1745,9 +1923,9 @@ int playGame() {
 					}
 				}
 				//calculate tile player is currently standing on
-				int currentTile = (int)(player1->xPosition + (player1->rectangle.w / 2)) / TILE_WIDTH;
-				currentTile += (int)((player1->yPosition + player1->rectangle.h) / TILE_HEIGHT) * 30;
-
+				int x_to_tile = (int)(player1->xPosition + (player1->rectangle.w / 2)) / TILE_WIDTH;
+				int y_to_tile = (int)((player1->yPosition + player1->rectangle.h) / TILE_HEIGHT) ;
+				
 				// Show which tile the character is standing on
 				/*
 				if (currentTile != tile_test) {
@@ -1756,7 +1934,7 @@ int playGame() {
 				}
 				*/
 
-				if (tiles[currentTile]->mType != 0) {
+				if (tiles[x_to_tile][y_to_tile]->mType != 0) {
 					player1->xPosition = beforeMoveX;
 					player1->yPosition = beforeMoveY;
 					/*
@@ -1803,8 +1981,12 @@ int playGame() {
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 				SDL_RenderClear(gRenderer);
 
-				for (int i = 0; i < 900; i++) {
-					tiles[i]->render(&camera);
+				for (int tempx = 0; tempx < MAX_HORIZONTAL_TILES; tempx++)
+				{
+					for (int tempy = 0; tempy < MAX_VERTICAL_TILES; tempy++)
+					{
+						tiles[tempx][tempy]->render(&camera);
+					}
 				}
 
 
@@ -1812,13 +1994,13 @@ int playGame() {
 					if (isHost) {
 						int moveResult = moveCluster(allEnemies, "pursuit", timePassed, tiles);
 						if (moveResult == -1)
-							return 4;
+							return GOTO_EXIT;
 					}
 				}
 				else {
 					int moveResult = moveCluster(allEnemies, "pursuit", timePassed, tiles);
 					if (moveResult == -1)
-						return 4;
+						return GOTO_EXIT;
 				}
 
 
@@ -1962,7 +2144,7 @@ int playGame() {
 									notYourSTD = notYourSTD.substr(0, notYourSTD.find("*"));
 									receiveString = receiveString.substr(receiveString.find("*") + 1, receiveString.length());
 									std::cout << "Recieved PLAYER" << notYourSTD << std::endl;
-									notYou->fromString(notYourSTD);
+									player2->fromString(notYourSTD);
 								}
 
 						
@@ -1987,7 +2169,7 @@ int playGame() {
 								std::cout << receiveString << endl;
 								std::string notYourSTD = receiveString.substr(0, receiveString.find("*"));
 								std::cout << "client Recieved PLAYER " << notYourSTD << std::endl;
-								notYou->fromString(notYourSTD);
+								player2->fromString(notYourSTD);
 								std::string enemySTD = receiveString.substr(receiveString.find("*") + 1, receiveString.find("Z"));
 								bool firstrun = true;
 								for (auto i : allEnemies)
@@ -2051,11 +2233,11 @@ int playGame() {
 				response = handlePauseMenu(inPauseMenu, charactersOnScreen, tiles, camera);
 				switch (response)
 				{
-				case 2:
+				case GOTO_INGAME:
 					inOverworld = true;
 					break;
 				default:
-					return 4;
+					return GOTO_EXIT;
 				}
 				inPauseMenu = false;
 				timeSinceLastMovement = SDL_GetTicks();
@@ -2081,7 +2263,7 @@ int playGame() {
 				if (combatResult == ENEMY_WINS) {
 					GameOverTransition();
 					SDL_Delay(8000);
-					return 4;
+					return GOTO_EXIT;
 				}
 				else if (combatResult == PLAYER_WINS) {
 					if (allEnemies.size() == 0)
@@ -2111,7 +2293,7 @@ int playGame() {
 					charactersOnScreen.push_back(player1);
 				}
 				else if (combatResult == PLAYER_EXIT) {
-					return 4;
+					return GOTO_EXIT;
 				}
 				combatStarted = false;
 				inOverworld = true;
@@ -2126,7 +2308,7 @@ int playGame() {
 			}
 		}
 	}
-	return 3;
+	return GOTO_CREDITS;
 }
 
 void printProgramLog(GLuint program)
@@ -2192,15 +2374,9 @@ void printShaderLog(GLuint shader)
 		printf("Name %d is not a shader\n", shader);
 	}
 }
-/*
-if return...
--1 - SDL_QUIT
-0 - character creation screen
-1 - farnan memes (credits)
-2 - load game (currently inactive)
-*/
 
-int mainMenu() {
+int mainMenu()
+{
 	//Load the music
 	gMusic = Mix_LoadMUS("Audio/Main_Test.wav");
 	if (gMusic == NULL)
@@ -2211,47 +2387,78 @@ int mainMenu() {
 	bool run = true;
 	std::vector<Button*> buttons;
 
-	SDL_Texture* start = loadImage("Images/UI/MainMenu/StartButton.png");
+	SDL_Texture* singleplayer = loadImage("Images/UI/MainMenu/SingleplayerButton.png");
+	SDL_Texture* multiplayer = loadImage("Images/UI/MainMenu/MultiplayerButton.png");
 	SDL_Texture* credits = loadImage("Images/UI/MainMenu/CreditsButton.png");
 	SDL_Texture* exit = loadImage("Images/UI/MainMenu/ExitButton.png");
 	SDL_Texture* title = loadImage("Images/UI/MainMenu/title.png");
 	SDL_Rect space = { 100, 50, 526, 72 };
-	//need attr objects
-	buttons.push_back(new Button("start", 240, 200, 240, 64, "Images/UI/MainMenu/BlankButton.png", "", gRenderer));
+	
+	// Add all buttons to a vector
+	buttons.push_back(new Button("singleplayer", 240, 200, 240, 64, "Images/UI/MainMenu/BlankButton.png", "", gRenderer));
+	buttons.push_back(new Button("multiplayer", 240, 275, 240, 64, "Images/UI/MainMenu/BlankButton.png", "", gRenderer));
 	buttons.push_back(new Button("credits", 240, 350, 240, 64, "Images/UI/MainMenu/BlankButton.png", "", gRenderer));
-	buttons.push_back(new Button("exit", 240, 500, 240, 64, "Images/UI/MainMenu/BlankButton.png", "", gRenderer));
+	buttons.push_back(new Button("exit", 240, 425, 240, 64, "Images/UI/MainMenu/BlankButton.png", "", gRenderer));
 
-	SDL_Texture* background = loadImage("Images/UI/MainMenu/MainMenuNoButtons.png"); //Moved to fix memory leak
+	SDL_Texture* background = loadImage("Images/UI/MainMenu/MainMenuNoButtons.png");
 
 	SDL_Event e;
-	while (run) {
-		while (SDL_PollEvent(&e)) {
-			if (e.type == SDL_QUIT) {
+	SDL_RenderCopy(gRenderer, background, NULL, NULL);
+	SDL_RenderCopy(gRenderer, title, NULL, &space);
+	for (auto i : buttons)
+	{
+		if (i->type == "singleplayer") SDL_RenderCopy(gRenderer, singleplayer, NULL, &i->rect);
+		else if (i->type == "multiplayer") SDL_RenderCopy(gRenderer, multiplayer, NULL, &i->rect);
+		else if (i->type == "credits") SDL_RenderCopy(gRenderer, credits, NULL, &i->rect);
+		else if (i->type == "exit")  SDL_RenderCopy(gRenderer, exit, NULL, &i->rect);
+	}
+	SDL_RenderPresent(gRenderer);
+	while (run)
+	{
+		while (SDL_PollEvent(&e))
+		{
+			if (e.type == SDL_QUIT)
+			{
 				close();
-				return 4;
+				return GOTO_EXIT;
 			}
-			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN) {
+			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN)
+			{
 				int mouseX, mouseY;
 				SDL_GetMouseState(&mouseX, &mouseY);
-
 				for (auto i : buttons) {
 					//if mouse is clicked inside a button
-					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) && ((mouseY >= i->y) && (mouseY <= (i->y + i->h)))) {
-						if (i->type == "start") {
-							for (auto i : buttons) {
+					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) && ((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
+					{
+						if (i->type == "singleplayer")
+						{
+							for (auto i : buttons)
+							{
 								delete(i);
 							}
 							SDL_DestroyTexture(background);
 							run = false;
-							return 1; // GO TO CHARACTER SELECT
+							return GOTO_SOLO; // GO TO CHARACTER SELECT
 						}
-						else if (i->type == "credits") {
-							for (auto i : buttons) {
+						else if (i->type == "multiplayer")
+						{
+							for (auto i : buttons)
+							{
 								delete(i);
 							}
 							SDL_DestroyTexture(background);
 							run = false;
-							return 3; // GO TO CREDITS
+							return GOTO_COOP; // GO TO COOP
+						}
+						else if (i->type == "credits")
+						{
+							for (auto i : buttons)
+							{
+								delete(i);
+							}
+							SDL_DestroyTexture(background);
+							run = false;
+							return GOTO_CREDITS; // GO TO CREDITS
 						}
 						else if (i->type == "exit") {
 							for (auto i : buttons) {
@@ -2259,56 +2466,57 @@ int mainMenu() {
 							}
 							SDL_DestroyTexture(background);
 							run = false;
-							return 4; // EXIT
+							return GOTO_EXIT; // EXIT
 						}
 						break;
 					}
 				}
 			}
-			SDL_RenderCopy(gRenderer, background, NULL, NULL);
-			SDL_RenderCopy(gRenderer, title, NULL, &space);
-			for (auto i : buttons) {
-				if (i->type == "start") SDL_RenderCopy(gRenderer, start, NULL, &i->rect);
-				else if (i->type == "credits") SDL_RenderCopy(gRenderer, credits, NULL, &i->rect);
-				else if (i->type == "exit")  SDL_RenderCopy(gRenderer, exit, NULL, &i->rect);
-			}
-			SDL_RenderPresent(gRenderer);
-			SDL_Delay(16);
 		}
 	}
-	return 3;
+	return GOTO_CREDITS;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 	srand((unsigned int)time(NULL));
-	if (!init()) {
+	if (!init())
+	{
 		std::cout << "Failed to initialize!" << std::endl;
 		close();
-		return 1;
+		exit(1);
 	}
 	handleMain();
 	close();
 	exit(1);
 }
-void handleMain() {
+void handleMain()
+{
 	player1 = new Player("nlf4", 1, 1, 1, 1, 1);
-	int currentMode = 0;
-	while (1)
+	int currentMode = GOTO_MAIN;
+	while (true)
 	{
-		switch (currentMode) {
-		case 0:
+		switch (currentMode)
+		{
+		case GOTO_MAIN:
 			currentMode = mainMenu();
 			break;
-		case 1:
+		case GOTO_SOLO:
 			currentMode = characterCreateScreen();
 			break;
-		case 2:
+		case GOTO_COOP:
+			currentMode = networkingScreen();
+			break;
+		case GOTO_INGAME:
 			currentMode = playGame();
 			break;
-		case 3:
+		case GOTO_CREDITS:
 			currentMode = playCredits();
 			break;
+		case GOTO_EXIT:
+			return;
 		default:
+			cout << "Option not set" << endl;
 			return;
 		}
 	}	
