@@ -2133,10 +2133,14 @@ int mainMenu()
 	SDL_RenderCopy(gRenderer, title, NULL, &space);
 	for (auto i : buttons)
 	{
-		if (i->type == "singleplayer") SDL_RenderCopy(gRenderer, singleplayer, NULL, &i->rect);
-		else if (i->type == "multiplayer") SDL_RenderCopy(gRenderer, multiplayer, NULL, &i->rect);
-		else if (i->type == "credits") SDL_RenderCopy(gRenderer, credits, NULL, &i->rect);
-		else if (i->type == "exit")  SDL_RenderCopy(gRenderer, exit, NULL, &i->rect);
+		if (i->type == "singleplayer")
+			SDL_RenderCopy(gRenderer, singleplayer, NULL, &i->rect);
+		else if (i->type == "multiplayer")
+			SDL_RenderCopy(gRenderer, multiplayer, NULL, &i->rect);
+		else if (i->type == "credits")
+			SDL_RenderCopy(gRenderer, credits, NULL, &i->rect);
+		else if (i->type == "exit") 
+			SDL_RenderCopy(gRenderer, exit, NULL, &i->rect);
 	}
 	SDL_RenderPresent(gRenderer);
 	while (run)
