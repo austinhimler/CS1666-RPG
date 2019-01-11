@@ -45,9 +45,10 @@ SDL_GLContext gContext;//OpenGL context
 std::vector<SDL_Texture*> gTex;
 void handleMain();
 
+bool isNetworked = false;
 bool isHost;
 bool isClient;
-int port;
+const int port = 12345;
 IPaddress ipAddress;
 TCPsocket serverSocket;
 TCPsocket clientSocket;
@@ -55,8 +56,7 @@ TCPsocket clientSocket;
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
 const int ENEMIES_PER_CLUSTER = 1;
-const int STARTING_ENEMIES = 15;
-//const int STARTING_ENEMIES = 1;
+const int STARTING_ENEMIES = 2;
 const vector<string> ALL_MAPS = { "map1.txt", "map2.txt", "map3.txt" };
 const int MAX_HORIZONTAL_TILES = 30;
 const int MAX_VERTICAL_TILES = 30;
@@ -185,6 +185,59 @@ bool init() {
 	SDLNet_Init();
 
 	return true;
+}
+void handleNetworkingSetup(string userType, string ip)
+{
+	if (userType == "host")
+	{
+		isHost = true;
+		isClient = false;
+	}
+	else if (userType == "client")
+	{
+		isHost = false;
+		isClient = true;
+	}
+	else
+	{
+		cout << "Unknown Usertype\nExiting" << endl;
+		exit(1);
+	}
+	if (isClient)
+	{
+		SDLNet_ResolveHost(&ipAddress, ip.c_str(), 12345);
+		clientSocket = NULL;
+		while (clientSocket == NULL)
+		{
+			clientSocket = SDLNet_TCP_Open(&ipAddress);
+		}
+
+		std::cout << clientSocket << std::endl;
+		std::cout << ip.c_str() << std::endl;
+		std::cout << ipAddress.host << std::endl;
+		std::cout << ipAddress.port << std::endl;
+
+	}
+
+	if (isHost)
+	{
+		SDLNet_ResolveHost(&ipAddress, NULL, 12345);
+		serverSocket = SDLNet_TCP_Open(&ipAddress);
+		bool noClient = true;
+		while (noClient)
+		{
+			//waits for a client to connect
+			clientSocket = SDLNet_TCP_Accept(serverSocket);
+			if (clientSocket)
+			{
+				noClient = false;
+			}
+		}
+		std::cout << serverSocket << std::endl;
+		std::cout << ipAddress.host << std::endl;
+		std::cout << ipAddress.port << std::endl;
+	}
+	isNetworked = true;
 }
 
 
@@ -324,6 +377,14 @@ void close() {
 	IMG_Quit();
 	SDL_Quit();
 }
+void startMusic(string song, int volume)
+{
+	gMusic = Mix_LoadMUS(song.c_str());
+	if (gMusic == NULL)
+		std::cout << "Failed to load music" << std::endl;
+	Mix_PlayMusic(gMusic, -1);
+	Mix_VolumeMusic(volume);
+}
 
 int playCredits() {
 	
@@ -339,12 +400,7 @@ int playCredits() {
 	gTex.push_back(loadImage("Images/Credits/SankethKolliCredit.jpg")); //Sanketh Kolli - ssk38
 	gTex.push_back(loadImage("Images/Credits/mjl159Credits.png")); //Mitchell Leng - mjl159
 
-	//Load the music
-	gMusic = Mix_LoadMUS("Audio/BGM.wav");
-	if (gMusic == NULL)
-		std::cout << "Failed to load music" << std::endl;
-	//Play the music
-	Mix_PlayMusic(gMusic, -1);
+	startMusic("Audio/BGM.wav", MIX_MAX_VOLUME);
 
 //This is for the actual credits
 	SDL_Event e;
@@ -369,7 +425,6 @@ int playCredits() {
 		}
 		j = 0;
 	}
-	//Stop the music
 	Mix_HaltMusic();
 	return GOTO_EXIT;
 }
@@ -388,14 +443,42 @@ void renderText(const char* text, SDL_Rect* rect, SDL_Color* color)
 	SDL_RenderCopy(gRenderer, texture, NULL, rect);
 	SDL_DestroyTexture(texture);
 }
-void combatTransition() {
-	//Load the music
-	gMusic = Mix_LoadMUS("Audio/Into_Combat_Test.wav");
-	if (gMusic == NULL)
-		std::cout << "Failed to load music" << std::endl;
-	//Play the music
-	Mix_PlayMusic(gMusic, -1);
-	Mix_VolumeMusic(MIX_MAX_VOLUME / 8);
+void animateCharacter(Character* i,SDL_Rect camera)
+{
+	if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
+		i->flip = SDL_FLIP_NONE;
+	else if (i->xVelocity < 0 && i->flip == SDL_FLIP_NONE)
+		i->flip = SDL_FLIP_HORIZONTAL;
+
+	if (i->getTextureActive() == i->getTextureIdle()) {
+		if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
+			i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+			i->timeSinceLastAnimation = SDL_GetTicks();
+		}
+	}
+	else if (i->getTextureActive() == i->getTextureIdleNotReady()) {
+		if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
+			i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+			i->timeSinceLastAnimation = SDL_GetTicks();
+		}
+	}
+	else {
+		if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenRunAnimations()) {
+			i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+			i->timeSinceLastAnimation = SDL_GetTicks();
+		}
+	}
+
+	i->drawRectangle.x = i->currentFrame *i->getPixelShiftAmountForAnimationInSpriteSheet();
+	i->rectangle.x = (int)i->xPosition - camera.x;
+	i->rectangle.y = (int)i->yPosition - camera.y;
+	SDL_RenderCopyEx(gRenderer, i->getTextureActive(), &i->drawRectangle, &i->rectangle, 0.0, nullptr, i->flip);
+}
+
+void combatTransition()
+{
+	startMusic("Audio/Into_Combat_Test.wav", MIX_MAX_VOLUME / 8);
+
 	SDL_Rect wipe = { 0,0,72,72 };
 	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 	for (; wipe.x < 720; wipe.x += 72)
@@ -429,11 +512,7 @@ void levelTransition() {
 	}
 }
 void EndTransition() {
-	gMusic = Mix_LoadMUS("Audio/Victory_2_Test.wav");
-	if (gMusic == NULL)
-		std::cout << "Failed to load music" << std::endl;
-	//Play the music
-	Mix_PlayMusic(gMusic, -1);
+	startMusic("Audio/Victory_2_Test.wav", MIX_MAX_VOLUME);
 	SDL_Rect wholeS = { 0,0,720,720 };
 	SDL_Rect word1 = { 220,200,120,60 };
 	SDL_Rect word2 = { 30, 240,120,60};
@@ -453,12 +532,9 @@ void EndTransition() {
 	SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);
 	SDL_Delay(200);
 }
-void GameOverTransition() {
-	gMusic = Mix_LoadMUS("Audio/Defeat_Test.wav");
-	if (gMusic == NULL)
-		std::cout << "Failed to load music" << std::endl;
-	//Play the music
-	Mix_PlayMusic(gMusic, -1);
+void GameOverTransition()
+{
+	startMusic("Audio/Defeat_Test.wav", MIX_MAX_VOLUME);
 	SDL_Rect wholeS = { 0,0,720,720 };
 	SDL_Rect word1 = { 280,200,120,60 };
 	SDL_Rect word2 = { 180, 240,120,60 };
@@ -509,19 +585,7 @@ int networkingScreen()
 	background.loadFromFile("Images/UI/NetworkingScreen/NetworkingNoButtons.png", gRenderer);
 	background.renderBackground(gRenderer);
 
-	//Start Music
-	gMusic = Mix_LoadMUS("Audio/charactercreate.wav");
-	if (gMusic == NULL)
-		std::cout << "Failed to load music" << std::endl;
-	gBSound = Mix_LoadWAV("Audio/BSound.wav");
-	if (gBSound == NULL)
-	{
-		printf("Failed to load Button sound effect! SDL_mixer Error: %s\n", Mix_GetError());
-	}
-	//Play the music
-	Mix_PlayMusic(gMusic, -1);
-
-
+	startMusic("Audio/NetworkSetup.wav", MIX_MAX_VOLUME);
 
 	SDL_Event e;
 	while (onNetworking)
@@ -559,7 +623,10 @@ int networkingScreen()
 						{
 							if (startReady)
 							{
-								cout << "Beep";
+								if (currentState == 0)
+									handleNetworkingSetup("host", "");
+								else if (currentState == 1)
+									handleNetworkingSetup("client", IPInputText);
 							}
 						}
 						else if (i->type == "host")
@@ -588,8 +655,6 @@ int networkingScreen()
 				}
 			}
 			else if (e.type == SDL_TEXTINPUT) {
-				//add char
-				//set length limit to arbitrariy be 11 (fits textbox about right, depends on what user enters)
 				if (IPInputText.length() < 15) {
 					Mix_PlayChannel(-1, gBSound, 0);
 					IPInputText += e.text.text;
@@ -704,17 +769,12 @@ int characterCreateScreen()
 	background.loadFromFile("Images/UI/CreateScreen/characterCreateV2NoButtons.png", gRenderer);
 	background.renderBackground(gRenderer);
 
-	//Start Music
-	gMusic = Mix_LoadMUS("Audio/charactercreate.wav");
-	if (gMusic == NULL)
-		std::cout << "Failed to load music" << std::endl;
+	startMusic("Audio/charactercreate.wav", MIX_MAX_VOLUME / 8);
 	gBSound = Mix_LoadWAV("Audio/BSound.wav");
 	if (gBSound == NULL)
 	{
 		printf("Failed to load Button sound effect! SDL_mixer Error: %s\n", Mix_GetError());
 	}
-	//Play the music
-	Mix_PlayMusic(gMusic, -1);
 
 
 	
@@ -1085,38 +1145,46 @@ int characterCreateScreen()
 	return GOTO_CREDITS;
 }
 
-int handlePauseMenu(bool inPauseMenu, std::vector<Character*> charactersOnScreen, Tile *tiles[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES], SDL_Rect camera) {
+int handlePauseMenu(bool inPauseMenu, std::vector<Character*> allPlayers, std::vector<Cluster*> allEnemies, Tile *tiles[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES], SDL_Rect camera) {
 	std::vector<Button*> buttons;
 	buttons.push_back(new Button("continue", 240, 200, 260, 64, "Images/UI/PauseMenu/ContinueButton.png", "", gRenderer));
 	buttons.push_back(new Button("exit", 240, 300, 260, 64, "Images/UI/PauseMenu/ExitButton.png", "", gRenderer));
 	SDL_Texture* background = loadImage("Images/UI/PauseMenu/PauseMenuNoButtons.png"); 
 
 	SDL_Event e;
-	while (inPauseMenu) {
-		while (SDL_PollEvent(&e)) {
+	while (inPauseMenu)
+	{
+		while (SDL_PollEvent(&e))
+		{
 			const Uint8* key = SDL_GetKeyboardState(nullptr);
-			if (e.type == SDL_QUIT) {
+			if (e.type == SDL_QUIT)
+			{
 				inPauseMenu = false;
 				return GOTO_EXIT;
 			}
-			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN) {
+			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN)
+			{
 				int mouseX, mouseY;
 				SDL_GetMouseState(&mouseX, &mouseY);
-				for (auto i : buttons) {
+				for (auto i : buttons)
+				{
 					//if mouse is clicked inside a button
-					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
-						((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
+					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) && ((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
 					{
-						if (i->type == "continue") {
-							for (auto i : buttons) {
+						if (i->type == "continue")
+						{
+							for (auto i : buttons)
+							{
 								delete(i);
 							}
 							SDL_DestroyTexture(background);
 							inPauseMenu = false;
 							return GOTO_INGAME;
 						}
-						else if (i->type == "exit") {
-							for (auto i : buttons) {
+						else if (i->type == "exit")
+						{
+							for (auto i : buttons)
+							{
 								delete(i);
 							}
 							SDL_DestroyTexture(background);
@@ -1142,43 +1210,19 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Character*> charactersOnScreen
 				tiles[tempx][tempy]->render(&camera);
 			}
 		}
-		
 
-		for (auto &i : charactersOnScreen)
+		for (auto &i : allPlayers)
 		{
-			if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
-				i->flip = SDL_FLIP_NONE;
-			else if (i->xVelocity < 0 && i->flip == SDL_FLIP_NONE)
-				i->flip = SDL_FLIP_HORIZONTAL;
-
-			if (i->getTextureActive() == i->getTextureIdle())
-			{
-				if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations())
-				{
-					i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
-					i->timeSinceLastAnimation = SDL_GetTicks();
-				}
-			}
-			else 
-			{
-				if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenRunAnimations())
-				{
-					i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
-					i->timeSinceLastAnimation = SDL_GetTicks();
-				}
-			}
-
-			i->drawRectangle.x = i->currentFrame *i->getPixelShiftAmountForAnimationInSpriteSheet();
-			i->rectangle.x = (int)i->xPosition - camera.x;
-			i->rectangle.y = (int)i->yPosition - camera.y;
-			SDL_RenderCopyEx(gRenderer, i->getTextureActive(), &i->drawRectangle, &i->rectangle, 0.0, nullptr, i->flip);
+			animateCharacter(i, camera);
 		}
-
-		//SDL_RenderCopy(gRenderer, background, NULL, NULL);
-		for (auto &i : buttons) {
+		for (auto &i : allEnemies)
+		{
+			animateCharacter(i, camera);
+		}
+		for (auto &i : buttons)
+		{
 			SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
 		}
-
 		SDL_RenderPresent(gRenderer);
 		SDL_Delay(16);
 	}
@@ -1470,303 +1514,134 @@ int moveCluster(std::vector<Cluster*> c, std::string move, double time, Tile* ma
 	return 0;
 }
 
-void combatScene(std::vector<Character*> combatants) {
-	/*for (auto i : combatants) {
-		std::cout << i->getName();
-	}*/
 
-}
+int playGame()
+{
+	std::vector<Character*> allPlayers;
+	std::vector<Cluster*> allEnemies;
+	std::vector<Character*> allCombat;
 
+	std::vector<string> HUD_HPStrings;
+	std::vector<string> HUD_NameStrings;
+	std::vector<string> HUD_LevelStrings;
 
-bool handleNetworkingSetup() {
-	bool waitForInput = true;
-	while (waitForInput) {
-		std::cout << "Do you want to do Networking? 'y' or 'n'" << std::endl;
-		std::string networkingAnswer;
-		std::getline(std::cin, networkingAnswer);
+	std::vector<SDL_Rect> HUD_HealthRect;
+	std::vector<SDL_Rect> HUD_NameRect;
+	std::vector<SDL_Rect> HUD_LevelRect;
 
-		if (networkingAnswer == "y") {
-
-		}
-		else {
-			return false;
-		}
-
-		std::cout << "Are you host or client? Type 'h' for host 'c' for client?" << std::endl;
-		std::string hostOrClientInput;
-		std::getline(std::cin, hostOrClientInput);
-		if (hostOrClientInput == "h") {
-			isHost = true;
-			isClient = false;
-		}
-		else if (hostOrClientInput == "c") {
-			isHost = false;
-			isClient = true;
-		}
-		else {
-			break;
-		}
-
-
-		if (isClient) {
-			std::cout << "Enter IP address:\n" << std::endl;
-			std::string ipInput;
-			std::getline(std::cin, ipInput);
-
-			std::cout << "Enter Port:\n" << std::endl;
-			std::cin >> port;
-
-			SDLNet_ResolveHost(&ipAddress, ipInput.c_str(), port);
-			
-
-			clientSocket = NULL;
-			while (clientSocket == NULL)
-			{
-				clientSocket = SDLNet_TCP_Open(&ipAddress);
-			}
-
-			std::cout << clientSocket << std::endl;
-			std::cout << ipInput.c_str() << std::endl;
-			std::cout << ipAddress.host << std::endl;
-			std::cout << ipAddress.port << std::endl;
-		
-		}
-
-		if (isHost) {
-			std::cout << "Enter Port:\n" << std::endl;
-			std::cin >> port;
-
-			SDLNet_ResolveHost(&ipAddress, NULL, port);
-			serverSocket = SDLNet_TCP_Open(&ipAddress);
-			bool noClient = true;
-			while (noClient)
-			{
-				//waits for a client to connect
-				clientSocket = SDLNet_TCP_Accept(serverSocket);
-				if (clientSocket)
-				{
-					noClient = false;
-				}
-			}
-			std::cout << serverSocket << std::endl;
-			std::cout << ipAddress.host << std::endl;
-			std::cout << ipAddress.port << std::endl;
-		}
-
-		return true;
-	}
-	return false;
-}
-
-int playGame() {
-	std::vector<Character*> charactersOnScreen;
-	std::vector<Character*> playersOnScreen;
-	playersOnScreen.push_back(player1);
-	std::vector<Character*> combatants;
-	player1->refillEnergy();
+	Cluster* CollidingCluster;
 
 	pathing = aStar();
 	Uint32 timeSinceLastMovement = SDL_GetTicks();
 	Uint32 timeSinceLastAnimation = SDL_GetTicks();
 	Uint32 lastSync = SDL_GetTicks();
-	player1->timeSinceLastMovement = timeSinceLastMovement;
-	player1->timeSinceLastAnimation = timeSinceLastAnimation;
-	vector<Cluster*> allEnemies;
-	Cluster* CollidingCluster;
+	
+
 	std::string receiveString="";
-	bool doNetworking = handleNetworkingSetup();
-	if (doNetworking)
+
+	allPlayers.push_back(player1);
+	if (isNetworked)
 	{
 		player2 = new Player("meme", 10, 10, 10, 10, 10);
-		
-		charactersOnScreen.push_back(player2);
-		playersOnScreen.push_back(player2);
+		allPlayers.push_back(player2);
 	}
 
-	//Load the music
-	gMusic = Mix_LoadMUS("Audio/Walking_Test.wav");
-	if (gMusic == NULL)
-		std::cout << "Failed to load music" << std::endl;
-	//Play the music
-	Mix_PlayMusic(gMusic, -1);
-	Mix_VolumeMusic(MIX_MAX_VOLUME / 8);
+	startMusic("Audio/Walking_Test.wav", MIX_MAX_VOLUME / 8);
+
 	for (MAP_INDEX = 0; MAP_INDEX < ALL_MAPS.size(); MAP_INDEX++)
 	{
 		Tile*  tiles[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES];
-
-		//tiles
-		//Need to delete this to stop memory leak if we load more than one map
 		SDL_Rect* BlockedTiles = loadMap(tiles, ALL_MAPS.at(MAP_INDEX));
-		for (;;)
+
+		int numEnemies = STARTING_ENEMIES * (MAP_INDEX + 1);
+		allEnemies = vector<Cluster*>();
+
+		
+		for (auto player : allPlayers)
 		{
-			int x_to_tile = (int)(player1->xPosition + (player1->rectangle.w / 2)) / TILE_WIDTH;
-			int y_to_tile = (int)((player1->yPosition + player1->rectangle.h) / TILE_HEIGHT) ;
-			if (tiles[x_to_tile][y_to_tile]->mType == 0)
-				break;
-			player1->xPosition = rand() % (LEVEL_WIDTH - player1->getImageWidth());
-			player1->yPosition = rand() % (LEVEL_HEIGHT - player1->getImageHeight());
-		}
-
-		if (doNetworking) {
-			int numEnemies = STARTING_ENEMIES * (MAP_INDEX + 1); //2
-			allEnemies = vector<Cluster*>();
-			if (isHost) {
-			
-				for (int num_enemy = 0; num_enemy < numEnemies; num_enemy++)
-				{
-					int length = sizeof(int);
-					int param = (rand() % (ENEMIES_PER_CLUSTER + MAP_INDEX)) + 1;
-					Cluster* enemy = new Cluster(param);
-					//printf("Host Sending %d\n", &param);
-					//result = SDLNet_TCP_Send(clientSocket, &param, sizeof(int));
-					//if (result < length) {
-					//	printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-					//}
-					//std::cout << "Host Done Sending\n" << std::endl;
-
-					cout << "Enemy " << num_enemy + 1 << " Cluster Size: " << enemy->clusterSize << endl;
-					allEnemies.push_back(enemy);
-				}
-
-				for (auto i : allEnemies)
-				{
-					i->setTextureActive(i->getTextureIdle());
-					i->currentMaxFrame = i->getNumIdleAnimationFrames();
-					// Randomly spawn the enemy
-					for (;;)
-					{
-						i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
-						i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
-						int x_to_tile = (int)(player1->xPosition + (player1->rectangle.w / 2)) / TILE_WIDTH;
-						int y_to_tile = (int)((player1->yPosition + player1->rectangle.h) / TILE_HEIGHT) ;
-						if (tiles[x_to_tile][y_to_tile]->mType == 0)
-							break;
-					}
-				}
-
-				for (auto i : allEnemies)
-				{
-					cout << "Enemy Coordinates: (" << i->xPosition << "," << i->yPosition << ")" << endl;
-					i->timeSinceLastAnimation = timeSinceLastAnimation;
-					charactersOnScreen.push_back(i);
-
-					//std::string cppString = player1->ptoString();
-					//const char* myString = cppString.c_str();
-					//length = strlen(myString) + 1;
-					//printf("Host Sending %s\n", myString);
-					//result = SDLNet_TCP_Send(clientSocket, myString, length);
-					//if (result < length) {
-					//	printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-					//}
-					//std::cout << "Host Done Sending\n" << std::endl;
-				}
-
-			}
-			else if (isClient) {
-				//std::vector<int> params;
-				//char temp[100];
-				//for (int i = 0; i < numEnemies; i++) {					
-				//	SDLNet_TCP_Recv(clientSocket, temp, sizeof(int));
-				//}
-
-				//int j = 0;
-				//while (temp[j] != 0) {
-				//	std::cout << "param buffer at index " << j << " with  " << temp[j] << std::endl;
-				//	params.push_back(temp[j] - '0');
-				//	j++;
-				//}
-
-				//for (int i = 0; i < params.size(); i++) {
-				//	std::cout << params[i] << std::endl;
-				//	Cluster* enemy = new Cluster(params[i]);
-				//	cout << "Enemy " << i + 1 << " Cluster Size: " << enemy->clusterSize << endl;
-				//	allEnemies.push_back(enemy);
-				//}
-
-				for (int i = 0; i < numEnemies; i++) {
-					Cluster* enemy = new Cluster(1);
-					cout << "Enemy " << i + 1 << " Cluster Size: " << enemy->clusterSize << endl;
-					allEnemies.push_back(enemy);
-				}
-
-
-				for (auto i : allEnemies)
-				{
-					cout << "Enemy Coordinates: (" << i->xPosition << "," << i->yPosition << ")" << endl;
-					i->timeSinceLastAnimation = timeSinceLastAnimation;
-					i->setTextureActive(i->getTextureIdle());
-					i->currentMaxFrame = i->getNumIdleAnimationFrames();
-					charactersOnScreen.push_back(i);
-				}
-
-			}
-		}
-		else {
-			allEnemies = vector<Cluster*>();
-			for (int num_enemy = 0; num_enemy < STARTING_ENEMIES * (MAP_INDEX + 1); num_enemy++)
+			while (true)
 			{
-				Cluster* enemy = new Cluster((rand() % (ENEMIES_PER_CLUSTER + MAP_INDEX)) + 1);
+				int x_to_tile = (int)(player->xPosition + (player->rectangle.w / 2)) / TILE_WIDTH;
+				int y_to_tile = (int)((player->yPosition + player->rectangle.h) / TILE_HEIGHT);
+				if (tiles[x_to_tile][y_to_tile]->mType == 0)
+					break;
+				player->xPosition = rand() % (LEVEL_WIDTH - player->getImageWidth());
+				player->yPosition = rand() % (LEVEL_HEIGHT - player->getImageHeight());
+			}
+			player->setTextureActive(player->getTextureIdle());
+			player->currentMaxFrame = player->getNumIdleAnimationFrames();
+			player->timeSinceLastMovement = timeSinceLastMovement;
+			player->timeSinceLastAnimation = timeSinceLastAnimation;
+		}
+
+		if ((isNetworked&&isHost) || !isNetworked)
+		{
+			for (int num_enemy = 0; num_enemy < numEnemies; num_enemy++)
+			{
+				int length = sizeof(int);
+				int enemiesInCluster = (rand() % (ENEMIES_PER_CLUSTER + MAP_INDEX)) + 1;
+				Cluster* enemy = new Cluster(enemiesInCluster);
 				cout << "Enemy " << num_enemy + 1 << " Cluster Size: " << enemy->clusterSize << endl;
 				allEnemies.push_back(enemy);
 			}
-			for (auto i : allEnemies)
-			{
-					i->setTextureActive(i->getTextureIdle());
-					i->currentMaxFrame = i->getNumIdleAnimationFrames();
-					// Randomly spawn the enemy
-					for (;;)
-					{
-						i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
-						i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
-						int x_to_tile = (int)(player1->xPosition + (player1->rectangle.w / 2)) / TILE_WIDTH;
-						int y_to_tile = (int)((player1->yPosition + player1->rectangle.h) / TILE_HEIGHT) ;
-						if (tiles[x_to_tile][y_to_tile]->mType == 0)
-							break;
-					}
-			}
 
 			for (auto i : allEnemies)
 			{
-				cout << "Enemy Coordinates: (" << i->xPosition << "," << i->yPosition << ")" << endl;
+				i->setTextureActive(i->getTextureIdle());
+				i->currentMaxFrame = i->getNumIdleAnimationFrames();
 				i->timeSinceLastAnimation = timeSinceLastAnimation;
-				charactersOnScreen.push_back(i);
+				while (true)
+				{
+					i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
+					i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
+					int x_to_tile = (int)(i->xPosition + (i->rectangle.w / 2)) / TILE_WIDTH;
+					int y_to_tile = (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT);
+					if (tiles[x_to_tile][y_to_tile]->mType == 0)
+						break;
+				}
 			}
-
-
 		}
 
-		//SDL_RendererFlip flip = SDL_FLIP_NONE;
-
-		int tile_test = -1;
-
-		player1->setTextureActive(player1->getTextureIdle());
-		player1->currentMaxFrame = player1->getNumIdleAnimationFrames();
-
-
-		
-		if (doNetworking)
+		int hudArea = 0; // 0 is top left	1 is top right	2 is bottom left	3 is bottom right
+		for (auto player : allPlayers)
 		{
-			player2->setTextureActive(player2->getTextureIdle());
-			player2->currentMaxFrame = player2->getNumIdleAnimationFrames();
-			player2->timeSinceLastMovement = timeSinceLastMovement;
-			player2->timeSinceLastAnimation = timeSinceLastAnimation;
-		}
+			HUD_HPStrings.push_back("Health: " + to_string(player->getHPCurrent()));
+			HUD_LevelStrings.push_back("Level: " + to_string(player->getLevel()));
+			HUD_NameStrings.push_back("Name: " + player->getName());
 
-		std::string hudHealthString = "Health: " + to_string(player1->getHPCurrent());
-		std::string hudLevelString = "Level: " + to_string(player1->getLevel());
-		SDL_Rect hudHealthTextRectangle = { 10, 35, 0, 0 };
-		SDL_Rect hudLevelTextRectangle = { 10, 10, 0, 0 };
+			switch (hudArea)
+			{
+			case 0:
+				HUD_NameRect.push_back({ 10, 10, 0, 0 });
+				HUD_HealthRect.push_back({ 10, 35, 0, 0 });
+				HUD_LevelRect.push_back({ 10, 60, 0, 0 });
+				break;
+			case 1:
+				HUD_NameRect.push_back({ SCREEN_WIDTH-10, 10, 0, 0 });
+				HUD_HealthRect.push_back({ SCREEN_WIDTH-10, 35, 0, 0 });
+				HUD_LevelRect.push_back({ SCREEN_WIDTH-10, 60, 0, 0 });
+				break;
+			case 2:
+				HUD_NameRect.push_back({ 10, SCREEN_HEIGHT-10, 0, 0 });
+				HUD_HealthRect.push_back({ 10, SCREEN_HEIGHT - 35, 0, 0 });
+				HUD_LevelRect.push_back({ 10, SCREEN_HEIGHT - 60, 0, 0 });
+				break;
+			case 3:
+				HUD_NameRect.push_back({ SCREEN_WIDTH - 10, SCREEN_HEIGHT - 10, 0, 0 });
+				HUD_HealthRect.push_back({ SCREEN_WIDTH - 10, SCREEN_HEIGHT - 35, 0, 0 });
+				HUD_LevelRect.push_back({ SCREEN_WIDTH - 10, SCREEN_HEIGHT - 60, 0, 0 });
+				break;
+			default:
+				cout << "ERROR HERE" << endl;
+				exit(1);
+			}
+			hudArea++;
+		}
+		
 		SDL_Color hudTextColor = { 0, 0, 0, 0 };
 
 		double timePassed = 0;
 		int response = 0;
-
-		charactersOnScreen.push_back(player1);
-
-		std::cout << player1->xPosition;
-		std::cout << "\n";
-		std::cout << player1->yPosition;
-
 
 		SDL_Event e;
 		SDL_Rect camera = { 0,0,SCREEN_WIDTH, SCREEN_HEIGHT };
@@ -1774,11 +1649,14 @@ int playGame() {
 		bool combatStarted = false;
 		bool inPauseMenu = false;
 		bool keepPlaying = true;
-		while (keepPlaying) {
+		while (keepPlaying)
+		{
 			while (inOverworld) 
 			{
-				while (SDL_PollEvent(&e)) {
-					if (e.type == SDL_QUIT) {
+				while (SDL_PollEvent(&e))
+				{
+					if (e.type == SDL_QUIT)
+					{
 						inOverworld = false;
 						return GOTO_EXIT;
 					}
@@ -1802,37 +1680,39 @@ int playGame() {
 					runningAddSpeed = 200;
 
 
-				if (player1->xDeltaVelocity == 0) {
+				if (player1->xDeltaVelocity == 0)
+				{
 					if (player1->xVelocity > 0)
+					{
 						if (player1->xVelocity < (player1->getAcceleration() * timePassed))
 							player1->xVelocity = 0;
-						else
-							player1->xVelocity -= (player1->getAcceleration() * timePassed);
+						else player1->xVelocity -= (player1->getAcceleration() * timePassed);
+					}
 					else if (player1->xVelocity < 0)
+					{
 						if (-player1->xVelocity < (player1->getAcceleration() * timePassed))
 							player1->xVelocity = 0;
-						else
-							player1->xVelocity += (player1->getAcceleration() * timePassed);
+						else player1->xVelocity += (player1->getAcceleration() * timePassed);
+					}
 				}
-				else {
-					player1->xVelocity += player1->xDeltaVelocity;
-				}
+				else player1->xVelocity += player1->xDeltaVelocity;
 
-				if (player1->yDeltaVelocity == 0) {
+				if (player1->yDeltaVelocity == 0)
+				{
 					if (player1->yVelocity > 0)
+					{
 						if (player1->yVelocity < (player1->getAcceleration() * timePassed))
 							player1->yVelocity = 0;
-						else
-							player1->yVelocity -= (player1->getAcceleration() * timePassed);
+						else player1->yVelocity -= (player1->getAcceleration() * timePassed);
+					}
 					else if (player1->yVelocity < 0)
+					{
 						if (-player1->yVelocity < (player1->getAcceleration() * timePassed))
 							player1->yVelocity = 0;
-						else
-							player1->yVelocity += (player1->getAcceleration() * timePassed);
+						else player1->yVelocity += (player1->getAcceleration() * timePassed);
+					}
 				}
-				else {
-					player1->yVelocity += player1->yDeltaVelocity;
-				}
+				else player1->yVelocity += player1->yDeltaVelocity;
 
 				//bound within Max Speed
 				if (player1->xVelocity < -(player1->getSpeedMax() + runningAddSpeed))
@@ -1848,69 +1728,35 @@ int playGame() {
 				//Change sprite if character is in motion
 				int beforeMoveX = (int)player1->xPosition;
 				int beforeMoveY = (int)player1->yPosition;
-				for (auto &i : playersOnScreen)
+				for (auto &i : allPlayers)
 				{
-					if (i->xVelocity != 0 || i->yVelocity != 0) {
-
-						if (i->yVelocity == 0) {
-							if (i->getTextureActive() != i->getTextureRun()) {
-								i->setTextureActive(i->getTextureRun());
-								i->currentFrame = 0;
-								i->currentMaxFrame = i->getNumRunAnimationFrames();
-							}
-						}
-
-
-						if (i->xVelocity == 0 && i->yVelocity > 0) {
-							if (i->getTextureActive() != i->getTextureDownRun()) {
-								i->setTextureActive(i->getTextureDownRun());
-								i->currentFrame = 0;
-								i->currentMaxFrame = i->getNumRunAnimationFrames();
-							}
-						}
-
-
-
-						if (i->xVelocity != 0 && i->yVelocity > 0) {
-							if (i->getTextureActive() != i->getTextureDownRightRun()) {
-								i->setTextureActive(i->getTextureDownRightRun());
-								i->currentFrame = 0;
-								i->currentMaxFrame = i->getNumRunAnimationFrames();
-							}
-						}
-
-						if (i->xVelocity != 0 && i->yVelocity < 0) {
-							if (i->getTextureActive() != i->getTextureUpRightRun()) {
-								i->setTextureActive(i->getTextureUpRightRun());
-								i->currentFrame = 0;
-								i->currentMaxFrame = i->getNumRunAnimationFrames();
-							}
-						}
-
-
-
-						if (i->xVelocity == 0 && i->yVelocity < 0) {
-							if (i->getTextureActive() != i->getTextureUpRun()) {
-								i->setTextureActive(i->getTextureUpRun());
-								i->currentFrame = 0;
-								i->currentMaxFrame = i->getNumRunAnimationFrames();
-
-							}
-						}
+					if (i->xVelocity == 0 && i->yVelocity == 0)
+					{
+						if (i->getTextureActive() != i->getTextureIdle())
+							i->changeTexture(i->getTextureIdle());
 					}
+					else
+					{
+						if (i->yVelocity == 0 && i->getTextureActive() != i->getTextureRun())
+							i->changeTexture(i->getTextureRun());
 
-					else {
-						if (i->getTextureActive() != i->getTextureIdle()) {
-							i->setTextureActive(i->getTextureIdle());
-							i->currentFrame = 0;
-							i->currentMaxFrame = i->getNumIdleAnimationFrames();
-						}
+						if (i->xVelocity == 0 && i->yVelocity > 0 && i->getTextureActive() != i->getTextureDownRun())
+							i->changeTexture(i->getTextureDownRun());
+
+						if (i->xVelocity != 0 && i->yVelocity > 0 && i->getTextureActive() != i->getTextureDownRightRun())
+							i->changeTexture(i->getTextureDownRightRun());
+						
+						if (i->xVelocity != 0 && i->yVelocity < 0 && i->getTextureActive() != i->getTextureUpRightRun())
+							i->changeTexture(i->getTextureUpRightRun());
+
+						if (i->xVelocity == 0 && i->yVelocity < 0 && i->getTextureActive() != i->getTextureUpRun())
+							i->changeTexture(i->getTextureUpRun());
 					}
-
-					
+						
 					//Move vertically
 					i->yPosition += (i->yVelocity * timePassed);
-					if (i->yPosition < 0 || (i->yPosition + i->getImageHeight() > LEVEL_HEIGHT)) {
+					if (i->yPosition < 0 || (i->yPosition + i->getImageHeight() > LEVEL_HEIGHT))
+					{
 						//go back into window
 						i->yPosition -= (i->yVelocity * timePassed);
 					}
@@ -1926,51 +1772,29 @@ int playGame() {
 				int x_to_tile = (int)(player1->xPosition + (player1->rectangle.w / 2)) / TILE_WIDTH;
 				int y_to_tile = (int)((player1->yPosition + player1->rectangle.h) / TILE_HEIGHT) ;
 				
-				// Show which tile the character is standing on
-				/*
-				if (currentTile != tile_test) {
-					cout << currentTile << endl;
-					tile_test = currentTile;
-				}
-				*/
 
-				if (tiles[x_to_tile][y_to_tile]->mType != 0) {
+				if (tiles[x_to_tile][y_to_tile]->mType != 0)
+				{
 					player1->xPosition = beforeMoveX;
 					player1->yPosition = beforeMoveY;
-					/*
-					//toDo
-					bool xVelPos = player1->xVelocity > 0;
-					bool xVelNeg = player1->xVelocity < 0;
-					bool yVelPos = player1->yVelocity > 0;
-					bool yVelNeg = player1->yVelocity < 0;
-					player1->xVelocity = 0;
-					player1->yVelocity = 0;
-					if (xVelPos)
-						player1->xPosition -= 1;
-					if (xVelNeg)
-						player1->xPosition += 1;
-					if (yVelNeg)
-						player1->yPosition += 1;
-					if (yVelPos)
-						player1->yPosition -= 1;
-
-					//player1->xPosition -= 1;
-					//player1->yPosition -= 1;
-					*/
 				}
 
 				camera.x = (int)((player1->xPosition + player1->rectangle.w / 2) - SCREEN_WIDTH / 2);
 				camera.y = (int)((player1->yPosition + player1->rectangle.h / 2) - SCREEN_HEIGHT / 2);
-				if (camera.x < 0) {
+				if (camera.x < 0)
+				{
 					camera.x = 0;
 				}
-				if (camera.y < 0) {
+				if (camera.y < 0)
+				{
 					camera.y = 0;
 				}
-				if (camera.x > LEVEL_WIDTH - camera.w) {
+				if (camera.x > LEVEL_WIDTH - camera.w)
+				{
 					camera.x = LEVEL_WIDTH - camera.w;
 				}
-				if (camera.y > LEVEL_HEIGHT - camera.h) {
+				if (camera.y > LEVEL_HEIGHT - camera.h)
+				{
 					camera.y = LEVEL_HEIGHT - camera.h;
 				}
 
@@ -1989,61 +1813,37 @@ int playGame() {
 					}
 				}
 
-
-				if (doNetworking) {
-					if (isHost) {
+					if (isNetworked&&isHost||!isNetworked)
+					{
 						int moveResult = moveCluster(allEnemies, "pursuit", timePassed, tiles);
 						if (moveResult == -1)
 							return GOTO_EXIT;
 					}
-				}
-				else {
-					int moveResult = moveCluster(allEnemies, "pursuit", timePassed, tiles);
-					if (moveResult == -1)
-						return GOTO_EXIT;
-				}
 
-
-				for (auto &i : charactersOnScreen)
+				for (auto &i : allPlayers)
 				{
-					if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
-						i->flip = SDL_FLIP_NONE;
-					else if (i->xVelocity < 0 && i->flip == SDL_FLIP_NONE)
-						i->flip = SDL_FLIP_HORIZONTAL;
-
-					if (i->getTextureActive() == i->getTextureIdle()) {
-						if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
-							i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
-							i->timeSinceLastAnimation = SDL_GetTicks();
-						}
-					}
-					else if (i->getTextureActive() == i->getTextureIdleNotReady()) {
-						if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
-							i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
-							i->timeSinceLastAnimation = SDL_GetTicks();
-						}
-					}
-					else {
-						if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenRunAnimations()) {
-							i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
-							i->timeSinceLastAnimation = SDL_GetTicks();
-						}
-					}
-
-					i->drawRectangle.x = i->currentFrame *i->getPixelShiftAmountForAnimationInSpriteSheet();
-					i->rectangle.x = (int)i->xPosition - camera.x;
-					i->rectangle.y = (int)i->yPosition - camera.y;
-					SDL_RenderCopyEx(gRenderer, i->getTextureActive(), &i->drawRectangle, &i->rectangle, 0.0, nullptr, i->flip);
+					animateCharacter(i, camera);
 				}
-
-				hudHealthString = "Health: " + to_string(player1->getHPCurrent());
-				hudLevelString = "Level: " + to_string(player1->getLevel());
-				renderText(hudHealthString.c_str(), &hudHealthTextRectangle, &hudTextColor);
-				renderText(hudLevelString.c_str(), &hudLevelTextRectangle, &hudTextColor);
-
+				for (auto &i : allEnemies)
+				{
+					animateCharacter(i, camera);
+				}
+				
+				int hudArea = 0; // 0 is top left	1 is top right	2 is bottom left	3 is bottom right
+				for (auto player : allPlayers)
+				{
+					HUD_HPStrings.at(hudArea) = "Health: " + to_string(player->getHPCurrent());
+					HUD_LevelStrings.at(hudArea) = "Level: " + to_string(player->getLevel());
+					HUD_NameStrings.at(hudArea) = "Name: " + player->getName();
+					renderText(HUD_NameStrings.at(hudArea).c_str(), &HUD_NameRect.at(hudArea), &hudTextColor);
+					renderText(HUD_HPStrings.at(hudArea).c_str(), &HUD_HealthRect.at(hudArea), &hudTextColor);
+					renderText(HUD_LevelStrings.at(hudArea).c_str(), &HUD_LevelRect.at(hudArea), &hudTextColor);
+					hudArea++;
+				}
 				SDL_RenderPresent(gRenderer);
 
-				if (keyState[SDL_SCANCODE_ESCAPE]) {
+				if (keyState[SDL_SCANCODE_ESCAPE])
+				{
 					inOverworld = false;
 					inPauseMenu = true;
 				}
@@ -2052,38 +1852,38 @@ int playGame() {
 				for (auto z : allEnemies)
 				{
 					
-					if (check_collision(player1->rectangle, z->rectangle) && z->combatReady) {
+					if (check_collision(player1->rectangle, z->rectangle) && z->combatReady)
+					{
 						z->combatReady = false;
 						z->readyTimeLeft = 3000;
 						z->setTextureActive(z->getTextureIdleNotReady());
 						CollidingCluster = z;
-						combatants.clear();
-						combatants.push_back(player1);
+						allCombat.clear();
+						allCombat.push_back(player1);
 						for (auto i : z->characterGroup)
 						{
-							combatants.push_back(i);
+							allCombat.push_back(i);
 						}
 						allEnemies.erase(allEnemies.begin() + enemyToRemove);
-						charactersOnScreen.erase(charactersOnScreen.begin() + enemyToRemove);
 						inOverworld = false;
 						combatStarted = true;
 						break;
 					}
 					if (z->readyTimeLeft > -1)
 						z->readyTimeLeft -= 1;
-					if (z->readyTimeLeft == 0) {
+					if (z->readyTimeLeft == 0)
+					{
 						z->combatReady = true;
 						z->setTextureActive(z->getTextureIdle());
 					}
 					enemyToRemove++;
 				}
-				if (doNetworking&&(SDL_GetTicks()-lastSync>25)) {
+				if (isNetworked&&(SDL_GetTicks()-lastSync>25))
+				{
 					int length;
 					int result;
 					lastSync = SDL_GetTicks();
 
-
-					
 					if (isHost)
 					{
 						std::string sendString;
@@ -2091,29 +1891,12 @@ int playGame() {
 						std::string cppString = player1->ptoString();
 						std::stringstream ssfull;
 						ssfull<< cppString;
-	/*					const char* myString = cppString.c_str();
-						length = strlen(myString) + 1;
-						printf("Host Sending PLAYER %s\n", myString);
-						result = SDLNet_TCP_Send(clientSocket, myString, length);
-						if (result < length) {
-							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-						}
-						std::cout << "Host Done Sending PLAYER\n" << std::endl;*/
 
-
-						for (auto i : allEnemies) {
+						for (auto i : allEnemies)
+						{
 							enemyString = i->ptoString();
 							
 							ssfull<< enemyString;
-							
-							////const char* enemyStringChar = enemyString.c_str();
-							////length = strlen(enemyStringChar) + 1;
-							////printf("Host Sending ENEMY %s\n", enemyStringChar);
-							////result = SDLNet_TCP_Send(clientSocket, enemyStringChar, length);
-							////if (result < length) {
-							////	printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-							////}
-							////std::cout << "Host Done Sending ENEMY\n" << std::endl;
 						}
 						ssfull << "+";
 						std::string ctemp=ssfull.str();
@@ -2121,74 +1904,61 @@ int playGame() {
 						length = (int)strlen(myString) + 1;
 						printf("Host Sending PLAYER and ENEMIES %s\n", myString);
 						result = SDLNet_TCP_Send(clientSocket, myString, length);
-						if (result < length) {
+						if (result < length)
+						{
 							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 						}
 						std::cout << "Host Done Sending PLAYER and ENEMIES\n" << std::endl;
-
-
-						
 						std::stringstream notyoStream;
-						
 						char temp[100];
 						std::cout << "Host Recieving PLAYER\n" << std::endl;
-
-						
-							SDLNet_TCP_Recv(clientSocket, temp, 100);
-							notyoStream << temp;
-							receiveString += notyoStream.str();
-							notyoStream.flush();
-								while (receiveString.length()>1&&receiveString.find('*') != string::npos)
-								{
-									std::string notYourSTD = receiveString;
-									notYourSTD = notYourSTD.substr(0, notYourSTD.find("*"));
-									receiveString = receiveString.substr(receiveString.find("*") + 1, receiveString.length());
-									std::cout << "Recieved PLAYER" << notYourSTD << std::endl;
-									player2->fromString(notYourSTD);
-								}
-
-						
+						SDLNet_TCP_Recv(clientSocket, temp, 100);
+						notyoStream << temp;
+						receiveString += notyoStream.str();
+						notyoStream.flush();
+						while (receiveString.length()>1&&receiveString.find('*') != string::npos)
+						{
+							std::string notYourSTD = receiveString;
+							notYourSTD = notYourSTD.substr(0, notYourSTD.find("*"));
+							receiveString = receiveString.substr(receiveString.find("*") + 1, receiveString.length());
+							std::cout << "Recieved PLAYER" << notYourSTD << std::endl;
+							player2->fromString(notYourSTD);
+						}
 					}
 					else
 					{
 						//recieve character and push back
 						std::stringstream receiveStream;
-						
 						char buffer[100];
 						std::cout << "Client Recieving PLAYER\n" << std::endl;
 		
-						
 						SDLNet_TCP_Recv(clientSocket, buffer, 100);
 						receiveStream << buffer;
 						receiveString += receiveStream.str();
-						receiveStream.flush();
-						//std::cout << receiveStream.str() << endl;
-						
-							while (receiveString.length() > 1 && receiveString.find('+') != string::npos)
+						receiveStream.flush();						
+						while (receiveString.length() > 1 && receiveString.find('+') != string::npos)
+						{
+							std::cout << receiveString << endl;
+							std::string notYourSTD = receiveString.substr(0, receiveString.find("*"));
+							std::cout << "client Recieved PLAYER " << notYourSTD << std::endl;
+							player2->fromString(notYourSTD);
+							std::string enemySTD = receiveString.substr(receiveString.find("*") + 1, receiveString.find("Z"));
+							bool firstrun = true;
+							for (auto i : allEnemies)
 							{
-								std::cout << receiveString << endl;
-								std::string notYourSTD = receiveString.substr(0, receiveString.find("*"));
-								std::cout << "client Recieved PLAYER " << notYourSTD << std::endl;
-								player2->fromString(notYourSTD);
-								std::string enemySTD = receiveString.substr(receiveString.find("*") + 1, receiveString.find("Z"));
-								bool firstrun = true;
-								for (auto i : allEnemies)
+
+								if (!firstrun)
 								{
-
-									if (!firstrun)
-									{
-										enemySTD = receiveString.substr(0, receiveString.find("Z"));
-									}
-									else
-										firstrun = false;
-									std::cout << "client Recieved ENEMY" << enemySTD << std::endl;
-									i->fromString(enemySTD);
-									receiveString = receiveString.substr(receiveString.find("Z") + 1, receiveString.length());
-
+									enemySTD = receiveString.substr(0, receiveString.find("Z"));
 								}
+								else
+									firstrun = false;
+								std::cout << "client Recieved ENEMY" << enemySTD << std::endl;
+								i->fromString(enemySTD);
+								receiveString = receiveString.substr(receiveString.find("Z") + 1, receiveString.length());
+
 							}
-						
-						
+						}						
 						//Send Character
 						std::string cppString = player1->ptoString();
 						const char* myString = cppString.c_str();
@@ -2198,39 +1968,14 @@ int playGame() {
 						if (result < length) {
 							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 						}
-						std::cout << "Client Done Sending PLAYER\n" << std::endl;
-
-						//for (auto i : allEnemies) {
-
-						//	//std::string cppString = i->ptoString();
-						//	//const char* myString = cppString.c_str();
-						//	//length = strlen(myString) + 1;
-
-						//	std::stringstream enemyStream;
-						//	enemyStream << "#";
-						//	char tempEnemy[100];
-						//	std::cout << "Client Recieving ENEMY\n" << enemyStream.str().back() << std::endl;
-
-						//	while (enemyStream.str().back() != 'Z')
-						//	{
-						//		std::cout << "ENEMY STREAM IN LOOP before << temp: " << enemyStream.str() << std::endl;
-						//		SDLNet_TCP_Recv(clientSocket, tempEnemy, 100);
-						//		enemyStream << tempEnemy;
-						//		std::cout << "AFTER << temp " << enemyStream.str() << endl;
-						//	}
-						//	std::string enemySTD(enemyStream.str());
-						//	enemySTD = enemySTD.substr(1, enemySTD.find("Z"));
-						//	std::cout << "Recieved ENEMY" << enemySTD << std::endl;
-						//	i->fromString(enemySTD);
-						//}
-
-						
+						std::cout << "Client Done Sending PLAYER\n" << std::endl;		
 					}
 				}
 			}
 
-			if (inPauseMenu) {
-				response = handlePauseMenu(inPauseMenu, charactersOnScreen, tiles, camera);
+			if (inPauseMenu)
+			{
+				response = handlePauseMenu(inPauseMenu, allPlayers, allEnemies, tiles, camera);
 				switch (response)
 				{
 				case GOTO_INGAME:
@@ -2246,32 +1991,21 @@ int playGame() {
 			while (combatStarted) {
 				combatTransition();
 				CombatManager cm;
-				//std::cout << combatants.size();
-				//convert combatants vector of characters to pointer of characters
-				//vector<Character *> c;
-				//for (auto i : combatants)
-					//c.push_back(&i);
-				int combatResult = cm.combatMain(combatants);
-				gMusic = Mix_LoadMUS("Audio/Walking_Test.wav");
-				if (gMusic == NULL)
-					std::cout << "Failed to load music" << std::endl;
-				//Play the music
-				Mix_PlayMusic(gMusic, -1);
+				int combatResult = cm.combatMain(allCombat);
+				startMusic("Audio/Walking_Test.wav", MIX_MAX_VOLUME / 8);
 				Mix_ResumeMusic();
 				timeSinceLastMovement = SDL_GetTicks();
 				std::cout << combatResult << std::endl;
-				if (combatResult == ENEMY_WINS) {
+				if (combatResult == ENEMY_WINS)
+				{
 					GameOverTransition();
 					SDL_Delay(8000);
 					return GOTO_EXIT;
 				}
-				else if (combatResult == PLAYER_WINS) {
+				else if (combatResult == PLAYER_WINS)
+				{
 					if (allEnemies.size() == 0)
 					{
-						for (auto en : charactersOnScreen)
-						{
-							charactersOnScreen.erase(charactersOnScreen.begin());
-						}
 						keepPlaying = false;
 						if (MAP_INDEX + 1 == ALL_MAPS.size())
 						{
@@ -2287,23 +2021,20 @@ int playGame() {
 						}
 					}
 				}
-				else if (combatResult == PLAYER_ESCAPES) {
+				else if (combatResult == PLAYER_ESCAPES)
+				{
 					allEnemies.push_back(CollidingCluster);
-					charactersOnScreen.push_back(CollidingCluster);
-					charactersOnScreen.push_back(player1);
 				}
-				else if (combatResult == PLAYER_EXIT) {
+				else if (combatResult == PLAYER_EXIT)
+				{
 					return GOTO_EXIT;
 				}
 				combatStarted = false;
 				inOverworld = true;
 			}
 			int backToMainMenu = 1;
-			if (response == backToMainMenu) { //backToMainMenu
-				//for (auto i : charactersOnScreen) {
-				//	delete(&i);
-				//}
-				//destroy tiles etc?
+			if (response == backToMainMenu)
+			{
 				handleMain();
 			}
 		}
@@ -2377,13 +2108,8 @@ void printShaderLog(GLuint shader)
 
 int mainMenu()
 {
-	//Load the music
-	gMusic = Mix_LoadMUS("Audio/Main_Test.wav");
-	if (gMusic == NULL)
-		std::cout << "Failed to load music" << std::endl;
-	//Play the music
-	Mix_PlayMusic(gMusic, -1);
-	Mix_VolumeMusic(MIX_MAX_VOLUME / 5);
+	startMusic("Audio/Main_Test.wav", MIX_MAX_VOLUME / 5);
+
 	bool run = true;
 	std::vector<Button*> buttons;
 
@@ -2494,6 +2220,7 @@ void handleMain()
 {
 	player1 = new Player("nlf4", 1, 1, 1, 1, 1);
 	int currentMode = GOTO_MAIN;
+	int coopCheck;
 	while (true)
 	{
 		switch (currentMode)
@@ -2505,7 +2232,10 @@ void handleMain()
 			currentMode = characterCreateScreen();
 			break;
 		case GOTO_COOP:
-			currentMode = networkingScreen();
+			coopCheck = characterCreateScreen();
+			if(coopCheck == GOTO_INGAME)
+				currentMode = networkingScreen();
+			else currentMode = coopCheck;
 			break;
 		case GOTO_INGAME:
 			currentMode = playGame();

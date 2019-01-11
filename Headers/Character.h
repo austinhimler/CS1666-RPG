@@ -107,6 +107,7 @@ public:
 
 	string toString();
 	void setTextureActive(SDL_Texture*);
+	void changeTexture(SDL_Texture*);
 
 protected:
 	bool isEnemy;

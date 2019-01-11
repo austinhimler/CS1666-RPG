@@ -136,7 +136,7 @@
 		}
 		return energyCurrent;
 	}
-
+	
 	void Character::takeAilm(Ailment ailm) {
 		if (ailments.size() != 0)
 		{
@@ -239,6 +239,12 @@
 		st << name << " " << xPosition << " " << yPosition << " " << xVelocity << " " << yVelocity << " *";
 		std::cout << st.str() << std::endl;
 		return st.str();
+	}
+	void Character::changeTexture(SDL_Texture* newTexture)
+	{
+		setTextureActive(newTexture);
+		currentFrame = 0;
+		currentMaxFrame = getNumRunAnimationFrames();
 	}
 	void Character::fromString(std::string in)
 	{
