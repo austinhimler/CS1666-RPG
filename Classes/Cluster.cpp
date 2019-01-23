@@ -118,13 +118,13 @@ void Cluster::clearTarget()
 }
 void Cluster::findPath(Tile* map[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES])
 {
-	Path p;
+	Path p(map);
 	pathOffset = 0;
-	currentPath = p.makePath(xPosition, yPosition, targetX, targetY, map);
+	currentPath = p.makePath(xPosition/MAX_INSIDE_TILE, yPosition/ MAX_INSIDE_TILE, targetX/ MAX_INSIDE_TILE, targetY/ MAX_INSIDE_TILE);
 }
 void Cluster::moveSteps(double time)
 {
-	pathOffset += (time * acceleration);
+	pathOffset += (int)(time * (acceleration/MAX_INSIDE_TILE));
 	Point* loc = currentPath.at(pathOffset);
 	xPosition = loc->x;
 	yPosition = loc->y;

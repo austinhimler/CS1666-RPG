@@ -4,7 +4,7 @@
 class Point
 {
 public:
-	Point(int, int, int, int, int, int, int);
+	Point(int, int, int, int, int, int, int, bool, bool);
 	Point();
 	int y;
 	int x;

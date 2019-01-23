@@ -3,7 +3,7 @@
 Point::Point()
 {
 }
-Point::Point(int newX, int newY, int pX, int pY, int m, int d, int t)
+Point::Point(int newX, int newY, int pX, int pY, int m, int d, int t, bool isClosed, bool isOpen)
 {
 	x = newX;
 	y = newY;
@@ -12,6 +12,6 @@ Point::Point(int newX, int newY, int pX, int pY, int m, int d, int t)
 	moves = m;
 	dist = d;
 	total = t;
-	closed = false;
-	open = false;
+	closed = isClosed;
+	open = isOpen;
 }

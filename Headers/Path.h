@@ -11,11 +11,12 @@
 class Path
 {
 public:
-	Path();
-	std::vector<Point*> makePath(int startX, int startY, int endX, int endY, Tile* map[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES]);
-	bool isValid(int x, int y, Tile* map[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES]);
+	Path(Tile*[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES]);
+	std::vector<Point*> makePath(int startX, int startY, int endX, int endY);
+	bool isValid(int x, int y);
 	bool isDestination(int x, int y, int endX, int endY);
 	int calculateDist(int x, int y, int endX, int endY);
+	int map[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES];
 };
 
 #endif
