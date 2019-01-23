@@ -199,7 +199,9 @@
     <ClCompile Include="Classes\Item.cpp" />
     <ClCompile Include="Classes\LoadTexture.cpp" />
     <ClCompile Include="Classes\mainGame.cpp" />
+    <ClCompile Include="Classes\Path.cpp" />
     <ClCompile Include="Classes\Player.cpp" />
+    <ClCompile Include="Classes\Point.cpp" />
     <ClCompile Include="Classes\Resistance.cpp" />
     <ClCompile Include="Classes\ResourceManager\FontData.cpp" />
     <ClCompile Include="Classes\ResourceManager\ResourceManager.cpp" />
@@ -271,7 +273,9 @@
     <ClInclude Include="Headers\Inventory.h" />
     <ClInclude Include="Headers\Item.h" />
     <ClInclude Include="Headers\LoadTexture.h" />
+    <ClInclude Include="Headers\Path.h" />
     <ClInclude Include="Headers\Player.h" />
+    <ClInclude Include="Headers\Point.h" />
     <ClInclude Include="Headers\QueueManager.h" />
     <ClInclude Include="Headers\Resistance.h" />
     <ClInclude Include="Headers\ResourceManager\FontData.h" />

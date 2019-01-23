@@ -24,7 +24,6 @@
 #include "../Headers/Cluster.h"
 #include "../Headers/LoadTexture.h"
 #include "../Headers/aStar.h"
-#include "../Headers/Globals.h"
 #include "../Headers/ResourceManager/ResourceManager.h"
 
 // Function declarations
@@ -53,13 +52,6 @@ IPaddress ipAddress;
 TCPsocket serverSocket;
 TCPsocket clientSocket;
 
-const int SCREEN_WIDTH = 720;
-const int SCREEN_HEIGHT = 720;
-const int ENEMIES_PER_CLUSTER = 1;
-const int STARTING_ENEMIES = 2;
-const vector<string> ALL_MAPS = { "map1.txt", "map2.txt", "map3.txt" };
-const int MAX_HORIZONTAL_TILES = 30;
-const int MAX_VERTICAL_TILES = 30;
 int MAP_INDEX = 0;
 
 enum SCENE_CHANGE {
@@ -256,12 +248,7 @@ bool check_collision(SDL_Rect a, SDL_Rect b) {
 
 	return true;
 }
-void getTilePosition(Character* c)
-{
-	int x_to_tile = (int)(c->xPosition + (c->rectangle.w / 2)) / TILE_WIDTH;
-	int y_to_tile = (int)((c->yPosition + c->rectangle.h) / TILE_HEIGHT);
-	cout << c->getName() << "(" << x_to_tile << "," << y_to_tile << ")" << endl;
-}
+
 
 
 SDL_Rect * loadMap(Tile* tiles[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES],string mapToLoad)
@@ -1145,7 +1132,7 @@ int characterCreateScreen()
 	return GOTO_CREDITS;
 }
 
-int handlePauseMenu(bool inPauseMenu, std::vector<Character*> allPlayers, std::vector<Cluster*> allEnemies, Tile *tiles[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES], SDL_Rect camera) {
+int handlePauseMenu(bool inPauseMenu, std::vector<Player*> allPlayers, std::vector<Cluster*> allEnemies, Tile *tiles[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES], SDL_Rect camera) {
 	std::vector<Button*> buttons;
 	buttons.push_back(new Button("continue", 240, 200, 260, 64, "Images/UI/PauseMenu/ContinueButton.png", "", gRenderer));
 	buttons.push_back(new Button("exit", 240, 300, 260, 64, "Images/UI/PauseMenu/ExitButton.png", "", gRenderer));
@@ -1255,260 +1242,56 @@ int getDirection(Cluster* c) {
 	else if (out >= 135 && out <= 181) return 1;
 	return -1;
 }
+double getDistance(Character* a, Character* b)
+{
+	return sqrt(pow(a->xPosition-b->xPosition,2)+pow(a->yPosition-b->yPosition,2));
+}
+int xToTile(Character* c)
+{
+	int newX = (int)((c->xPosition + c->rectangle.w / 2) / TILE_WIDTH);
+	return newX;
+}
+int yToTile(Character* c)
+{
+	int newY = (int)((c->yPosition + c->rectangle.h) / TILE_HEIGHT);
+	return newY;
+}
 
+void getTilePosition(Character* c)
+{
+	cout << c->getName() << "(" << xToTile(c) << "," << yToTile(c) << ")" << endl;
+}
 
-/*
-move location of Cluster cl
-
-a indicates movement type
-up/down/left/right/random
-*/
-int moveCluster(std::vector<Cluster*> c, std::string move, double time, Tile* map[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES]) {
+int moveCluster(std::vector<Cluster*> c, std::vector<Player*> p, double time, Tile* map[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES])
+{
 
 	for (auto cl : c)
 	{
 		if (cl->combatReady)
 		{
-  			getTilePosition(cl);
-			getTilePosition(player1);
-			int a = -1;
-			if (move == "pursuit")
+			if (cl->targetPlayer == NULL)
 			{
-
-				if ((std::sqrt((cl->xPosition - player1->xPosition) * (cl->xPosition - player1->xPosition)
-					+ (cl->yPosition - player1->yPosition) * (cl->yPosition - player1->yPosition)) < cl->aRange)) {
-
-					int currentP = (int)(player1->xPosition + player1->rectangle.w / 2) / TILE_WIDTH;
-					currentP += (int)((player1->yPosition + player1->rectangle.h) / TILE_HEIGHT) * 30;
-
-					if (cl->seqX.empty() && cl->seqY.empty()) {
-						/*
-						std::cout << "x0: " << cl->xPosition / TILE_WIDTH << std::endl;
-						std::cout << "y0: " << cl->yPosition / TILE_HEIGHT << std::endl;
-						std::cout << "px0: " << player1->xPosition / TILE_WIDTH << std::endl;
-						std::cout << "py0: " << player1->yPosition / TILE_HEIGHT << std::endl;
-						*/
-						aStar::map m;
-						aStar::point s((int)(cl->xPosition / TILE_WIDTH), (int)(cl->yPosition / TILE_HEIGHT));
-						aStar::point e((int)(player1->xPosition / TILE_WIDTH), (int)(player1->yPosition / TILE_HEIGHT));
-						std::list<aStar::point> path;
-
-						pathing.search(s, e, m);
-						pathing.path(path);
-						for (std::list<aStar::point>::iterator i = path.begin(); i != path.end(); i++) {
-							if ((*i).x != (int)cl->xPosition / TILE_WIDTH && (*i).y != (int)cl->yPosition) {
-								cl->seqX.push((*i).x);
-								cl->seqY.push((*i).y);
-							}
-
-							//std::cout << "NOTE" << std::endl;
-							//std::cout << "X: " << (*i).x << std::endl;
-							//std::cout << "Y: " << (*i).y << std::endl;
-
-						}
-						
-					}
-					else if (currentP != pathing.lastPlayerLocation) {
-						while (!cl->seqX.empty()) cl->seqX.pop();
-						while (!cl->seqY.empty()) cl->seqY.pop();
-
-						aStar::map m;
-						aStar::point s((int)(cl->xPosition / TILE_WIDTH), (int)(cl->yPosition / TILE_HEIGHT));
-						aStar::point e((int)(player1->xPosition / TILE_WIDTH), (int)(player1->yPosition / TILE_HEIGHT));
-						std::list<aStar::point> path;
-
-						//std::cout << pathing.search(s, e, m) << std::endl;
-
-						pathing.path(path);
-						for (std::list<aStar::point>::iterator i = path.begin(); i != path.end(); i++) {
-							if ((*i).x != (int)cl->xPosition / TILE_WIDTH && (*i).y != (int)cl->yPosition) {
-								cl->seqX.push((*i).x);
-								cl->seqY.push((*i).y);
-							}
-
-							//std::cout << "BOTE" << std::endl;
-							//std::cout << "X: " << (*i).x << std::endl;
-							//std::cout << "Y: " << (*i).y << std::endl;
-						}
-						
-
-					}
-
-					a = getDirection(cl);
-					if (a == -1)
-						return -1;
-					//std::cout << a << std::endl;
-					//std::cout << "NOTE" << std::endl;
-					//std::cout << a << std::endl;
-					pathing.lastPlayerLocation = currentP;
-					//std::cout << "NOTE" << std::endl;
-				}
-				else {
-					//random
-					//std::cout << "Boat" << std::endl;
-					while (!cl->seqX.empty()) cl->seqX.pop();
-					while (!cl->seqY.empty()) cl->seqY.pop();
-				}
-			}
-			//std::cout << a << std::endl;
-			cl->xDeltaVelocity = 0;
-			cl->yDeltaVelocity = 0;
-
-			if (a == 0) {
-				cl->yDeltaVelocity -= (cl->getAcceleration() * time);
-			}
-			else if (a == 1) {
-				cl->xDeltaVelocity -= (cl->getAcceleration() * time);
-			}
-			else if (a == 2) {
-				cl->yDeltaVelocity += (cl->getAcceleration() * time);
-			}
-			else if (a == 3) {
-				cl->xDeltaVelocity += (cl->getAcceleration() * time);
-			}
-
-			if (cl->xDeltaVelocity == 0) {
-				if (cl->xVelocity > 0) {
-					if (cl->xVelocity < (cl->getAcceleration() * time))
-						cl->xVelocity = 0;
-					else
-						cl->xVelocity -= cl->getAcceleration() * time;
-				}
-				else if (cl->xVelocity < 0) {
-					if (-cl->xVelocity < (cl->getAcceleration() * time))
-						cl->xVelocity = 0;
-					else
-						cl->xVelocity += cl->getAcceleration() * time;
-				}
-			}
-			else {
-				cl->xVelocity += cl->xDeltaVelocity;
-			}
-			if (cl->yDeltaVelocity == 0) {
-				if (cl->yVelocity > 0) {
-					if (cl->yVelocity < (cl->getAcceleration() * time))
-						cl->yVelocity = 0;
-					else
-						cl->yVelocity -= cl->getAcceleration() * time;
-				}
-				else if (cl->yVelocity < 0) {
-					if (-cl->yVelocity < (cl->getAcceleration() * time))
-						cl->yVelocity = 0;
-					else
-						cl->yVelocity += cl->getAcceleration() * time;
-				}
-			}
-			else {
-				cl->yVelocity += cl->yDeltaVelocity;
-			}
-
-			if (cl->xVelocity < -cl->getSpeedMax())
-				cl->xVelocity = -cl->getSpeedMax();
-			else if (cl->xVelocity > cl->getSpeedMax())
-				cl->xVelocity = cl->getSpeedMax();
-			if (cl->yVelocity < -cl->getSpeedMax())
-				cl->yVelocity = -cl->getSpeedMax();
-			else if (cl->yVelocity > cl->getSpeedMax()) cl->yVelocity = cl->getSpeedMax();
-
-			if (cl->xVelocity != 0 || cl->yVelocity != 0) {
-
-				if (cl->yVelocity == 0) {
-					if (cl->getTextureActive() != cl->getTextureRun()) {
-						cl->setTextureActive(cl->getTextureRun());
-						cl->currentFrame = 0;
-						cl->currentMaxFrame = cl->getNumRunAnimationFrames();
-					}
-				}
-
-
-				if (cl->xVelocity == 0 && cl->yVelocity > 0) {
-					if (cl->getTextureActive() != cl->getTextureDownRun()) {
-						cl->setTextureActive(cl->getTextureDownRun());
-						cl->currentFrame = 0;
-						cl->currentMaxFrame = cl->getNumRunAnimationFrames();
-					}
-				}
-
-
-
-				if (cl->xVelocity != 0 && cl->yVelocity > 0) {
-					if (cl->getTextureActive() != cl->getTextureDownRightRun()) {
-						cl->setTextureActive(cl->getTextureDownRightRun());
-						cl->currentFrame = 0;
-						cl->currentMaxFrame = cl->getNumRunAnimationFrames();
-					}
-				}
-
-				if (cl->xVelocity != 0 && cl->yVelocity < 0) {
-					if (cl->getTextureActive() != cl->getTextureUpRightRun()) {
-						cl->setTextureActive(cl->getTextureUpRightRun());
-						cl->currentFrame = 0;
-						cl->currentMaxFrame = cl->getNumRunAnimationFrames();
-					}
-				}
-
-
-
-				if (cl->xVelocity == 0 && cl->yVelocity < 0) {
-					if (cl->getTextureActive() != cl->getTextureUpRun()) {
-						cl->setTextureActive(cl->getTextureUpRun());
-						cl->currentFrame = 0;
-						cl->currentMaxFrame = cl->getNumRunAnimationFrames();
-
-					}
-				}
-			}
-
-			else {
-				if (cl->getTextureActive() != cl->getTextureIdle()) {
-					cl->setTextureActive(cl->getTextureIdle());
-					cl->currentFrame = 0;
-					cl->currentMaxFrame = cl->getNumIdleAnimationFrames();
-				}
-			}
-
-			int beforeMoveX = (int)cl->xPosition;
-			int beforeMoveY = (int)cl->yPosition;
-			cl->yPosition += (cl->yVelocity * time);
-			if (cl->yPosition < 0 || (cl->yPosition + cl->getImageHeight() > LEVEL_HEIGHT)) {
-				cl->yPosition -= (cl->yVelocity * time);
-			}
-			cl->xPosition += (cl->xVelocity * time);
-			if (cl->xPosition < 0 || (cl->xPosition + cl->getImageWidth() > LEVEL_WIDTH)) {
-				cl->xPosition -= (cl->xVelocity * time);
-			}
-			if (beforeMoveX / TILE_WIDTH <= cl->seqX.front() && cl->seqX.front() <= (int)cl->xPosition / TILE_WIDTH) {
-				if (beforeMoveY / TILE_HEIGHT <= cl->seqY.front() && cl->seqY.front() <= (int)cl->yPosition / TILE_HEIGHT) {
-					cl->seqX.pop();
-					cl->seqY.pop();
-				}
-			}
-			int x_to_tile = (int)(cl->xPosition + cl->rectangle.w / 2) / TILE_WIDTH;
-			int y_to_tile = (int)((cl->yPosition + cl->rectangle.h) / TILE_HEIGHT) ;
-
-
-			//std::cout << cl->xPosition << std::endl;
-			//std::cout << cl->yPosition << std::endl;
-
-
-			if (map[x_to_tile][y_to_tile]->mType != 0) {
-				cl->xPosition = beforeMoveX;
-				cl->yPosition = beforeMoveY;
-			}
-
-			for (auto i : c) {
-				if (i != cl) {
-					int other_x = (int)(i->xPosition + i->rectangle.w / 2) / TILE_WIDTH;
-					int other_y = (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT) ;
-					if (other_x == x_to_tile && other_y == y_to_tile)
+				for (auto play_num : p)
+				{
+					if (getDistance(play_num, cl) <= cl->pursuitRange)
 					{
-						cl->xPosition = beforeMoveX;
-						cl->yPosition = beforeMoveY;
+						cl->setTarget(play_num);
+						break;
 					}
 				}
 			}
-			//std::cout << cl->xPosition << std::endl;
-			//std::cout << cl->yPosition << std::endl;
+			if (cl->targetPlayer != NULL)
+			{
+				if ((getDistance(cl->targetPlayer,cl) <= cl->pursuitRange) && (cl->targetPlayer->xPosition != cl->targetX || cl->targetPlayer->yPosition != cl->targetY))
+					cl->findPath(map);
+				cl->moveSteps(time);
+				if (cl->xPosition == cl->targetX && cl->yPosition == cl->targetY)
+					cl->clearTarget();
+			}
+			else
+			{
+				// Move Randomly
+			}
 		}
 	}
 	return 0;
@@ -1517,7 +1300,7 @@ int moveCluster(std::vector<Cluster*> c, std::string move, double time, Tile* ma
 
 int playGame()
 {
-	std::vector<Character*> allPlayers;
+	std::vector<Player*> allPlayers;
 	std::vector<Cluster*> allEnemies;
 	std::vector<Character*> allCombat;
 
@@ -1550,7 +1333,7 @@ int playGame()
 
 	for (MAP_INDEX = 0; MAP_INDEX < ALL_MAPS.size(); MAP_INDEX++)
 	{
-		Tile*  tiles[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES];
+		Tile* tiles[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES];
 		SDL_Rect* BlockedTiles = loadMap(tiles, ALL_MAPS.at(MAP_INDEX));
 
 		int numEnemies = STARTING_ENEMIES * (MAP_INDEX + 1);
@@ -1561,12 +1344,14 @@ int playGame()
 		{
 			while (true)
 			{
-				int x_to_tile = (int)(player->xPosition + (player->rectangle.w / 2)) / TILE_WIDTH;
-				int y_to_tile = (int)((player->yPosition + player->rectangle.h) / TILE_HEIGHT);
+				int x_to_tile = xToTile(player);
+				int y_to_tile = yToTile(player);
 				if (tiles[x_to_tile][y_to_tile]->mType == 0)
 					break;
 				player->xPosition = rand() % (LEVEL_WIDTH - player->getImageWidth());
+				player->xTile = xToTile(player);
 				player->yPosition = rand() % (LEVEL_HEIGHT - player->getImageHeight());
+				player->yTile = yToTile(player);
 			}
 			player->setTextureActive(player->getTextureIdle());
 			player->currentMaxFrame = player->getNumIdleAnimationFrames();
@@ -1593,9 +1378,11 @@ int playGame()
 				while (true)
 				{
 					i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
+					i->xTile = xToTile(i);
 					i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
-					int x_to_tile = (int)(i->xPosition + (i->rectangle.w / 2)) / TILE_WIDTH;
-					int y_to_tile = (int)((i->yPosition + i->rectangle.h) / TILE_HEIGHT);
+					i->yTile = yToTile(i);
+					int x_to_tile = xToTile(i);
+					int y_to_tile = yToTile(i);
 					if (tiles[x_to_tile][y_to_tile]->mType == 0)
 						break;
 				}
@@ -1769,8 +1556,8 @@ int playGame()
 					}
 				}
 				//calculate tile player is currently standing on
-				int x_to_tile = (int)(player1->xPosition + (player1->rectangle.w / 2)) / TILE_WIDTH;
-				int y_to_tile = (int)((player1->yPosition + player1->rectangle.h) / TILE_HEIGHT) ;
+				int x_to_tile = xToTile(player1);
+				int y_to_tile = yToTile(player1);
 				
 
 				if (tiles[x_to_tile][y_to_tile]->mType != 0)
@@ -1778,6 +1565,8 @@ int playGame()
 					player1->xPosition = beforeMoveX;
 					player1->yPosition = beforeMoveY;
 				}
+				player1->xTile = xToTile(player1);
+				player1->yTile = yToTile(player1);
 
 				camera.x = (int)((player1->xPosition + player1->rectangle.w / 2) - SCREEN_WIDTH / 2);
 				camera.y = (int)((player1->yPosition + player1->rectangle.h / 2) - SCREEN_HEIGHT / 2);
@@ -1813,12 +1602,12 @@ int playGame()
 					}
 				}
 
-					if (isNetworked&&isHost||!isNetworked)
-					{
-						int moveResult = moveCluster(allEnemies, "pursuit", timePassed, tiles);
-						if (moveResult == -1)
-							return GOTO_EXIT;
-					}
+				if ((isNetworked&&isHost)||!isNetworked)
+				{
+					int moveResult = moveCluster(allEnemies, allPlayers, timePassed, tiles);
+					if (moveResult == -1)
+						return GOTO_EXIT;
+				}
 
 				for (auto &i : allPlayers)
 				{
@@ -1988,7 +1777,8 @@ int playGame()
 				timeSinceLastMovement = SDL_GetTicks();
 			}
 
-			while (combatStarted) {
+			while (combatStarted)
+			{
 				combatTransition();
 				CombatManager cm;
 				int combatResult = cm.combatMain(allCombat);
@@ -2011,12 +1801,14 @@ int playGame()
 						{
 							EndTransition();
 							SDL_Delay(4000);
-							playCredits();
+							return GOTO_CREDITS;
 						}
 						else
 						{
 							player1->xPosition = 0;
+							player1->xTile = xToTile(player1);
 							player1->yPosition = 0;
+							player1->yTile = yToTile(player1);
 							levelTransition();
 						}
 					}

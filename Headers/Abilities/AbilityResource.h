@@ -4,6 +4,7 @@
 #include <vector>
 #include "../Attributes/Attr_Globals.h"
 #include "../AI/CombatAIResource.h"
+#include "Globals.h"
 
 namespace AbilityResource {
 

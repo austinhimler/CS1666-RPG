@@ -1,6 +1,4 @@
 #include "../Headers/Cluster.h"
-#include "../Headers/Helper.h"
-#include "../Headers/Globals.h"
 
 Cluster::Cluster(int q) {
 	for (int temp = 0;temp < q;temp++)
@@ -49,8 +47,14 @@ Cluster::Cluster(int q) {
 	acceleration = 2000.0;
 	combatReady = true;
 	readyTimeLeft = -1;
+
+	targetPlayer = NULL;
+	targetX = -1;
+	targetY = -1;
+	pursuitRange = 300;
 }
-Cluster::Cluster(std::string n) {
+Cluster::Cluster(std::string n)
+{
 	name = n;
 	Cluster(1);
 }
@@ -100,10 +104,28 @@ void Cluster::fromString(std::string in)
 	}
 
 }
-
-/*
-Cluster::Cluster(std::string n, int q) {
-	name = n;
-	Cluster(q);
+void Cluster::setTarget(Character* p)
+{
+	targetPlayer = p;
+	targetX = p->xPosition;
+	targetY = p->yPosition;
 }
-*/
+void Cluster::clearTarget()
+{
+	targetPlayer = NULL;
+	targetX = -1;
+	targetY = -1;
+}
+void Cluster::findPath(Tile* map[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES])
+{
+	Path p;
+	pathOffset = 0;
+	currentPath = p.makePath(xPosition, yPosition, targetX, targetY, map);
+}
+void Cluster::moveSteps(double time)
+{
+	pathOffset += (time * acceleration);
+	Point* loc = currentPath.at(pathOffset);
+	xPosition = loc->x;
+	yPosition = loc->y;
+}

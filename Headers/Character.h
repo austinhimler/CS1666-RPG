@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <cstring>
 #include <sstream>
+#include <iostream>
 /*
 #include "Attributes/Strength.h"
 #include "Attributes/Intelligence.h"
@@ -64,6 +65,8 @@ public:
 	double yDeltaVelocity;
 	double xPosition;
 	double yPosition;
+	int xTile;
+	int yTile;
 	Uint32 timeSinceLastMovement;
 	Uint32 timeSinceLastAnimation;
 	SDL_Rect rectangle;

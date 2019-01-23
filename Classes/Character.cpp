@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "../Headers/Character.h"
 
 	Character::Character(std::string n, std::vector<Attribute> attr) {

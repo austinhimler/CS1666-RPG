@@ -7,6 +7,10 @@
 #include "Inventory.h"
 #include "Ability.h"
 #include "Character.h"
+#include "Helper.h"
+#include <iostream>
+#include <sstream>
+#include <cstring>
 
 class Player : public Character
 {

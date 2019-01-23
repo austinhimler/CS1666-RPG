@@ -5,8 +5,10 @@
 #include <vector>
 #include <queue>
 #include "Enemy.h"
+#include "Tile.h"
+#include "Path.h"
 #include <random>
-
+#include "Helper.h"
 class Cluster : public Character
 {
 public:
@@ -14,16 +16,23 @@ public:
 	Cluster(int q);
 	Cluster(std::string n);
 	Cluster(std::string n, int q);
-	/*
-	Cluster(Enemy e, int q);
-	*/
 	vector<Character*> characterGroup;
+	Character* targetPlayer;
+	int targetX;
+	int targetY;
+	int pursuitRange;
 	int isAlive();
 	int clusterSize;
 	bool combatReady;
 	int readyTimeLeft;
+	std::vector<Point*> currentPath;
 	std::string ptoString();
 	void fromString(std::string in);
+	void setTarget(Character*);
+	void clearTarget();
+	void findPath(Tile*[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES]);
+	void moveSteps(double);
+	int pathOffset;
 
 	int lastDirection = -1;
 	std::queue<int> seqX;

@@ -1,7 +1,8 @@
 #include "../Headers/Ability.h"
-#include "../Headers/Abilities/AbilityResource.h"
+
 	
-	Ability::Ability(int n, std::string d, int ec, int cd, int v, int t) {
+	Ability::Ability(int n, std::string d, int ec, int cd, int v, int t)
+	{
 		name = n;
 		description = d;
 		energyCost = ec;
