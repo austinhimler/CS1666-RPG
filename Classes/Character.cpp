@@ -225,7 +225,7 @@
 	void Character::changeTexture(int newTexture)
 	{
 		setSpriteSheetNumber(newTexture);
-		rectangle = { (int)(xPosition+(rectangle.w/2)-(getImageWidth()/2)), (int)(yPosition+rectangle.h-getImageHeight()), getImageWidth(), getImageHeight() };
+		rectangle = { (int)xPosition, (int)yPosition, getImageWidth(), getImageHeight() };
 		drawRectangle = { 0, 0, getImageWidth(), getImageHeight() };
 		currentFrame = 0;
 	}

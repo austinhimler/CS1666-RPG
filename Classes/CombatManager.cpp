@@ -692,10 +692,10 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 
 	int charImageX = 0;
 	int charImageY = 0;
-	int charImageW = 128;
-	int charImageH = 128;
-	SDL_Rect characterBox = { 472, 225, 128, 128 };
-	int charAnimationPixelShift = 128;
+	int charImageW = participants[player_index.at(0)]->getImageWidth();
+	int charImageH = participants[player_index.at(0)]->getImageHeight();;
+	SDL_Rect characterBox = { 472, 225, charImageW, charImageH };
+	int charAnimationPixelShift = charImageW;
 	int delaysPerFrame = 0;
 	int frame = 0;
 	
@@ -739,14 +739,14 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 	m_combatGraphics.init();
 
 	//Create Player with Player Texture, translate it, then set it to animate the sprite
-	int player = m_combatGraphics.genQuadTexture(144, 144, "Images/Player/Idle_Down.png", "player", 0, 6);
+	int player = m_combatGraphics.genQuadTexture(charImageW, charImageH/1.5, "Images/Player/Idle_Down.png", "player", 0, 7);
 	m_combatGraphics.translateObjectByPixel(player, SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
 	m_combatGraphics.setIdleAnimationType(player, 1);
 	//Create Enemy with Player Texture, translate it, retexture it to owl, then set it to animate the sprite
 	int enemy[2];
 	for (int i = 0; i < enemy_index.size(); i++)
 	{
-		enemy[i] = m_combatGraphics.genQuadTexture(144, 144, "Images/Player/Idle_Down.png", "player", 0, 6);
+		enemy[i] = m_combatGraphics.genQuadTexture(charImageW, charImageH/2, "Images/Player/Idle_Down.png", "player", 0, 6);
 		m_combatGraphics.translateObjectByPixel(enemy[i], ((i/2) + 4) * SCREEN_WIDTH / 5, SCREEN_HEIGHT / (3 - (i)), 0.0);
 		m_combatGraphics.retextureQuad(enemy[i], "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png", "owl");
 		m_combatGraphics.setIdleAnimationType(enemy[i], 1);
@@ -964,7 +964,8 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			//m_combatDialogManager.AddMessage(ss.str());
 			//PLACE THE ATTACK ANIMATIONS HERE USING THE atk VARIABLE
 			//std::cout << atk;
-			if (atk == "Attack") {
+			if (atk == "Attack")
+			{
 				glm::vec3 playerToEnemyVector = m_combatGraphics.getVectorFromTo(player, enemy[t]);
 				glm::vec3 enemyToPlayerVector = m_combatGraphics.getVectorFromTo(enemy[t], player);
 				glm::mat4 motion;
@@ -981,6 +982,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 					m_combatGraphics.addTextsToRender(m_combatDialogManager.GetTextToRender());
 					m_combatGraphics.idle();
 				}
+				m_combatGraphics.setIdleAnimationType(player, 1);
 			}
 			else if (atk == "Fireball") {
 				//std::cout << "Fireball Reached";

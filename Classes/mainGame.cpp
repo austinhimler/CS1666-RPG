@@ -645,13 +645,13 @@ int characterCreateScreen()
 	int faith = 1;
 	int charImageX = 0;
 	int charImageY = 0;
-	int charImageW = 44;
-	int charImageH = 120;
+	int charImageW = 96;
+	int charImageH = 132;
 	int delaysPerFrame = 0;
 	int frame = 0;
 	int attributeX = 245;
 
-	SDL_Rect characterBox = { 516, 225, charImageW, charImageH };
+	SDL_Rect characterBox = { 490, 225, charImageW, charImageH };
 	SDL_Rect pointsAllocatedRectangle = { 227, 32, 0, 0 };
 	SDL_Rect strengthTextRectangle = { attributeX, 115, 0, 0 };
 	SDL_Rect intelligenceTextRectangle = { attributeX, 205, 0, 0 };
