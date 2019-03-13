@@ -1,12 +1,10 @@
 
 #ifndef _____ABILITY_H_____
 #define _____ABILITY_H_____
-#include <string>
-#include <vector>
 #include "Attribute.h"
 #include "Abilities/AbilityResource.h"
-#include "Globals.h"
-#include "Ailment.h"
+
+
 
 /*
 *	Curretnly not supporting abilities involving ailments and Resistance

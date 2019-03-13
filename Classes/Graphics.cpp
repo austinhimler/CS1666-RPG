@@ -274,8 +274,8 @@ int Graphics::genCone(GLfloat radius, GLfloat height, int resolution, int color_
 
 	for (theta = 0; theta < 360.0f; theta += increment)
 	{
-		theta_r = theta * M_PI / 180.0f;
-		theta_next_r = (theta + increment) * M_PI / 180.0f;
+		theta_r =(float)(theta * M_PI / 180.0f);
+		theta_next_r =(float)((theta + increment) * M_PI / 180.0f);
 
 		newCone.position_array[index] = glm::vec4(0.0, -height / 2, 0.0, 1.0);
 		newCone.position_array[index + 1] = glm::vec4(radius * cos(theta_r), -height / 2, radius * sin(theta_r), 1.0);
@@ -331,19 +331,19 @@ int Graphics::genSphere(GLfloat radius, int resolution, int color_type, glm::vec
 
 	newSphere.ID = object_counter++;
 	newSphere.type = 0;
-	newSphere.num_vertices = 3 * (resolution * (2 + (2 * ((180.0f / increment) - 2))));
+	newSphere.num_vertices =(int)( 3 * (resolution * (2 + (2 * ((180.0f / increment) - 2)))));
 
 	newSphere.position_array = (glm::vec4*)malloc(sizeof(glm::vec4) * (newSphere.num_vertices));
 
 	for (sphere_it = 0; sphere_it < 180.0f; sphere_it += increment) {
-		sphere_i = sphere_it * M_PI / 180.0f;
-		sphere_j = (sphere_it + increment) * M_PI / 180.0f;
+		sphere_i =(GLfloat)(sphere_it * M_PI / 180.0f);
+		sphere_j =(GLfloat)((sphere_it + increment) * M_PI / 180.0f);
 
 
 		if (sphere_it == 0) {
 			for (circle_it = 0; circle_it < 360.0f; circle_it += increment) {
-				circle_i = circle_it * M_PI / 180.0f;
-				circle_j = (circle_it + increment) * M_PI / 180.0f;
+				circle_i = (GLfloat)(circle_it * M_PI / 180.0f);
+				circle_j = (GLfloat)((circle_it + increment) * M_PI / 180.0f);
 
 				newSphere.position_array[index] = glm::vec4(0.0, radius * cos(sphere_i), 0.0, 1.0);
 				newSphere.position_array[index + 1] = glm::vec4((radius * cos(circle_j)) * sin(sphere_j), radius * cos(sphere_j), (radius * sin(circle_j) * sin(sphere_j)), 1.0);
@@ -354,8 +354,8 @@ int Graphics::genSphere(GLfloat radius, int resolution, int color_type, glm::vec
 
 		if (sphere_it != 0 && sphere_it + increment < 180.0f) {
 			for (band_it = 0; band_it < 360.0f; band_it += increment) {
-				band_i = band_it * M_PI / 180.0f;
-				band_j = (band_it + increment) * M_PI / 180.0f;
+				band_i = (GLfloat)(band_it * M_PI / 180.0f);
+				band_j = (GLfloat)((band_it + increment) * M_PI / 180.0f);
 
 				newSphere.position_array[index] = glm::vec4((radius * cos(band_i)) * sin(sphere_i), radius * cos(sphere_i), (radius * sin(band_i) * sin(sphere_i)), 1.0);
 				newSphere.position_array[index + 1] = glm::vec4((radius * cos(band_j)) * sin(sphere_j), radius * cos(sphere_j), (radius * sin(band_j)) * sin(sphere_j), 1.0);
@@ -369,8 +369,8 @@ int Graphics::genSphere(GLfloat radius, int resolution, int color_type, glm::vec
 
 		if (sphere_it + increment >= 180.0f) {
 			for (circle_it = 0; circle_it < 360.0f; circle_it += increment) {
-				circle_i = circle_it * M_PI / 180.0f;
-				circle_j = (circle_it + increment) * M_PI / 180.0f;
+				circle_i = (GLfloat)(circle_it * M_PI / 180.0f);
+				circle_j = (GLfloat)((circle_it + increment) * M_PI / 180.0f);
 
 				newSphere.position_array[index] = glm::vec4(0.0, radius * cos(sphere_j), 0.0, 1.0);
 				newSphere.position_array[index + 1] = glm::vec4((radius * cos(circle_i)) * sin(sphere_i), radius * cos(sphere_i), (radius * sin(circle_i)) * sin(sphere_i), 1.0);
@@ -474,7 +474,7 @@ glm::vec4* Graphics::genRandomTriangleColors(int num_vertices)
 	GLfloat r, g, b;
 	int index = 0, it;
 
-	srand(time(0));
+	srand((unsigned int)time(0));
 
 	glm::vec4 *colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
 
@@ -498,7 +498,7 @@ glm::vec4* Graphics::genRandomTriangleColorsAlpha(int num_vertices)
 	GLfloat r, g, b, a;
 	int index = 0, it;
 
-	srand(time(0));
+	srand((unsigned int)time(0));
 
 	glm::vec4 *colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
 
@@ -524,7 +524,7 @@ glm::vec4* Graphics::genRandomTriangleColorsSimilar(int num_vertices, glm::vec4 
 	GLfloat r, g, b, a, modifying_color;
 	int index = 0, it;
 
-	srand(time(0));
+	srand((unsigned int)time(0));
 
 	glm::vec4 *colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * num_vertices);
 

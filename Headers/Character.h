@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <cstring>
 #include <sstream>
+#include <iostream>
 /*
 #include "Attributes/Strength.h"
 #include "Attributes/Intelligence.h"
@@ -29,6 +30,7 @@ public:
 	Character(std::string n, int s, int i, int d, int c, int f);
 	Character(std::string n, std::vector<Attribute> attr);
 	
+	int getTilePosition();
 	int getLevel();
 	int getHPMax();
 	int getHPCurrent();
@@ -37,15 +39,17 @@ public:
 	int getEnergyCurrent();
 	int getEnergyMax();
 	int getStatus();
-	int getPixelShiftAmountForAnimationInSpriteSheet();
+
+	void setSpriteSheetNumber(int);
+
 	int currentFrame;
-	int currentMaxFrame;
-	int getNumIdleAnimationFrames();
-	int getNumRunAnimationFrames();
-	int getTimeBetweenIdleAnimations();
-	int getTimeBetweenRunAnimations();
+	int getNumAnimationFrames();
+	unsigned int getTimeBetweenAnimations();
+	int spriteSheetNumber;
 	int getImageWidth();
 	int getImageHeight();
+	SDL_Texture* getSpriteTexture();
+	int getSpriteSheetNumber();
 	double getSpeedMax();
 	double getAcceleration();
 	int getDex();
@@ -63,29 +67,15 @@ public:
 	double yDeltaVelocity;
 	double xPosition;
 	double yPosition;
+	int xTile;
+	int yTile;
 	Uint32 timeSinceLastMovement;
 	Uint32 timeSinceLastAnimation;
 	SDL_Rect rectangle;
 	SDL_Rect drawRectangle;
 	SDL_RendererFlip flip;
 	int isAlive();
-	std::string getImageIdleResource();
-	std::string getImageRightIdleResource();
-	std::string getImageRunResource();
-	std::string getImageDownRunResource();
-	std::string getImageDownRightRunResource();
-	std::string getImageUpRightRunResource();
-	std::string getImageUpRunResource();
 	std::string getName();
-	SDL_Texture* getTextureRightIdle();
-	SDL_Texture* getTextureIdle();
-	SDL_Texture* getTextureIdleNotReady();
-	SDL_Texture* getTextureRun();
-	SDL_Texture* getTextureDownRun();
-	SDL_Texture* getTextureDownRightRun();
-	SDL_Texture* getTextureUpRightRun();
-	SDL_Texture* getTextureUpRun();
-	SDL_Texture* getTextureActive();
 	SDL_Rect getRectangle();
 	std::string ptoString();
 	void fromString(std::string in);
@@ -105,7 +95,7 @@ public:
 	void refillEnergy();
 
 	string toString();
-	void setTextureActive(SDL_Texture*);
+	void changeTexture(int);
 
 protected:
 	bool isEnemy;
@@ -118,34 +108,17 @@ protected:
 	int mpCurrent;
 	int level;
 	std::vector<int> buff;
-	std::string imageIdleResource;
-	std::string imageIdleNotReadyResource;
-	std::string imageRightIdleResource;
-	std::string imageRunResource;
-	std::string imageDownRunResource;
-	std::string imageDownRightRunResource;
-	std::string imageUpRightRunResource;
-	std::string imageUpRunResource;
+	std::vector<SDL_Texture*> spriteTextures;
+	std::vector<int> spriteWidths;
+	std::vector<int> spriteHeights;
+	std::vector<int> spriteImages;
 	std::string name;
-	SDL_Texture* textureIdle;
-	SDL_Texture* textureIdleNotReady;
-	SDL_Texture* textureRightIdle;
-	SDL_Texture* textureRun;
-	SDL_Texture* textureDownRun;
-	SDL_Texture* textureDownRightRun;
-	SDL_Texture* textureUpRightRun;
-	SDL_Texture* textureUpRun;
-	SDL_Texture* textureActive;
-	int pixelShiftAmountForAnimationInSpriteSheet;
-	int numIdleAnimationFrames;
-	int numRunAnimatonFrames;
-	int timeBetweenIdleAnimations; //ms
-	int timeBetweenRunAnimations; //ms
-	int imageWidth;
-	int imageHeight;
+	
+	int timeBetweenAnimations; //ms
 	double speedMax; // px/s
 	double acceleration; // px/s^2
 
+	
 	void setHPMax();
 	void setMPMax();
 	void setEnergyMax();

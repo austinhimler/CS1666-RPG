@@ -2,7 +2,7 @@
 
 Ailment::Ailment(int n, double c, int v, int tn, int sa, int d) {
 	name = n;
-	chance = c;
+	chance = (int)c;
 	value = v;
 	turnN = tn;
 	stopAction = sa;
@@ -28,7 +28,7 @@ Ailment::Ailment(int n, int f1, int f2, int val) {
 
 Ailment::Ailment(int n, double c) {
 	name = n;
-	chance = c;
+	chance = (int)c;
 }
 
 Ailment::Ailment() {}

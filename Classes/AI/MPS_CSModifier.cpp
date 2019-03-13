@@ -6,7 +6,7 @@ MPS_CSModifier::MPS_CSModifier() {
 }
 MPS_CSModifier::MPS_CSModifier(Character* c, int t) {
 	if (c->getHPCurrent() == 0) Val = 0;
-	else Val = c->getHPMax() / c->getHPCurrent();
+	else Val = (float)(c->getHPMax() / c->getHPCurrent());
 	Type = t;
 }
 MPS_CSModifier::MPS_CSModifier(std::string Path) {}

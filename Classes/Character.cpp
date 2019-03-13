@@ -1,8 +1,7 @@
-#include <iostream>
-
 #include "../Headers/Character.h"
 
-	Character::Character(std::string n, std::vector<Attribute> attr) {
+	Character::Character(std::string n, std::vector<Attribute> attr)
+	{
 		attributes = attr;
 		setHPMax();
 		setMPMax();
@@ -12,9 +11,8 @@
 		flip = SDL_FLIP_NONE;
 		energyCurrent = energyMax;
 		energyRegen = 10;
-		energyRegen += (energyMax < 10) ? 1 : 0.1 * energyMax;
-		energyRegen += (attr[DEX].current < 10) ? 1 : 0.1 * attr[DEX].current;
-		std::cout << "regen: " << energyRegen << std::endl;
+		energyRegen += (int)((energyMax < 10) ? 1 : 0.1 * energyMax);
+		energyRegen += (int)((attr[DEX].current < 10) ? 1 : 0.1 * attr[DEX].current);
 		name = n;
 		buff = std::vector<int>(BUFFCOUNT, 0);
 		level = 1;
@@ -137,7 +135,7 @@
 		}
 		return energyCurrent;
 	}
-
+	
 	void Character::takeAilm(Ailment ailm) {
 		if (ailments.size() != 0)
 		{
@@ -175,6 +173,7 @@
 		return s;
 	}
 
+	
 	int Character::getHelp(int n) { return abil_helper[n]; }
 	int Character::getDex() { return attributes[DEX].current;}
 	int Character::getHPMax() { return hpMax; }
@@ -185,34 +184,17 @@
 	void Character::setMPMax() { mpMax = 100 * attributes[INT].current; }
 	void Character::setEnergyMax() { energyMax = 50 + attributes[DEX].current; }
 	void Character::refillEnergy() { energyCurrent = energyMax;	}
-	void Character::setTextureActive(SDL_Texture* text) { textureActive = text; }
+	int Character::getSpriteSheetNumber() { return spriteSheetNumber; }
+	void Character::setSpriteSheetNumber(int newNum){ spriteSheetNumber = newNum; }
 	int Character::getHPCurrent() { return hpCurrent; }
 	int Character::getMPCurrent() { return mpCurrent; }
 	int Character::getEnergyCurrent() { return energyCurrent;  }
-	int Character::getPixelShiftAmountForAnimationInSpriteSheet() { return pixelShiftAmountForAnimationInSpriteSheet; }
-	int Character::getNumIdleAnimationFrames() { return numIdleAnimationFrames; }
-	int Character::getNumRunAnimationFrames() { return numRunAnimatonFrames; }
-	int Character::getTimeBetweenIdleAnimations() { return timeBetweenIdleAnimations; }
-	int Character::getTimeBetweenRunAnimations() { return timeBetweenRunAnimations;  }
-	int Character::getImageWidth() { return imageWidth; }
-	int Character::getImageHeight() { return imageHeight; }
-	std::string Character::getImageIdleResource() { return imageIdleResource; }
-	std::string Character::getImageRightIdleResource() { return imageRightIdleResource; }
-	std::string Character::getImageRunResource() { return imageRunResource; }
-	std::string Character::getImageUpRunResource() { return imageUpRunResource; }
-	std::string Character::getImageDownRunResource() { return imageDownRunResource; }
-	std::string Character::getImageDownRightRunResource() { return imageDownRightRunResource; }
-	std::string Character::getImageUpRightRunResource() { return imageUpRightRunResource; }
+	int Character::getNumAnimationFrames() { return spriteImages.at(spriteSheetNumber); }
+	unsigned int Character::getTimeBetweenAnimations() { return timeBetweenAnimations; }
+	int Character::getImageWidth() { return spriteWidths.at(spriteSheetNumber); }
+	int Character::getImageHeight() { return spriteHeights.at(spriteSheetNumber); }
+	SDL_Texture* Character::getSpriteTexture() { return spriteTextures.at(spriteSheetNumber); }
 	std::string Character::getName() { return name; }
-	SDL_Texture* Character::getTextureIdle() { return textureIdle; }
-	SDL_Texture* Character::getTextureIdleNotReady() { return textureIdleNotReady; }
-	SDL_Texture* Character::getTextureRightIdle() { return textureIdle; }
-	SDL_Texture* Character::getTextureRun() { return textureRun; }
-	SDL_Texture* Character::getTextureDownRun() { return textureDownRun; }
-	SDL_Texture* Character::getTextureDownRightRun() { return textureDownRightRun; }
-	SDL_Texture* Character::getTextureUpRightRun() { return textureUpRightRun; }
-	SDL_Texture* Character::getTextureUpRun() { return textureUpRun; }
-	SDL_Texture* Character::getTextureActive() { return textureActive; }
 	SDL_Rect Character::getRectangle() { return rectangle; }
 	std::vector<Attribute> Character::getAttributes() { return attributes; }
 	std::vector<Ability> Character::getAbilities() { return abilities; }
@@ -239,6 +221,13 @@
 		st << name << " " << xPosition << " " << yPosition << " " << xVelocity << " " << yVelocity << " *";
 		std::cout << st.str() << std::endl;
 		return st.str();
+	}
+	void Character::changeTexture(int newTexture)
+	{
+		setSpriteSheetNumber(newTexture);
+		rectangle = { (int)(xPosition+(rectangle.w/2)-(getImageWidth()/2)), (int)(yPosition+rectangle.h-getImageHeight()), getImageWidth(), getImageHeight() };
+		drawRectangle = { 0, 0, getImageWidth(), getImageHeight() };
+		currentFrame = 0;
 	}
 	void Character::fromString(std::string in)
 	{

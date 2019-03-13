@@ -1,5 +1,4 @@
 #include "../Headers/CombatManager.h"
-#include <stdio.h>
 
 QueueManager::QueueManager(vector<Character *> c)
 {
@@ -25,7 +24,7 @@ void QueueManager::createRounds(vector<Character*> c)
 void QueueManager::changeRounds()
 {
 	vectorCopy(currTurn, nextTurn);
-	insertionSort(nextTurn, nextTurn.size());
+	insertionSort(nextTurn, (int)nextTurn.size());
 }
 
 void QueueManager::insertionSort(std::vector<Character*>& turn, int n)
@@ -125,7 +124,7 @@ int CombatManager::takeActionByAI(Character* c, int EnemyActionOrderCount) {
 		std::cout << c->toString() << std::endl;
 		// Carry out action and out put result for every target
 		std::vector<Character*> tars = ActionToTake.getTar();
-		int TarNum = tars.size();
+		int TarNum = (int)tars.size();
 		Ability* abil = ActionToTake.getAbil();
 		std::cout << c->getEnergyCurrent() << " " << abil->getEnergyCost() << std::endl;
 		if (c->getEnergyCurrent() < abil->getEnergyCost()) {
@@ -780,7 +779,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 	// Set up the combat dialog manager
 	m_combatDialogManager = CombatDialogManager();
 	m_combatDialogManager.SetTimePerCharacter(0.005f);
-	m_combatDialogManager.SetWaitTime(.2);
+	m_combatDialogManager.SetWaitTime((float).2);
 	m_combatDialogManager.SetColor(glm::vec4(0.0, 0.0, 0.0, 1.0));
 	m_combatDialogManager.SetSelectionColor(glm::vec4(0.0, 1.0, 0.0, 1.0));
 	m_combatDialogManager.SetFont(ResourceManager::getFontData("stacked_pixel"));
@@ -789,7 +788,6 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 	m_combatGraphics.rotateRandom();
 	
 
-	int width, height;
 	int allPlayers = 0;
 	while (inCombat) {
 		//printf("%d", turnOrder);
@@ -813,7 +811,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 				Mix_FreeChunk(gBSound);
 				m_combatGraphics.clean();
 				//Random integer for quitting the game
-				return -69; 
+				return PLAYER_EXIT; 
 			}
 			gBSound = Mix_LoadWAV("Audio/BSound.wav");
 
@@ -986,7 +984,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			}
 			else if (atk == "Fireball") {
 				//std::cout << "Fireball Reached";
-				int attack = m_combatGraphics.genSphere(0.1, 36, 2, glm::vec4(1.0, 0.345, 0.133, 0.4));
+				int attack = m_combatGraphics.genSphere((GLfloat)0.1, 36, 2, glm::vec4(1.0, 0.345, 0.133, 0.4));
 				m_combatGraphics.translateObjectByPixel(attack, SCREEN_WIDTH / 5, SCREEN_HEIGHT / 3, 0.0);
 				glm::vec3 playerToEnemyVector = m_combatGraphics.getVectorFromTo(player, enemy[t]);
 				glm::mat4 motion;
@@ -1003,9 +1001,9 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 			}
 			else if (atk == "Smite") {
 				//std::cout << "Smite Reached";
-				int attack = m_combatGraphics.genSphere(0.4, 36, 2, glm::vec4(1.0, 0.9, 0.0, 0.7));
+				int attack = m_combatGraphics.genSphere((GLfloat)0.4, 36, 2, glm::vec4(1.0, 0.9, 0.0, 0.7));
 				m_combatGraphics.setIdleAnimationMotion(attack, glm::rotate(0.4f, m_combatGraphics.rotateRandom()));
-				m_combatGraphics.translateObjectByPixel(attack, 0.0f, 0.0f, 0.0);
+				m_combatGraphics.translateObjectByPixel(attack, 0, 0, 0.0);
 				glm::vec3 playerToEnemyVector = m_combatGraphics.getVectorFromTo(attack, enemy[t]);
 				glm::mat4 motion;
 				motion = glm::translate(motion, (1.0f / 90.0f)*playerToEnemyVector);
@@ -1060,12 +1058,12 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		}
 		else if (turnOrder == 6)
 		{
-			for (int i = player_index.size(); i < participants.size(); i++)
+			for (int i = (int)player_index.size(); i < participants.size(); i++)
 			{
 				//updateStatus(participants[i]);
 				if (participants[i]->getHPCurrent() != 0 && participants[i]->getEnergyCurrent() != 0) {
 					stringstream ss;
-					switch (int result_temp = takeActionByAI(participants[i], i - player_index.size())) {
+					switch (int result_temp = takeActionByAI(participants[i], i - (int)player_index.size())) {
 					case IN_COMBAT:
 						break;
 					case PLAYER_WINS:

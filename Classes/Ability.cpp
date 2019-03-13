@@ -1,7 +1,8 @@
 #include "../Headers/Ability.h"
-#include "../Headers/Abilities/AbilityResource.h"
+
 	
-	Ability::Ability(int n, std::string d, int ec, int cd, int v, int t) {
+	Ability::Ability(int n, std::string d, int ec, int cd, int v, int t)
+	{
 		name = n;
 		description = d;
 		energyCost = ec;
@@ -33,7 +34,7 @@
 				value = baseValue + attr[re[0]].getCur() + ((attr[re[1]].getCur()+baseValue) / 2);
 				break;
 			case FIREBALL:
-				value = 2 * baseValue * attr[re[0]].getCur() + 1.5 * baseValue * attr[re[1]].getCur();
+				value = (int)(2 * baseValue * attr[re[0]].getCur() + 1.5 * baseValue * attr[re[1]].getCur());
 				break;
 			case ARROWSHOT:
 				value = baseValue + 2 * attr[re[0]].getCur();
