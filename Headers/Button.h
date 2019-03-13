@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <SDL2/SDL.h>
+#include "Helper.h"
 
 class Button {
 public:

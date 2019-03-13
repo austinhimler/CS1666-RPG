@@ -1,6 +1,4 @@
 #include "../Headers/Tile.h"
-#include "../Headers/Helper.h"
-#include "../Headers/Globals.h"
 
 //0: grass 1:water
 Tile::Tile(int x, int y, int tileType)

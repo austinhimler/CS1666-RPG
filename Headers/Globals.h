@@ -11,29 +11,12 @@
 #include "Attributes/Attr_Globals.h"
 #include "Abilities/AbilityResource.h"
 #include "Ailments/AilmentResource.h"
-/*
-//namespace Char_Help {
-	
-	const std::string char_type_string[] = {
-		"player",
-		"enemy"
-	};
-	
-
-//}//*/
-
-
-//const map<string, attr_index> attr_map = (ATTR_NAME[]);
 
 enum CHAR_TYPE {
 	PLAYER,
 	ENEMY
 };
 
-
-//const map<std::string, ATTR_NAMES> attr_map = {
-
-//};
 
 enum ABILITY {
 	ATTACK,
@@ -71,12 +54,36 @@ enum COMBATFLAGS {
 	PLAYER_EXIT
 };
 
+enum SPRITEINDEX {
+	NOT_READY,
+	IDLE_DOWN,
+	IDLE_RIGHT,
+	IDLE_LEFT,
+	IDLE_UP,
+	RUN_DOWN,
+	RUN_RIGHT,
+	RUN_LEFT,
+	RUN_UP,
+	RUN_DOWN_RIGHT,
+	RUN_DOWN_LEFT,
+	RUN_UP_RIGHT,
+	RUN_UP_LEFT
+};
+
 extern SDL_Window* gWindow;
 extern SDL_Renderer* gRenderer;
 extern std::vector<SDL_Texture*> gTex;
 
-extern const int SCREEN_WIDTH;
-extern const int SCREEN_HEIGHT;
+const int SCREEN_WIDTH = 720;
+const int SCREEN_HEIGHT = 720;
+const int ENEMIES_PER_CLUSTER = 1;
+const int STARTING_ENEMIES = 1;
+const std::vector<std::string> ALL_MAPS = { "map1.txt", "map2.txt", "map3.txt" };
+const int MAX_HORIZONTAL_TILES = 30;
+const int MAX_VERTICAL_TILES = 30;
+const int MAX_INSIDE_TILE = 64;
+const int MAX_X_POSITION = 1920;
+const int MAX_Y_POSITION = 1920;
 
 
 

@@ -1,5 +1,4 @@
 #include "../Headers/CombatManager.h"
-#include <stdio.h>
 
 QueueManager::QueueManager(vector<Character *> c)
 {

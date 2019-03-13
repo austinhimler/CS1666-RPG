@@ -5,7 +5,8 @@
 #include <algorithm>
 #include <iostream>
 
-class aStar {
+class aStar
+{
 public:
 	class point {
 	public:

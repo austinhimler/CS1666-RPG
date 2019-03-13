@@ -199,7 +199,9 @@
     <ClCompile Include="Classes\Item.cpp" />
     <ClCompile Include="Classes\LoadTexture.cpp" />
     <ClCompile Include="Classes\mainGame.cpp" />
+    <ClCompile Include="Classes\Path.cpp" />
     <ClCompile Include="Classes\Player.cpp" />
+    <ClCompile Include="Classes\Point.cpp" />
     <ClCompile Include="Classes\Resistance.cpp" />
     <ClCompile Include="Classes\ResourceManager\FontData.cpp" />
     <ClCompile Include="Classes\ResourceManager\ResourceManager.cpp" />
@@ -256,8 +258,6 @@
     <ClInclude Include="Headers\Attribute.h" />
     <ClInclude Include="Headers\Attributes\Constitution.h" />
     <ClInclude Include="Headers\Attributes\Dexterity.h" />
-    <ClInclude Include="Headers\Attributes\Faith.h" />
-    <ClInclude Include="Headers\Attributes\Intelligence.h" />
     <ClInclude Include="Headers\Attributes\Strength.h" />
     <ClInclude Include="Headers\Attributes\Attr_Globals.h" />
     <ClInclude Include="Headers\Button.h" />
@@ -271,7 +271,9 @@
     <ClInclude Include="Headers\Inventory.h" />
     <ClInclude Include="Headers\Item.h" />
     <ClInclude Include="Headers\LoadTexture.h" />
+    <ClInclude Include="Headers\Path.h" />
     <ClInclude Include="Headers\Player.h" />
+    <ClInclude Include="Headers\Point.h" />
     <ClInclude Include="Headers\QueueManager.h" />
     <ClInclude Include="Headers\Resistance.h" />
     <ClInclude Include="Headers\ResourceManager\FontData.h" />
@@ -302,9 +304,9 @@
     <ClInclude Include="SOIL2\stb_image_write.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="map1.txt" />
     <Text Include="map2.txt" />
     <Text Include="map3.txt" />
+    <Text Include="Maps\map1.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\AI\MPS_Effectiveness.csv" />
