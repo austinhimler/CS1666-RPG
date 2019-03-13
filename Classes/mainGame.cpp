@@ -31,6 +31,7 @@
 bool init();//Starts up SDL, creates window, and initializes OpenGL
 
 void close();//Frees media and shuts down SDL
+void ThankYouTransition();
 
 SDL_Texture* loadImage(std::string fname);
 
@@ -44,17 +45,11 @@ SDL_GLContext gContext;//OpenGL context
 std::vector<SDL_Texture*> gTex;
 void handleMain();
 
-bool isNetworked = false;
-bool isHost;
-bool isClient;
-const int port = 12345;
-IPaddress ipAddress;
-TCPsocket serverSocket;
-TCPsocket clientSocket;
 
 int MAP_INDEX = 0;
 
-enum SCENE_CHANGE {
+enum SCENE_CHANGE
+{
 	GOTO_MAIN,
 	GOTO_SOLO,
 	GOTO_COOP,
@@ -71,22 +66,21 @@ aStar pathing;
 
 //Player ONE
 Player* player1;
-Player* player2;
 std::vector<int> attr;
 
-bool init() {
-	// Flag what subsystems to initialize
-	// For now, just video
-	//added audio init
+bool init()
+{
     
 	//Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
+	{
 		std::cout << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
 		return false;
 	}
 	
 	// Set texture filtering to linear
-	if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
+	if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
+	{
 		std::cout << "Warning: Linear texture filtering not enabled!" << std::endl;
 	}
 
@@ -95,11 +89,11 @@ bool init() {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);//Double-buffering
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 	//Create window
 	gWindow = SDL_CreateWindow("CS1666-RPG", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-	if (gWindow == nullptr) {
+	if (gWindow == nullptr)
+	{
 		std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
 		return false;
 	}
@@ -127,34 +121,27 @@ bool init() {
 		printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 	}
 
-	
-	
 	/* Create a renderer for our window
 	 * Use hardware acceleration (last arg)
 	 * Choose first driver that can provide hardware acceleration
 	 *   (second arg, -1)
 	 */
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-	if (gRenderer == nullptr) {
+	if (gRenderer == nullptr)
+	{
 		std::cout << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
 		return  false;
 	}
 
 	// Set renderer draw/clear color
 	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
-
-	
-	//glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-	//glClear(GL_COLOR_BUFFER_BIT);
-	//draw OpenGL; 
-	//SDL_GL_SwapWindow(SDL_Window* window)-> Use this function to update a window with OpenGL rendering.
-	
 	
 	// Initialize PNG loading via SDL_image extension library
 	int imgFlags = IMG_INIT_PNG;
 	imgFlags = imgFlags | IMG_INIT_JPG;//add jpg support
 	int retFlags = IMG_Init(imgFlags);
-	if (retFlags != imgFlags) {
+	if (retFlags != imgFlags)
+	{
 		std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << std::endl;
 		return false;
 	}
@@ -165,12 +152,14 @@ bool init() {
 		//return false;
 	}
 
-	if (TTF_Init() == -1) {
+	if (TTF_Init() == -1)
+	{
 		std::cout << "TTF could not initialize. Error: %s\n", TTF_GetError();
 		return false;
 	}
 	font = TTF_OpenFont("Fonts/Gameplay.ttf", 20);
-	if (font == NULL) {
+	if (font == NULL)
+	{
 		std::cout << "font was null";
 	}
 
@@ -178,66 +167,13 @@ bool init() {
 
 	return true;
 }
-void handleNetworkingSetup(string userType, string ip)
+
+bool check_collision(SDL_Rect a, SDL_Rect b)
 {
-	if (userType == "host")
-	{
-		isHost = true;
-		isClient = false;
-	}
-	else if (userType == "client")
-	{
-		isHost = false;
-		isClient = true;
-	}
-	else
-	{
-		cout << "Unknown Usertype\nExiting" << endl;
-		exit(1);
-	}
-	if (isClient)
-	{
-		SDLNet_ResolveHost(&ipAddress, ip.c_str(), 12345);
-		clientSocket = NULL;
-		while (clientSocket == NULL)
-		{
-			clientSocket = SDLNet_TCP_Open(&ipAddress);
-		}
-
-		std::cout << clientSocket << std::endl;
-		std::cout << ip.c_str() << std::endl;
-		std::cout << ipAddress.host << std::endl;
-		std::cout << ipAddress.port << std::endl;
-
-	}
-
-	if (isHost)
-	{
-		SDLNet_ResolveHost(&ipAddress, NULL, 12345);
-		serverSocket = SDLNet_TCP_Open(&ipAddress);
-		bool noClient = true;
-		while (noClient)
-		{
-			//waits for a client to connect
-			clientSocket = SDLNet_TCP_Accept(serverSocket);
-			if (clientSocket)
-			{
-				noClient = false;
-			}
-		}
-		std::cout << serverSocket << std::endl;
-		std::cout << ipAddress.host << std::endl;
-		std::cout << ipAddress.port << std::endl;
-	}
-	isNetworked = true;
-}
-
-
-bool check_collision(SDL_Rect a, SDL_Rect b) {
 	// Check vertical overlap
-	if (a.y + a.h <= b.y)
+	if (a.y - a.h >= b.y)
 		return false;
-	if (a.y >= b.y + b.h)
+	if (a.y <= b.y - b.h)
 		return false;
 
 	// Check horizontal overlap
@@ -248,7 +184,6 @@ bool check_collision(SDL_Rect a, SDL_Rect b) {
 
 	return true;
 }
-
 
 
 SDL_Rect * loadMap(Tile* tiles[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES],string mapToLoad)
@@ -317,8 +252,8 @@ SDL_Rect * loadMap(Tile* tiles[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES],string 
 }
 
 
-
-SDL_Texture* loadImage(std::string fname) {
+SDL_Texture* loadImage(std::string fname)
+{
 	SDL_Texture* newText = nullptr;
 
 	SDL_Surface* startSurf = IMG_Load(fname.c_str());
@@ -339,7 +274,8 @@ SDL_Texture* loadImage(std::string fname) {
 	return newText;
 }
 
-void close() {
+void close()
+{
 	for (auto i : gTex) {
 		SDL_DestroyTexture(i);
 		i = nullptr;
@@ -356,9 +292,6 @@ void close() {
 	Mix_FreeMusic(gMusic);
 	Mix_FreeChunk(gBSound);
 	gMusic = NULL;
-	// Quit SDL subsystems
-		SDLNet_TCP_Close(clientSocket);
-		SDLNet_TCP_Close(serverSocket);
 	TTF_Quit();
 	Mix_Quit();
 	IMG_Quit();
@@ -375,19 +308,19 @@ void startMusic(string song, int volume)
 
 int playCredits() {
 	
+	string imagePath = "Images/Credits/";
+	gTex.push_back(loadImage(imagePath+"dsgCredits.jpg"));
+	gTex.push_back(loadImage(imagePath + "RyanKillenCreditImage.jpg")); //Ryan Killen - rek77
+ 	gTex.push_back(loadImage(imagePath + "bmbCredits.jpg"));
+	gTex.push_back(loadImage(imagePath + "dank_farnan_meme.jpg")); //Austin Himler - arh121
+	gTex.push_back(loadImage(imagePath + "Kexin Wang.jpg"));
+	gTex.push_back(loadImage(imagePath + "justin.jpg"));
+	gTex.push_back(loadImage(imagePath + "my_greatest_creation.png")); // jake
+	gTex.push_back(loadImage(imagePath + "ilum.jpg")); // James Finkel
+	gTex.push_back(loadImage(imagePath + "SankethKolliCredit.jpg")); //Sanketh Kolli - ssk38
+	gTex.push_back(loadImage(imagePath + "mjl159Credits.png")); //Mitchell Leng - mjl159
 
-	gTex.push_back(loadImage("Images/Credits/dsgCredits.jpg"));
-	gTex.push_back(loadImage("Images/Credits/RyanKillenCreditImage.jpg")); //Ryan Killen - rek77
- 	gTex.push_back(loadImage("Images/Credits/bmbCredits.jpg"));
-	gTex.push_back(loadImage("Images/Credits/dank_farnan_meme.jpg")); //Austin Himler - arh121
-	gTex.push_back(loadImage("Images/Credits/Kexin Wang.jpg"));
-	gTex.push_back(loadImage("Images/Credits/justin.jpg"));
-	gTex.push_back(loadImage("Images/Credits/my_greatest_creation.png")); // jake
-	gTex.push_back(loadImage("Images/Credits/ilum.jpg")); // James Finkel
-	gTex.push_back(loadImage("Images/Credits/SankethKolliCredit.jpg")); //Sanketh Kolli - ssk38
-	gTex.push_back(loadImage("Images/Credits/mjl159Credits.png")); //Mitchell Leng - mjl159
-
-	startMusic("Audio/BGM.wav", MIX_MAX_VOLUME);
+	startMusic("Audio/Song_Credits.wav", MIX_MAX_VOLUME / 8);
 
 //This is for the actual credits
 	SDL_Event e;
@@ -407,13 +340,14 @@ int playCredits() {
 				SDL_RenderPresent(gRenderer);
 
 			}
-			SDL_Delay(15);
+			SDL_Delay(20);
 			j++;
 		}
 		j = 0;
 	}
+	ThankYouTransition();
 	Mix_HaltMusic();
-	return GOTO_EXIT;
+	return GOTO_MAIN;
 }
 
 
@@ -430,41 +364,27 @@ void renderText(const char* text, SDL_Rect* rect, SDL_Color* color)
 	SDL_RenderCopy(gRenderer, texture, NULL, rect);
 	SDL_DestroyTexture(texture);
 }
+
 void animateCharacter(Character* i,SDL_Rect camera)
 {
-	if (i->xVelocity > 0 && i->flip == SDL_FLIP_HORIZONTAL)
-		i->flip = SDL_FLIP_NONE;
-	else if (i->xVelocity < 0 && i->flip == SDL_FLIP_NONE)
-		i->flip = SDL_FLIP_HORIZONTAL;
-
-	if (i->getTextureActive() == i->getTextureIdle()) {
-		if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
-			i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
+	if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenAnimations())
+	{
+			i->currentFrame = (i->currentFrame + 1) % i->getNumAnimationFrames();
 			i->timeSinceLastAnimation = SDL_GetTicks();
-		}
-	}
-	else if (i->getTextureActive() == i->getTextureIdleNotReady()) {
-		if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenIdleAnimations()) {
-			i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
-			i->timeSinceLastAnimation = SDL_GetTicks();
-		}
-	}
-	else {
-		if (SDL_GetTicks() - i->timeSinceLastAnimation > i->getTimeBetweenRunAnimations()) {
-			i->currentFrame = (i->currentFrame + 1) % i->currentMaxFrame;
-			i->timeSinceLastAnimation = SDL_GetTicks();
-		}
 	}
 
-	i->drawRectangle.x = i->currentFrame *i->getPixelShiftAmountForAnimationInSpriteSheet();
+	i->drawRectangle.x = i->currentFrame *i->getImageWidth();
 	i->rectangle.x = (int)i->xPosition - camera.x;
 	i->rectangle.y = (int)i->yPosition - camera.y;
-	SDL_RenderCopyEx(gRenderer, i->getTextureActive(), &i->drawRectangle, &i->rectangle, 0.0, nullptr, i->flip);
+	SDL_Rect hitbox = i->rectangle;
+	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+	SDL_RenderFillRect(gRenderer, &hitbox);
+	SDL_RenderCopyEx(gRenderer, i->getSpriteTexture(), &i->drawRectangle, &i->rectangle, 0.0, nullptr, i->flip);
 }
 
 void combatTransition()
 {
-	startMusic("Audio/Into_Combat_Test.wav", MIX_MAX_VOLUME / 8);
+	startMusic("Audio/Song_CombatTransition.wav", MIX_MAX_VOLUME / 8);
 
 	SDL_Rect wipe = { 0,0,72,72 };
 	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
@@ -498,30 +418,50 @@ void levelTransition() {
 		SDL_Delay(100);
 	}
 }
+
 void EndTransition() {
-	startMusic("Audio/Victory_2_Test.wav", MIX_MAX_VOLUME);
+	startMusic("Audio/Song_PlayerVictory.wav", MIX_MAX_VOLUME);
 	SDL_Rect wholeS = { 0,0,720,720 };
 	SDL_Rect word1 = { 220,200,120,60 };
 	SDL_Rect word2 = { 30, 240,120,60};
-	SDL_Rect word3 = { 260, 280,120,60 };
 	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 	SDL_RenderFillRect(gRenderer, &wholeS);
 	SDL_RenderPresent(gRenderer);
-	string line1 = "Congratulations!";
-	string line2 = "You have successfully completed The Game!";
-	string line3 = "Cya Nerd.";
+	string line1 = "Congratulations! You Win!";
+	string line2 = "You Defeated the Forces of Evil!";
 	SDL_Color TextColor = { 255, 255, 255, 0 };
 	renderText(line1.c_str(), &word1, &TextColor);
 	renderText(line2.c_str(), &word2, &TextColor);
-	renderText(line3.c_str(), &word3, &TextColor);
 	SDL_RenderPresent(gRenderer);
-	SDL_Rect wipe = { 180,240,20,20 };
-	SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);
 	SDL_Delay(200);
 }
+
+void ThankYouTransition() {
+	SDL_Rect wholeS = { 0,0,720,720 };
+	SDL_Rect word1 = { 220,200,120,60 };
+	SDL_Rect word2 = { 220,280,120,60 };
+	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+	SDL_RenderFillRect(gRenderer, &wholeS);
+	SDL_RenderPresent(gRenderer);
+	string line1 = "Thank you for Playing!";
+	string line2 = "Returning to Main Menu!";
+	SDL_Color TextColor = { 255, 255, 255, 0 };
+	renderText(line1.c_str(), &word1, &TextColor);
+	SDL_RenderPresent(gRenderer);
+	SDL_Delay(5000);
+	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+	SDL_RenderFillRect(gRenderer, &wholeS);
+	renderText(line1.c_str(), &word1, &TextColor);
+	renderText(line2.c_str(), &word2, &TextColor);
+	SDL_RenderPresent(gRenderer);
+	SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);
+	SDL_Delay(5000);
+
+}
+
 void GameOverTransition()
 {
-	startMusic("Audio/Defeat_Test.wav", MIX_MAX_VOLUME);
+	startMusic("Audio/Song_PlayerDefeat.wav", MIX_MAX_VOLUME);
 	SDL_Rect wholeS = { 0,0,720,720 };
 	SDL_Rect word1 = { 280,200,120,60 };
 	SDL_Rect word2 = { 180, 240,120,60 };
@@ -541,7 +481,8 @@ void GameOverTransition()
 	SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, 255);
 	SDL_Delay(200);
 }
-int networkingScreen()
+
+/*int networkingScreen()
 {
 	// Initialize Variables
 	bool onNetworking = true;
@@ -688,7 +629,7 @@ int networkingScreen()
 		SDL_Delay(16);
 	}
 	return GOTO_CREDITS;
-}
+}*/
 int characterCreateScreen()
 {
 	// Initialize Variables
@@ -704,14 +645,13 @@ int characterCreateScreen()
 	int faith = 1;
 	int charImageX = 0;
 	int charImageY = 0;
-	int charImageW = 144;
-	int charImageH = 144;
-	int charAnimationPixelShift = 144;
+	int charImageW = 44;
+	int charImageH = 120;
 	int delaysPerFrame = 0;
 	int frame = 0;
 	int attributeX = 245;
 
-	SDL_Rect characterBox = { 470, 225, 144, 144 };
+	SDL_Rect characterBox = { 516, 225, charImageW, charImageH };
 	SDL_Rect pointsAllocatedRectangle = { 227, 32, 0, 0 };
 	SDL_Rect strengthTextRectangle = { attributeX, 115, 0, 0 };
 	SDL_Rect intelligenceTextRectangle = { attributeX, 205, 0, 0 };
@@ -1084,8 +1024,7 @@ int characterCreateScreen()
 			}
 		}
 
-
-		charImageX = frame * charAnimationPixelShift;
+		charImageX = frame * charImageW;
 
 
 		SDL_Rect charactersRectangle = { charImageX, charImageY, charImageW, charImageH };
@@ -1096,12 +1035,10 @@ int characterCreateScreen()
 		//to add more frames per image to make it more fluid
 		//definitely not the best way to do this, need to sync to a consistent gametime
 		delaysPerFrame++;
-		if (delaysPerFrame >= 6) {
-			frame++;
+		if (delaysPerFrame >= 6)
+		{
+			frame = (frame + 1) % 6;
 			delaysPerFrame = 0;
-		}
-		if (frame == 4) {
-			frame = 0;
 		}
 
 		std::string strengthString = std::to_string(strength);
@@ -1176,7 +1113,7 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Player*> allPlayers, std::vect
 							}
 							SDL_DestroyTexture(background);
 							inPauseMenu = false;
-							return GOTO_EXIT;
+							return GOTO_MAIN;
 						}
 
 					}
@@ -1216,44 +1153,32 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Player*> allPlayers, std::vect
 	return GOTO_EXIT;
 }
 
-/*
-	if dest-x is greater and dest-y is greater:	right or down (random)
-					 ... and dest-y is less: up or right (random)
-.				     ... and dest-y is equal: right
-	if dest-x is equal and dest-y is greater: down
-				   ... and dest-y is less: up
-				   ... and dest-y is equal: (@ destination Node) error with pathing algo
-	if dest-x is less and dest-y is greater: down or left (random)
-				  ... and dest-y is less: left or up (random)
-				  ... and dest-y is equal: left
-*/
-
-int getDirection(Cluster* c) {
-	double dx, dy;
-	int out;
-	dx =  c->seqX.front()- (int)c->xPosition / TILE_WIDTH;
-	dy =  c->seqY.front() - (int)c->yPosition / TILE_HEIGHT;
-	out = (int) (std::atan2(dy, dx) * 180 / -3.14);
-	
-	if (out >= -181 && out < -135) return 1;
-	else if (out >= -135 && out < -45) return 2;
-	else if (out >= -45 && out < 45) return 3;
-	else if (out >= 45 && out < 135) return 0;
-	else if (out >= 135 && out <= 181) return 1;
-	return -1;
-}
 double getDistance(Character* a, Character* b)
 {
 	return sqrt(pow(a->xPosition-b->xPosition,2)+pow(a->yPosition-b->yPosition,2));
 }
+
 int xToTile(Character* c)
 {
-	int newX = (int)((c->xPosition + c->rectangle.w / 2) / TILE_WIDTH);
+	int newX = (int)((c->xPosition + c->getImageWidth()/ 2) / TILE_WIDTH);
 	return newX;
 }
+
 int yToTile(Character* c)
 {
-	int newY = (int)((c->yPosition + c->rectangle.h) / TILE_HEIGHT);
+	int newY = (int)((c->yPosition + c->getImageHeight()) / TILE_HEIGHT);
+	return newY;
+}
+
+int tileToX(Character* c)
+{
+	int newX = (int)(TILE_WIDTH * c->xTile)- (c->rectangle.w / 2);
+	return newX;
+}
+
+int tileToY(Character* c)
+{
+	int newY = (TILE_HEIGHT * c->yTile);
 	return newY;
 }
 
@@ -1282,11 +1207,16 @@ int moveCluster(std::vector<Cluster*> c, std::vector<Player*> p, double time, Ti
 			}
 			if (cl->targetPlayer != NULL)
 			{
-				if ((getDistance(cl->targetPlayer,cl) <= cl->pursuitRange) && (cl->targetPlayer->xPosition != cl->targetX || cl->targetPlayer->yPosition != cl->targetY))
+				if (cl->currentPath.size() == 0)
+				{
 					cl->findPath(map);
+				}
+				else if ((getDistance(cl->targetPlayer, cl) <= cl->pursuitRange) && (cl->targetPlayer->xTile != cl->targetTileX || cl->targetPlayer->yTile != cl->targetTileY))
+				{
+					cl->setTarget(cl->targetPlayer);
+					cl->findPath(map);
+				}
 				cl->moveSteps(time);
-				if (cl->xPosition == cl->targetX && cl->yPosition == cl->targetY)
-					cl->clearTarget();
 			}
 			else
 			{
@@ -1323,13 +1253,8 @@ int playGame()
 	std::string receiveString="";
 
 	allPlayers.push_back(player1);
-	if (isNetworked)
-	{
-		player2 = new Player("meme", 10, 10, 10, 10, 10);
-		allPlayers.push_back(player2);
-	}
 
-	startMusic("Audio/Walking_Test.wav", MIX_MAX_VOLUME / 8);
+	startMusic("Audio/Song_Overworld.wav", MIX_MAX_VOLUME / 8);
 
 	for (MAP_INDEX = 0; MAP_INDEX < ALL_MAPS.size(); MAP_INDEX++)
 	{
@@ -1348,44 +1273,43 @@ int playGame()
 				int y_to_tile = yToTile(player);
 				if (tiles[x_to_tile][y_to_tile]->mType == 0)
 					break;
-				player->xPosition = rand() % (LEVEL_WIDTH - player->getImageWidth());
+				player->xPosition = 1+(rand() % (LEVEL_WIDTH - player->getImageWidth()));
 				player->xTile = xToTile(player);
-				player->yPosition = rand() % (LEVEL_HEIGHT - player->getImageHeight());
+				player->yPosition = 1+(rand() % (LEVEL_HEIGHT - player->getImageHeight()));
 				player->yTile = yToTile(player);
 			}
-			player->setTextureActive(player->getTextureIdle());
-			player->currentMaxFrame = player->getNumIdleAnimationFrames();
+			player->setSpriteSheetNumber(IDLE_DOWN);
 			player->timeSinceLastMovement = timeSinceLastMovement;
 			player->timeSinceLastAnimation = timeSinceLastAnimation;
 		}
 
-		if ((isNetworked&&isHost) || !isNetworked)
+		for (int num_enemy = 0; num_enemy < numEnemies; num_enemy++)
 		{
-			for (int num_enemy = 0; num_enemy < numEnemies; num_enemy++)
-			{
-				int length = sizeof(int);
-				int enemiesInCluster = (rand() % (ENEMIES_PER_CLUSTER + MAP_INDEX)) + 1;
-				Cluster* enemy = new Cluster(enemiesInCluster);
-				cout << "Enemy " << num_enemy + 1 << " Cluster Size: " << enemy->clusterSize << endl;
-				allEnemies.push_back(enemy);
-			}
+			int length = sizeof(int);
+			int enemiesInCluster = (rand() % (ENEMIES_PER_CLUSTER + MAP_INDEX)) + 1;
+			Cluster* enemy = new Cluster(enemiesInCluster);
+			cout << "Enemy " << num_enemy + 1 << " Cluster Size: " << enemy->clusterSize << endl;
+			allEnemies.push_back(enemy);
+		}
 
-			for (auto i : allEnemies)
+		for (auto i : allEnemies)
+		{
+			i->setSpriteSheetNumber(IDLE_DOWN);
+			i->timeSinceLastAnimation = timeSinceLastAnimation;
+			while (true)
 			{
-				i->setTextureActive(i->getTextureIdle());
-				i->currentMaxFrame = i->getNumIdleAnimationFrames();
-				i->timeSinceLastAnimation = timeSinceLastAnimation;
-				while (true)
-				{
-					i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
-					i->xTile = xToTile(i);
-					i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
-					i->yTile = yToTile(i);
-					int x_to_tile = xToTile(i);
-					int y_to_tile = yToTile(i);
-					if (tiles[x_to_tile][y_to_tile]->mType == 0)
-						break;
-				}
+				/*
+				i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
+				i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
+				i->xTile = xToTile(i);
+				i->yTile = yToTile(i);
+				*/
+				i->xTile = 6;
+				i->yTile = 18;
+				i->xPosition = tileToX(i);
+				i->yPosition = tileToY(i);
+				if (tiles[i->xTile][i->yTile]->mType == 0)
+					break;
 			}
 		}
 
@@ -1519,40 +1443,48 @@ int playGame()
 				{
 					if (i->xVelocity == 0 && i->yVelocity == 0)
 					{
-						if (i->getTextureActive() != i->getTextureIdle())
-							i->changeTexture(i->getTextureIdle());
+						if (i->getSpriteSheetNumber() == RUN_UP || i->getSpriteSheetNumber() == RUN_UP_RIGHT || i->getSpriteSheetNumber() == RUN_UP_LEFT )
+							i->changeTexture(IDLE_UP);
+						else if (i->getSpriteSheetNumber() == RUN_DOWN || i->getSpriteSheetNumber() == RUN_DOWN_RIGHT || i->getSpriteSheetNumber() == RUN_DOWN_LEFT)
+							i->changeTexture(IDLE_DOWN);
+						else if (i->getSpriteSheetNumber() == RUN_LEFT)
+							i->changeTexture(IDLE_LEFT);
+						else if (i->getSpriteSheetNumber() == RUN_RIGHT)
+							i->changeTexture(IDLE_RIGHT);
 					}
 					else
 					{
-						if (i->yVelocity == 0 && i->getTextureActive() != i->getTextureRun())
-							i->changeTexture(i->getTextureRun());
-
-						if (i->xVelocity == 0 && i->yVelocity > 0 && i->getTextureActive() != i->getTextureDownRun())
-							i->changeTexture(i->getTextureDownRun());
-
-						if (i->xVelocity != 0 && i->yVelocity > 0 && i->getTextureActive() != i->getTextureDownRightRun())
-							i->changeTexture(i->getTextureDownRightRun());
-						
-						if (i->xVelocity != 0 && i->yVelocity < 0 && i->getTextureActive() != i->getTextureUpRightRun())
-							i->changeTexture(i->getTextureUpRightRun());
-
-						if (i->xVelocity == 0 && i->yVelocity < 0 && i->getTextureActive() != i->getTextureUpRun())
-							i->changeTexture(i->getTextureUpRun());
+						if (i->yVelocity == 0 && i->xVelocity > 0 && i->getSpriteSheetNumber()!= RUN_RIGHT)
+							i->changeTexture(RUN_RIGHT);
+						else if (i->yVelocity == 0 && i->xVelocity < 0 && i->getSpriteSheetNumber() != RUN_LEFT)
+							i->changeTexture(RUN_LEFT);
+						else if (i->xVelocity == 0 && i->yVelocity > 0 && i->getSpriteSheetNumber() != RUN_DOWN)
+							i->changeTexture(RUN_DOWN);
+						else if (i->xVelocity == 0 && i->yVelocity < 0 && i->getSpriteSheetNumber() != RUN_UP)
+							i->changeTexture(RUN_UP);
+						else if (i->xVelocity > 0 && i->yVelocity > 0 && i->getSpriteSheetNumber() != RUN_DOWN_RIGHT)
+							i->changeTexture(RUN_DOWN_RIGHT);
+						else if (i->xVelocity < 0 && i->yVelocity > 0 && i->getSpriteSheetNumber() != RUN_DOWN_LEFT)
+							i->changeTexture(RUN_DOWN_LEFT);
+						else if (i->xVelocity > 0 && i->yVelocity < 0 && i->getSpriteSheetNumber() != RUN_UP_RIGHT)
+							i->changeTexture(RUN_UP_RIGHT);
+						else if (i->xVelocity < 0 && i->yVelocity < 0 && i->getSpriteSheetNumber() != RUN_UP_LEFT)
+							i->changeTexture(RUN_UP_LEFT);
 					}
 						
 					//Move vertically
 					i->yPosition += (i->yVelocity * timePassed);
-					if (i->yPosition < 0 || (i->yPosition + i->getImageHeight() > LEVEL_HEIGHT))
+					if (i->yPosition  < 0 || ((i->yPosition + i->getImageHeight())  > LEVEL_HEIGHT))
 					{
 						//go back into window
-						i->yPosition -= (i->yVelocity * timePassed);
+						i->yPosition = beforeMoveY;
 					}
 
 					//Move horizontally
 					i->xPosition += (i->xVelocity * timePassed);
 					if (i->xPosition < 0 || (i->xPosition + i->getImageWidth() > LEVEL_WIDTH)) {
 						//go back into window
-						i->xPosition -= (i->xVelocity * timePassed);
+						i->xPosition = beforeMoveX;
 					}
 				}
 				//calculate tile player is currently standing on
@@ -1602,12 +1534,9 @@ int playGame()
 					}
 				}
 
-				if ((isNetworked&&isHost)||!isNetworked)
-				{
-					int moveResult = moveCluster(allEnemies, allPlayers, timePassed, tiles);
-					if (moveResult == -1)
-						return GOTO_EXIT;
-				}
+				int moveResult = moveCluster(allEnemies, allPlayers, timePassed, tiles);
+				if (moveResult == -1)
+					return GOTO_EXIT;
 
 				for (auto &i : allPlayers)
 				{
@@ -1645,7 +1574,7 @@ int playGame()
 					{
 						z->combatReady = false;
 						z->readyTimeLeft = 3000;
-						z->setTextureActive(z->getTextureIdleNotReady());
+						z->setSpriteSheetNumber(NOT_READY);
 						CollidingCluster = z;
 						allCombat.clear();
 						allCombat.push_back(player1);
@@ -1663,102 +1592,9 @@ int playGame()
 					if (z->readyTimeLeft == 0)
 					{
 						z->combatReady = true;
-						z->setTextureActive(z->getTextureIdle());
+						z->setSpriteSheetNumber(IDLE_DOWN);
 					}
 					enemyToRemove++;
-				}
-				if (isNetworked&&(SDL_GetTicks()-lastSync>25))
-				{
-					int length;
-					int result;
-					lastSync = SDL_GetTicks();
-
-					if (isHost)
-					{
-						std::string sendString;
-						std::string enemyString;
-						std::string cppString = player1->ptoString();
-						std::stringstream ssfull;
-						ssfull<< cppString;
-
-						for (auto i : allEnemies)
-						{
-							enemyString = i->ptoString();
-							
-							ssfull<< enemyString;
-						}
-						ssfull << "+";
-						std::string ctemp=ssfull.str();
-						const char* myString = ctemp.c_str();
-						length = (int)strlen(myString) + 1;
-						printf("Host Sending PLAYER and ENEMIES %s\n", myString);
-						result = SDLNet_TCP_Send(clientSocket, myString, length);
-						if (result < length)
-						{
-							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-						}
-						std::cout << "Host Done Sending PLAYER and ENEMIES\n" << std::endl;
-						std::stringstream notyoStream;
-						char temp[100];
-						std::cout << "Host Recieving PLAYER\n" << std::endl;
-						SDLNet_TCP_Recv(clientSocket, temp, 100);
-						notyoStream << temp;
-						receiveString += notyoStream.str();
-						notyoStream.flush();
-						while (receiveString.length()>1&&receiveString.find('*') != string::npos)
-						{
-							std::string notYourSTD = receiveString;
-							notYourSTD = notYourSTD.substr(0, notYourSTD.find("*"));
-							receiveString = receiveString.substr(receiveString.find("*") + 1, receiveString.length());
-							std::cout << "Recieved PLAYER" << notYourSTD << std::endl;
-							player2->fromString(notYourSTD);
-						}
-					}
-					else
-					{
-						//recieve character and push back
-						std::stringstream receiveStream;
-						char buffer[100];
-						std::cout << "Client Recieving PLAYER\n" << std::endl;
-		
-						SDLNet_TCP_Recv(clientSocket, buffer, 100);
-						receiveStream << buffer;
-						receiveString += receiveStream.str();
-						receiveStream.flush();						
-						while (receiveString.length() > 1 && receiveString.find('+') != string::npos)
-						{
-							std::cout << receiveString << endl;
-							std::string notYourSTD = receiveString.substr(0, receiveString.find("*"));
-							std::cout << "client Recieved PLAYER " << notYourSTD << std::endl;
-							player2->fromString(notYourSTD);
-							std::string enemySTD = receiveString.substr(receiveString.find("*") + 1, receiveString.find("Z"));
-							bool firstrun = true;
-							for (auto i : allEnemies)
-							{
-
-								if (!firstrun)
-								{
-									enemySTD = receiveString.substr(0, receiveString.find("Z"));
-								}
-								else
-									firstrun = false;
-								std::cout << "client Recieved ENEMY" << enemySTD << std::endl;
-								i->fromString(enemySTD);
-								receiveString = receiveString.substr(receiveString.find("Z") + 1, receiveString.length());
-
-							}
-						}						
-						//Send Character
-						std::string cppString = player1->ptoString();
-						const char* myString = cppString.c_str();
-						length = (int)strlen(myString) + 1;
-						printf("Client Sending PLAYER%s\n", myString);
-						result = SDLNet_TCP_Send(clientSocket, myString, length);
-						if (result < length) {
-							printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-						}
-						std::cout << "Client Done Sending PLAYER\n" << std::endl;		
-					}
 				}
 			}
 
@@ -1770,6 +1606,8 @@ int playGame()
 				case GOTO_INGAME:
 					inOverworld = true;
 					break;
+				case GOTO_MAIN:
+					return GOTO_MAIN;
 				default:
 					return GOTO_EXIT;
 				}
@@ -1782,7 +1620,7 @@ int playGame()
 				combatTransition();
 				CombatManager cm;
 				int combatResult = cm.combatMain(allCombat);
-				startMusic("Audio/Walking_Test.wav", MIX_MAX_VOLUME / 8);
+				startMusic("Audio/Song_Overworld.wav", MIX_MAX_VOLUME / 8);
 				Mix_ResumeMusic();
 				timeSinceLastMovement = SDL_GetTicks();
 				std::cout << combatResult << std::endl;
@@ -1900,7 +1738,7 @@ void printShaderLog(GLuint shader)
 
 int mainMenu()
 {
-	startMusic("Audio/Main_Test.wav", MIX_MAX_VOLUME / 5);
+	startMusic("Audio/Song_MainMenu.wav", MIX_MAX_VOLUME / 5);
 
 	bool run = true;
 	std::vector<Button*> buttons;
@@ -1913,8 +1751,7 @@ int mainMenu()
 	SDL_Rect space = { 100, 50, 526, 72 };
 	
 	// Add all buttons to a vector
-	buttons.push_back(new Button("singleplayer", 240, 200, 240, 64, "Images/UI/MainMenu/BlankButton.png", "", gRenderer));
-	buttons.push_back(new Button("multiplayer", 240, 275, 240, 64, "Images/UI/MainMenu/BlankButton.png", "", gRenderer));
+	buttons.push_back(new Button("singleplayer", 240, 275, 240, 64, "Images/UI/MainMenu/BlankButton.png", "", gRenderer));
 	buttons.push_back(new Button("credits", 240, 350, 240, 64, "Images/UI/MainMenu/BlankButton.png", "", gRenderer));
 	buttons.push_back(new Button("exit", 240, 425, 240, 64, "Images/UI/MainMenu/BlankButton.png", "", gRenderer));
 
@@ -1927,8 +1764,6 @@ int mainMenu()
 	{
 		if (i->type == "singleplayer")
 			SDL_RenderCopy(gRenderer, singleplayer, NULL, &i->rect);
-		else if (i->type == "multiplayer")
-			SDL_RenderCopy(gRenderer, multiplayer, NULL, &i->rect);
 		else if (i->type == "credits")
 			SDL_RenderCopy(gRenderer, credits, NULL, &i->rect);
 		else if (i->type == "exit") 
@@ -1961,16 +1796,6 @@ int mainMenu()
 							SDL_DestroyTexture(background);
 							run = false;
 							return GOTO_SOLO; // GO TO CHARACTER SELECT
-						}
-						else if (i->type == "multiplayer")
-						{
-							for (auto i : buttons)
-							{
-								delete(i);
-							}
-							SDL_DestroyTexture(background);
-							run = false;
-							return GOTO_COOP; // GO TO COOP
 						}
 						else if (i->type == "credits")
 						{
@@ -2014,9 +1839,8 @@ int main(int argc, char *argv[])
 }
 void handleMain()
 {
-	player1 = new Player("nlf4", 1, 1, 1, 1, 1);
+	player1 = new Player("Default", 1, 1, 1, 1, 1);
 	int currentMode = GOTO_MAIN;
-	int coopCheck;
 	while (true)
 	{
 		switch (currentMode)
@@ -2026,12 +1850,6 @@ void handleMain()
 			break;
 		case GOTO_SOLO:
 			currentMode = characterCreateScreen();
-			break;
-		case GOTO_COOP:
-			coopCheck = characterCreateScreen();
-			if(coopCheck == GOTO_INGAME)
-				currentMode = networkingScreen();
-			else currentMode = coopCheck;
 			break;
 		case GOTO_INGAME:
 			currentMode = playGame();

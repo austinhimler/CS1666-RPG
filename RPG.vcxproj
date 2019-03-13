@@ -258,8 +258,6 @@
     <ClInclude Include="Headers\Attribute.h" />
     <ClInclude Include="Headers\Attributes\Constitution.h" />
     <ClInclude Include="Headers\Attributes\Dexterity.h" />
-    <ClInclude Include="Headers\Attributes\Faith.h" />
-    <ClInclude Include="Headers\Attributes\Intelligence.h" />
     <ClInclude Include="Headers\Attributes\Strength.h" />
     <ClInclude Include="Headers\Attributes\Attr_Globals.h" />
     <ClInclude Include="Headers\Button.h" />
@@ -306,9 +304,9 @@
     <ClInclude Include="SOIL2\stb_image_write.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="map1.txt" />
     <Text Include="map2.txt" />
     <Text Include="map3.txt" />
+    <Text Include="Maps\map1.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\AI\MPS_Effectiveness.csv" />

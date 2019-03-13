@@ -54,6 +54,22 @@ enum COMBATFLAGS {
 	PLAYER_EXIT
 };
 
+enum SPRITEINDEX {
+	NOT_READY,
+	IDLE_DOWN,
+	IDLE_RIGHT,
+	IDLE_LEFT,
+	IDLE_UP,
+	RUN_DOWN,
+	RUN_RIGHT,
+	RUN_LEFT,
+	RUN_UP,
+	RUN_DOWN_RIGHT,
+	RUN_DOWN_LEFT,
+	RUN_UP_RIGHT,
+	RUN_UP_LEFT
+};
+
 extern SDL_Window* gWindow;
 extern SDL_Renderer* gRenderer;
 extern std::vector<SDL_Texture*> gTex;
@@ -61,7 +77,7 @@ extern std::vector<SDL_Texture*> gTex;
 const int SCREEN_WIDTH = 720;
 const int SCREEN_HEIGHT = 720;
 const int ENEMIES_PER_CLUSTER = 1;
-const int STARTING_ENEMIES = 2;
+const int STARTING_ENEMIES = 1;
 const std::vector<std::string> ALL_MAPS = { "map1.txt", "map2.txt", "map3.txt" };
 const int MAX_HORIZONTAL_TILES = 30;
 const int MAX_VERTICAL_TILES = 30;

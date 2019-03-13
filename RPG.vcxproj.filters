@@ -261,13 +261,7 @@
     <ClInclude Include="Headers\Attributes\Strength.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Attributes\Intelligence.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\Attributes\Dexterity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\Attributes\Faith.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\Attributes\Constitution.h">
@@ -428,13 +422,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="map1.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
     <Text Include="map2.txt">
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="map3.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Maps\map1.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

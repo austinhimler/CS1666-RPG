@@ -1,16 +1,21 @@
 #include "../Headers/Path.h"
+#include <stdio.h>
 Path::Path(Tile* input[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES])
 {
-	for (int x = 0; x < MAX_HORIZONTAL_TILES; x++)
-	{
+	
 		for (int y = 0; y < MAX_VERTICAL_TILES; y++)
 		{
-			map[x][y] = input[x][y]->getType();
+			for (int x = 0; x < MAX_HORIZONTAL_TILES; x++)
+			{
+				map[x][y] = input[x][y]->getType();
+			}
 		}
-	}
 }
 std::vector<Point*> Path::makePath(int currentX, int currentY, int endX, int endY)
 {
+	std::cout << currentX << " CURRENT " << currentY << std::endl;
+	std::cout << endX << " END " << endY << std::endl;
+	std::cout << std::endl;
 	Point* allPoints[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES];
 	
 	for (int x = 0; x < MAX_HORIZONTAL_TILES; x++)
@@ -21,6 +26,7 @@ std::vector<Point*> Path::makePath(int currentX, int currentY, int endX, int end
 		}
 	}
 	Point* current = new Point(currentX, currentY, 0, 0, 0, 0, 0, true, false);
+	allPoints[currentX][currentY] = current;
 	while(true)
 	{ 
 		if (isDestination(current->x,current->y,endX, endY))
@@ -37,14 +43,14 @@ std::vector<Point*> Path::makePath(int currentX, int currentY, int endX, int end
 				if (allPoints[temporary_x][temporary_y] == nullptr)
 				{
 					temporary_h = calculateDist(temporary_x, temporary_y, endX, endY);
-					allPoints[temporary_x][temporary_y] == new Point(temporary_x, temporary_y, current->x, current->y, current->moves + 1, temporary_h, temporary_h + current->moves + 1, false, true);
+					allPoints[temporary_x][temporary_y] = new Point(temporary_x, temporary_y, current->x, current->y, current->moves + 1, temporary_h, temporary_h + current->moves + 1, false, true);
 				}
 				else if (allPoints[temporary_x][temporary_y]->closed == false)
 				{
 						if (allPoints[temporary_x][temporary_y]->moves > current->moves + 1)
 						{
 							temporary_h = calculateDist(temporary_x, temporary_y, endX, endY);
-							allPoints[temporary_x][temporary_y] == new Point(temporary_x, temporary_y, current->x, current->y, current->moves + 1, temporary_h, temporary_h + current->moves + 1, false, true);
+							allPoints[temporary_x][temporary_y] = new Point(temporary_x, temporary_y, current->x, current->y, current->moves + 1, temporary_h, temporary_h + current->moves + 1, false, true);
 						}
 				}
 			}
@@ -60,14 +66,14 @@ std::vector<Point*> Path::makePath(int currentX, int currentY, int endX, int end
 				if (allPoints[temporary_x][temporary_y] == nullptr)
 				{
 					temporary_h = calculateDist(temporary_x, temporary_y, endX, endY);
-					allPoints[temporary_x][temporary_y] == new Point(temporary_x, temporary_y, current->x, current->y, current->moves + 1, temporary_h, temporary_h + current->moves + 1, false, true);
+					allPoints[temporary_x][temporary_y] = new Point(temporary_x, temporary_y, current->x, current->y, current->moves + 1, temporary_h, temporary_h + current->moves + 1, false, true);
 				}
 				else if (allPoints[temporary_x][temporary_y]->closed == false)
 				{
 					if (allPoints[temporary_x][temporary_y]->moves > current->moves + 1)
 					{
 						temporary_h = calculateDist(temporary_x, temporary_y, endX, endY);
-						allPoints[temporary_x][temporary_y] == new Point(temporary_x, temporary_y, current->x, current->y, current->moves + 1, temporary_h, temporary_h + current->moves + 1, false, true);
+						allPoints[temporary_x][temporary_y] = new Point(temporary_x, temporary_y, current->x, current->y, current->moves + 1, temporary_h, temporary_h + current->moves + 1, false, true);
 					}
 				}
 			}
@@ -81,14 +87,14 @@ std::vector<Point*> Path::makePath(int currentX, int currentY, int endX, int end
 				if (allPoints[temporary_x][temporary_y] == nullptr)
 				{
 					temporary_h = calculateDist(temporary_x, temporary_y, endX, endY);
-					allPoints[temporary_x][temporary_y] == new Point(temporary_x, temporary_y, current->x, current->y, current->moves + 1, temporary_h, temporary_h + current->moves + 1, false, true);
+					allPoints[temporary_x][temporary_y] = new Point(temporary_x, temporary_y, current->x, current->y, current->moves + 1, temporary_h, temporary_h + current->moves + 1, false, true);
 				}
 				else if (allPoints[temporary_x][temporary_y]->closed == false)
 				{
 					if (allPoints[temporary_x][temporary_y]->moves > current->moves + 1)
 					{
 						temporary_h = calculateDist(temporary_x, temporary_y, endX, endY);
-						allPoints[temporary_x][temporary_y] == new Point(temporary_x, temporary_y, current->x, current->y, current->moves + 1, temporary_h, temporary_h + current->moves + 1, false, true);
+						allPoints[temporary_x][temporary_y] = new Point(temporary_x, temporary_y, current->x, current->y, current->moves + 1, temporary_h, temporary_h + current->moves + 1, false, true);
 					}
 				}
 			}
@@ -102,37 +108,42 @@ std::vector<Point*> Path::makePath(int currentX, int currentY, int endX, int end
 				if (allPoints[temporary_x][temporary_y] == nullptr)
 				{
 					temporary_h = calculateDist(temporary_x, temporary_y, endX, endY);
-					allPoints[temporary_x][temporary_y] == new Point(temporary_x, temporary_y, current->x, current->y, current->moves + 1, temporary_h, temporary_h + current->moves + 1, false, true);
+					allPoints[temporary_x][temporary_y] = new Point(temporary_x, temporary_y, current->x, current->y, current->moves + 1, temporary_h, temporary_h + current->moves + 1, false, true);
 				}
 				else if (allPoints[temporary_x][temporary_y]->closed == false)
 				{
 					if (allPoints[temporary_x][temporary_y]->moves > current->moves + 1)
 					{
 						temporary_h = calculateDist(temporary_x, temporary_y, endX, endY);
-						allPoints[temporary_x][temporary_y] == new Point(temporary_x, temporary_y, current->x, current->y, current->moves + 1, temporary_h, temporary_h + current->moves + 1, false, true);
+						allPoints[temporary_x][temporary_y] = new Point(temporary_x, temporary_y, current->x, current->y, current->moves + 1, temporary_h, temporary_h + current->moves + 1, false, true);
 					}
 				}
 			}
 		}
 
 		Point* low = nullptr;
-		int lowScore = 123456789;
-		for (int x = 0; x < MAX_X_POSITION; x++)
+		int lowScore = INT_MAX;
+		for (int x = 0; x < MAX_HORIZONTAL_TILES; x++)
 		{
-			for (int y = 0; y < MAX_Y_POSITION; y++)
+			for (int y = 0; y < MAX_VERTICAL_TILES; y++)
 			{
-				if (allPoints[x][y] != nullptr && allPoints[x][y]->open == true)
+				if (allPoints[x][y] != nullptr)
 				{
-					if (allPoints[x][y]->total < lowScore)
+					if (allPoints[x][y]->open == true)
 					{
-						low = allPoints[x][y];
-						lowScore = low->total;
+						if (allPoints[x][y]->total < lowScore)
+						{
+							low = allPoints[x][y];
+							lowScore = low->total;
+						}
 					}
 				}
 			}
 		}
+		/*
 		if (low == nullptr)
 			exit(17);
+			*/
 		current = low;
 		current->closed = true;
 		current->open = false;
@@ -143,10 +154,11 @@ std::vector<Point*> Path::makePath(int currentX, int currentY, int endX, int end
 		fullPath.at(temp) = current;
 		current = allPoints[current->parentX][current->parentY];
 	}
+	return fullPath;
 }
 bool Path::isValid(int x, int y)
 {
-	return map[x / MAX_INSIDE_TILE][y / MAX_INSIDE_TILE] == 0;
+	return map[x][y] == 0;
 }
 
 bool Path::isDestination(int x, int y, int endX, int endY)

@@ -18,8 +18,8 @@ public:
 	Cluster(std::string n, int q);
 	vector<Character*> characterGroup;
 	Character* targetPlayer;
-	int targetX;
-	int targetY;
+	int targetTileX;
+	int targetTileY;
 	int pursuitRange;
 	int isAlive();
 	int clusterSize;
@@ -33,6 +33,7 @@ public:
 	void findPath(Tile*[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES]);
 	void moveSteps(double);
 	int pathOffset;
+	double partialSteps;
 
 	int lastDirection = -1;
 	std::queue<int> seqX;

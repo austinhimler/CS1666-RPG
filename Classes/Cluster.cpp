@@ -9,49 +9,107 @@ Cluster::Cluster(int q) {
 		//characterGroup.push_back(new Enemy(t_name, 10, 10, 10, 10, 10));
 	}
 	clusterSize = q;
-	pixelShiftAmountForAnimationInSpriteSheet = 144;
-	imageWidth = 144;
-	imageHeight = 144;
-
-	numIdleAnimationFrames = 6 ;
-	numRunAnimatonFrames = 6;
 	currentFrame = 0;
-	timeBetweenIdleAnimations = 120;
-	timeBetweenRunAnimations = 120;
-	imageIdleResource = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
-	imageIdleNotReadyResource = "Images/Enemies/shadow_cluster/OWL_BROWN_NOT_READY.png";
-	imageRightIdleResource = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";;
-	imageRunResource  = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
-	imageDownRunResource = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
-	imageDownRightRunResource = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
-	imageUpRightRunResource = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
-	imageUpRunResource = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
-	lastDirection = NULL;
+	timeBetweenAnimations = 120;
+
+	std::vector<string> tempSprite(13);
+	std::vector<int> tempWidth(13);
+	std::vector<int> tempHeight(13);
+	std::vector<int> tempImages(13);
+
+	tempSprite.at(NOT_READY) = "Images/Enemies/shadow_cluster/OWL_BROWN_NOT_READY.png";
+	tempWidth.at(NOT_READY) = 112;
+	tempHeight.at(NOT_READY) = 136;
+	tempImages.at(NOT_READY) = 6;
+
+	tempSprite.at(IDLE_DOWN) = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	tempWidth.at(IDLE_DOWN) = 112;
+	tempHeight.at(IDLE_DOWN) = 136;
+	tempImages.at(IDLE_DOWN) = 6;
+
+	tempSprite.at(IDLE_RIGHT) = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	tempWidth.at(IDLE_RIGHT) = 112;
+	tempHeight.at(IDLE_RIGHT) = 136;
+	tempImages.at(IDLE_RIGHT) = 6;
+
+	tempSprite.at(IDLE_LEFT) = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	tempWidth.at(IDLE_LEFT) = 112;
+	tempHeight.at(IDLE_LEFT) = 136;
+	tempImages.at(IDLE_LEFT) = 6;
+
+	tempSprite.at(IDLE_UP) = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	tempWidth.at(IDLE_UP) = 112;
+	tempHeight.at(IDLE_UP) = 136;
+	tempImages.at(IDLE_UP) = 7;
+
+	tempSprite.at(RUN_DOWN) = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	tempWidth.at(RUN_DOWN) = 112;
+	tempHeight.at(RUN_DOWN) = 136;
+	tempImages.at(RUN_DOWN) = 6;
+
+	tempSprite.at(RUN_RIGHT) = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	tempWidth.at(RUN_RIGHT) = 112;
+	tempHeight.at(RUN_RIGHT) = 136;
+	tempImages.at(RUN_RIGHT) = 6;
+
+	tempSprite.at(RUN_LEFT) = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	tempWidth.at(RUN_LEFT) = 112;
+	tempHeight.at(RUN_LEFT) = 136;
+	tempImages.at(RUN_LEFT) = 6;
+
+	tempSprite.at(RUN_UP) = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	tempWidth.at(RUN_UP) = 112;
+	tempHeight.at(RUN_UP) = 136;
+	tempImages.at(RUN_UP) = 6;
+
+	tempSprite.at(RUN_DOWN_RIGHT) = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	tempWidth.at(RUN_DOWN_RIGHT) = 112;
+	tempHeight.at(RUN_DOWN_RIGHT) = 136;
+	tempImages.at(RUN_DOWN_RIGHT) = 6;
+
+	tempSprite.at(RUN_DOWN_LEFT) = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	tempWidth.at(RUN_DOWN_LEFT) = 112;
+	tempHeight.at(RUN_DOWN_LEFT) = 136;
+	tempImages.at(RUN_DOWN_LEFT) = 6;
+
+	tempSprite.at(RUN_UP_RIGHT) = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	tempWidth.at(RUN_UP_RIGHT) = 112;
+	tempHeight.at(RUN_UP_RIGHT) = 136;
+	tempImages.at(RUN_UP_RIGHT) = 6;
+
+	tempSprite.at(RUN_UP_LEFT) = "Images/Enemies/shadow_cluster/OWL_BROWN_READY.png";
+	tempWidth.at(RUN_UP_LEFT) = 112;
+	tempHeight.at(RUN_UP_LEFT) = 136;
+	tempImages.at(RUN_UP_LEFT) = 6;
 
 	Helper helper = Helper();
-	textureIdle = helper.loadImage(imageIdleResource.c_str(), gRenderer);
-	textureRightIdle = helper.loadImage(imageRightIdleResource.c_str(), gRenderer);
-	textureRun = helper.loadImage(imageRunResource.c_str(), gRenderer);
-	textureDownRun = helper.loadImage(imageDownRunResource.c_str(), gRenderer);
-	textureDownRightRun = helper.loadImage(imageDownRightRunResource.c_str(), gRenderer);
-	textureUpRightRun = helper.loadImage(imageUpRightRunResource.c_str(), gRenderer);
-	textureUpRun = helper.loadImage(imageUpRunResource.c_str(), gRenderer);
-	textureIdleNotReady = helper.loadImage(imageIdleNotReadyResource.c_str(), gRenderer);
-	textureActive = NULL;
+	for (int index = 0; index < tempSprite.size(); index++)
+	{
+		spriteTextures.push_back(helper.loadImage(tempSprite.at(index).c_str(), gRenderer));
+		spriteWidths.push_back(tempWidth.at(index));
+		spriteHeights.push_back(tempHeight.at(index));
+		spriteImages.push_back(tempImages.at(index));
+	}
+
+	spriteSheetNumber = IDLE_DOWN;
+
+
+
+	rectangle = { (int)xPosition, (int)yPosition, getImageWidth(), getImageHeight() };
+	drawRectangle = { 0, 0, getImageWidth(), getImageHeight() };
 
 	xPosition = 400.0;
 	yPosition = 200.0;
-	rectangle = { (int)xPosition, (int)yPosition, imageWidth, imageHeight };
-	drawRectangle = { 0, 0, imageWidth, imageHeight };
 	speedMax = 250.0;
-	acceleration = 2000.0;
+	acceleration = 100;
 	combatReady = true;
 	readyTimeLeft = -1;
 
 	targetPlayer = NULL;
-	targetX = -1;
-	targetY = -1;
-	pursuitRange = 300;
+	targetTileX = -1;
+	targetTileY = -1;
+	pursuitRange = 500;
+	partialSteps = 0;
 }
 Cluster::Cluster(std::string n)
 {
@@ -107,25 +165,60 @@ void Cluster::fromString(std::string in)
 void Cluster::setTarget(Character* p)
 {
 	targetPlayer = p;
-	targetX = p->xPosition;
-	targetY = p->yPosition;
+	targetTileX = (int)(p->xTile);
+	targetTileY = (int)(p->yTile);
 }
 void Cluster::clearTarget()
 {
 	targetPlayer = NULL;
-	targetX = -1;
-	targetY = -1;
+	targetTileX = -1;
+	targetTileY = -1;
+	currentPath.clear();
 }
 void Cluster::findPath(Tile* map[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES])
 {
 	Path p(map);
 	pathOffset = 0;
-	currentPath = p.makePath(xPosition/MAX_INSIDE_TILE, yPosition/ MAX_INSIDE_TILE, targetX/ MAX_INSIDE_TILE, targetY/ MAX_INSIDE_TILE);
+	currentPath = p.makePath(xTile, yTile, targetTileX, targetTileY);
+	/*
+	for (int t = 0; t < currentPath.size(); t++)
+	{
+		cout << "(" << currentPath.at(t)->x << "," << currentPath.at(t)->y << ") |";
+	}
+	cout << endl;
+	*/
 }
 void Cluster::moveSteps(double time)
 {
-	pathOffset += (int)(time * (acceleration/MAX_INSIDE_TILE));
-	Point* loc = currentPath.at(pathOffset);
-	xPosition = loc->x;
-	yPosition = loc->y;
+	/*
+	cout << "TARGET : " << targetTileX << "," << targetTileY<<endl;
+	cout << "SELF : " << xTile << "," << yTile<<endl;
+	*/
+	if (currentPath.size() == 0 || (currentPath.size() <= pathOffset))
+	{
+		clearTarget();
+	}
+	else
+	{
+		partialSteps += (time * acceleration);
+		int steps = (int)(partialSteps);
+		partialSteps -= steps;
+		for (int stepsTaken = 0;stepsTaken < steps && currentPath.size() > pathOffset;stepsTaken++)
+		{
+			Point* next = currentPath.at(pathOffset);
+			if (next->x > xTile)
+				xPosition++;
+			else if (next->x < xTile)
+				xPosition--;
+			else if (next->y < yTile)
+				yPosition--;
+			else if (next->y > yTile)
+				yPosition++;
+			else cout << "ERR" << endl;
+			xTile = (int)((xPosition + rectangle.w / 2) / TILE_WIDTH);
+			yTile = (int)((yPosition + rectangle.h) / TILE_HEIGHT);
+			if (xTile == next->x && yTile == next->y)
+				pathOffset++;
+		}
+	}
 }
