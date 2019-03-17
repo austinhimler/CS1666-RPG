@@ -13,6 +13,7 @@ class Path
 public:
 	Path(Tile*[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES]);
 	std::vector<Point*> makePath(int startX, int startY, int endX, int endY);
+	std::vector<Point*> makeRandomPath(int startX, int startY);
 	bool isValid(int x, int y);
 	bool isDestination(int x, int y, int endX, int endY);
 	int calculateDist(int x, int y, int endX, int endY);

@@ -101,14 +101,14 @@ Cluster::Cluster(int q) {
 	xPosition = 400.0;
 	yPosition = 200.0;
 	speedMax = 250.0;
-	acceleration = 100;
+	acceleration = 180;
 	combatReady = true;
 	readyTimeLeft = -1;
 
 	targetPlayer = NULL;
 	targetTileX = -1;
 	targetTileY = -1;
-	pursuitRange = 500;
+	pursuitRange = 400;
 	partialSteps = 0;
 }
 Cluster::Cluster(std::string n)
@@ -175,25 +175,20 @@ void Cluster::clearTarget()
 	targetTileY = -1;
 	currentPath.clear();
 }
+void Cluster::findRandom(Tile* map[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES])
+{
+	Path p(map);
+	pathOffset = 0;
+	currentPath = p.makeRandomPath(xTile, yTile);
+}
 void Cluster::findPath(Tile* map[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES])
 {
 	Path p(map);
 	pathOffset = 0;
 	currentPath = p.makePath(xTile, yTile, targetTileX, targetTileY);
-	/*
-	for (int t = 0; t < currentPath.size(); t++)
-	{
-		cout << "(" << currentPath.at(t)->x << "," << currentPath.at(t)->y << ") |";
-	}
-	cout << endl;
-	*/
 }
 void Cluster::moveSteps(double time)
 {
-	/*
-	cout << "TARGET : " << targetTileX << "," << targetTileY<<endl;
-	cout << "SELF : " << xTile << "," << yTile<<endl;
-	*/
 	if (currentPath.size() == 0 || (currentPath.size() <= pathOffset))
 	{
 		clearTarget();

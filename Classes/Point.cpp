@@ -3,6 +3,13 @@
 Point::Point()
 {
 }
+Point::Point(int newX, int newY, int prevX, int prevY)
+{
+	x = newX;
+	y = newY;
+	parentX = prevX;
+	parentY = prevY;
+}
 Point::Point(int newX, int newY, int pX, int pY, int m, int d, int t, bool isClosed, bool isOpen)
 {
 	x = newX;

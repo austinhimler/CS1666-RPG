@@ -376,9 +376,6 @@ void animateCharacter(Character* i,SDL_Rect camera)
 	i->drawRectangle.x = i->currentFrame *i->getImageWidth();
 	i->rectangle.x = (int)i->xPosition - camera.x;
 	i->rectangle.y = (int)i->yPosition - camera.y;
-	SDL_Rect hitbox = i->rectangle;
-	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-	SDL_RenderFillRect(gRenderer, &hitbox);
 	SDL_RenderCopyEx(gRenderer, i->getSpriteTexture(), &i->drawRectangle, &i->rectangle, 0.0, nullptr, i->flip);
 }
 
@@ -1215,13 +1212,14 @@ int moveCluster(std::vector<Cluster*> c, std::vector<Player*> p, double time, Ti
 				{
 					cl->setTarget(cl->targetPlayer);
 					cl->findPath(map);
-				}
-				cl->moveSteps(time);
+				}	
 			}
 			else
 			{
-				// Move Randomly
+				if (cl->currentPath.size() == 0)
+				cl->findRandom(map);
 			}
+			cl->moveSteps(time);
 		}
 	}
 	return 0;
@@ -1298,14 +1296,8 @@ int playGame()
 			i->timeSinceLastAnimation = timeSinceLastAnimation;
 			while (true)
 			{
-				/*
-				i->xPosition = rand() % (LEVEL_WIDTH - (2 * i->getImageWidth()));
-				i->yPosition = rand() % (LEVEL_HEIGHT - (2 * i->getImageHeight()));
-				i->xTile = xToTile(i);
-				i->yTile = yToTile(i);
-				*/
-				i->xTile = 6;
-				i->yTile = 18;
+				i->xTile = 1+(rand() % (MAX_HORIZONTAL_TILES-1));
+				i->yTile = 1 + (rand() % (MAX_VERTICAL_TILES - 1));
 				i->xPosition = tileToX(i);
 				i->yPosition = tileToY(i);
 				if (tiles[i->xTile][i->yTile]->mType == 0)
@@ -1474,7 +1466,7 @@ int playGame()
 						
 					//Move vertically
 					i->yPosition += (i->yVelocity * timePassed);
-					if (i->yPosition  < 0 || ((i->yPosition + i->getImageHeight())  > LEVEL_HEIGHT))
+					if (i->yPosition  < 0 || ((i->yPosition + i->getImageHeight())  >= LEVEL_HEIGHT))
 					{
 						//go back into window
 						i->yPosition = beforeMoveY;
@@ -1482,7 +1474,7 @@ int playGame()
 
 					//Move horizontally
 					i->xPosition += (i->xVelocity * timePassed);
-					if (i->xPosition < 0 || (i->xPosition + i->getImageWidth() > LEVEL_WIDTH)) {
+					if (i->xPosition < 0 || (i->xPosition + i->getImageWidth() >= LEVEL_WIDTH)) {
 						//go back into window
 						i->xPosition = beforeMoveX;
 					}
@@ -1490,7 +1482,6 @@ int playGame()
 				//calculate tile player is currently standing on
 				int x_to_tile = xToTile(player1);
 				int y_to_tile = yToTile(player1);
-				
 
 				if (tiles[x_to_tile][y_to_tile]->mType != 0)
 				{
