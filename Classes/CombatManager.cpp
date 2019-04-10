@@ -646,11 +646,17 @@ void CombatManager::textAttributes(Character *c, int optNum)
 
 }
 
-void CombatManager::textMain(bool& printed, bool initialText) {
+void CombatManager::textMain(bool& printed, bool initialText, int number) {
 	if (printed) return;
 	if (initialText)
 	{
-		m_combatDialogManager.AddMessage("You've encountered the Owls!"); 
+		string text = "You've encountered ";
+		text.append(std::to_string(number));
+		text.append(" enem");
+		if (number > 1)
+			text.append("ies!");
+		else text.append("y!");
+		m_combatDialogManager.AddMessage(text);
 	}
 	std::vector<std::string> options;
 	options.push_back("Strength Abilities");
@@ -853,7 +859,7 @@ int CombatManager::combatMain(std::vector<Character*>& p)
 		
 		if (turnOrder == 0)
 		{
-			textMain(printed, initialText); // text combat ui initialization
+			textMain(printed, initialText, enemy_index.size()); // text combat ui initialization
 			turnOrder = 1;
 		}
 		

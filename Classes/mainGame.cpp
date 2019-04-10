@@ -1071,7 +1071,7 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Player*> allPlayers, std::vect
 	buttons.push_back(new Button("continue", 240, 200, 260, 64, "Images/UI/PauseMenu/ContinueButton.png", "", gRenderer));
 	buttons.push_back(new Button("exit", 240, 300, 260, 64, "Images/UI/PauseMenu/ExitButton.png", "", gRenderer));
 	SDL_Texture* background = loadImage("Images/UI/PauseMenu/PauseMenuNoButtons.png"); 
-
+	SDL_Rect background_rectangle = { 0, 0, 720, 720 };
 	SDL_Event e;
 	while (inPauseMenu)
 	{
@@ -1140,10 +1140,12 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Player*> allPlayers, std::vect
 		{
 			animateCharacter(i, camera);
 		}
+		SDL_RenderCopy(gRenderer, background, NULL, &background_rectangle);
 		for (auto &i : buttons)
 		{
 			SDL_RenderCopy(gRenderer, i->texture, NULL, &i->rect);
 		}
+		
 		SDL_RenderPresent(gRenderer);
 		SDL_Delay(16);
 	}
@@ -1619,7 +1621,7 @@ int playGame()
 				{
 					GameOverTransition();
 					SDL_Delay(8000);
-					return GOTO_EXIT;
+					return GOTO_MAIN;
 				}
 				else if (combatResult == PLAYER_WINS)
 				{
