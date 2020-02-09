@@ -56,10 +56,15 @@ enum SCENE_CHANGE
 	GOTO_CREDITS,
 	GOTO_EXIT,
 	GOTO_INGAME,
+	GOTO_OPTIONS,
 };
 
 Mix_Music *gMusic = NULL;
 Mix_Chunk *gBSound = NULL;
+Mix_Chunk *soundButtonSuccess_Up = NULL; 
+Mix_Chunk *soundButtonSuccess_Down = NULL;
+Mix_Chunk *soundButtonFailure = NULL; 
+Mix_Chunk *soundMenuSelect = NULL;
 TTF_Font* font;
 
 aStar pathing;
@@ -291,6 +296,9 @@ void close()
 	//Free music
 	Mix_FreeMusic(gMusic);
 	Mix_FreeChunk(gBSound);
+	Mix_FreeChunk(soundButtonSuccess_Up);
+	Mix_FreeChunk(soundButtonSuccess_Down);
+	Mix_FreeChunk(soundButtonFailure);
 	gMusic = NULL;
 	TTF_Quit();
 	Mix_Quit();
@@ -330,9 +338,18 @@ int playCredits() {
 		while (j < 101)
 		{
 			SDL_PollEvent(&e);
-			if (e.type == SDL_QUIT) {
+			if (e.type == SDL_QUIT)
+			{
 				Mix_HaltMusic();
 				return GOTO_EXIT;
+			}
+			else if (e.type == SDL_KEYDOWN)
+			{
+				if (e.key.keysym.sym == SDLK_ESCAPE)
+				{
+					Mix_HaltMusic();
+					return GOTO_MAIN;
+				}
 			}
 			if (j == 0)
 			{
@@ -479,160 +496,16 @@ void GameOverTransition()
 	SDL_Delay(200);
 }
 
-/*int networkingScreen()
-{
-	// Initialize Variables
-	bool onNetworking = true;
-	bool startReady = false;
-	int currentState = -1;
-
-	SDL_Rect IPTextRectangle = { 255, 195, 0,0 };
-	SDL_Color textColor = { 112, 96, 80, 0 };
-	std::string IPInputText;
-
-	std::vector<Button*> buttons;
-	SDL_Texture* host_false = loadImage("Images/UI/NetworkingScreen/Host_False.png");
-	SDL_Texture* host_true = loadImage("Images/UI/NetworkingScreen/Host_True.png");
-	SDL_Texture* join_false = loadImage("Images/UI/NetworkingScreen/Join_False.png");
-	SDL_Texture* join_true = loadImage("Images/UI/NetworkingScreen/Join_True.png");
-	SDL_Texture* startlocked = loadImage("Images/UI/NetworkingScreen/StartButton_Locked.png");
-	SDL_Texture* startunlocked = loadImage("Images/UI/NetworkingScreen/StartButton_Unlocked.png");
-	SDL_Texture* back = loadImage("Images/UI/NetworkingScreen/BackButton.png");
-
-	//Establish Visuals
-	buttons.push_back(new Button("start", 450, 425, 230, 56, "Images/UI/NetworkingScreen/StartButton_Locked.png", "", gRenderer));
-	buttons.push_back(new Button("host", 450, 500, 230, 56, "Images/UI/NetworkingScreen/Host_False.png", "", gRenderer));
-	buttons.push_back(new Button("join", 450, 575, 230, 56, "Images/UI/NetworkingScreen/Join_False.png", "", gRenderer));
-	buttons.push_back(new Button("back", 450, 650, 230, 56, "Images/UI/NetworkingScreen/BackButton.png", "", gRenderer));
-
-	// Load Background
-	LoadTexture background;
-	background.loadFromFile("Images/UI/NetworkingScreen/NetworkingNoButtons.png", gRenderer);
-	background.renderBackground(gRenderer);
-
-	startMusic("Audio/NetworkSetup.wav", MIX_MAX_VOLUME);
-
-	SDL_Event e;
-	while (onNetworking)
-	{
-		while (SDL_PollEvent(&e))
-		{
-
-			if (e.type == SDL_QUIT)
-			{
-				Mix_HaltMusic();
-				return GOTO_EXIT; //end game
-			}
-
-			if (e.button.button == (SDL_BUTTON_LEFT) && e.type == SDL_MOUSEBUTTONDOWN)
-			{
-				int mouseX, mouseY;
-				SDL_GetMouseState(&mouseX, &mouseY);
-				for (auto i : buttons)
-				{
-					//if mouse is clicked inside a button
-					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) &&
-						((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
-					{
-						if (i->type == "back")
-						{
-							for (auto i : buttons)
-							{
-								delete(i);
-							}
-							background.free();
-							Mix_HaltMusic();
-							return GOTO_MAIN;
-						}
-						else if (i->type == "start")
-						{
-							if (startReady)
-							{
-								if (currentState == 0)
-									handleNetworkingSetup("host", "");
-								else if (currentState == 1)
-									handleNetworkingSetup("client", IPInputText);
-							}
-						}
-						else if (i->type == "host")
-						{
-							currentState = 0;
-						}
-						else if (i->type == "join")
-						{
-							currentState = 1;
-						}
-					}
-					
-				}
-			}
-			else if (e.type == SDL_KEYDOWN)
-			{
-				//remove char if backspace
-				if (e.key.keysym.sym == SDLK_BACKSPACE && IPInputText.length() > 0)
-				{
-					Mix_PlayChannel(-1, gBSound, 0);
-					IPInputText.pop_back();
-				}
-				//Move on by pressing enter
-				else if (e.key.keysym.sym == SDLK_RETURN)
-				{
-				}
-			}
-			else if (e.type == SDL_TEXTINPUT) {
-				if (IPInputText.length() < 15) {
-					Mix_PlayChannel(-1, gBSound, 0);
-					IPInputText += e.text.text;
-				}
-			}
-
-
-		}
-		if (currentState == 0)
-			startReady = true;
-		else if (currentState == 1 && IPInputText.length() >= 9)
-			startReady = true;
-		else startReady = false;
-		background.renderBackground(gRenderer);
-		//Renders buttons and shows pressed image if pressed
-		for (auto i : buttons)
-		{
-			if (i->type == "start")
-			{
-				if(startReady)
-					SDL_RenderCopy(gRenderer, startunlocked, NULL, &i->rect);
-				else SDL_RenderCopy(gRenderer, startlocked, NULL, &i->rect);
-			}
-			else if (i->type == "host")
-			{
-				if(currentState == 0)
-					SDL_RenderCopy(gRenderer, host_true, NULL, &i->rect);
-				else SDL_RenderCopy(gRenderer, host_false, NULL, &i->rect);
-			}
-			else if (i->type == "join")
-			{
-				if(currentState == 1)
-					SDL_RenderCopy(gRenderer, join_true, NULL, &i->rect);
-				else SDL_RenderCopy(gRenderer, join_false, NULL, &i->rect);
-			}
-			else if (i->type == "back")
-				SDL_RenderCopy(gRenderer, back, NULL, &i->rect);
-		}
-		if (IPInputText.length() > 0)
-		{
-			renderText(IPInputText.c_str(), &IPTextRectangle, &textColor);
-		}
-		SDL_RenderPresent(gRenderer);
-		SDL_Delay(16);
-	}
-	return GOTO_CREDITS;
-}*/
 int characterCreateScreen()
 {
+	soundMenuSelect = Mix_LoadWAV("Audio/SoundEffect_MenuSelect.wav");
+	if (soundMenuSelect == NULL)
+	{
+		printf("Failed to load Button sound effect! SDL_mixer Error: %s\n", Mix_GetError());
+	}
 	// Initialize Variables
 	bool onCharacterCreate = true;
-	bool backToMain = false;
-	int pointsToAllocate = 25;
+	int pointsToAllocate = 5;
 	int maxStat = 10;
 	int minStat = 1;
 	int strength = 1;
@@ -644,6 +517,16 @@ int characterCreateScreen()
 	int charImageY = 0;
 	int charImageW = 96;
 	int charImageH = 132;
+
+	int attribute_summary_x = 0;
+	int attribute_summary_y = 0;
+	int attribute_summary_width = 300;
+	int attribute_summary_height = 200;
+
+	int mouseX = -1;
+	int mouseY = -1;
+
+
 	int delaysPerFrame = 0;
 	int frame = 0;
 	int attributeX = 245;
@@ -658,6 +541,35 @@ int characterCreateScreen()
 	SDL_Rect nameTextRectangle = { 150, 640, 0,0 };
 	SDL_Rect errorTextRectangle = { 115, 580, 0, 0 };
 	SDL_Rect errorTextRectangleLong = { 25, 580, 0, 0 };
+
+	/* these rectangles are for when the player hovers over the ability words */
+		/* Strength */
+			SDL_Rect strBox = { 200, 100, attribute_summary_width, attribute_summary_height };
+			SDL_Texture* strSum = loadImage("Images/UI/CreateScreen/STR_Sum.png");
+			SDL_Rect strRectangle = { attribute_summary_x, attribute_summary_y, attribute_summary_width, attribute_summary_height };
+		/* End */
+		/* Intelligence */
+			SDL_Rect intBox = { 200, 160, attribute_summary_width, attribute_summary_height };
+			SDL_Texture* intSum = loadImage("Images/UI/CreateScreen/INT_Sum.png");
+			SDL_Rect intRectangle = { attribute_summary_x, attribute_summary_y, attribute_summary_width, attribute_summary_height };
+		/* End */
+		/* Dexterity */
+			SDL_Rect dexBox = { 200, 220, attribute_summary_width, attribute_summary_height };
+			SDL_Texture* dexSum = loadImage("Images/UI/CreateScreen/DEX_Sum.png");
+			SDL_Rect dexRectangle = { attribute_summary_x, attribute_summary_y, attribute_summary_width, attribute_summary_height };
+		/* End */
+		/* Constitution */
+			SDL_Rect conBox = { 200, 280, attribute_summary_width, attribute_summary_height };
+			SDL_Texture* conSum = loadImage("Images/UI/CreateScreen/CON_Sum.png");
+			SDL_Rect conRectangle = { attribute_summary_x, attribute_summary_y, attribute_summary_width, attribute_summary_height };
+		/* End */
+		/* Faith */
+			SDL_Rect faiBox = { 200, 340, attribute_summary_width, attribute_summary_height };
+			SDL_Texture* faiSum = loadImage("Images/UI/CreateScreen/FAI_Sum.png");
+			SDL_Rect faiRectangle = { attribute_summary_x, attribute_summary_y, attribute_summary_width, attribute_summary_height };
+		/* End */
+	/* End */
+
 	SDL_Color textColor = { 112, 96, 80, 0 };
 	SDL_Color errorColor = { 255, 0, 0, 0 };
 	std::string nameInputText;
@@ -688,14 +600,22 @@ int characterCreateScreen()
 	buttons.push_back(new Button("start", 450, 575, 230, 56, "Images/UI/CreateScreen/StartButton.png", "", gRenderer));
 	buttons.push_back(new Button("back", 450, 650, 230, 56, "Images/UI/CreateScreen/BackButton.png", "", gRenderer));
 
+	SDL_Texture* back = loadImage("Images/UI/CreateScreen/BackButton.png");
+	SDL_Texture* back_selected = loadImage("Images/UI/CreateScreen/BackButton_Selected.png");
+	SDL_Texture* start = loadImage("Images/UI/CreateScreen/StartButton.png");
+	SDL_Texture* start_selected = loadImage("Images/UI/CreateScreen/StartButton_Selected.png");
+
 	// Load Background
 	LoadTexture background;
 	background.loadFromFile("Images/UI/CreateScreen/characterCreateV2NoButtons.png", gRenderer);
 	background.renderBackground(gRenderer);
 
-	startMusic("Audio/charactercreate.wav", MIX_MAX_VOLUME / 8);
+	startMusic("Audio/Song_CharacterCreate_New.wav", MIX_MAX_VOLUME / 8);
 	gBSound = Mix_LoadWAV("Audio/BSound.wav");
-	if (gBSound == NULL)
+	soundButtonFailure = Mix_LoadWAV("Audio/SoundEffect_ButtonFailure.wav");
+	soundButtonSuccess_Up =  Mix_LoadWAV("Audio/SoundEffect_ButtonSuccess_Up.wav");
+	soundButtonSuccess_Down = Mix_LoadWAV("Audio/SoundEffect_ButtonSuccess_Down.wav");
+	if (gBSound == NULL || soundButtonFailure == NULL || soundButtonSuccess_Up == NULL || soundButtonSuccess_Down == NULL)
 	{
 		printf("Failed to load Button sound effect! SDL_mixer Error: %s\n", Mix_GetError());
 	}
@@ -731,74 +651,112 @@ int characterCreateScreen()
 					{
 					if (i->type == "back")
 					{
-						if (backToMain == true)
-						{
+						Mix_PlayChannel(-1, soundMenuSelect, 0);
+							SDL_RenderCopy(gRenderer, back_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, back, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, back_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, back, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, back_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
 							for (auto i : buttons) {
 								delete(i);
 							}
 							background.free();
 							Mix_HaltMusic();
 							return GOTO_MAIN;
-						}
-						else
-						{
-							backToMain = true;
-							errorInputText = "Progress Will Not Be Saved!";
-						}
 					}
-					else backToMain = false;
 					i->pressed = 5;
-					if (i->type == "start") {
-						if (nameInputText == "nlf4" || nameInputText == "nfl4" || pointsToAllocate == 0) {
-								if (nameInputText == "nlf4" || nameInputText == "nfl4" || nameInputText != "") {
-									Mix_PlayChannel(-1, gBSound, 0);
+					if (i->type == "start")
+					{
+						if (nameInputText == "nlf4" || pointsToAllocate == 0)
+							{
+								if (nameInputText == "nlf4" || nameInputText != "")
+								{
+									Mix_PlayChannel(-1, soundMenuSelect, 0);
+									SDL_RenderCopy(gRenderer, start_selected, NULL, &i->rect);
+									SDL_RenderPresent(gRenderer);
+									SDL_Delay(300);
+									SDL_RenderCopy(gRenderer, start, NULL, &i->rect);
+									SDL_RenderPresent(gRenderer);
+									SDL_Delay(300);
+									SDL_RenderCopy(gRenderer, start_selected, NULL, &i->rect);
+									SDL_RenderPresent(gRenderer);
+									SDL_Delay(300);
+									SDL_RenderCopy(gRenderer, start, NULL, &i->rect);
+									SDL_RenderPresent(gRenderer);
+									SDL_Delay(300);
+									SDL_RenderCopy(gRenderer, start_selected, NULL, &i->rect);
+									SDL_RenderPresent(gRenderer);
+									SDL_Delay(300);
 									onCharacterCreate = false;
 									if (nameInputText == "nfl4" || nameInputText == "nlf4")
-										player1 = new Player(nameInputText, 10, 10, 10, 10, 10);//player1->setAll(nameInputText, 10, 10, 10, 10, 10);
+										player1 = new Player(nameInputText, 10, 10, 10, 10, 10);
 									else
-										player1 = new Player(nameInputText, strength, intelligence, dexterity, constitution, faith);//player1->setAll(nameInputText, strength, intelligence, dexterity, constitution, faith);
+										player1 = new Player(nameInputText, strength, intelligence, dexterity, constitution, faith);
 									std::cout << std::string(*player1); //displays player 1
 									//make Character Object, validate, return to main
-									for (auto i : buttons) {
+									for (auto i : buttons)
+									{
 										delete(i);
 									}
 									background.free();
 									Mix_HaltMusic();
 									return GOTO_INGAME;
 								}
-								else {
+								else
+								{
+									Mix_PlayChannel(-1, soundButtonFailure, 0);
 									errorInputText = "Enter Your Name!";
 								}
 							}
-							else {
+							else
+							{
+								Mix_PlayChannel(-1, soundButtonFailure, 0);
 								errorInputText = "Points Remaining!";
 								break; //not valid to start, break out of for loop
 							}
 						}
-						else if (i->type == "up") {
-							if (pointsToAllocate > 0) {
-								Mix_PlayChannel(-1, gBSound, 0);
+						else if (i->type == "up")
+						{
+							if (pointsToAllocate > 0)
+							{
+								Mix_PlayChannel(-1, soundButtonSuccess_Up, 0);
 								deltaAttribute = 1;
-								
 							}
-							else {
+							else
+							{
+								Mix_PlayChannel(-1, soundButtonFailure, 0);
 								errorInputText = "No Points Remaining!";
 								deltaAttribute = 0;
 								
 							}
 						}
-						else if (i->type == "down") {
-							Mix_PlayChannel(-1, gBSound, 0);
-							deltaAttribute = -1;
-							
+						else if (i->type == "down")
+						{
+							if (i->locked)
+							{
+								Mix_PlayChannel(-1, soundButtonFailure, 0);
+								deltaAttribute = 0;
+							}
+							else
+							{
+								Mix_PlayChannel(-1, soundButtonSuccess_Down, 0);
+								deltaAttribute = -1;
+							}					
 						}
 
 						if (i->attribute == "strength") {
-							if ((deltaAttribute + strength) <= maxStat && (deltaAttribute + strength) >= minStat) {
-						
-
-								
-
+							if ((deltaAttribute + strength) <= maxStat && (deltaAttribute + strength) >= minStat)
+							{
 								strength += deltaAttribute;
 								pointsToAllocate -= deltaAttribute;
 							}
@@ -931,7 +889,7 @@ int characterCreateScreen()
 		for (auto i : buttons) {
 			if (i->attribute == "strength") {
 				if (i->type == "up") {
-					if (strength == maxStat) {
+					if (strength == maxStat || pointsToAllocate == 0) {
 						i->locked = true;
 					}
 					else i->locked = false;
@@ -945,7 +903,7 @@ int characterCreateScreen()
 			}
 			else if (i->attribute == "intelligence") {
 				if (i->type == "up") {
-					if (intelligence == maxStat) {
+					if (intelligence == maxStat || pointsToAllocate == 0) {
 						i->locked = true;
 					}
 					else i->locked = false;
@@ -959,7 +917,7 @@ int characterCreateScreen()
 			}
 			else if (i->attribute == "dexterity") {
 				if (i->type == "up") {
-					if (dexterity == maxStat) {
+					if (dexterity == maxStat || pointsToAllocate == 0) {
 						i->locked = true;
 					}
 					else i->locked = false;
@@ -973,7 +931,7 @@ int characterCreateScreen()
 			}
 			else if (i->attribute == "constitution") {
 				if (i->type == "up") {
-					if (constitution == maxStat) {
+					if (constitution == maxStat || pointsToAllocate == 0) {
 						i->locked = true;
 					}
 					else i->locked = false;
@@ -987,7 +945,7 @@ int characterCreateScreen()
 			}
 			else if (i->attribute == "faith") {
 				if (i->type == "up") {
-					if (faith == maxStat) {
+					if (faith == maxStat || pointsToAllocate == 0) {
 						i->locked = true;
 					}
 					else i->locked = false;
@@ -1060,18 +1018,58 @@ int characterCreateScreen()
 		else if (errorInputText.length() > 0) {
 			renderText(errorInputText.c_str(), &errorTextRectangle, &errorColor);
 		}
+		
+		/* Check if mouse is hovering over ability word*/
+		SDL_GetMouseState(&mouseX, &mouseY);
+		if (mouseX >= 35 && mouseX < 180)
+		{
+			if (mouseY > 125 && mouseY < 165)
+			{
+				SDL_RenderCopy(gRenderer, strSum, &strRectangle, &strBox);
+			}
+			else if (mouseY > 215 && mouseY < 255)
+			{
+				SDL_RenderCopy(gRenderer, intSum, &intRectangle, &intBox);
+			}
+			else if (mouseY > 305 && mouseY < 345)
+			{
+				SDL_RenderCopy(gRenderer, dexSum, &dexRectangle, &dexBox);
+			}
+			else if (mouseY > 395 && mouseY < 435)
+			{
+				SDL_RenderCopy(gRenderer, conSum, &conRectangle, &conBox);
+			}
+			else if (mouseY > 485 && mouseY < 525)
+			{
+				SDL_RenderCopy(gRenderer, faiSum, &faiRectangle, &faiBox);
+			}
+		}
+		/* END */
+		
 		SDL_RenderPresent(gRenderer);
 		SDL_Delay(16);
 	}
 	return GOTO_CREDITS;
 }
 
-int handlePauseMenu(bool inPauseMenu, std::vector<Player*> allPlayers, std::vector<Cluster*> allEnemies, Tile *tiles[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES], SDL_Rect camera) {
+int handlePauseMenu(bool inPauseMenu, std::vector<Player*> allPlayers, std::vector<Cluster*> allEnemies, Tile *tiles[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES], SDL_Rect camera)
+{
 	std::vector<Button*> buttons;
 	buttons.push_back(new Button("continue", 240, 200, 260, 64, "Images/UI/PauseMenu/ContinueButton.png", "", gRenderer));
 	buttons.push_back(new Button("exit", 240, 300, 260, 64, "Images/UI/PauseMenu/ExitButton.png", "", gRenderer));
 	SDL_Texture* background = loadImage("Images/UI/PauseMenu/PauseMenuNoButtons.png"); 
+	SDL_Texture* continuebutton = loadImage("Images/UI/PauseMenu/ContinueButton.png");
+	SDL_Texture* continuebutton_selected = loadImage("Images/UI/PauseMenu/ContinueButton_Selected.png");
+	SDL_Texture* exitbutton = loadImage("Images/UI/PauseMenu/ExitButton.png");
+	SDL_Texture* exitbutton_selected = loadImage("Images/UI/PauseMenu/ExitButton_Selected.png");
 	SDL_Rect background_rectangle = { 0, 0, 720, 720 };
+
+	soundMenuSelect = Mix_LoadWAV("Audio/SoundEffect_MenuSelect.wav");
+	if (soundMenuSelect == NULL)
+	{
+		printf("Failed to load Button sound effect! SDL_mixer Error: %s\n", Mix_GetError());
+	}
+
 	SDL_Event e;
 	while (inPauseMenu)
 	{
@@ -1092,8 +1090,24 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Player*> allPlayers, std::vect
 					//if mouse is clicked inside a button
 					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) && ((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
 					{
+						Mix_PlayChannel(-1, soundMenuSelect, 0);
 						if (i->type == "continue")
 						{
+							SDL_RenderCopy(gRenderer, continuebutton_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, continuebutton, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, continuebutton_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, continuebutton, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, continuebutton_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
 							for (auto i : buttons)
 							{
 								delete(i);
@@ -1104,6 +1118,21 @@ int handlePauseMenu(bool inPauseMenu, std::vector<Player*> allPlayers, std::vect
 						}
 						else if (i->type == "exit")
 						{
+							SDL_RenderCopy(gRenderer, exitbutton_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, exitbutton, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, exitbutton_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, exitbutton, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, exitbutton_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
 							for (auto i : buttons)
 							{
 								delete(i);
@@ -1473,23 +1502,36 @@ int playGame()
 						//go back into window
 						i->yPosition = beforeMoveY;
 					}
+					else
+					{
+						int x_to_tile = xToTile(i);
+						int y_to_tile = yToTile(i);
+
+						if (tiles[x_to_tile][y_to_tile]->mType != 0)
+						{
+							i->yPosition = beforeMoveY;
+						}
+					}
 
 					//Move horizontally
 					i->xPosition += (i->xVelocity * timePassed);
-					if (i->xPosition < 0 || (i->xPosition + i->getImageWidth() >= LEVEL_WIDTH)) {
+					if (i->xPosition < 0 || (i->xPosition + i->getImageWidth() >= LEVEL_WIDTH))
+					{
 						//go back into window
 						i->xPosition = beforeMoveX;
 					}
+					else
+					{
+						int x_to_tile = xToTile(i);
+						int y_to_tile = yToTile(i);
+
+						if (tiles[x_to_tile][y_to_tile]->mType != 0)
+						{
+							i->xPosition = beforeMoveX;
+						}
+					}
 				}
 				//calculate tile player is currently standing on
-				int x_to_tile = xToTile(player1);
-				int y_to_tile = yToTile(player1);
-
-				if (tiles[x_to_tile][y_to_tile]->mType != 0)
-				{
-					player1->xPosition = beforeMoveX;
-					player1->yPosition = beforeMoveY;
-				}
 				player1->xTile = xToTile(player1);
 				player1->yTile = yToTile(player1);
 
@@ -1728,25 +1770,37 @@ void printShaderLog(GLuint shader)
 		printf("Name %d is not a shader\n", shader);
 	}
 }
-
+int optionsScreen()
+{
+	return GOTO_MAIN;
+}
 int mainMenu()
 {
-	startMusic("Audio/Song_MainMenu.wav", MIX_MAX_VOLUME / 5);
-
+	startMusic("Audio/Song_MainMenu_New.wav", MIX_MAX_VOLUME / 5);
+	soundMenuSelect = Mix_LoadWAV("Audio/SoundEffect_MenuSelect.wav");
+	if (soundMenuSelect == NULL)
+	{
+		printf("Failed to load Button sound effect! SDL_mixer Error: %s\n", Mix_GetError());
+	}
 	bool run = true;
 	std::vector<Button*> buttons;
 
 	SDL_Texture* singleplayer = loadImage("Images/UI/MainMenu/SingleplayerButton.png");
-	SDL_Texture* multiplayer = loadImage("Images/UI/MainMenu/MultiplayerButton.png");
+	SDL_Texture* singleplayer_selected = loadImage("Images/UI/MainMenu/SingleplayerButton_Selected.png");
+	SDL_Texture* options = loadImage("Images/UI/MainMenu/OptionsButton.png");
+	SDL_Texture* options_selected = loadImage("Images/UI/MainMenu/OptionsButton_Selected.png");
 	SDL_Texture* credits = loadImage("Images/UI/MainMenu/CreditsButton.png");
+	SDL_Texture* credits_selected = loadImage("Images/UI/MainMenu/CreditsButton_Selected.png");
 	SDL_Texture* exit = loadImage("Images/UI/MainMenu/ExitButton.png");
+	SDL_Texture* exit_selected = loadImage("Images/UI/MainMenu/ExitButton_Selected.png");
 	SDL_Texture* title = loadImage("Images/UI/MainMenu/title.png");
 	SDL_Rect space = { 100, 50, 526, 72 };
 	
 	// Add all buttons to a vector
 	buttons.push_back(new Button("singleplayer", 240, 275, 240, 64, "Images/UI/MainMenu/BlankButton.png", "", gRenderer));
-	buttons.push_back(new Button("credits", 240, 350, 240, 64, "Images/UI/MainMenu/BlankButton.png", "", gRenderer));
-	buttons.push_back(new Button("exit", 240, 425, 240, 64, "Images/UI/MainMenu/BlankButton.png", "", gRenderer));
+	buttons.push_back(new Button("options", 240, 350, 240, 64, "Images/UI/MainMenu/BlankButton.png", "", gRenderer));
+	buttons.push_back(new Button("credits", 240, 425, 240, 64, "Images/UI/MainMenu/BlankButton.png", "", gRenderer));
+	buttons.push_back(new Button("exit", 240, 500, 240, 64, "Images/UI/MainMenu/BlankButton.png", "", gRenderer));
 
 	SDL_Texture* background = loadImage("Images/UI/MainMenu/MainMenuNoButtons.png");
 
@@ -1757,6 +1811,8 @@ int mainMenu()
 	{
 		if (i->type == "singleplayer")
 			SDL_RenderCopy(gRenderer, singleplayer, NULL, &i->rect);
+		else if (i->type == "options")
+			SDL_RenderCopy(gRenderer, options, NULL, &i->rect);
 		else if (i->type == "credits")
 			SDL_RenderCopy(gRenderer, credits, NULL, &i->rect);
 		else if (i->type == "exit") 
@@ -1780,8 +1836,24 @@ int mainMenu()
 					//if mouse is clicked inside a button
 					if (((mouseX >= i->x) && (mouseX <= (i->x + i->w))) && ((mouseY >= i->y) && (mouseY <= (i->y + i->h))))
 					{
+						Mix_PlayChannel(-1, soundMenuSelect, 0);
 						if (i->type == "singleplayer")
 						{
+							SDL_RenderCopy(gRenderer, singleplayer_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, singleplayer, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);							
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, singleplayer_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);							
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, singleplayer, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);							
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, singleplayer_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);							
+							SDL_Delay(300);
 							for (auto i : buttons)
 							{
 								delete(i);
@@ -1790,8 +1862,48 @@ int mainMenu()
 							run = false;
 							return GOTO_SOLO; // GO TO CHARACTER SELECT
 						}
+						else if (i->type == "options")
+						{
+							SDL_RenderCopy(gRenderer, options_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, options, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, options_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, options, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, options_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							for (auto i : buttons)
+							{
+								delete(i);
+							}
+							SDL_DestroyTexture(background);
+							run = false;
+							return GOTO_OPTIONS; // GO TO OPTIONS
+						}
 						else if (i->type == "credits")
 						{
+							SDL_RenderCopy(gRenderer, credits_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, credits, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, credits_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, credits, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, credits_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
 							for (auto i : buttons)
 							{
 								delete(i);
@@ -1800,7 +1912,23 @@ int mainMenu()
 							run = false;
 							return GOTO_CREDITS; // GO TO CREDITS
 						}
-						else if (i->type == "exit") {
+						else if (i->type == "exit")
+						{
+							SDL_RenderCopy(gRenderer, exit_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, exit, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, exit_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, exit, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
+							SDL_RenderCopy(gRenderer, exit_selected, NULL, &i->rect);
+							SDL_RenderPresent(gRenderer);
+							SDL_Delay(300);
 							for (auto i : buttons) {
 								delete(i);
 							}
@@ -1852,6 +1980,9 @@ void handleMain()
 			break;
 		case GOTO_EXIT:
 			return;
+		case GOTO_OPTIONS:
+			currentMode = optionsScreen();
+			break;
 		default:
 			cout << "Option not set" << endl;
 			return;
