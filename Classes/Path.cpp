@@ -11,11 +11,51 @@ Path::Path(Tile* input[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES])
 			}
 		}
 }
+std::vector<Point*> Path::makeRandomPath(int currentX, int currentY)
+{
+	std::vector<Point*> myPath;
+	int direction = rand() % 4;
+	switch (direction)
+	{
+	case 0:
+		for (int x = currentX+1; x < MAX_HORIZONTAL_TILES; x++)
+		{
+			if (isValid(x, currentY))
+				myPath.push_back(new Point(x, currentY, x - 1, currentY));
+			else break;
+		}
+		break;
+	case 1:
+		for (int x = currentX - 1; x > 0; x--)
+		{
+			if (isValid(x, currentY))
+				myPath.push_back(new Point(x, currentY, x + 1, currentY));
+			else break;
+		}
+		break;
+	case 2:
+		for (int y = currentY + 1; y < MAX_VERTICAL_TILES; y++)
+		{
+			if (isValid(currentX, y))
+				myPath.push_back(new Point(currentX, y, currentX, y-1));
+			else break;
+		}
+		break;
+	case 3:
+		for (int y = currentY - 1; y > 0; y--)
+		{
+			if (isValid(currentX, y))
+				myPath.push_back(new Point(currentX, y, currentX, y + 1));
+			else break;
+		}
+		break;
+	default:
+		std::cout << "WHOOPS" << std::endl;
+	}
+	return myPath;
+}
 std::vector<Point*> Path::makePath(int currentX, int currentY, int endX, int endY)
 {
-	std::cout << currentX << " CURRENT " << currentY << std::endl;
-	std::cout << endX << " END " << endY << std::endl;
-	std::cout << std::endl;
 	Point* allPoints[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES];
 	
 	for (int x = 0; x < MAX_HORIZONTAL_TILES; x++)
@@ -140,10 +180,11 @@ std::vector<Point*> Path::makePath(int currentX, int currentY, int endX, int end
 				}
 			}
 		}
-		/*
 		if (low == nullptr)
-			exit(17);
-			*/
+		{
+			std::vector<Point*> noPath;
+			return noPath;
+		}
 		current = low;
 		current->closed = true;
 		current->open = false;

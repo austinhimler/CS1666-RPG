@@ -25,69 +25,70 @@
 		std::vector<int> tempHeight(13);
 		std::vector<int> tempImages(13);
 
+
 		tempSprite.at(NOT_READY) = "Images/Player/Idle_Down.png";
-		tempWidth.at(NOT_READY) = 44;
-		tempHeight.at(NOT_READY) = 120;
+		tempWidth.at(NOT_READY) = 96;
+		tempHeight.at(NOT_READY) = 132;
 		tempImages.at(NOT_READY) = 7;
 		
 		tempSprite.at(IDLE_DOWN) = "Images/Player/Idle_Down.png";
-		tempWidth.at(IDLE_DOWN) = 44;
-		tempHeight.at(IDLE_DOWN) = 120;
+		tempWidth.at(IDLE_DOWN) = 96;
+		tempHeight.at(IDLE_DOWN) = 132;
 		tempImages.at(IDLE_DOWN) = 7;
 
 		tempSprite.at(IDLE_RIGHT) = "Images/Player/Idle_Right.png";
-		tempWidth.at(IDLE_RIGHT) = 40;
-		tempHeight.at(IDLE_RIGHT) = 124;
+		tempWidth.at(IDLE_RIGHT) = 96;
+		tempHeight.at(IDLE_RIGHT) = 132;
 		tempImages.at(IDLE_RIGHT) = 6;
 
 		tempSprite.at(IDLE_LEFT) = "Images/Player/Idle_Left.png";
-		tempWidth.at(IDLE_LEFT) = 40;
-		tempHeight.at(IDLE_LEFT) = 124;
+		tempWidth.at(IDLE_LEFT) = 96;
+		tempHeight.at(IDLE_LEFT) = 132;
 		tempImages.at(IDLE_LEFT) = 6;
 
 		tempSprite.at(IDLE_UP) = "Images/Player/Idle_Up.png";
-		tempWidth.at(IDLE_UP) = 44;
-		tempHeight.at(IDLE_UP) = 120;
+		tempWidth.at(IDLE_UP) = 96;
+		tempHeight.at(IDLE_UP) = 132;
 		tempImages.at(IDLE_UP) = 7;
 
 		tempSprite.at(RUN_DOWN) = "Images/Player/Run_Down.png";
-		tempWidth.at(RUN_DOWN) = 72;
-		tempHeight.at(RUN_DOWN) = 120;
+		tempWidth.at(RUN_DOWN) = 96;
+		tempHeight.at(RUN_DOWN) = 132;
 		tempImages.at(RUN_DOWN) = 6;
 
 		tempSprite.at(RUN_RIGHT) = "Images/Player/Run_Right.png";
-		tempWidth.at(RUN_RIGHT) = 80;
-		tempHeight.at(RUN_RIGHT) = 124;
+		tempWidth.at(RUN_RIGHT) = 96;
+		tempHeight.at(RUN_RIGHT) = 132;
 		tempImages.at(RUN_RIGHT) = 6;
 
 		tempSprite.at(RUN_LEFT) = "Images/Player/Run_Left.png";
-		tempWidth.at(RUN_LEFT) = 80;
-		tempHeight.at(RUN_LEFT) = 124;
+		tempWidth.at(RUN_LEFT) = 96;
+		tempHeight.at(RUN_LEFT) = 132;
 		tempImages.at(RUN_LEFT) = 6;
 
 		tempSprite.at(RUN_UP) = "Images/Player/Run_Up.png";
-		tempWidth.at(RUN_UP) = 80;
+		tempWidth.at(RUN_UP) = 96;
 		tempHeight.at(RUN_UP) = 132;
 		tempImages.at(RUN_UP) = 6;
 
 		tempSprite.at(RUN_DOWN_RIGHT) = "Images/Player/Run_Down_Right.png";
-		tempWidth.at(RUN_DOWN_RIGHT) = 76;
-		tempHeight.at(RUN_DOWN_RIGHT) = 116;
+		tempWidth.at(RUN_DOWN_RIGHT) = 96;
+		tempHeight.at(RUN_DOWN_RIGHT) = 132;
 		tempImages.at(RUN_DOWN_RIGHT) = 6;
 
 		tempSprite.at(RUN_DOWN_LEFT) = "Images/Player/Run_Down_Left.png";
-		tempWidth.at(RUN_DOWN_LEFT) = 76;
-		tempHeight.at(RUN_DOWN_LEFT) = 116;
+		tempWidth.at(RUN_DOWN_LEFT) = 96;
+		tempHeight.at(RUN_DOWN_LEFT) = 132;
 		tempImages.at(RUN_DOWN_LEFT) = 6;
 
 		tempSprite.at(RUN_UP_RIGHT) = "Images/Player/Run_Up_Right.png";
 		tempWidth.at(RUN_UP_RIGHT) = 96;
-		tempHeight.at(RUN_UP_RIGHT) = 124;
+		tempHeight.at(RUN_UP_RIGHT) = 132;
 		tempImages.at(RUN_UP_RIGHT) = 6;
 
 		tempSprite.at(RUN_UP_LEFT) = "Images/Player/Run_Up_Left.png";
 		tempWidth.at(RUN_UP_LEFT) = 96;
-		tempHeight.at(RUN_UP_LEFT) = 124;
+		tempHeight.at(RUN_UP_LEFT) = 132;
 		tempImages.at(RUN_UP_LEFT) = 6;
 
 		Helper helper = Helper();

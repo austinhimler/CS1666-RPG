@@ -31,69 +31,82 @@
     <Filter Include="Source Files\UI">
       <UniqueIdentifier>{b29677f9-b1d4-43aa-94b2-f9b2aa7329d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Maps">
+      <UniqueIdentifier>{bacfc087-f44d-42e1-a587-147fb6ef9d05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Tiles">
+      <UniqueIdentifier>{e7bf2c6a-9004-49d6-8db7-18dfe31c5e34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Media Include="CREDIT_IMG\BGM.wav">
-      <Filter>Resource Files\CREDIT_IMAGES</Filter>
-    </Media>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="CREDIT_IMG\bmbCredits.jpg">
+    <Image Include="Images\Credits\bmbCredits.jpg">
       <Filter>Resource Files\CREDIT_IMAGES</Filter>
     </Image>
-    <Image Include="CREDIT_IMG\dank_farnan_meme.jpg">
+    <Image Include="Images\Credits\dank_farnan_meme.jpg">
       <Filter>Resource Files\CREDIT_IMAGES</Filter>
     </Image>
-    <Image Include="CREDIT_IMG\dsgCredits.png">
+    <Image Include="Images\Credits\dsgCredits.jpg">
       <Filter>Resource Files\CREDIT_IMAGES</Filter>
     </Image>
-    <Image Include="CREDIT_IMG\ilum.jpg">
+    <Image Include="Images\Credits\ilum.jpg">
       <Filter>Resource Files\CREDIT_IMAGES</Filter>
     </Image>
-    <Image Include="CREDIT_IMG\justin.jpg">
+    <Image Include="Images\Credits\justin.jpg">
       <Filter>Resource Files\CREDIT_IMAGES</Filter>
     </Image>
-    <Image Include="CREDIT_IMG\Kexin Wang.jpg">
+    <Image Include="Images\Credits\Kexin Wang.jpg">
       <Filter>Resource Files\CREDIT_IMAGES</Filter>
     </Image>
-    <Image Include="CREDIT_IMG\mjl159Credits.png">
+    <Image Include="Images\Credits\mjl159Credits.png">
       <Filter>Resource Files\CREDIT_IMAGES</Filter>
     </Image>
-    <Image Include="CREDIT_IMG\my_greatest_creation.png">
+    <Image Include="Images\Credits\my_greatest_creation.png">
       <Filter>Resource Files\CREDIT_IMAGES</Filter>
     </Image>
-    <Image Include="CREDIT_IMG\RyanKillenCreditImage.jpg">
+    <Image Include="Images\Credits\RyanKillenCreditImage.jpg">
       <Filter>Resource Files\CREDIT_IMAGES</Filter>
     </Image>
-    <Image Include="CREDIT_IMG\SankethKolliCredit.jpg">
+    <Image Include="Images\Credits\SankethKolliCredit.jpg">
       <Filter>Resource Files\CREDIT_IMAGES</Filter>
     </Image>
-    <Image Include="Images\Tiles\64^64 Grasstiles.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="Images\Tiles\flower1.png">
+      <Filter>Resource Files\Tiles</Filter>
     </Image>
-    <Image Include="Images\Tiles\64^64 lake.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="Images\Tiles\flower2.png">
+      <Filter>Resource Files\Tiles</Filter>
     </Image>
-    <Image Include="Images\Tiles\singleGrass.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="Images\Tiles\flower3.png">
+      <Filter>Resource Files\Tiles</Filter>
     </Image>
-    <Image Include="Images\Tiles\pond.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="Images\Tiles\flower4.png">
+      <Filter>Resource Files\Tiles</Filter>
     </Image>
-    <Image Include="Images\Tiles\pondBottom.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="Images\Tiles\flower5.png">
+      <Filter>Resource Files\Tiles</Filter>
     </Image>
-    <Image Include="Images\Tiles\pondBottomLeft.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="Images\Tiles\flower6.png">
+      <Filter>Resource Files\Tiles</Filter>
     </Image>
-    <Image Include="Images\Tiles\pondLeft.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="Images\Tiles\OutsideBottomLeft.png">
+      <Filter>Resource Files\Tiles</Filter>
     </Image>
-    <Image Include="Images\Tiles\pondTop.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="Images\Tiles\OutsideBottomRight.png">
+      <Filter>Resource Files\Tiles</Filter>
     </Image>
-    <Image Include="Images\Tiles\pondTopLeft.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="Images\Tiles\OutsideTopLeft.png">
+      <Filter>Resource Files\Tiles</Filter>
+    </Image>
+    <Image Include="Images\Tiles\OutsideTopRight.png">
+      <Filter>Resource Files\Tiles</Filter>
+    </Image>
+    <Image Include="Images\Tiles\singleGrass2.png">
+      <Filter>Resource Files\Tiles</Filter>
+    </Image>
+    <Image Include="Images\Tiles\singleGrass4.png">
+      <Filter>Resource Files\Tiles</Filter>
+    </Image>
+    <Image Include="Images\Tiles\singleGrass5.png">
+      <Filter>Resource Files\Tiles</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
@@ -261,12 +274,6 @@
     <ClInclude Include="Headers\Attributes\Strength.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Attributes\Dexterity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\Attributes\Constitution.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\Helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -277,9 +284,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\Tile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\Abilities\Attack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\Abilities\AbilityResource.h">
@@ -422,17 +426,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="map2.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="map3.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Maps\map1.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Shaders\simpleColorShader.frag">
       <Filter>Shaders</Filter>
     </None>
@@ -460,5 +453,16 @@
     <None Include="Shaders\NO_SHADER.vs">
       <Filter>Shaders</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Maps\map1.txt">
+      <Filter>Resource Files\Maps</Filter>
+    </Text>
+    <Text Include="Maps\map2.txt">
+      <Filter>Resource Files\Maps</Filter>
+    </Text>
+    <Text Include="Maps\map3.txt">
+      <Filter>Resource Files\Maps</Filter>
+    </Text>
   </ItemGroup>
 </Project>

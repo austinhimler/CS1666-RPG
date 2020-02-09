@@ -213,32 +213,32 @@
     <ClCompile Include="Classes\UI\TextRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Media Include="CREDIT_IMG\BGM.wav" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="CREDIT_IMG\bmbCredits.jpg" />
-    <Image Include="CREDIT_IMG\dank_farnan_meme.jpg" />
-    <Image Include="CREDIT_IMG\dsgCredits.png" />
-    <Image Include="CREDIT_IMG\ilum.jpg" />
-    <Image Include="CREDIT_IMG\justin.jpg" />
-    <Image Include="CREDIT_IMG\Kexin Wang.jpg" />
-    <Image Include="CREDIT_IMG\mjl159Credits.png" />
-    <Image Include="CREDIT_IMG\my_greatest_creation.png" />
-    <Image Include="CREDIT_IMG\RyanKillenCreditImage.jpg" />
-    <Image Include="CREDIT_IMG\SankethKolliCredit.jpg" />
-    <Image Include="Images\Tiles\64^64 Grasstiles.png" />
-    <Image Include="Images\Tiles\64^64 lake.png" />
-    <Image Include="Images\Tiles\pond.png" />
-    <Image Include="Images\Tiles\pondBottom.png" />
-    <Image Include="Images\Tiles\pondBottomLeft.png" />
-    <Image Include="Images\Tiles\pondLeft.png" />
-    <Image Include="Images\Tiles\pondTop.png" />
-    <Image Include="Images\Tiles\pondTopLeft.png" />
-    <Image Include="Images\Tiles\singleGrass.png" />
+    <Image Include="Images\Credits\bmbCredits.jpg" />
+    <Image Include="Images\Credits\dank_farnan_meme.jpg" />
+    <Image Include="Images\Credits\dsgCredits.jpg" />
+    <Image Include="Images\Credits\ilum.jpg" />
+    <Image Include="Images\Credits\justin.jpg" />
+    <Image Include="Images\Credits\Kexin Wang.jpg" />
+    <Image Include="Images\Credits\mjl159Credits.png" />
+    <Image Include="Images\Credits\my_greatest_creation.png" />
+    <Image Include="Images\Credits\RyanKillenCreditImage.jpg" />
+    <Image Include="Images\Credits\SankethKolliCredit.jpg" />
+    <Image Include="Images\Tiles\flower1.png" />
+    <Image Include="Images\Tiles\flower2.png" />
+    <Image Include="Images\Tiles\flower3.png" />
+    <Image Include="Images\Tiles\flower4.png" />
+    <Image Include="Images\Tiles\flower5.png" />
+    <Image Include="Images\Tiles\flower6.png" />
+    <Image Include="Images\Tiles\OutsideBottomLeft.png" />
+    <Image Include="Images\Tiles\OutsideBottomRight.png" />
+    <Image Include="Images\Tiles\OutsideTopLeft.png" />
+    <Image Include="Images\Tiles\OutsideTopRight.png" />
+    <Image Include="Images\Tiles\singleGrass2.png" />
+    <Image Include="Images\Tiles\singleGrass4.png" />
+    <Image Include="Images\Tiles\singleGrass5.png" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Abilities\AbilityResource.h" />
-    <ClInclude Include="Headers\Abilities\Attack.h" />
     <ClInclude Include="Headers\Ability.h" />
     <ClInclude Include="Headers\Ailment.h" />
     <ClInclude Include="Headers\Ailments\AilmentResource.h" />
@@ -256,8 +256,6 @@
     <ClInclude Include="Headers\AI\MPS_TaskAssignment.h" />
     <ClInclude Include="Headers\aStar.h" />
     <ClInclude Include="Headers\Attribute.h" />
-    <ClInclude Include="Headers\Attributes\Constitution.h" />
-    <ClInclude Include="Headers\Attributes\Dexterity.h" />
     <ClInclude Include="Headers\Attributes\Strength.h" />
     <ClInclude Include="Headers\Attributes\Attr_Globals.h" />
     <ClInclude Include="Headers\Button.h" />
@@ -304,9 +302,9 @@
     <ClInclude Include="SOIL2\stb_image_write.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="map2.txt" />
-    <Text Include="map3.txt" />
     <Text Include="Maps\map1.txt" />
+    <Text Include="Maps\map2.txt" />
+    <Text Include="Maps\map3.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\AI\MPS_Effectiveness.csv" />

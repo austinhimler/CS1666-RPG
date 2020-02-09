@@ -37,7 +37,7 @@ public:
 	int textAction(Character* c);
 	int combatMain(std::vector<Character*>& c);
 	void textAttributes(Character *c, int optNum);
-	void textMain(bool& printed, bool initialText);
+	void textMain(bool& printed, bool initialText, int number);
 	//void setNewButtons(std::vector<Button*>& buttons, int t);
 	void outputEnemy();
 

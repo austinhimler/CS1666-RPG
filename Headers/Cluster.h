@@ -30,6 +30,7 @@ public:
 	void fromString(std::string in);
 	void setTarget(Character*);
 	void clearTarget();
+	void findRandom(Tile*[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES]);
 	void findPath(Tile*[MAX_HORIZONTAL_TILES][MAX_VERTICAL_TILES]);
 	void moveSteps(double);
 	int pathOffset;
